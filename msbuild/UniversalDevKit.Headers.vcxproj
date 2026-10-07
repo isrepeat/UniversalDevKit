@@ -21,10 +21,12 @@
     <PlatformToolset Condition="'$(PlatformToolset)' == ''">$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="BuildLayout.props" />
   <Import Project="UniversalDevKit.props" />
   <ItemGroup>
     <ClInclude Include="..\include\UniversalDevKit\Math.h" />
     <None Include="UniversalDevKit.props" />
+    <None Include="BuildLayout.props" />
     <None Include="..\CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
