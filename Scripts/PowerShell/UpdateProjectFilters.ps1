@@ -6,8 +6,9 @@ $ErrorActionPreference = 'Stop'
 $repositoryPath = [IO.Path]::GetFullPath($RepositoryRoot)
 $prefix = $repositoryPath.TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar
 $updates = [Collections.Generic.List[object]]::new()
-$projects = Get-ChildItem -LiteralPath $repositoryPath -Filter '*.vcxproj' -Recurse -File |
-    Where-Object { $_.FullName -notmatch '[\\/](build|\.git|\.vs)[\\/]' } |
+$projects = Get-ChildItem -LiteralPath $repositoryPath -Recurse -File |
+    Where-Object { $_.Extension -in @('.vcxproj', '.vcxitems') } |
+    Where-Object { $_.FullName -notmatch '[\\/](!artifacts|build|\.git|\.vs)[\\/]' } |
     Sort-Object FullName
 
 function EscapeXml([string]$Value) {
@@ -16,6 +17,8 @@ function EscapeXml([string]$Value) {
 
 foreach ($project in $projects) {
     [xml]$document = Get-Content -LiteralPath $project.FullName -Raw
+    $rootNode = $document.SelectSingleNode("/*[local-name()='Project']/*[local-name()='PropertyGroup']/*[local-name()='UniversalDevKitFilterRoots']")
+    $filterRoots = if ($rootNode) { @($rootNode.InnerText -split ';' | Where-Object { $_ }) } else { @() }
     $items = @{}
     $filters = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     foreach ($node in $document.SelectNodes("/*[local-name()='Project']/*[local-name()='ItemGroup']/*[@Include]")) {
@@ -23,15 +26,26 @@ foreach ($project in $projects) {
             continue
         }
         $include = $node.GetAttribute('Include')
+        $resolvedInclude = $include.Replace('$(MSBuildThisFileDirectory)', $project.DirectoryName + '\')
         # Сложные пути требуют вычисления MSBuild; не создаём неверное дерево молча.
-        if ($include -match '[$@%*?;]') {
+        if ($resolvedInclude -match '[$@%*?;]') {
             throw "Unsupported Include '$include' in $($project.FullName)"
         }
-        $absolute = [IO.Path]::GetFullPath((Join-Path $project.DirectoryName $include))
+        $absolute = if ([IO.Path]::IsPathRooted($resolvedInclude)) {
+            [IO.Path]::GetFullPath($resolvedInclude)
+        } else { [IO.Path]::GetFullPath((Join-Path $project.DirectoryName $resolvedInclude)) }
         if (-not $absolute.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)) {
             throw "File outside repository: $absolute"
         }
         $relative = $absolute.Substring($prefix.Length).Replace('/', '\')
+        foreach ($filterRoot in $filterRoots) {
+            $filterPrefix = $filterRoot.Replace('/', '\').TrimEnd('\') + '\'
+            if ($relative.StartsWith($filterPrefix, [StringComparison]::OrdinalIgnoreCase)) {
+                $relative = $relative.Substring($filterPrefix.Length)
+                break
+            }
+        }
+        if ($node.LocalName -eq 'None') { $relative = 'Build\' + $relative }
         $filter = [IO.Path]::GetDirectoryName($relative)
         $items[$node.LocalName + '|' + $include] = @($node.LocalName, $include, $filter)
         while ($filter) {

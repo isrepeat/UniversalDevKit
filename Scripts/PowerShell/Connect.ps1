@@ -6,7 +6,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repositoryPath = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-$integrationPath = Join-Path $repositoryPath 'msbuild\UniversalDevKit.Sources.targets'
+$integrationPath = Join-Path $repositoryPath 'Projects\MsBuild\UniversalDevKit.Sources.targets'
 
 function SelectConsoleItem {
     param([string]$Title, [string[]]$Items)
@@ -47,7 +47,7 @@ if (-not $ProjectPath) {
     $location = (Read-Host 'Path to consumer .vcxproj, .sln or project directory').Trim('"')
     if (Test-Path -LiteralPath $location -PathType Container) {
         $projects = @(Get-ChildItem -LiteralPath $location -Recurse -Filter '*.vcxproj' -File |
-            Where-Object { $_.FullName -notmatch '[\\/](build|\.git|\.vs)[\\/]' -and
+            Where-Object { $_.FullName -notmatch '[\\/](!artifacts|build|\.git|\.vs)[\\/]' -and
                 -not $_.FullName.StartsWith($repositoryPath + '\', [StringComparison]::OrdinalIgnoreCase) } |
             ForEach-Object FullName | Sort-Object)
     }
@@ -66,9 +66,9 @@ if (-not $ProjectPath) {
     $action = SelectConsoleItem -Title $ProjectPath -Items @('Connect / update', 'Disconnect')
     if ($action -eq 1) { $Disconnect = $true }
     if (-not $Disconnect) {
-        $availableComponents = @('Helpers')
+        $availableComponents = @('Helpers', 'Diagnostic', 'Helpers + Diagnostic')
         $selection = SelectConsoleItem -Title 'Select component' -Items $availableComponents
-        $Components = @($availableComponents[$selection])
+        $Components = if ($selection -eq 2) { @('Helpers', 'Diagnostic') } else { @($availableComponents[$selection]) }
     }
     [Console]::Clear()
     Write-Host ('Consumer: ' + $ProjectPath)
@@ -76,7 +76,7 @@ if (-not $ProjectPath) {
 if (-not $Disconnect) {
     if (-not $Components) { $Components = @('Helpers') }
     foreach ($component in $Components) {
-        if ($component -cne 'Helpers') { throw "Unsupported component: $component" }
+        if ($component -cnotin @('Helpers', 'Diagnostic')) { throw "Unsupported component: $component" }
     }
     $Components = @($Components | Select-Object -Unique)
 }

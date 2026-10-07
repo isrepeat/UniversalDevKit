@@ -1,8 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.10.12224.181 stable
+VisualStudioVersion = 18.10.12224.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Headers", "msbuild\UniversalDevKit.Headers.vcxproj", "{A7CE4335-D8E6-4E53-B810-7D932E87BA59}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Static", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Static.vcxproj", "{A7CE4335-D8E6-4E53-B810-7D932E87BA59}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}"
 	ProjectSection(SolutionItems) = preProject
@@ -16,10 +16,41 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", 
 		Scripts\PowerShell\UpdateProjectFilters.ps1 = Scripts\PowerShell\UpdateProjectFilters.ps1
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Static", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Static.vcxproj", "{C6B94069-54C2-4B96-880D-4C058A605C56}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{13DA8639-4234-4E82-9423-056A19840860}"
+	ProjectSection(SolutionItems) = preProject
+		CMakeLists.txt = CMakeLists.txt
+		CMakePresets.json = CMakePresets.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4-1E80-4386-ACBA-A8B9D984FC44}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\UniversalDevKitConfig.cmake.in = Projects\Cmake\UniversalDevKitConfig.cmake.in
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\MsBuild\BuildLayout.props = Projects\MsBuild\BuildLayout.props
+		Projects\MsBuild\UniversalDevKit.props = Projects\MsBuild\UniversalDevKit.props
+		Projects\MsBuild\UniversalDevKit.Sources.targets = Projects\MsBuild\UniversalDevKit.Sources.targets
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Shared", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems", "{F27F4562-11C4-42EF-AC5A-26101FD26F46}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Dynamic", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Dynamic.vcxproj", "{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Shared", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems", "{28F717C7-A2EF-405E-96F1-538329030ACF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Dynamic", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj", "{88573491-8330-4D25-A3C2-FAAB1D69E589}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{8B6DD9E6-3057-45B9-80F6-B813601BE33B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{066DAD5F-063F-43BF-8ADC-0E76A36CA54D}"
+EndProject
 Global
-	GlobalSection(NestedProjects) = preSolution
-		{D832A37F-03A2-4EBD-9FF9-BC27D415378B} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
@@ -29,11 +60,44 @@ Global
 		{A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Debug|x64.Build.0 = Debug|x64
 		{A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Release|x64.ActiveCfg = Release|x64
 		{A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Release|x64.Build.0 = Release|x64
+		{C6B94069-54C2-4B96-880D-4C058A605C56}.Debug|x64.ActiveCfg = Debug|x64
+		{C6B94069-54C2-4B96-880D-4C058A605C56}.Debug|x64.Build.0 = Debug|x64
+		{C6B94069-54C2-4B96-880D-4C058A605C56}.Release|x64.ActiveCfg = Release|x64
+		{C6B94069-54C2-4B96-880D-4C058A605C56}.Release|x64.Build.0 = Release|x64
+		{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24}.Debug|x64.ActiveCfg = Debug|x64
+		{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24}.Debug|x64.Build.0 = Debug|x64
+		{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24}.Release|x64.ActiveCfg = Release|x64
+		{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24}.Release|x64.Build.0 = Release|x64
+		{88573491-8330-4D25-A3C2-FAAB1D69E589}.Debug|x64.ActiveCfg = Debug|x64
+		{88573491-8330-4D25-A3C2-FAAB1D69E589}.Debug|x64.Build.0 = Debug|x64
+		{88573491-8330-4D25-A3C2-FAAB1D69E589}.Release|x64.ActiveCfg = Release|x64
+		{88573491-8330-4D25-A3C2-FAAB1D69E589}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A7CE4335-D8E6-4E53-B810-7D932E87BA59} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
+		{D832A37F-03A2-4EBD-9FF9-BC27D415378B} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
+		{C6B94069-54C2-4B96-880D-4C058A605C56} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}
+		{26DC63D4-1E80-4386-ACBA-A8B9D984FC44} = {13DA8639-4234-4E82-9423-056A19840860}
+		{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83} = {13DA8639-4234-4E82-9423-056A19840860}
+		{F27F4562-11C4-42EF-AC5A-26101FD26F46} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
+		{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
+		{28F717C7-A2EF-405E-96F1-538329030ACF} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}
+		{88573491-8330-4D25-A3C2-FAAB1D69E589} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}
+		{8B6DD9E6-3057-45B9-80F6-B813601BE33B} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7A3009E-A79E-4542-AC95-DD9B9C113922}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{28f717c7-a2ef-405e-96f1-538329030acf}*SharedItemsImports = 9
+		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{56ed54d2-4f7a-4cd2-91ba-3d710d8f9c24}*SharedItemsImports = 4
+		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{88573491-8330-4d25-a3c2-faab1d69e589}*SharedItemsImports = 4
+		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{a7ce4335-d8e6-4e53-b810-7d932e87ba59}*SharedItemsImports = 4
+		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{c6b94069-54c2-4b96-880d-4c058a605c56}*SharedItemsImports = 4
+		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{f27f4562-11c4-42ef-ac5a-26101fd26f46}*SharedItemsImports = 9
 	EndGlobalSection
 EndGlobal

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <UniversalDevKitArtifactsRoot>$(MSBuildThisFileDirectory)..\build\</UniversalDevKitArtifactsRoot>
-    <UniversalDevKitTargetPlatform Condition="'$(UniversalDevKitTargetPlatform)' == ''">Windows-$(Platform)</UniversalDevKitTargetPlatform>
-    <OutDir>$(UniversalDevKitArtifactsRoot)$(UniversalDevKitTargetPlatform)\$(MSBuildProjectName)\msbuild\$(Configuration)\bin\</OutDir>
-    <IntDir>$(UniversalDevKitArtifactsRoot)$(UniversalDevKitTargetPlatform)\$(MSBuildProjectName)\msbuild\$(Configuration)\obj\</IntDir>
-  </PropertyGroup>
-</Project>

@@ -10,14 +10,14 @@
       "name": "windows-x64",
       "displayName": "Windows x64",
       "generator": "Ninja Multi-Config",
-      "binaryDir": "${sourceDir}/build/Windows-x64/UniversalDevKit/cmake",
+      "binaryDir": "${sourceDir}/!artifacts/Windows-x64/cmake/UniversalDevKit",
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Windows"
       },
       "cacheVariables": {
-        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/Windows-x64/UniversalDevKit/install"
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/!artifacts/Windows-x64/cmake/UniversalDevKit/install"
       }
     }
   ],
