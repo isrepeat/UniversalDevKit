@@ -24,7 +24,7 @@
   <Import Project="BuildLayout.props" />
   <Import Project="UniversalDevKit.props" />
   <ItemGroup>
-    <ClInclude Include="..\include\UniversalDevKit\Math.h" />
+    <ClInclude Include="..\include\UniversalDevKit\Helpers\Math.h" />
     <None Include="UniversalDevKit.props" />
     <None Include="BuildLayout.props" />
     <None Include="..\CMakeLists.txt" />

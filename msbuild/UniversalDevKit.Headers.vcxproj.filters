@@ -3,11 +3,12 @@
   <ItemGroup>
     <Filter Include="include" />
     <Filter Include="include\UniversalDevKit" />
+    <Filter Include="include\UniversalDevKit\Helpers" />
     <Filter Include="msbuild" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\UniversalDevKit\Math.h">
-      <Filter>include\UniversalDevKit</Filter>
+    <ClInclude Include="..\include\UniversalDevKit\Helpers\Math.h">
+      <Filter>include\UniversalDevKit\Helpers</Filter>
     </ClInclude>
     <None Include="..\CMakeLists.txt" />
     <None Include="BuildLayout.props">

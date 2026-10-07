@@ -1,18 +1,24 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.10.12224.181 stable
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{BC8A1FFA-BEE3-4634-8014-F334798102B3}") = "UniversalDevKit.Headers", "msbuild\UniversalDevKit.Headers.vcxproj", "{A7CE4335-D8E6-4E53-B810-7D932E87BA59}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Headers", "msbuild\UniversalDevKit.Headers.vcxproj", "{A7CE4335-D8E6-4E53-B810-7D932E87BA59}"
 EndProject
 Global
-    GlobalSection(SolutionConfigurationPlatforms) = preSolution
-        Debug|x64 = Debug|x64
-        Release|x64 = Release|x64
-    EndGlobalSection
-    GlobalSection(ProjectConfigurationPlatforms) = postSolution
-        {A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Debug|x64.ActiveCfg = Debug|x64
-        {A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Debug|x64.Build.0 = Debug|x64
-        {A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Release|x64.ActiveCfg = Release|x64
-        {A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Release|x64.Build.0 = Release|x64
-    EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Debug|x64.ActiveCfg = Debug|x64
+		{A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Debug|x64.Build.0 = Debug|x64
+		{A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Release|x64.ActiveCfg = Release|x64
+		{A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D7A3009E-A79E-4542-AC95-DD9B9C113922}
+	EndGlobalSection
 EndGlobal

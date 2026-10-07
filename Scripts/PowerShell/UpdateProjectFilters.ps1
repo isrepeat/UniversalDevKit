@@ -1,13 +1,11 @@
 param(
-    [string]$RepositoryRoot = (Split-Path -Parent $PSScriptRoot),
-    [switch]$Check
+    [string]$RepositoryRoot = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
 )
 
 $ErrorActionPreference = 'Stop'
 $repositoryPath = [IO.Path]::GetFullPath($RepositoryRoot)
 $prefix = $repositoryPath.TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar
-$patches = [Collections.Generic.List[string]]::new()
-$outdated = [Collections.Generic.List[string]]::new()
+$updates = [Collections.Generic.List[object]]::new()
 $projects = Get-ChildItem -LiteralPath $repositoryPath -Filter '*.vcxproj' -Recurse -File |
     Where-Object { $_.FullName -notmatch '[\\/](build|\.git|\.vs)[\\/]' } |
     Sort-Object FullName
@@ -71,27 +69,14 @@ foreach ($project in $projects) {
     $actual = if ($exists) { [IO.File]::ReadAllText($destination).Replace("`r`n", "`n") } else { '' }
     if ($actual -ceq $expected) { continue }
     $relativeDestination = $destination.Substring($prefix.Length).Replace('\', '/')
-    $outdated.Add($relativeDestination)
-    if ($exists) {
-        $patches.Add('*** Update File: ' + $relativeDestination)
-        $patches.Add('@@')
-        foreach ($line in ($actual -split "`n")) { $patches.Add('-' + $line) }
-    }
-    else {
-        $patches.Add('*** Add File: ' + $relativeDestination)
-    }
-    foreach ($line in $lines) { $patches.Add('+' + $line) }
+    $updates.Add(@{ Path = $destination; Content = $expected; RelativePath = $relativeDestination })
 }
 
-if ($Check) {
-    if ($outdated.Count) {
-        throw ('Outdated project filters: ' + ($outdated -join ', '))
-    }
-    Write-Output 'Project filters are up to date.'
+# Записываем после проверки всех проектов, без BOM и завершающего перевода строки.
+foreach ($update in $updates) {
+    [IO.File]::WriteAllText($update.Path, $update.Content, [Text.UTF8Encoding]::new($false))
+    Write-Output ('Updated: ' + $update.RelativePath)
 }
-elseif ($patches.Count) {
-    # Изменения применяются через apply_patch согласно правилам репозитория.
-    Write-Output '*** Begin Patch'
-    $patches | Write-Output
-    Write-Output '*** End Patch'
+if (-not $updates.Count) {
+    Write-Output 'Project filters are up to date.'
 }
