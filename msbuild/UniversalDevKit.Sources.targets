@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="UniversalDevKit.props" />
+  <ItemGroup>
+    <_UniversalDevKitComponent Include="$(UniversalDevKitComponents)" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\include\UniversalDevKit\Helpers\Math.h"
+               Condition="'$(UniversalDevKitComponents)' == 'Helpers'" />
+  </ItemGroup>
+  <Target Name="ValidateUniversalDevKitComponents" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(UniversalDevKitComponents)' == ''" Text="UniversalDevKitComponents must be specified." />
+    <Error Condition="'%(_UniversalDevKitComponent.Identity)' != 'Helpers'"
+           Text="Unsupported UniversalDevKit component: %(_UniversalDevKitComponent.Identity)" />
+  </Target>
+</Project>

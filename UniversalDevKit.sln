@@ -4,7 +4,22 @@ VisualStudioVersion = 18.10.12224.181 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Headers", "msbuild\UniversalDevKit.Headers.vcxproj", "{A7CE4335-D8E6-4E53-B810-7D932E87BA59}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Connect.cmd = Scripts\Connect.cmd
+		Scripts\UpdateProjectFilters.cmd = Scripts\UpdateProjectFilters.cmd
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{D832A37F-03A2-4EBD-9FF9-BC27D415378B}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\PowerShell\Connect.ps1 = Scripts\PowerShell\Connect.ps1
+		Scripts\PowerShell\UpdateProjectFilters.ps1 = Scripts\PowerShell\UpdateProjectFilters.ps1
+	EndProjectSection
+EndProject
 Global
+	GlobalSection(NestedProjects) = preSolution
+		{D832A37F-03A2-4EBD-9FF9-BC27D415378B} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
