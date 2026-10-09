@@ -29,6 +29,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4
 		Projects\Cmake\UniversalDevKitConfig.cmake.in = Projects\Cmake\UniversalDevKitConfig.cmake.in
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{23CA4B7F-EBE4-4934-A198-BE258D8FBACB}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\Helpers\CMakeLists.txt = Projects\Cmake\Helpers\CMakeLists.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{DD8EB3A1-297D-4465-9859-1EDD908CCA73}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\Diagnostic\CMakeLists.txt = Projects\Cmake\Diagnostic\CMakeLists.txt
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}"
 	ProjectSection(SolutionItems) = preProject
 		Projects\MsBuild\BuildLayout.props = Projects\MsBuild\BuildLayout.props
@@ -81,6 +91,8 @@ Global
 		{D832A37F-03A2-4EBD-9FF9-BC27D415378B} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
 		{C6B94069-54C2-4B96-880D-4C058A605C56} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}
 		{26DC63D4-1E80-4386-ACBA-A8B9D984FC44} = {13DA8639-4234-4E82-9423-056A19840860}
+		{23CA4B7F-EBE4-4934-A198-BE258D8FBACB} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{DD8EB3A1-297D-4465-9859-1EDD908CCA73} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
 		{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83} = {13DA8639-4234-4E82-9423-056A19840860}
 		{F27F4562-11C4-42EF-AC5A-26101FD26F46} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
 		{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
