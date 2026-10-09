@@ -5,7 +5,7 @@
     <ItemsProjectGuid>{F27F4562-11C4-42EF-AC5A-26101FD26F46}</ItemsProjectGuid>
     <UniversalDevKitFilterRoots>Includes\UniversalDevKit\Helpers;Sources\Helpers</UniversalDevKitFilterRoots>
   </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.props" Condition="'$(UniversalDevKitPublicPropsImported)' != 'true'" />
+  <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.props" Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\UniversalDevKit\Helpers\Math.h" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Helpers\Math.cpp">

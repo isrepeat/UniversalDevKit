@@ -1,4 +1,16 @@
+# Шаблон CMake-пакета: configure_package_config_file() создаёт из него
+# UniversalDevKitConfig.cmake, который устанавливается через cmake --install.
+# Потребитель вызывает find_package(UniversalDevKit CONFIG REQUIRED)
+# и подключает targets, например UniversalDevKit::Helpers.Static.
+# При add_subdirectory() и MSBuild этот файл не используется.
+
+# Заменяется кодом инициализации пакета и вспомогательными макросами CMake.
 @PACKAGE_INIT@
 
+# Загружает targets с путями к библиотекам, заголовкам и настройками.
+# Путь отсчитывается от установленного файла конфигурации.
 include("${CMAKE_CURRENT_LIST_DIR}/UniversalDevKitTargets.cmake")
+
+# Проверяет обязательные COMPONENTS; их выбор отдельно не реализован.
+# Сейчас загружаются все экспортированные targets.
 check_required_components(UniversalDevKit)

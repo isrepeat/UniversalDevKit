@@ -5,7 +5,7 @@
     <ItemsProjectGuid>{28F717C7-A2EF-405E-96F1-538329030ACF}</ItemsProjectGuid>
     <UniversalDevKitFilterRoots>Includes\UniversalDevKit\Diagnostic;Sources\Diagnostic</UniversalDevKitFilterRoots>
   </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.props" Condition="'$(UniversalDevKitPublicPropsImported)' != 'true'" />
+  <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.props" Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\UniversalDevKit\Diagnostic\Logging.h" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\Logging.cpp">

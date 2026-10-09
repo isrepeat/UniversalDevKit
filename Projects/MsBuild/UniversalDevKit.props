@@ -1,10 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Публичные настройки подключения заголовков UniversalDevKit к C++-проекту.
+       Этот файл подключается только через Import:
+       - Shared.vcxitems импортирует его при сборке наших Static/Dynamic-проектов;
+       - UniversalDevKit.Sources.targets импортирует его при подключении исходников к внешнему проекту через Connect.cmd;
+       - для использования только заголовков потребитель может импортировать его сам.
+
+       В отличие от этого файла, Directory.Build.props MSBuild ищет автоматически
+       вверх по родительским каталогам проекта и подключает как общие настройки.
+       Наличие UniversalDevKit.props или Directory.Build.props внутри submodule
+       само по себе не подключает их к проектам приложения вне этого каталога.
+       Приложение может импортировать этот файл из своего Directory.Build.props,
+       чтобы предоставить заголовки сразу нескольким проектам.
+
+       Добавляет путь к Includes, сохраняя существующие include-пути проекта.
+       Не подключает .cpp и готовые библиотеки, не меняет стандарт C++, CRT
+       или каталоги артефактов потребителя. -->
   <PropertyGroup>
-    <UniversalDevKitPublicPropsImported>true</UniversalDevKitPublicPropsImported>
+    <!-- Импортирующие файлы проверяют этот признак, чтобы избежать повторного импорта. -->
+    <__IsUniversalDevKitPublicPropsImported>true</__IsUniversalDevKitPublicPropsImported>
   </PropertyGroup>
+
   <ItemDefinitionGroup>
     <ClCompile>
+      <!-- Корень Includes позволяет писать #include <UniversalDevKit/Helpers/Math.h>.
+           Существующие include-пути проекта сохраняются через наследуемое значение. -->
       <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\Includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>

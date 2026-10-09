@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Общая схема артефактов для собственных Static/Dynamic-проектов UniversalDevKit.
+       Если исходники UniversalDevKit подключены через Sources.targets к приложению,
+       их компилирует проект приложения и сохраняет результаты в свои каталоги.
+       Поэтому этот файл там не подключается, чтобы не менять пути сборки приложения. -->
   <PropertyGroup>
+    <!-- Путь относительно этого файла не зависит от рабочего каталога или расположения solution. -->
     <UniversalDevKitArtifactsRoot>$(MSBuildThisFileDirectory)..\..\!artifacts\</UniversalDevKitArtifactsRoot>
+    <!-- По умолчанию ОС и архитектура образуют Windows-x64; платформу можно задать заранее. -->
     <UniversalDevKitTargetPlatform Condition="'$(UniversalDevKitTargetPlatform)' == ''">Windows-$(Platform)</UniversalDevKitTargetPlatform>
+
+		<!-- Разделяем платформу, систему сборки, проект и конфигурацию.
+         bin содержит результат сборки, obj — промежуточные файлы компиляции. -->
     <OutDir>$(UniversalDevKitArtifactsRoot)$(UniversalDevKitTargetPlatform)\msbuild\$(MSBuildProjectName)\$(Configuration)\bin\</OutDir>
     <IntDir>$(UniversalDevKitArtifactsRoot)$(UniversalDevKitTargetPlatform)\msbuild\$(MSBuildProjectName)\$(Configuration)\obj\</IntDir>
   </PropertyGroup>
