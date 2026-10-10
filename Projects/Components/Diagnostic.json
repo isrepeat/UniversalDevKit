@@ -1,5 +1,6 @@
 {
   "name": "Diagnostic",
+  "dependencies": [],
   "msbuildGuid": "{28F717C7-A2EF-405E-96F1-538329030ACF}",
   "headers": [
     "Includes/UniversalDevKit/Diagnostic/Logging.h"

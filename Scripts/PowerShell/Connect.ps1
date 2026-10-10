@@ -8,6 +8,15 @@ $ErrorActionPreference = 'Stop'
 $repositoryPath = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $integrationPath = Join-Path $repositoryPath 'Projects\MsBuild\UniversalDevKit.Sources.targets'
 
+function GetAvailableComponents {
+    # Каталог имён сформирован вместе с графом зависимостей; проверяем его актуальность без записи.
+    & (Join-Path $PSScriptRoot 'GenerateComponentProjects.ps1') -Check | Out-Host
+    [xml]$integration = Get-Content -LiteralPath $integrationPath -Raw -Encoding UTF8
+    $catalog = $integration.SelectSingleNode("/*[local-name()='Project']/*[local-name()='ItemGroup']/*[local-name()='__UniversalDevKitAvailableComponent']")
+    if (-not $catalog) { throw 'UniversalDevKit component catalog is missing. Run GenerateComponentProjects.cmd.' }
+    return @($catalog.GetAttribute('Include').Split(';'))
+}
+
 function SelectConsoleItem {
     param([string]$Title, [string[]]$Items)
 
@@ -66,17 +75,21 @@ if (-not $ProjectPath) {
     $action = SelectConsoleItem -Title $ProjectPath -Items @('Connect / update', 'Disconnect')
     if ($action -eq 1) { $Disconnect = $true }
     if (-not $Disconnect) {
-        $availableComponents = @('Helpers', 'Diagnostic', 'Helpers + Diagnostic')
-        $selection = SelectConsoleItem -Title 'Select component' -Items $availableComponents
-        $Components = if ($selection -eq 2) { @('Helpers', 'Diagnostic') } else { @($availableComponents[$selection]) }
+        $availableComponents = @(GetAvailableComponents)
+        $menuItems = @($availableComponents) + @('All components')
+        $selection = SelectConsoleItem -Title 'Select component' -Items $menuItems
+        $Components = if ($selection -eq $availableComponents.Count) { $availableComponents } else { @($availableComponents[$selection]) }
     }
     [Console]::Clear()
     Write-Host ('Consumer: ' + $ProjectPath)
 }
 if (-not $Disconnect) {
-    if (-not $Components) { $Components = @('Helpers') }
+    if (-not $availableComponents) { $availableComponents = @(GetAvailableComponents) }
+    if (-not $Components) {
+        $Components = if ('Helpers' -cin $availableComponents) { @('Helpers') } else { @($availableComponents[0]) }
+    }
     foreach ($component in $Components) {
-        if ($component -cnotin @('Helpers', 'Diagnostic')) { throw "Unsupported component: $component" }
+        if ($component -cnotin $availableComponents) { throw "Unsupported component: $component" }
     }
     $Components = @($Components | Select-Object -Unique)
 }

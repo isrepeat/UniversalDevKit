@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Этот файл полностью формируется Scripts/PowerShell/GenerateComponentProjects.ps1
+       из Components.json и включённых описаний в Projects/Components/.
+       Не редактируйте его вручную: изменения будут заменены при следующей генерации.
+       Для обновления измените JSON и запустите Scripts/GenerateComponentProjects.cmd.
+
+       Connect добавляет в проект потребителя выбор UniversalDevKitComponents и импорт этого файла.
+       При вычислении MSBuild подключаются заголовки и исходники выбранных компонентов
+       вместе со всеми транзитивными зависимостями; каждый Shared-проект импортируется один раз.
+       Исходники не копируются и компилируются с настройками проекта потребителя.
+       Каталог доступных компонентов используется меню Connect, а перед сборкой проверяется выбор. -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- Подключает исходники выбранных компонентов непосредственно в C++-проект потребителя.
-       Connect.cmd добавляет импорт этого файла и свойство UniversalDevKitComponents
-       в .vcxproj. Пример значения: Helpers;Diagnostic. Отдельная библиотека не создаётся;
-       общий код компилируется с настройками и в каталоги артефактов потребителя. -->
   <Import Project="UniversalDevKit.props" Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
-
-	<PropertyGroup>
-    <!-- Разделители с обеих сторон обеспечивают поиск целого имени компонента в списке. -->
-    <__HasUniversalDevKitHelpers>$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;'))</__HasUniversalDevKitHelpers>
-    <__HasUniversalDevKitDiagnostic>$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;'))</__HasUniversalDevKitDiagnostic>
-  </PropertyGroup>
-
-	<ItemGroup>
-    <!-- Преобразуем список в элементы MSBuild для проверки каждого выбранного имени. -->
+  <ItemGroup>
+    <__UniversalDevKitAvailableComponent Include="Diagnostic;Helpers" />
     <__UniversalDevKitComponent Include="$(UniversalDevKitComponents)" />
   </ItemGroup>
-
-	<!-- Shared-файлы содержат единственные списки исходников; ими также пользуются
-       Static/Dynamic-проекты. Здесь файлы не копируются, а добавляются в потребителя. -->
-  <Import Project="Helpers\UniversalDevKit.Helpers.Shared.vcxitems" Condition="'$(__HasUniversalDevKitHelpers)' == 'true'" Label="Shared" />
+  <PropertyGroup>
+    <__HasUniversalDevKitDiagnostic>false</__HasUniversalDevKitDiagnostic>
+    <__HasUniversalDevKitDiagnostic Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;'))">true</__HasUniversalDevKitDiagnostic>
+    <__HasUniversalDevKitHelpers>false</__HasUniversalDevKitHelpers>
+    <__HasUniversalDevKitHelpers Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;'))">true</__HasUniversalDevKitHelpers>
+  </PropertyGroup>
   <Import Project="Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems" Condition="'$(__HasUniversalDevKitDiagnostic)' == 'true'" Label="Shared" />
-
-  <Target Name="ValidateUniversalDevKitComponents" BeforeTargets="PrepareForBuild">
-	 <!-- Останавливаем сборку до компиляции при пустом списке или неизвестном компоненте. -->
+  <Import Project="Helpers\UniversalDevKit.Helpers.Shared.vcxitems" Condition="'$(__HasUniversalDevKitHelpers)' == 'true'" Label="Shared" />
+  <Target Name="__UniversalDevKitValidateComponents" BeforeTargets="PrepareForBuild">
     <Error Condition="'$(UniversalDevKitComponents)' == ''" Text="UniversalDevKitComponents must be specified." />
-    <Error Condition="'%(__UniversalDevKitComponent.Identity)' != 'Helpers' and '%(__UniversalDevKitComponent.Identity)' != 'Diagnostic'"
-           Text="Unsupported UniversalDevKit component: %(__UniversalDevKitComponent.Identity)" />
+    <Error Condition="'%(__UniversalDevKitComponent.Identity)' != 'Diagnostic' and '%(__UniversalDevKitComponent.Identity)' != 'Helpers'" Text="Unsupported UniversalDevKit component: %(__UniversalDevKitComponent.Identity)" />
   </Target>
 </Project>

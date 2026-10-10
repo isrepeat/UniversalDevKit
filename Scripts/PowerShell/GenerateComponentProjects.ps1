@@ -17,6 +17,7 @@ $updates = [Collections.Generic.List[object]]::new()
 $guids = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 $names = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 $includePaths = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+$componentGraph = @{}
 
 function EscapeXml([string]$Value) {
     return [Security.SecurityElement]::Escape($Value)
@@ -107,7 +108,7 @@ foreach ($includePath in $manifest.includes) {
     if (-not $names.Add($name)) { throw "Duplicate component name: $name" }
     # Не игнорируем будущие поля: для зависимостей и платформ потребуется расширение генератора.
     foreach ($field in $component.PSObject.Properties.Name) {
-        if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters')) { throw "Unsupported field ${name}: $field" }
+        if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies')) { throw "Unsupported field ${name}: $field" }
     }
     $guid = [Guid]::Empty
     if (-not [Guid]::TryParse([string]$component.msbuildGuid, [ref]$guid) -or -not $guids.Add($guid.ToString())) {
@@ -118,6 +119,25 @@ foreach ($includePath in $manifest.includes) {
             throw "${name}.${field} must be an array."
         }
     }
+    $dependencies = [Collections.Generic.List[string]]::new()
+    if ($component.PSObject.Properties['dependencies']) {
+        if ($component.dependencies -isnot [Array]) { throw "${name}.dependencies must be an array." }
+        foreach ($dependency in $component.dependencies) {
+            if ($dependency -isnot [pscustomobject]) { throw "Invalid dependency in $name" }
+            foreach ($field in $dependency.PSObject.Properties.Name) {
+                if ($field -notin @('component', 'visibility', 'linkage')) { throw "Unsupported dependency field: $field" }
+            }
+            if ($dependency.component -isnot [string] -or $dependency.component -notmatch '^[A-Z][A-Za-z0-9]*$') {
+                throw "Invalid dependency component in $name"
+            }
+            if ($dependency.visibility -cnotin @('private', 'public') -or $dependency.linkage -cnotin @('same', 'static')) {
+                throw "Invalid dependency visibility or linkage in $name"
+            }
+            if ($dependencies.Contains($dependency.component)) { throw "Duplicate dependency in ${name}: $($dependency.component)" }
+            $dependencies.Add($dependency.component)
+        }
+    }
+    $componentGraph[$name] = $dependencies.ToArray()
     if ($component.PSObject.Properties['filters'] -and $null -eq $component.filters) {
         throw "${name}.filters must be an object."
     }
@@ -168,6 +188,67 @@ foreach ($includePath in $manifest.includes) {
     if ($null -eq $original -or $original.Replace("`r`n", "`n") -cne $content) {
         $updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $original })
     }
+}
+
+# Замыкание зависимостей вычисляется до записи; цикл или неизвестное имя останавливают генерацию.
+function GetDependencyClosure([string]$Name, [string[]]$Stack) {
+    if ($Name -cin $Stack) { throw ('Component dependency cycle: ' + (($Stack + $Name) -join ' -> ')) }
+    if ($Name -cnotin @($componentGraph.Keys)) { throw "Unknown dependency component: $Name" }
+    $result = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    [void]$result.Add($Name)
+    foreach ($dependency in $componentGraph[$Name]) {
+        foreach ($resolved in (GetDependencyClosure $dependency @($Stack + $Name))) { [void]$result.Add($resolved) }
+    }
+    return @($result | Sort-Object)
+}
+$closures = @{}
+$componentNames = @($componentGraph.Keys | Sort-Object)
+foreach ($name in $componentNames) { $closures[$name] = @(GetDependencyClosure $name @()) }
+
+$lines = [Collections.Generic.List[string]]::new()
+$lines.Add('<?xml version="1.0" encoding="utf-8"?>')
+$lines.Add('<!-- Этот файл полностью формируется Scripts/PowerShell/GenerateComponentProjects.ps1')
+$lines.Add('       из Components.json и включённых описаний в Projects/Components/.')
+$lines.Add('       Не редактируйте его вручную: изменения будут заменены при следующей генерации.')
+$lines.Add('       Для обновления измените JSON и запустите Scripts/GenerateComponentProjects.cmd.')
+$lines.Add('')
+$lines.Add('       Connect добавляет в проект потребителя выбор UniversalDevKitComponents и импорт этого файла.')
+$lines.Add('       При вычислении MSBuild подключаются заголовки и исходники выбранных компонентов')
+$lines.Add('       вместе со всеми транзитивными зависимостями; каждый Shared-проект импортируется один раз.')
+$lines.Add('       Исходники не копируются и компилируются с настройками проекта потребителя.')
+$lines.Add('       Каталог доступных компонентов используется меню Connect, а перед сборкой проверяется выбор. -->')
+$lines.Add('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+$lines.Add('  <Import Project="UniversalDevKit.props" Condition="''$(__IsUniversalDevKitPublicPropsImported)'' != ''true''" />')
+$lines.Add('  <ItemGroup>')
+$lines.Add('    <__UniversalDevKitAvailableComponent Include="' + ($componentNames -join ';') + '" />')
+$lines.Add('    <__UniversalDevKitComponent Include="$(UniversalDevKitComponents)" />')
+$lines.Add('  </ItemGroup>')
+$lines.Add('  <PropertyGroup>')
+foreach ($name in $componentNames) {
+    $selectors = @($componentNames | Where-Object { $name -cin $closures[$_] })
+    $conditions = @($selectors | ForEach-Object {
+        '$([System.String]::Copy('';$(UniversalDevKitComponents);'').Contains('';' + $_ + ';''))'
+    })
+    $lines.Add('    <__HasUniversalDevKit' + $name + '>false</__HasUniversalDevKit' + $name + '>')
+    $lines.Add('    <__HasUniversalDevKit' + $name + ' Condition="' + ($conditions -join ' Or ') + '">true</__HasUniversalDevKit' + $name + '>')
+}
+$lines.Add('  </PropertyGroup>')
+foreach ($name in $componentNames) {
+    $lines.Add('  <Import Project="' + $name + '\UniversalDevKit.' + $name + '.Shared.vcxitems" Condition="' +
+        '''$(__HasUniversalDevKit' + $name + ')'' == ''true''" Label="Shared" />')
+}
+$lines.Add('  <Target Name="__UniversalDevKitValidateComponents" BeforeTargets="PrepareForBuild">')
+$lines.Add('    <Error Condition="''$(UniversalDevKitComponents)'' == ''''" Text="UniversalDevKitComponents must be specified." />')
+$invalidConditions = @($componentNames | ForEach-Object { '''%(__UniversalDevKitComponent.Identity)'' != ''' + $_ + '''' })
+$lines.Add('    <Error Condition="' + ($invalidConditions -join ' and ') + '" Text="Unsupported UniversalDevKit component: %(__UniversalDevKitComponent.Identity)" />')
+$lines.Add('  </Target>')
+$lines.Add('</Project>')
+$relativePath = 'Projects/MsBuild/UniversalDevKit.Sources.targets'
+$targetPath = Join-Path $repositoryPath $relativePath
+$content = $lines -join "`n"
+$original = if (Test-Path -LiteralPath $targetPath) { [IO.File]::ReadAllText($targetPath) } else { $null }
+if ($null -eq $original -or $original.Replace("`r`n", "`n") -cne $content) {
+    $updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $original })
 }
 
 if ($Check) {

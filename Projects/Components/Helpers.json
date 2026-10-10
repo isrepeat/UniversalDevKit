@@ -1,5 +1,6 @@
 {
   "name": "Helpers",
+  "dependencies": [],
   "msbuildGuid": "{F27F4562-11C4-42EF-AC5A-26101FD26F46}",
   "headers": [
     "Includes/UniversalDevKit/Helpers/Math.h"
