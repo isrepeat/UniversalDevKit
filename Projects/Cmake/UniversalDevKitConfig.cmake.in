@@ -7,10 +7,18 @@
 # Заменяется кодом инициализации пакета и вспомогательными макросами CMake.
 @PACKAGE_INIT@
 
+# Создаём target системной зависимости до загрузки экспортированных библиотек.
+include(CMakeFindDependencyMacro)
+find_dependency(Threads)
+
 # Загружает targets с путями к библиотекам, заголовкам и настройками.
 # Путь отсчитывается от установленного файла конфигурации.
 include("${CMAKE_CURRENT_LIST_DIR}/UniversalDevKitTargets.cmake")
 
-# Проверяет обязательные COMPONENTS; их выбор отдельно не реализован.
-# Сейчас загружаются все экспортированные targets.
+# Все targets загружаются вместе, но эти признаки позволяют проверить COMPONENTS.
+# Неизвестный компонент не получает значение TRUE и считается ненайденным.
+set(UniversalDevKit_Helpers_FOUND TRUE)
+set(UniversalDevKit_Diagnostic_FOUND TRUE)
+
+# Проверяет обязательные COMPONENTS, запрошенные через find_package().
 check_required_components(UniversalDevKit)

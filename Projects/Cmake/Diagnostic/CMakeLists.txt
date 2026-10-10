@@ -11,6 +11,11 @@ add_library(UniversalDevKit::Diagnostic.Dynamic ALIAS universaldevkit_diagnostic
 
 target_link_libraries(universaldevkit_diagnostic PUBLIC UniversalDevKit::Headers)
 target_link_libraries(universaldevkit_diagnostic_dynamic PUBLIC UniversalDevKit::Headers)
+
+# Потоковая поддержка нужна реализации Logging.cpp; CMake выбирает настройки платформы.
+find_package(Threads REQUIRED)
+target_link_libraries(universaldevkit_diagnostic PRIVATE Threads::Threads)
+target_link_libraries(universaldevkit_diagnostic_dynamic PRIVATE Threads::Threads)
 target_compile_definitions(universaldevkit_diagnostic_dynamic
     PUBLIC UNIVERSALDEVKIT_DIAGNOSTIC_DYNAMIC
     PRIVATE UNIVERSALDEVKIT_DIAGNOSTIC_EXPORTS
