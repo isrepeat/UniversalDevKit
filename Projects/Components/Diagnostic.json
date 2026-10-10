@@ -6,5 +6,12 @@
   ],
   "sources": [
     "Sources/Diagnostic/Logging.cpp"
-  ]
+  ],
+  "filters": {
+    "roots": [
+      { "path": "Includes/UniversalDevKit/Diagnostic", "filter": "" },
+      { "path": "Sources/Diagnostic", "filter": "" }
+    ],
+    "files": {}
+  }
 }

@@ -8,7 +8,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{B1F5
 	ProjectSection(SolutionItems) = preProject
 		Scripts\Connect.cmd = Scripts\Connect.cmd
 		Scripts\GenerateComponentProjects.cmd = Scripts\GenerateComponentProjects.cmd
-		Scripts\UpdateProjectFilters.cmd = Scripts\UpdateProjectFilters.cmd
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{D832A37F-03A2-4EBD-9FF9-BC27D415378B}"

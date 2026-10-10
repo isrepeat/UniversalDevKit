@@ -1,5 +1,6 @@
 param(
-    [string]$RepositoryRoot = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
+    [string]$RepositoryRoot = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)),
+    [switch]$Check
 )
 
 $ErrorActionPreference = 'Stop'
@@ -16,7 +17,7 @@ function EscapeXml([string]$Value) {
 }
 
 foreach ($project in $projects) {
-    [xml]$document = Get-Content -LiteralPath $project.FullName -Raw
+    [xml]$document = Get-Content -LiteralPath $project.FullName -Raw -Encoding UTF8
     $rootNode = $document.SelectSingleNode("/*[local-name()='Project']/*[local-name()='PropertyGroup']/*[local-name()='UniversalDevKitFilterRoots']")
     $filterRoots = if ($rootNode) { @($rootNode.InnerText -split ';' | Where-Object { $_ }) } else { @() }
     $items = @{}
@@ -47,6 +48,9 @@ foreach ($project in $projects) {
         }
         if ($node.LocalName -eq 'None') { $relative = 'Build\' + $relative }
         $filter = [IO.Path]::GetDirectoryName($relative)
+        # Генератор компонентов передаёт готовую виртуальную папку, включая пустую.
+        $explicitFilter = $node.SelectSingleNode("*[local-name()='__UniversalDevKitFilter']")
+        if ($null -ne $explicitFilter) { $filter = $explicitFilter.InnerText }
         $items[$node.LocalName + '|' + $include] = @($node.LocalName, $include, $filter)
         while ($filter) {
             [void]$filters.Add($filter)
@@ -84,6 +88,12 @@ foreach ($project in $projects) {
     if ($actual -ceq $expected) { continue }
     $relativeDestination = $destination.Substring($prefix.Length).Replace('\', '/')
     $updates.Add(@{ Path = $destination; Content = $expected; RelativePath = $relativeDestination })
+}
+
+if ($Check) {
+    if ($updates.Count) { throw ('Project filters are out of date: ' + (($updates | ForEach-Object { $_.RelativePath }) -join ', ')) }
+    Write-Output 'Project filters are up to date.'
+    return
 }
 
 # Записываем после проверки всех проектов, без BOM и завершающего перевода строки.

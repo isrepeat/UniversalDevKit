@@ -2,13 +2,13 @@
 
 Корневой `Components.json` содержит `schemaVersion` и массив `includes` с путями отдельных описаний: `Projects/Components/Helpers.json`, `Projects/Components/Diagnostic.json`. Пути includes отсчитываются от корневого файла. Вложенные include запрещены; объединённый JSON на диске не создаётся.
 
-Каждое описание содержит `name`, `msbuildGuid`, `headers` и `sources`. `name` определяет компонент и имя `.vcxitems`. `msbuildGuid` сохраняет идентификатор Shared-проекта; при добавлении компонента нужен новый уникальный GUID.
+Каждое описание содержит `name`, `msbuildGuid`, `headers` и `sources`, а также необязательный объект `filters`. `name` определяет компонент и имя `.vcxitems`. `msbuildGuid` сохраняет идентификатор Shared-проекта; при добавлении компонента нужен новый уникальный GUID.
 
-После изменения реестра запустите `Scripts/GenerateComponentProjects.cmd` либо `pwsh -File Scripts/PowerShell/GenerateComponentProjects.ps1`. Затем обновите фильтры обычным `Scripts/UpdateProjectFilters.cmd`. Сгенерированные `.vcxitems` хранятся в Git и импортируются существующими Static/Dynamic-проектами и `UniversalDevKit.Sources.targets`.
+После изменения реестра запустите `Scripts/GenerateComponentProjects.cmd` либо `pwsh -File Scripts/PowerShell/GenerateComponentProjects.ps1`. Один запуск обновляет `.vcxitems`, затем вызывает внутренний `UpdateProjectFilters.ps1` для обновления `.filters` всех проектов. Сгенерированные файлы хранятся в Git. После завершения обоих этапов перезагрузите проект или solution в Visual Studio.
 
-Для проверки без записи: `pwsh -File Scripts/PowerShell/GenerateComponentProjects.ps1 -Check`. Неактуальные или отсутствующие `.vcxitems` вызывают ошибку.
+Для проверки без записи: `pwsh -File Scripts/PowerShell/GenerateComponentProjects.ps1 -Check` или `Scripts/GenerateComponentProjects.cmd -Check`. Неактуальные или отсутствующие `.vcxitems` либо `.filters` вызывают ошибку. Если устарели проекты, проверка останавливается на первом этапе; после их актуализации проверяются фильтры. Ни один этап проверки не записывает файлы.
 
-Генератор сохраняет GUID, фильтры и импорт публичных настроек. Для каждого `.cpp` отключает PCH и создаёт объектный путь внутри `$(IntDir)UniversalDevKit/<компонент>/`, сохраняя подкаталоги. Поэтому `Sources/Helpers/A/File.cpp` и `Sources/Helpers/B/File.cpp` получают разные объектные файлы.
+Генератор сохраняет GUID и импорт публичных настроек. Для каждого `.cpp` отключает PCH и создаёт объектный путь внутри `$(IntDir)UniversalDevKit/<компонент>/`, сохраняя подкаталоги. Поэтому `Sources/Helpers/A/File.cpp` и `Sources/Helpers/B/File.cpp` получают разные объектные файлы.
 
 Генератор работает в PowerShell 7 и Windows PowerShell 5.1 без Codex и apply_patch. Он записывает XML напрямую, в UTF-8 без BOM и завершающих переводов строк. Повторный запуск не перезаписывает актуальные проекты.
 
@@ -17,3 +17,28 @@
 Для добавления исходника измените только JSON соответствующего компонента. Для добавления компонента создайте его JSON и внесите путь в корневой includes. Удаление записи не удаляет ранее сгенерированные проекты автоматически.
 
 Это первый этап: CMake и меню Connect пока не читают реестр. Добавление нового компонента по-прежнему требует настройки его Static/Dynamic-проектов, импорта в Sources.targets и меню Connect. Поля зависимостей и платформ ещё не реализованы и отклоняются с ошибкой, чтобы их нельзя было принять за работающую настройку.
+
+## Виртуальные папки Visual Studio
+
+Пример настройки в JSON компонента:
+
+```json
+"filters": {
+  "roots": [
+    { "path": "Includes/UniversalDevKit/Helpers", "filter": "Public" },
+    { "path": "Sources/Helpers", "filter": "Implementation" },
+    { "path": "Sources/Helpers/platform/windows", "filter": "Platforms/Windows" }
+  ],
+  "files": {
+    "Sources/Helpers/Math.cpp": "Algorithms"
+  }
+}
+```
+
+`files` задаёт точную виртуальную папку файла и имеет приоритет над roots. Пустое значение помещает файл непосредственно в корень проекта. Файл должен присутствовать в headers или sources компонента.
+
+В roots выбирается самый длинный подходящий path с учётом границы каталога. Этот префикс заменяется на filter, а подкаталоги ниже него сохраняются. Например, `Sources/Helpers/Text/Encoding/Utf8.cpp` отображается в `Implementation/Text/Encoding`. Пустой filter убирает указанный корень. При отсутствии подходящего правила сохраняется структура относительно корня репозитория. Пути записываются через `/`; пустые сегменты, `.` и `..` запрещены.
+
+Генератор записывает вычисленные папки в метаданные `__UniversalDevKitFilter` каждого элемента `.vcxitems`. UpdateProjectFilters переносит их в `.filters`, создавая родительские папки и пропуская пустые. Для остальных проектов остаётся прежняя поддержка UniversalDevKitFilterRoots. Изменения влияют только на отображение, исходники не перемещаются.
+
+После изменения filters выполните только GenerateComponentProjects. В Helpers и Diagnostic явно заданы пустые корневые фильтры для сохранения прежнего объединённого дерева.

@@ -4,12 +4,14 @@
   <PropertyGroup Label="Globals">
     <HasSharedItems>true</HasSharedItems>
     <ItemsProjectGuid>{F27F4562-11C4-42EF-AC5A-26101FD26F46}</ItemsProjectGuid>
-    <UniversalDevKitFilterRoots>Includes\UniversalDevKit\Helpers;Sources\Helpers</UniversalDevKitFilterRoots>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.props" Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\UniversalDevKit\Helpers\Math.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\UniversalDevKit\Helpers\Math.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Helpers\Math.cpp">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\Helpers\Math.obj</ObjectFileName>
     </ClCompile>

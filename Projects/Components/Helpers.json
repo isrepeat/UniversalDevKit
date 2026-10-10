@@ -6,5 +6,12 @@
   ],
   "sources": [
     "Sources/Helpers/Math.cpp"
-  ]
+  ],
+  "filters": {
+    "roots": [
+      { "path": "Includes/UniversalDevKit/Helpers", "filter": "" },
+      { "path": "Sources/Helpers", "filter": "" }
+    ],
+    "files": {}
+  }
 }

@@ -34,6 +34,64 @@ function ValidateFile([string]$Path, [string]$Root) {
     }
 }
 
+function ValidateFilterPath($Value, [string]$Label) {
+    if ($Value -isnot [string] -or ($Value -ne '' -and
+        ($Value -match '[\\:$@%*?;\r\n]' -or
+         @($Value.Split('/') | Where-Object { $_ -in @('', '.', '..') -or $_ -ne $_.Trim() }).Count))) {
+        throw "Invalid filter path: $Label"
+    }
+}
+
+function ValidateFilterSettings($Settings, $Component) {
+    if ($null -eq $Settings) { return }
+    if ($Settings -isnot [pscustomobject]) { throw 'filters must be an object.' }
+    foreach ($field in $Settings.PSObject.Properties.Name) {
+        if ($field -notin @('roots', 'files')) { throw "Unsupported filters field: $field" }
+    }
+    if ($Settings.PSObject.Properties['roots']) {
+        if ($Settings.roots -isnot [Array]) { throw 'filters.roots must be an array.' }
+        $seen = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+        foreach ($rule in $Settings.roots) {
+            if ($rule -isnot [pscustomobject]) { throw 'Filter root must be an object.' }
+            foreach ($field in $rule.PSObject.Properties.Name) {
+                if ($field -notin @('path', 'filter')) { throw "Unsupported filter root field: $field" }
+            }
+            ValidateFilterPath $rule.path 'roots.path'
+            ValidateFilterPath $rule.filter 'roots.filter'
+            if ($rule.path -eq '' -or -not $seen.Add($rule.path)) { throw "Empty or duplicate filter root: $($rule.path)" }
+        }
+    }
+    if ($Settings.PSObject.Properties['files']) {
+        if ($Settings.files -isnot [pscustomobject]) { throw 'filters.files must be an object.' }
+        $knownFiles = @($Component.headers) + @($Component.sources)
+        foreach ($entry in $Settings.files.PSObject.Properties) {
+            if ($entry.Name -cnotin $knownFiles) { throw "Unknown filters.files entry: $($entry.Name)" }
+            ValidateFilterPath $entry.Value $entry.Name
+        }
+    }
+}
+
+function GetComponentFilter([string]$Path, $Settings) {
+    # Исключение файла имеет приоритет; пустая строка помещает файл в корень проекта.
+    if ($null -ne $Settings -and $null -ne $Settings.files) {
+        $entry = $Settings.files.PSObject.Properties[$Path]
+        if ($entry) { return $entry.Value.Replace('/', '\') }
+    }
+    $mapped = $Path
+    if ($null -ne $Settings) {
+        $best = $null
+        foreach ($rule in $Settings.roots) {
+            if ($Path.StartsWith($rule.path + '/', [StringComparison]::Ordinal) -and
+                ($null -eq $best -or $rule.path.Length -gt $best.path.Length)) { $best = $rule }
+        }
+        if ($null -ne $best) {
+            $mapped = $Path.Substring($best.path.Length + 1)
+            if ($best.filter -ne '') { $mapped = $best.filter + '/' + $mapped }
+        }
+    }
+    return [IO.Path]::GetDirectoryName($mapped.Replace('/', '\'))
+}
+
 foreach ($includePath in $manifest.includes) {
     # includes отсчитываются от корневого Components.json; вложенные include не поддерживаются.
     if ($includePath -isnot [string] -or $includePath -match '[\\:$@%*?;\r\n]' -or
@@ -49,7 +107,7 @@ foreach ($includePath in $manifest.includes) {
     if (-not $names.Add($name)) { throw "Duplicate component name: $name" }
     # Не игнорируем будущие поля: для зависимостей и платформ потребуется расширение генератора.
     foreach ($field in $component.PSObject.Properties.Name) {
-        if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources')) { throw "Unsupported field ${name}: $field" }
+        if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters')) { throw "Unsupported field ${name}: $field" }
     }
     $guid = [Guid]::Empty
     if (-not [Guid]::TryParse([string]$component.msbuildGuid, [ref]$guid) -or -not $guids.Add($guid.ToString())) {
@@ -60,6 +118,10 @@ foreach ($includePath in $manifest.includes) {
             throw "${name}.${field} must be an array."
         }
     }
+    if ($component.PSObject.Properties['filters'] -and $null -eq $component.filters) {
+        throw "${name}.filters must be an object."
+    }
+    ValidateFilterSettings $component.filters $component
     $files = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
     $objects = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
     $lines = [Collections.Generic.List[string]]::new()
@@ -69,7 +131,6 @@ foreach ($includePath in $manifest.includes) {
     $lines.Add('  <PropertyGroup Label="Globals">')
     $lines.Add('    <HasSharedItems>true</HasSharedItems>')
     $lines.Add('    <ItemsProjectGuid>{' + $guid.ToString().ToUpperInvariant() + '}</ItemsProjectGuid>')
-    $lines.Add('    <UniversalDevKitFilterRoots>Includes\UniversalDevKit\' + $name + ';Sources\' + $name + '</UniversalDevKitFilterRoots>')
     $lines.Add('  </PropertyGroup>')
     $lines.Add('  <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.props" Condition="''$(__IsUniversalDevKitPublicPropsImported)'' != ''true''" />')
     $lines.Add('  <ItemGroup>')
@@ -78,7 +139,9 @@ foreach ($includePath in $manifest.includes) {
         ValidateFile $path "Includes/UniversalDevKit/$name/"
         if (-not $files.Add($path)) { throw "Duplicate component file: $path" }
         $include = EscapeXml ('$' + '(MSBuildThisFileDirectory)..\..\..\' + $path.Replace('/', '\'))
-        $lines.Add('    <ClInclude Include="' + $include + '" />')
+        $lines.Add('    <ClInclude Include="' + $include + '">')
+        $lines.Add('      <__UniversalDevKitFilter>' + (EscapeXml (GetComponentFilter $path $component.filters)) + '</__UniversalDevKitFilter>')
+        $lines.Add('    </ClInclude>')
     }
     foreach ($path in $component.sources) {
         if ($path -isnot [string]) { throw "${name}.sources must contain strings." }
@@ -90,6 +153,7 @@ foreach ($includePath in $manifest.includes) {
         if (-not $objects.Add($object)) { throw "Duplicate object path: $path" }
         $include = EscapeXml ('$' + '(MSBuildThisFileDirectory)..\..\..\' + $path.Replace('/', '\'))
         $lines.Add('    <ClCompile Include="' + $include + '">')
+        $lines.Add('      <__UniversalDevKitFilter>' + (EscapeXml (GetComponentFilter $path $component.filters)) + '</__UniversalDevKitFilter>')
         $lines.Add('      <PrecompiledHeader>NotUsing</PrecompiledHeader>')
         $lines.Add('      <ObjectFileName>$(IntDir)UniversalDevKit\' + $name + '\' + (EscapeXml $object) + '</ObjectFileName>')
         $lines.Add('    </ClCompile>')
@@ -109,11 +173,11 @@ foreach ($includePath in $manifest.includes) {
 if ($Check) {
     if ($updates.Count) { throw ('Generated projects are out of date: ' + (($updates | ForEach-Object { $_.RelativePath }) -join ', ')) }
     Write-Output 'Component projects are up to date.'
+    & (Join-Path $PSScriptRoot 'UpdateProjectFilters.ps1') -RepositoryRoot $repositoryPath -Check
     return
 }
 if (-not $updates.Count) {
     Write-Output 'Component projects are up to date.'
-    return
 }
 # Записываем только после проверки всех включённых описаний компонентов.
 foreach ($update in $updates) {
@@ -121,3 +185,6 @@ foreach ($update in $updates) {
     [IO.File]::WriteAllText($update.Path, $update.Content, [Text.UTF8Encoding]::new($false))
     Write-Output ('Updated: ' + $update.RelativePath)
 }
+
+# Фильтры обновляем и при неизменившихся проектах: устареть может только .filters.
+& (Join-Path $PSScriptRoot 'UpdateProjectFilters.ps1') -RepositoryRoot $repositoryPath
