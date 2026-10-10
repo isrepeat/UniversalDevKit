@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Сформировано из Components.json; изменяйте реестр и запускайте GenerateComponentProjects. -->
   <PropertyGroup Label="Globals">
     <HasSharedItems>true</HasSharedItems>
     <ItemsProjectGuid>{28F717C7-A2EF-405E-96F1-538329030ACF}</ItemsProjectGuid>
