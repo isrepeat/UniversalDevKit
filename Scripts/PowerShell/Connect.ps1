@@ -15,7 +15,7 @@ $sharedReferencesCondition = '''$(__IsUniversalDevKitSharedReferences)'' == ''tr
 
 function GetAvailableComponents {
     # Каталог имён сформирован вместе с графом зависимостей; проверяем его актуальность без записи.
-    & (Join-Path $PSScriptRoot 'GenerateComponentProjects.ps1') -Check | Out-Host
+    & (Join-Path $PSScriptRoot 'GenerateComponentProjects.ps1') -Check | ForEach-Object { WriteMenuText $_ Hint }
     [xml]$integration = Get-Content -LiteralPath $integrationPath -Raw -Encoding UTF8
     $catalog = $integration.SelectSingleNode("/*[local-name()='Project']/*[local-name()='ItemGroup']/*[local-name()='__UniversalDevKitAvailableComponent']")
     if (-not $catalog) { throw 'UniversalDevKit component catalog is missing. Run GenerateComponentProjects.cmd.' }
@@ -121,7 +121,7 @@ function UpdateSolutionSharedReferences([string]$Path, [Guid]$ConsumerGuid, $Rem
     $updated = $updated.TrimEnd([char[]]"`r`n")
     if ($updated -cne $original) {
         [IO.File]::WriteAllText($Path, $updated, [Text.UTF8Encoding]::new($false))
-        Write-Host "Updated: $Path"
+        WriteMenuText "Updated: $Path" Mark
     }
 }
 
@@ -140,34 +140,71 @@ function RemoveSolutionBuildItems([string]$Path) {
     }
 }
 
+function WriteMenuText {
+    param([string]$Text, [string]$Role = 'Text', [switch]$NoNewline)
+
+    # RGB-палитра Olive; для консоли без ANSI используем ближайшие стандартные цвета.
+    $palette = @{
+        Title = @{ Rgb = '166;185;129'; Fallback = 'DarkGreen' }
+        Text = @{ Rgb = '170;170;170'; Fallback = 'Gray' }
+        Hint = @{ Rgb = '119;119;119'; Fallback = 'DarkGray' }
+        Mark = @{ Rgb = '180;204;149'; Fallback = 'Green' }
+        Focus = @{ Rgb = '216;196;120'; Fallback = 'Yellow' }
+    }
+    $color = $palette[$Role]
+    if ($Host.UI.SupportsVirtualTerminal -and -not [Console]::IsOutputRedirected) {
+        $escape = [char]27
+        $background = if ($Role -eq 'Focus') { "$escape[48;2;36;39;31m" } else { '' }
+        Write-Host ("$escape[38;2;$($color.Rgb)m$background$Text$escape[0m") -NoNewline:$NoNewline
+    }
+    else { Write-Host $Text -ForegroundColor $color.Fallback -NoNewline:$NoNewline }
+}
+
+function ReadMenuPath([string]$Prompt) {
+    WriteMenuText ($Prompt + ': ') Title -NoNewline
+    return (Read-Host).Trim('"')
+}
+
 function SelectConsoleItem {
-    param([string]$Title, [string[]]$Items)
+    param([string]$Title, [string[]]$Items, [hashtable]$MenuState = @{}, [string]$StateKey = $Title)
 
     if (-not $Items.Count) { throw 'Menu has no items.' }
     if ([Console]::IsInputRedirected -or [Console]::IsOutputRedirected) {
         throw 'Interactive selection requires a console. Use PowerShell parameters for non-interactive execution.'
     }
     $selected = 0
+    # Запоминаем сам пункт, чтобы позиция сохранялась и при изменении порядка списка.
+    if ($MenuState.ContainsKey($StateKey)) {
+        $previousIndex = [Array]::IndexOf($Items, $MenuState[$StateKey])
+        if ($previousIndex -ge 0) { $selected = $previousIndex }
+    }
     $previousCursorVisible = [Console]::CursorVisible
     try {
         [Console]::CursorVisible = $false
         while ($true) {
             # Перерисовываем меню целиком, чтобы длинные пути не нарушали положение курсора.
             [Console]::Clear()
-            Write-Host $Title
-            Write-Host 'Up/Down: select | Enter: confirm | Esc: cancel'
+            WriteMenuText $Title Title
+            WriteMenuText 'Up/Down: select | Enter: confirm | Backspace: back | Esc: cancel' Hint
             Write-Host ''
             for ($index = 0; $index -lt $Items.Count; $index++) {
                 if ($index -eq $selected) {
-                    Write-Host ('> ' + $Items[$index]) -ForegroundColor Cyan
+                    WriteMenuText ('> ' + $Items[$index]) Focus
                 }
-                else { Write-Host ('  ' + $Items[$index]) }
+                else { WriteMenuText ('  ' + $Items[$index]) }
             }
             $key = [Console]::ReadKey($true)
             switch ($key.Key) {
                 'UpArrow' { $selected = ($selected + $Items.Count - 1) % $Items.Count }
                 'DownArrow' { $selected = ($selected + 1) % $Items.Count }
-                'Enter' { return $selected }
+                'Enter' {
+                    $MenuState[$StateKey] = $Items[$selected]
+                    return $selected
+                }
+                'Backspace' {
+                    $MenuState[$StateKey] = $Items[$selected]
+                    return -1
+                }
                 'Escape' { throw 'Operation cancelled. No project changes were written.' }
             }
         }
@@ -176,7 +213,7 @@ function SelectConsoleItem {
 }
 
 function SelectConsoleComponents {
-    param([string]$Title, [string[]]$Items, [hashtable]$InitialModes = @{}, [switch]$Removal)
+    param([string]$Title, [string[]]$Items, [hashtable]$InitialModes = @{}, [switch]$Removal, [hashtable]$Catalog = @{})
 
     if (-not $Items.Count) { throw 'No components available for this operation.' }
     if ([Console]::IsInputRedirected -or [Console]::IsOutputRedirected) {
@@ -191,34 +228,97 @@ function SelectConsoleComponents {
     $modes = @('Shared', 'Static', 'Dynamic')
     $selected = 0
     $column = 0
+    $showDependencies = $false
     $previousCursorVisible = [Console]::CursorVisible
     try {
         [Console]::CursorVisible = $false
         while ($true) {
+            # Пересчитываем предварительный набор, сохраняя самостоятельные подключения.
+            $roots = if ($Removal) {
+                @($InitialModes.Keys | Where-Object { -not $marked.ContainsKey($_) })
+            }
+            else { @(@($InitialModes.Keys) + @($marked.Keys) | Select-Object -Unique) }
+            $requiredBy = @{}
+            foreach ($rootName in $roots) {
+                if (-not $Catalog.ContainsKey($rootName)) { continue }
+                foreach ($dependency in @(GetResolvedComponents @($rootName) $Catalog)) {
+                    if ($dependency -eq $rootName) { continue }
+                    if (-not $requiredBy.ContainsKey($dependency)) { $requiredBy[$dependency] = @() }
+                    $requiredBy[$dependency] += $rootName
+                }
+            }
+            $dependencies = @()
+            $activeName = if ($selected -lt $Items.Count) { $Items[$selected] } else { $null }
+            if ($showDependencies -and $activeName -and $Catalog.ContainsKey($activeName)) {
+                $dependencies = @(GetResolvedComponents @($activeName) $Catalog | Where-Object { $_ -ne $activeName })
+            }
             [Console]::Clear()
-            Write-Host $Title
-            Write-Host 'Up/Down: component | Left/Right: mode | Space: toggle | Enter on Apply: confirm | Esc: cancel'
+            WriteMenuText $Title Title
+            WriteMenuText 'Up/Down: component | Left/Right: mode | Space: toggle | Enter on Apply: confirm | Backspace: back | Esc: cancel' Hint
+            WriteMenuText '/ or .: show/hide dependencies | *: required transitively, not explicitly selected' Hint
             Write-Host ''
             for ($index = 0; $index -le $Items.Count; $index++) {
-                $text = if ($index -eq $Items.Count) { 'Apply' } else {
-                    $name = $Items[$index]
-                    if ($Removal) {
-                        $check = if ($marked.ContainsKey($name)) { 'x' } else { ' ' }
-                        "[$check] $name ($($InitialModes[$name]))"
-                    }
-                    else {
-                        $cells = @(for ($modeIndex = 0; $modeIndex -lt $modes.Count; $modeIndex++) {
-                            $check = if ($marked[$name] -eq $modes[$modeIndex]) { 'x' } else { ' ' }
-                            $cell = "[$check] $($modes[$modeIndex])"
-                            if ($index -eq $selected -and $modeIndex -eq $column) { "<$cell>" } else { " $cell " }
-                        })
-                        $name.PadRight(24) + ($cells -join '  ')
-                    }
+                $rowRole = if ($index -eq $selected) { 'Focus' } else { 'Text' }
+                $prefix = if ($index -eq $selected) { '> ' } else { '  ' }
+                WriteMenuText $prefix $rowRole -NoNewline
+                if ($index -eq $Items.Count) {
+                    WriteMenuText 'Apply' $rowRole
+                    continue
                 }
-                if ($index -eq $selected) { Write-Host ("> $text") -ForegroundColor Cyan }
-                else { Write-Host ("  $text") }
+                $name = $Items[$index]
+                $transitive = $name -notin $roots -and $requiredBy.ContainsKey($name)
+                $displayName = $name + $(if ($transitive) { '*' } else { '' })
+                $nameRole = if ($name -in $dependencies) { 'Mark' } else { 'Text' }
+                if ($Removal) {
+                    $check = if ($marked.ContainsKey($name)) { 'x' } else { ' ' }
+                    $markRole = if ($check -eq 'x') { 'Mark' } else { 'Text' }
+                    WriteMenuText "[$check]" $markRole -NoNewline
+                    if ($name -in $dependencies) { $rowRole = 'Mark' }
+                    $modeText = if ($InitialModes.ContainsKey($name)) { $InitialModes[$name] } else { 'dependency' }
+                    WriteMenuText " $displayName ($modeText)" $rowRole
+                    continue
+                }
+                WriteMenuText $displayName.PadRight(24) $nameRole -NoNewline
+                for ($modeIndex = 0; $modeIndex -lt $modes.Count; $modeIndex++) {
+                    $focused = $index -eq $selected -and $modeIndex -eq $column
+                    $check = if ($marked[$name] -eq $modes[$modeIndex]) { 'x' } else { ' ' }
+                    $markRole = if ($check -eq 'x') { 'Mark' } else { 'Text' }
+                    $modeRole = if ($focused) { 'Focus' } else { 'Text' }
+                    $left = if ($focused) { '<' } else { ' ' }
+                    $right = if ($focused) { '>' } else { ' ' }
+                    WriteMenuText $left $modeRole -NoNewline
+                    WriteMenuText "[$check]" $markRole -NoNewline
+                    WriteMenuText (' ' + $modes[$modeIndex] + $right) $modeRole -NoNewline
+                    if ($modeIndex -lt $modes.Count - 1) { WriteMenuText '  ' -NoNewline }
+                }
+                Write-Host ''
+            }
+            if ($showDependencies -and $activeName) {
+                Write-Host ''
+                WriteMenuText ("Dependencies: $activeName") Title
+                # Два независимых вертикальных списка: строки не обозначают связь между колонками.
+                $dependsOnNames = @(if ($dependencies.Count) { $dependencies } else { '(none)' })
+                $requiredByNames = @(if ($requiredBy.ContainsKey($activeName)) { $requiredBy[$activeName] | Sort-Object -Unique } else { '(none)' })
+                $dependsOnWidth = 'Depends on'.Length
+                $requiredByWidth = 'Required by'.Length
+                foreach ($name in $dependsOnNames) { $dependsOnWidth = [Math]::Max($dependsOnWidth, $name.Length) }
+                foreach ($name in $requiredByNames) { $requiredByWidth = [Math]::Max($requiredByWidth, $name.Length) }
+                $separator = '+-' + ('-' * $dependsOnWidth) + '-+-' + ('-' * $requiredByWidth) + '-+'
+                WriteMenuText $separator Hint
+                WriteMenuText ('| ' + 'Depends on'.PadRight($dependsOnWidth) + ' | ' + 'Required by'.PadRight($requiredByWidth) + ' |') Title
+                WriteMenuText $separator Hint
+                for ($rowIndex = 0; $rowIndex -lt [Math]::Max($dependsOnNames.Count, $requiredByNames.Count); $rowIndex++) {
+                    $leftName = if ($rowIndex -lt $dependsOnNames.Count) { $dependsOnNames[$rowIndex] } else { '' }
+                    $rightName = if ($rowIndex -lt $requiredByNames.Count) { $requiredByNames[$rowIndex] } else { '' }
+                    WriteMenuText ('| ' + $leftName.PadRight($dependsOnWidth) + ' | ' + $rightName.PadRight($requiredByWidth) + ' |') Mark
+                }
+                WriteMenuText $separator Hint
             }
             $key = [Console]::ReadKey($true)
+            if ($key.KeyChar -eq '/' -or $key.KeyChar -eq '.') {
+                $showDependencies = -not $showDependencies
+                continue
+            }
             switch ($key.Key) {
                 'UpArrow' { $selected = ($selected + $Items.Count) % ($Items.Count + 1) }
                 'DownArrow' { $selected = ($selected + 1) % ($Items.Count + 1) }
@@ -227,6 +327,7 @@ function SelectConsoleComponents {
                 'Spacebar' {
                     if ($selected -lt $Items.Count) {
                         $name = $Items[$selected]
+                        if ($Removal -and -not $InitialModes.ContainsKey($name)) { continue }
                         $mode = if ($Removal) { $InitialModes[$name] } else { $modes[$column] }
                         if ($marked[$name] -eq $mode) { $marked.Remove($name) }
                         else { $marked[$name] = $mode }
@@ -238,6 +339,7 @@ function SelectConsoleComponents {
                     }
                 }
                 'Escape' { throw 'Operation cancelled. No project changes were written.' }
+                'Backspace' { return $null }
             }
         }
     }
@@ -255,65 +357,100 @@ function GetConnectedComponents([string]$Path) {
 
 if (-not $Components -and $ComponentModes.Count) { $Components = @($ComponentModes.Keys) }
 $interactive = -not $Components -and -not [Console]::IsInputRedirected -and -not [Console]::IsOutputRedirected
-if ($ProjectOnly) {
-    if ($SolutionPath) { throw 'ProjectOnly cannot be combined with SolutionPath.' }
-    if (-not $ProjectPath) { $ProjectPath = (Read-Host 'Path to consumer .vcxproj').Trim('"') }
-}
-else {
-    # Обычный сценарий начинается с решения; consumer выбирается только из его проектов.
-    if (-not $SolutionPath) {
-        if ([Console]::IsInputRedirected) { throw 'Specify SolutionPath for Shared References, or ProjectOnly for a standalone project.' }
-        $SolutionPath = (Read-Host 'Path to consumer .sln or solution directory').Trim('"')
+$explicitDisconnect = [bool]$Disconnect
+$solutionDirectory = $null
+$menuState = @{}
+# Навигация завершается до любых изменений файлов; возврат повторяет только этапы выбора.
+:Selection while ($true) {
+    if ($ProjectOnly) {
+        if ($SolutionPath) { throw 'ProjectOnly cannot be combined with SolutionPath.' }
+        if (-not $ProjectPath) { $ProjectPath = ReadMenuPath 'Path to consumer .vcxproj' }
     }
-    $targetSolution = (Resolve-Path -LiteralPath $SolutionPath).Path
-    if (Test-Path -LiteralPath $targetSolution -PathType Container) {
-        # Ищем решения непосредственно в выбранной папке, без артефактов из подкаталогов.
-        $solutions = @(Get-ChildItem -LiteralPath $targetSolution -Filter '*.sln' -File | Sort-Object Name | ForEach-Object FullName)
-        if (-not $solutions.Count) { throw "No .sln files found in directory: $targetSolution" }
-        $targetSolution = $solutions[(SelectConsoleItem -Title 'Select consumer solution' -Items $solutions)]
-    }
-    $SolutionPath = $targetSolution
-    if ([IO.Path]::GetExtension($targetSolution) -ne '.sln') { throw 'Expected target .sln file.' }
-    $projects = @(@(foreach ($line in Get-Content -LiteralPath $targetSolution) {
-        if ($line -match '^Project\(.*\)\s*=\s*"[^"]*",\s*"([^"]+\.vcxproj)"') {
-            $candidate = [IO.Path]::GetFullPath((Join-Path (Split-Path -Parent $targetSolution) $Matches[1]))
-            # Проекты самой библиотеки не являются потребителями.
-            if (-not $candidate.StartsWith($repositoryPath + '\', [StringComparison]::OrdinalIgnoreCase)) { $candidate }
+    else {
+        # Обычный сценарий начинается с решения; consumer выбирается только из его проектов.
+        if (-not $SolutionPath) {
+            if ([Console]::IsInputRedirected) { throw 'Specify SolutionPath for Shared References, or ProjectOnly for a standalone project.' }
+            $SolutionPath = ReadMenuPath 'Path to consumer .sln or solution directory'
         }
-    }) | Sort-Object -Unique)
-    if (-not $projects.Count) { throw 'No consumer C++ projects found in solution.' }
-    if ($ProjectPath) {
-        $ProjectPath = (Resolve-Path -LiteralPath $ProjectPath).Path
-        if ($ProjectPath -notin $projects) { throw 'Selected consumer project is not part of the target solution.' }
+        $targetSolution = (Resolve-Path -LiteralPath $SolutionPath).Path
+        if (Test-Path -LiteralPath $targetSolution -PathType Container) {
+            $solutionDirectory = $targetSolution
+            # Ищем решения непосредственно в выбранной папке, без артефактов из подкаталогов.
+            $solutions = @(Get-ChildItem -LiteralPath $targetSolution -Filter '*.sln' -File | Sort-Object Name | ForEach-Object FullName)
+            if (-not $solutions.Count) { throw "No .sln files found in directory: $targetSolution" }
+            $solutionSelection = SelectConsoleItem -Title 'Select consumer solution' -Items $solutions -MenuState $menuState -StateKey "Solution:$solutionDirectory"
+            if ($solutionSelection -eq -1) {
+                $SolutionPath = $null
+                $ProjectPath = $null
+                continue Selection
+            }
+            $targetSolution = $solutions[$solutionSelection]
+        }
+        $SolutionPath = $targetSolution
+        if ([IO.Path]::GetExtension($targetSolution) -ne '.sln') { throw 'Expected target .sln file.' }
+        $projects = @(@(foreach ($line in Get-Content -LiteralPath $targetSolution) {
+            if ($line -match '^Project\(.*\)\s*=\s*"[^"]*",\s*"([^"]+\.vcxproj)"') {
+                $candidate = [IO.Path]::GetFullPath((Join-Path (Split-Path -Parent $targetSolution) $Matches[1]))
+                # Проекты самой библиотеки не являются потребителями.
+                if (-not $candidate.StartsWith($repositoryPath + '\', [StringComparison]::OrdinalIgnoreCase)) { $candidate }
+            }
+        }) | Sort-Object -Unique)
+        if (-not $projects.Count) { throw 'No consumer C++ projects found in solution.' }
+        if ($ProjectPath) {
+            $ProjectPath = (Resolve-Path -LiteralPath $ProjectPath).Path
+            if ($ProjectPath -notin $projects) { throw 'Selected consumer project is not part of the target solution.' }
+        }
+        elseif ($projects.Count -eq 1) { $ProjectPath = $projects[0] }
+        else {
+            $projectSelection = SelectConsoleItem -Title 'Select consumer project' -Items $projects -MenuState $menuState -StateKey "Project:$targetSolution"
+            if ($projectSelection -eq -1) {
+                $SolutionPath = $solutionDirectory
+                continue Selection
+            }
+            $ProjectPath = $projects[$projectSelection]
+        }
     }
-    elseif ($projects.Count -eq 1) { $ProjectPath = $projects[0] }
-    else { $ProjectPath = $projects[(SelectConsoleItem -Title 'Select consumer project' -Items $projects)] }
-}
-if ($interactive -and -not $Disconnect) {
-    $action = SelectConsoleItem -Title $ProjectPath -Items @('Connect / update', 'Disconnect')
-    if ($action -eq 1) { $Disconnect = $true }
-}
+    if ($interactive -and -not $Disconnect) {
+        $action = SelectConsoleItem -Title $ProjectPath -Items @('Connect / update', 'Disconnect') -MenuState $menuState -StateKey "Action:$ProjectPath"
+        if ($action -eq -1) {
+            $ProjectPath = $null
+            if ($ProjectOnly -or $projects.Count -eq 1) { $SolutionPath = $solutionDirectory }
+            continue Selection
+        }
+        if ($action -eq 1) { $Disconnect = $true }
+    }
 
-# 1. Выбираем явные компоненты; автоматически раскрытые зависимости отдельно не отключаются.
-$connectedComponents = @(GetConnectedComponents $ProjectPath)
-[xml]$currentProject = [IO.File]::ReadAllText($ProjectPath)
-$currentModes = @{}
-foreach ($name in $connectedComponents) {
-    $modeNode = $currentProject.SelectSingleNode('/*[local-name()="Project"]/*[local-name()="PropertyGroup" and @Label="UniversalDevKit"]/*[local-name()="UniversalDevKit' + $name + 'Linkage"]')
-    $currentModes[$name] = if ($modeNode) { $modeNode.InnerText } else { 'Shared' }
-}
-if ($interactive -and -not $Components) {
-    if ($Disconnect -and -not $connectedComponents.Count) {
-        Write-Host 'No UniversalDevKit components are connected to this project.'
-        return
+    # 1. Выбираем явные компоненты; автоматически раскрытые зависимости отдельно не отключаются.
+    $connectedComponents = @(GetConnectedComponents $ProjectPath)
+    [xml]$currentProject = [IO.File]::ReadAllText($ProjectPath)
+    $currentModes = @{}
+    foreach ($name in $connectedComponents) {
+        $modeNode = $currentProject.SelectSingleNode('/*[local-name()="Project"]/*[local-name()="PropertyGroup" and @Label="UniversalDevKit"]/*[local-name()="UniversalDevKit' + $name + 'Linkage"]')
+        $currentModes[$name] = if ($modeNode) { $modeNode.InnerText } else { 'Shared' }
     }
-    $menuItems = if ($Disconnect) { $connectedComponents } else { @(GetAvailableComponents) }
-    $title = if ($Disconnect) { 'Select components to disconnect' } else { 'Select components to connect' }
-    $selection = SelectConsoleComponents -Title $title -Items $menuItems -InitialModes $currentModes -Removal:$Disconnect
-    $Components = @($selection.Keys)
-    if (-not $Disconnect) { $ComponentModes = $selection }
-    [Console]::Clear()
-    Write-Host ('Consumer: ' + $ProjectPath)
+    if ($interactive -and -not $Components) {
+        if ($Disconnect -and -not $connectedComponents.Count) {
+            WriteMenuText 'No UniversalDevKit components are connected to this project.' Hint
+            return
+        }
+        $menuCatalog = GetComponentCatalog
+        $menuItems = if ($Disconnect) { @(GetResolvedComponents $connectedComponents $menuCatalog) } else { @(GetAvailableComponents) }
+        $title = if ($Disconnect) { 'Select components to disconnect' } else { 'Select components to connect' }
+        $selection = SelectConsoleComponents -Title $title -Items $menuItems -InitialModes $currentModes -Removal:$Disconnect -Catalog $menuCatalog
+        if ($null -eq $selection) {
+            $Disconnect = $explicitDisconnect
+            if ($explicitDisconnect) {
+                $ProjectPath = $null
+                if ($ProjectOnly -or $projects.Count -eq 1) { $SolutionPath = $solutionDirectory }
+            }
+            continue Selection
+        }
+        $Components = @($selection.Keys)
+        if (-not $Disconnect) { $ComponentModes = $selection }
+        [Console]::Clear()
+        WriteMenuText ('Consumer: ' + $ProjectPath) Title
+    }
+    break Selection
 }
 
 # 2. Получаем итоговый набор корней, сохраняя компоненты, не выбранные для удаления.
@@ -335,7 +472,23 @@ else {
 
 # 3. Для оставшихся корней обычная интеграция заново раскрывает зависимости.
 if ($SolutionPath) {
-    $solutionInjector = & (Join-Path $PSScriptRoot 'GetSolutionInjector.ps1') -LocalPath $SolutionInjectorPath
+    WriteMenuText 'Preparing SolutionInjector...' Title
+    # Загрузка и распаковка используют встроенный прогресс PowerShell; временно меняем его палитру.
+    $progressForeground = $Host.PrivateData.ProgressForegroundColor
+    $progressBackground = $Host.PrivateData.ProgressBackgroundColor
+    $progressStyle = $null
+    if (Get-Variable PSStyle -ErrorAction SilentlyContinue) { $progressStyle = $PSStyle.Progress.Style }
+    try {
+        $Host.PrivateData.ProgressForegroundColor = 'DarkGreen'
+        $Host.PrivateData.ProgressBackgroundColor = 'Black'
+        if ($null -ne $progressStyle) { $PSStyle.Progress.Style = "$([char]27)[38;2;166;185;129m" }
+        $solutionInjector = & (Join-Path $PSScriptRoot 'GetSolutionInjector.ps1') -LocalPath $SolutionInjectorPath
+    }
+    finally {
+        $Host.PrivateData.ProgressForegroundColor = $progressForeground
+        $Host.PrivateData.ProgressBackgroundColor = $progressBackground
+        if ($null -ne $progressStyle) { $PSStyle.Progress.Style = $progressStyle }
+    }
 }
 if (-not $Disconnect) {
     if (-not $availableComponents) { $availableComponents = @(GetAvailableComponents) }
@@ -392,7 +545,8 @@ if ($SolutionPath) {
     $sourceSolution = Join-Path $repositoryPath 'UniversalDevKit.sln'
     if (-not $Disconnect) {
         # Повторная вставка восстанавливает удалённые очисткой компоненты без дублирования оставшихся.
-        & $solutionInjector $sourceSolution $targetSolution --rootName UniversalDevKit -f MsBuild
+        WriteMenuText 'Updating solution projects...' Title
+        & $solutionInjector $sourceSolution $targetSolution --rootName UniversalDevKit -f MsBuild | ForEach-Object { WriteMenuText $_ Hint }
         if ($LASTEXITCODE -ne 0) { throw "SolutionInjector failed with exit code $LASTEXITCODE." }
     }
     if (-not $Disconnect) { RemoveSolutionBuildItems $targetSolution }
@@ -546,9 +700,9 @@ foreach ($node in @($root.SelectNodes('*[@Label="UniversalDevKit"]'))) { FormatI
 $updated = $document.OuterXml.TrimEnd([char[]]"`r`n")
 if ($updated -cne $original) {
     [IO.File]::WriteAllText($projectFile, $updated, [Text.UTF8Encoding]::new($false))
-    Write-Host "Updated: $projectFile"
+    WriteMenuText "Updated: $projectFile" Mark
 }
-else { Write-Host 'Project is already up to date.' }
+else { WriteMenuText 'Project is already up to date.' Hint }
 
 if ($SolutionPath) {
     $referencesToRemove = @($previousSharedProjects + $sharedProjects | Sort-Object Guid -Unique)
@@ -565,6 +719,7 @@ if ($SolutionPath) {
             # 2. Рассчитываем и применяем очистку после записи всех связей consumer.
             # SolutionInjector сохраняет используемые другими проектами зависимости и резервную копию .sln.
             $scopeGuid = '{' + $scopes[0].Groups[1].Value + '}'
+            WriteMenuText 'Analyzing dependencies and cleaning unused projects...' Title
             $cleanupOutput = & $solutionInjector prune $targetSolution --scope $scopeGuid --apply --json
             $cleanupExitCode = $LASTEXITCODE
             if ($cleanupExitCode -notin @(0, 2)) {
@@ -575,12 +730,12 @@ if ($SolutionPath) {
 
             # 3. При неоднозначном анализе оставляем дерево решения и показываем причины.
             if ($cleanupExitCode -eq 2 -or $cleanupReport.blocked) {
-                foreach ($issue in $cleanupReport.issues) { Write-Warning "Cleanup skipped: $issue" }
-                Write-Warning 'Consumer was disconnected; solution projects were retained because dependency analysis was blocked.'
+                foreach ($issue in $cleanupReport.issues) { WriteMenuText "Cleanup skipped: $issue" Focus }
+                WriteMenuText 'Consumer was disconnected; solution projects were retained because dependency analysis was blocked.' Focus
             }
             elseif (-not $cleanupReport.applied) { throw 'SolutionInjector did not apply the cleanup plan.' }
             else {
-                Write-Host ('Cleanup: removed {0} projects and {1} folders.' -f @($cleanupReport.removedProjects).Count, @($cleanupReport.removedFolders).Count)
+                WriteMenuText ('Cleanup: removed {0} projects and {1} folders.' -f @($cleanupReport.removedProjects).Count, @($cleanupReport.removedFolders).Count) Mark
             }
         }
     }
