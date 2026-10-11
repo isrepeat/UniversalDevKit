@@ -11,19 +11,19 @@ param(
 $ErrorActionPreference = 'Stop'
 $exitCode = 0
 try {
-    # Выполняем Connect в текущей области, чтобы итог использовал ту же палитру.
-    . (Join-Path $PSScriptRoot 'Connect.ps1') @PSBoundParameters
-    WriteMenuText 'Completed successfully.' Mark
+    Import-Module (Join-Path $PSScriptRoot 'Modules/Module.Udk.Console/Module.Udk.Console.psm1') -ErrorAction Stop
+    & (Join-Path $PSScriptRoot 'Connect.ps1') @PSBoundParameters
+    Module.Udk.Console\Write-UdkConsoleText 'Completed successfully.' Mark
 }
 catch {
     $exitCode = 1
-    if (Get-Command WriteMenuText -ErrorAction SilentlyContinue) {
-        WriteMenuText ('Failed: ' + $_.Exception.Message) Focus
+    if (Get-Command Module.Udk.Console\Write-UdkConsoleText -ErrorAction SilentlyContinue) {
+        Module.Udk.Console\Write-UdkConsoleText ('Failed: ' + $_.Exception.Message) Focus
     }
     else { Write-Host ('Failed: ' + $_.Exception.Message) -ForegroundColor Yellow }
 }
 
-if (Get-Command WriteMenuText -ErrorAction SilentlyContinue) {
-    WriteMenuText 'Press any key to continue...' Hint
+if (Get-Command Module.Udk.Console\Write-UdkConsoleText -ErrorAction SilentlyContinue) {
+    Module.Udk.Console\Write-UdkConsoleText 'Press any key to continue...' Hint
 }
 exit $exitCode

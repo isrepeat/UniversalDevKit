@@ -13,6 +13,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{D832A37F-03A2-4EBD-9FF9-BC27D415378B}"
 	ProjectSection(SolutionItems) = preProject
 		Scripts\PowerShell\Connect.ps1 = Scripts\PowerShell\Connect.ps1
+		Scripts\PowerShell\ConnectConsole.ps1 = Scripts\PowerShell\ConnectConsole.ps1
+		Scripts\PowerShell\GetSolutionInjector.ps1 = Scripts\PowerShell\GetSolutionInjector.ps1
 		Scripts\PowerShell\GenerateComponentProjects.ps1 = Scripts\PowerShell\GenerateComponentProjects.ps1
 		Scripts\PowerShell\GenerateComponentProjects.README.md = Scripts\PowerShell\GenerateComponentProjects.README.md
 		Scripts\PowerShell\UpdateProjectFilters.ps1 = Scripts\PowerShell\UpdateProjectFilters.ps1
@@ -69,6 +71,40 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{066DAD5F-063F-43BF-8ADC-0E76A36CA54D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{8B6A058C-7402-4392-8956-6B1489D9E118}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Module.Udk.Connection", "Module.Udk.Connection", "{18F6F60D-7635-4701-A27F-616A9A9C251A}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Module.Udk.Connection.psm1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Module.Udk.Connection.psm1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{BB4173F9-2ECC-455A-AE66-4115A51C9396}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ComponentCatalog.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ComponentCatalog.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionState.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionState.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionPlan.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionPlan.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\SolutionIntegration.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\SolutionIntegration.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ProjectIntegration.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ProjectIntegration.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Module.Udk.Console", "Module.Udk.Console", "{D9146E66-5EB7-4919-B6CC-F36544D8ACE4}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\PowerShell\Modules\Module.Udk.Console\Module.Udk.Console.psm1 = Scripts\PowerShell\Modules\Module.Udk.Console\Module.Udk.Console.psm1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{7DAB2C47-91F8-4085-8786-94437B89820E}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\PowerShell\Modules\Module.Udk.Console\Private\Style.ps1 = Scripts\PowerShell\Modules\Module.Udk.Console\Private\Style.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Console\Private\Menus.ps1 = Scripts\PowerShell\Modules\Module.Udk.Console\Private\Menus.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Console\Private\Wizard.ps1 = Scripts\PowerShell\Modules\Module.Udk.Console\Private\Wizard.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{CB7EEAB5-39FB-49B2-95A1-72774A80F5B8}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Tools\SolutionInjector.json = Scripts\Tools\SolutionInjector.json
+		Scripts\Tools\README.md = Scripts\Tools\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -96,6 +132,12 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{8B6A058C-7402-4392-8956-6B1489D9E118} = {D832A37F-03A2-4EBD-9FF9-BC27D415378B}
+		{18F6F60D-7635-4701-A27F-616A9A9C251A} = {8B6A058C-7402-4392-8956-6B1489D9E118}
+		{BB4173F9-2ECC-455A-AE66-4115A51C9396} = {18F6F60D-7635-4701-A27F-616A9A9C251A}
+		{D9146E66-5EB7-4919-B6CC-F36544D8ACE4} = {8B6A058C-7402-4392-8956-6B1489D9E118}
+		{7DAB2C47-91F8-4085-8786-94437B89820E} = {D9146E66-5EB7-4919-B6CC-F36544D8ACE4}
+		{CB7EEAB5-39FB-49B2-95A1-72774A80F5B8} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
 		{8CB5D103-21B9-4651-A4A1-671107F28847} = {13DA8639-4234-4E82-9423-056A19840860}
 		{A7CE4335-D8E6-4E53-B810-7D932E87BA59} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
 		{D832A37F-03A2-4EBD-9FF9-BC27D415378B} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
