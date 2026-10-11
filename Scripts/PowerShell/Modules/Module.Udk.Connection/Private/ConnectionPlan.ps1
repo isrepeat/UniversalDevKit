@@ -1,5 +1,57 @@
+function Resolve-UdkLinkageGraph {
+    param([string[]]$Components, [hashtable]$Modes, [hashtable]$ComponentRegistry)
+
+    $resolvedModes = @{}
+    $origins = @{}
+    function VisitComponent([string]$Name, [string]$Mode, [string[]]$Stack) {
+        if ($Name -cin $Stack) { throw ('Component dependency cycle: ' + (($Stack + $Name) -join ' -> ')) }
+        if (-not $ComponentRegistry.ContainsKey($Name)) { throw "Unknown component: $Name" }
+        if ($Mode -cnotin @('Shared', 'Static', 'Dynamic')) { throw "Unsupported linkage for ${Name}: $Mode" }
+        if ($resolvedModes.ContainsKey($Name)) {
+            if ($resolvedModes[$Name] -cne $Mode) {
+                throw "Conflicting linkage for ${Name}: $($resolvedModes[$Name]) via $($origins[$Name]); $Mode via $(($Stack + $Name) -join ' -> ')."
+            }
+            return
+        }
+        $resolvedModes[$Name] = $Mode
+        $origins[$Name] = ($Stack + $Name) -join ' -> '
+        foreach ($dependency in $ComponentRegistry[$Name].Dependencies) {
+            $dependencyMode = if ($Mode -eq 'Shared') { 'Shared' } elseif ($dependency.Linkage -eq 'static') { 'Static' } else { $Mode }
+            VisitComponent $dependency.Component $dependencyMode @($Stack + $Name)
+        }
+    }
+    foreach ($name in $Components) { VisitComponent $name $Modes[$name] @() }
+
+    # Финальный линкер раскрывает статические зависимости и публичные требования DLL.
+    $link = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    function VisitLink([string]$Name) {
+        if ($resolvedModes[$Name] -eq 'Shared' -or -not $link.Add($Name)) { return }
+        foreach ($dependency in $ComponentRegistry[$Name].Dependencies) {
+            if ($resolvedModes[$Name] -eq 'Static' -or $dependency.Visibility -eq 'public') { VisitLink $dependency.Component }
+        }
+    }
+    foreach ($name in $Components) { VisitLink $name }
+
+    # Макросы импорта нужны корням и только публично доступным зависимостям.
+    $definitions = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    function VisitPublic([string]$Name) {
+        if (-not $definitions.Add($Name)) { return }
+        foreach ($dependency in $ComponentRegistry[$Name].Dependencies) {
+            if ($dependency.Visibility -eq 'public') { VisitPublic $dependency.Component }
+        }
+    }
+    foreach ($name in $Components) { VisitPublic $name }
+    return [pscustomobject]@{
+        ResolvedModes = $resolvedModes
+        ResolvedComponents = @($resolvedModes.Keys | Sort-Object)
+        LinkComponents = @($link | Sort-Object)
+        DefinitionComponents = @($definitions | Where-Object { $resolvedModes[$_] -eq 'Dynamic' } | Sort-Object)
+        RuntimeComponents = @($resolvedModes.Keys | Where-Object { $resolvedModes[$_] -eq 'Dynamic' } | Sort-Object)
+    }
+}
+
 function New-UdkConnectionPlan {
-    param($Request, $State, [hashtable]$Catalog, [string]$RepositoryPath)
+    param($Request, $State, [hashtable]$ComponentRegistry, [string]$RepositoryPath)
 
     $ProjectPath = $Request.ProjectPath
     $SolutionPath = $Request.SolutionPath
@@ -9,6 +61,7 @@ function New-UdkConnectionPlan {
     $Disconnect = [bool]$Request.Disconnect
     $SolutionInjectorPath = $Request.SolutionInjectorPath
     $connectedComponents = @($State.Components)
+    $graph = [pscustomobject]@{ LinkComponents = @(); DefinitionComponents = @(); RuntimeComponents = @() }
     $currentModes = $State.Modes
     $resolvedComponents = @()
     $resolvedModes = @{}
@@ -32,7 +85,7 @@ function New-UdkConnectionPlan {
 
     # 2. Для оставшихся корней раскрываем зависимости и проверяем режимы.
     if (-not $Disconnect) {
-        $availableComponents = @($Catalog.Keys | Sort-Object)
+        $availableComponents = @($ComponentRegistry.Keys | Sort-Object)
         if (-not $Components) {
             $Components = if ('Helpers' -cin $availableComponents) { @('Helpers') } else { @($availableComponents[0]) }
         }
@@ -40,27 +93,21 @@ function New-UdkConnectionPlan {
             if ($component -cnotin $availableComponents) { throw "Unsupported component: $component" }
         }
         $Components = @($Components | Select-Object -Unique)
-        $componentCatalog = $Catalog
-        $resolvedComponents = @(Resolve-UdkComponents $Components $componentCatalog)
+        $componentRegistry = $ComponentRegistry
         foreach ($name in $ComponentModes.Keys) {
             if ($name -cnotin $Components) { throw "Linkage specified for an unselected component: $name" }
         }
         # Режимы проверяем до изменения consumer и решения; старые подключения считаем Shared.
-        $resolvedModes = @{}
+        $rootModes = @{}
         foreach ($name in $Components) {
             $mode = if ($ComponentModes.ContainsKey($name)) { $ComponentModes[$name] } elseif ($currentModes.ContainsKey($name)) { $currentModes[$name] } else { 'Shared' }
             if ($mode -cnotin @('Shared', 'Static', 'Dynamic')) { throw "Unsupported linkage for ${name}: $mode" }
             if ($ProjectOnly -and $mode -ne 'Shared') { throw 'Static/Dynamic linkage requires SolutionPath.' }
-            if ($mode -ne 'Shared' -and $componentCatalog[$name].Dependencies.Count) {
-                throw "Compiled dependencies are not yet configured for ${name}; use Shared for this component."
-            }
-            foreach ($dependency in @(Resolve-UdkComponents @($name) $componentCatalog)) {
-                if ($resolvedModes.ContainsKey($dependency) -and $resolvedModes[$dependency] -ne $mode) {
-                    throw "Conflicting linkage for dependency: $dependency"
-                }
-                $resolvedModes[$dependency] = $mode
-            }
+            $rootModes[$name] = $mode
         }
+        $graph = Resolve-UdkLinkageGraph $Components $rootModes $ComponentRegistry
+        $resolvedModes = $graph.ResolvedModes
+        $resolvedComponents = $graph.ResolvedComponents
     }
 
     return [pscustomobject]@{
@@ -69,6 +116,9 @@ function New-UdkConnectionPlan {
         Components = @($Components)
         ResolvedComponents = @($resolvedComponents)
         ResolvedModes = $resolvedModes
+        LinkComponents = @($graph.LinkComponents)
+        DefinitionComponents = @($graph.DefinitionComponents)
+        RuntimeComponents = @($graph.RuntimeComponents)
         Disconnect = [bool]$Disconnect
         CleanupRequested = $cleanupRequested
     }

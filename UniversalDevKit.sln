@@ -13,6 +13,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{D832A37F-03A2-4EBD-9FF9-BC27D415378B}"
 	ProjectSection(SolutionItems) = preProject
 		Scripts\PowerShell\Connect.ps1 = Scripts\PowerShell\Connect.ps1
+		Scripts\PowerShell\Connect.README.md = Scripts\PowerShell\Connect.README.md
+		Scripts\PowerShell\Connect.Tests.ps1 = Scripts\PowerShell\Connect.Tests.ps1
+		Scripts\PowerShell\FormatXmlAttributes.ps1 = Scripts\PowerShell\FormatXmlAttributes.ps1
+		Scripts\PowerShell\Templates\Component.vcxproj.in = Scripts\PowerShell\Templates\Component.vcxproj.in
 		Scripts\PowerShell\ConnectConsole.ps1 = Scripts\PowerShell\ConnectConsole.ps1
 		Scripts\PowerShell\GetSolutionInjector.ps1 = Scripts\PowerShell\GetSolutionInjector.ps1
 		Scripts\PowerShell\GenerateComponentProjects.ps1 = Scripts\PowerShell\GenerateComponentProjects.ps1
@@ -32,6 +36,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4-1E80-4386-ACBA-A8B9D984FC44}"
 	ProjectSection(SolutionItems) = preProject
 		Projects\Cmake\UniversalDevKitConfig.cmake.in = Projects\Cmake\UniversalDevKitConfig.cmake.in
+		Projects\Cmake\ComponentDependencies.cmake = Projects\Cmake\ComponentDependencies.cmake
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{8CB5D103-21B9-4651-A4A1-671107F28847}"
@@ -54,6 +59,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{08C8
 	ProjectSection(SolutionItems) = preProject
 		Projects\MsBuild\BuildLayout.props = Projects\MsBuild\BuildLayout.props
 		Projects\MsBuild\UniversalDevKit.props = Projects\MsBuild\UniversalDevKit.props
+		Projects\MsBuild\UniversalDevKit.Runtime.targets = Projects\MsBuild\UniversalDevKit.Runtime.targets
 		Projects\MsBuild\UniversalDevKit.Sources.targets = Projects\MsBuild\UniversalDevKit.Sources.targets
 	EndProjectSection
 EndProject
@@ -80,7 +86,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Module.Udk.Connection", "Mo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{BB4173F9-2ECC-455A-AE66-4115A51C9396}"
 	ProjectSection(SolutionItems) = preProject
-		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ComponentCatalog.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ComponentCatalog.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ComponentRegistry.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ComponentRegistry.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionState.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionState.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionPlan.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionPlan.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\SolutionIntegration.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\SolutionIntegration.ps1

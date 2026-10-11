@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Этот файл полностью формируется Scripts/PowerShell/GenerateComponentProjects.ps1
-       из Components.json и включённых описаний в Projects/Components/.
-       Не редактируйте его вручную: изменения будут заменены при следующей генерации.
-       Для обновления измените JSON и запустите Scripts/GenerateComponentProjects.cmd.
+     из Components.json и включённых описаний в Projects/Components/.
+     Не редактируйте его вручную: изменения будут заменены при следующей генерации.
+     Для обновления измените JSON и запустите Scripts/GenerateComponentProjects.cmd.
 
-       Connect добавляет в проект потребителя выбор UniversalDevKitComponents и импорт этого файла.
-       При вычислении MSBuild подключаются заголовки и исходники выбранных компонентов
-       вместе со всеми транзитивными зависимостями; каждый Shared-проект импортируется один раз.
-       Исходники не копируются и компилируются с настройками проекта потребителя.
-       Каталог доступных компонентов используется меню Connect, а перед сборкой проверяется выбор. -->
+     Connect добавляет в проект потребителя выбор UniversalDevKitComponents и импорт этого файла.
+     При вычислении MSBuild подключаются заголовки и исходники выбранных компонентов
+     вместе со всеми транзитивными зависимостями; каждый Shared-проект импортируется один раз.
+     Исходники не копируются и компилируются с настройками проекта потребителя.
+     Реестр компонентов используется меню Connect, а перед сборкой проверяется выбор. -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="UniversalDevKit.props" Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
+  <Import Project="UniversalDevKit.props"
+          Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
   <ItemGroup>
     <__UniversalDevKitAvailableComponent Include="Diagnostic;Helpers" />
     <__UniversalDevKitComponent Include="$(UniversalDevKitComponents)" />
@@ -21,10 +22,17 @@
     <__HasUniversalDevKitHelpers>false</__HasUniversalDevKitHelpers>
     <__HasUniversalDevKitHelpers Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;'))">true</__HasUniversalDevKitHelpers>
   </PropertyGroup>
-  <Import Project="Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems" Condition="'$(__HasUniversalDevKitDiagnostic)' == 'true'" Label="Shared" />
-  <Import Project="Helpers\UniversalDevKit.Helpers.Shared.vcxitems" Condition="'$(__HasUniversalDevKitHelpers)' == 'true'" Label="Shared" />
-  <Target Name="__UniversalDevKitValidateComponents" BeforeTargets="PrepareForBuild">
-    <Error Condition="'$(UniversalDevKitComponents)' == ''" Text="UniversalDevKitComponents must be specified." />
-    <Error Condition="'%(__UniversalDevKitComponent.Identity)' != 'Diagnostic' and '%(__UniversalDevKitComponent.Identity)' != 'Helpers'" Text="Unsupported UniversalDevKit component: %(__UniversalDevKitComponent.Identity)" />
+  <Import Project="Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems"
+          Condition="'$(__HasUniversalDevKitDiagnostic)' == 'true'"
+          Label="Shared" />
+  <Import Project="Helpers\UniversalDevKit.Helpers.Shared.vcxitems"
+          Condition="'$(__HasUniversalDevKitHelpers)' == 'true'"
+          Label="Shared" />
+  <Target Name="__UniversalDevKitValidateComponents"
+          BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(UniversalDevKitComponents)' == ''"
+           Text="UniversalDevKitComponents must be specified." />
+    <Error Condition="'%(__UniversalDevKitComponent.Identity)' != 'Diagnostic' and '%(__UniversalDevKitComponent.Identity)' != 'Helpers'"
+           Text="Unsupported UniversalDevKit component: %(__UniversalDevKitComponent.Identity)" />
   </Target>
 </Project>

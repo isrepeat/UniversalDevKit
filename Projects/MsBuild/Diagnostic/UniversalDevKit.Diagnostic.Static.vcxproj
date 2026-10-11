@@ -26,10 +26,6 @@
   <ImportGroup Label="Shared">
     <Import Project="UniversalDevKit.Diagnostic.Shared.vcxitems" Label="Shared" />
   </ImportGroup>
+  <Import Project="UniversalDevKit.Diagnostic.Dependencies.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ItemGroup>
-    <ProjectReference Include="..\Helpers\UniversalDevKit.Helpers.Static.vcxproj">
-      <Project>{A7CE4335-D8E6-4E53-B810-7D932E87BA59}</Project>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

@@ -12,8 +12,14 @@
   ],
   "filters": {
     "roots": [
-      { "path": "Includes/UniversalDevKit/Helpers", "filter": "" },
-      { "path": "Sources/Helpers", "filter": "" }
+      {
+        "path": "Includes/UniversalDevKit/Helpers",
+        "filter": ""
+      },
+      {
+        "path": "Sources/Helpers",
+        "filter": ""
+      }
     ],
     "files": {}
   }

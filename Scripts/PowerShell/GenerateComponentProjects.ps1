@@ -1,9 +1,11 @@
 ﻿param(
     [string]$RepositoryRoot = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)),
-    [switch]$Check
+    [switch]$Check,
+    [switch]$PassThru
 )
 
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'FormatXmlAttributes.ps1')
 $repositoryPath = [IO.Path]::GetFullPath($RepositoryRoot)
 $manifest = Get-Content -LiteralPath (Join-Path $repositoryPath 'Components.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 if ($manifest.schemaVersion -ne 1) { throw 'Unsupported Components.json schemaVersion.' }
@@ -18,6 +20,7 @@ $guids = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgn
 $names = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 $includePaths = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 $componentGraph = @{}
+$binaryComponentRegistry = @{}
 
 function EscapeXml([string]$Value) {
     return [Security.SecurityElement]::Escape($Value)
@@ -138,6 +141,12 @@ foreach ($includePath in $manifest.includes) {
         }
     }
     $componentGraph[$name] = $dependencies.ToArray()
+    $binaryComponentRegistry[$name] = [pscustomobject]@{
+        SharedGuid = $guid
+        Dependencies = @($component.dependencies | ForEach-Object {
+            [pscustomobject]@{ Component = $_.component; Visibility = $_.visibility; Linkage = $_.linkage }
+        })
+    }
     if ($component.PSObject.Properties['filters'] -and $null -eq $component.filters) {
         throw "${name}.filters must be an object."
     }
@@ -147,7 +156,7 @@ foreach ($includePath in $manifest.includes) {
     $lines = [Collections.Generic.List[string]]::new()
     $lines.Add('<?xml version="1.0" encoding="utf-8"?>')
     $lines.Add('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
-    $lines.Add('  <!-- Сформировано из Components.json; изменяйте реестр и запускайте GenerateComponentProjects. -->')
+    $lines.Add('  <!-- Сформировано из Components.json; изменяйте реестр компонентов и запускайте GenerateComponentProjects. -->')
     $lines.Add('  <PropertyGroup Label="Globals">')
     $lines.Add('    <HasSharedItems>true</HasSharedItems>')
     $lines.Add('    <ItemsProjectGuid>{' + $guid.ToString().ToUpperInvariant() + '}</ItemsProjectGuid>')
@@ -208,15 +217,15 @@ foreach ($name in $componentNames) { $closures[$name] = @(GetDependencyClosure $
 $lines = [Collections.Generic.List[string]]::new()
 $lines.Add('<?xml version="1.0" encoding="utf-8"?>')
 $lines.Add('<!-- Этот файл полностью формируется Scripts/PowerShell/GenerateComponentProjects.ps1')
-$lines.Add('       из Components.json и включённых описаний в Projects/Components/.')
-$lines.Add('       Не редактируйте его вручную: изменения будут заменены при следующей генерации.')
-$lines.Add('       Для обновления измените JSON и запустите Scripts/GenerateComponentProjects.cmd.')
+$lines.Add('     из Components.json и включённых описаний в Projects/Components/.')
+$lines.Add('     Не редактируйте его вручную: изменения будут заменены при следующей генерации.')
+$lines.Add('     Для обновления измените JSON и запустите Scripts/GenerateComponentProjects.cmd.')
 $lines.Add('')
-$lines.Add('       Connect добавляет в проект потребителя выбор UniversalDevKitComponents и импорт этого файла.')
-$lines.Add('       При вычислении MSBuild подключаются заголовки и исходники выбранных компонентов')
-$lines.Add('       вместе со всеми транзитивными зависимостями; каждый Shared-проект импортируется один раз.')
-$lines.Add('       Исходники не копируются и компилируются с настройками проекта потребителя.')
-$lines.Add('       Каталог доступных компонентов используется меню Connect, а перед сборкой проверяется выбор. -->')
+$lines.Add('     Connect добавляет в проект потребителя выбор UniversalDevKitComponents и импорт этого файла.')
+$lines.Add('     При вычислении MSBuild подключаются заголовки и исходники выбранных компонентов')
+$lines.Add('     вместе со всеми транзитивными зависимостями; каждый Shared-проект импортируется один раз.')
+$lines.Add('     Исходники не копируются и компилируются с настройками проекта потребителя.')
+$lines.Add('     Реестр компонентов используется меню Connect, а перед сборкой проверяется выбор. -->')
 $lines.Add('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
 $lines.Add('  <Import Project="UniversalDevKit.props" Condition="''$(__IsUniversalDevKitPublicPropsImported)'' != ''true''" />')
 $lines.Add('  <ItemGroup>')
@@ -245,12 +254,95 @@ $lines.Add('  </Target>')
 $lines.Add('</Project>')
 $relativePath = 'Projects/MsBuild/UniversalDevKit.Sources.targets'
 $targetPath = Join-Path $repositoryPath $relativePath
-$content = $lines -join "`n"
+$content = Format-UdkXmlAttributes ($lines -join "`n")
 $original = if (Test-Path -LiteralPath $targetPath) { [IO.File]::ReadAllText($targetPath) } else { $null }
 if ($null -eq $original -or $original.Replace("`r`n", "`n") -cne $content) {
     $updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $original })
 }
 
+# Сначала определяем GUID всех библиотек, включая ещё не созданные проекты.
+$libraryGuids = @{}
+$projectTemplate = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Templates/Component.vcxproj.in'))
+foreach ($name in $componentNames) {
+    foreach ($mode in @('Static', 'Dynamic')) {
+        $relativePath = "Projects/MsBuild/$name/UniversalDevKit.$name.$mode.vcxproj"
+        $targetPath = Join-Path $repositoryPath $relativePath
+        $configurationType = if ($mode -eq 'Static') { 'StaticLibrary' } else { 'DynamicLibrary' }
+        if (Test-Path -LiteralPath $targetPath) {
+            # Существующие проекты не переписываем; проверяем обязательные связи.
+            [xml]$libraryProject = [IO.File]::ReadAllText($targetPath)
+            $guidNodes = @($libraryProject.SelectNodes('/*[local-name()="Project"]/*[local-name()="PropertyGroup"]/*[local-name()="ProjectGuid"]'))
+            $libraryGuid = [Guid]::Empty
+            if ($guidNodes.Count -ne 1 -or -not [Guid]::TryParse($guidNodes[0].InnerText, [ref]$libraryGuid)) {
+                throw "Invalid library ProjectGuid: $relativePath"
+            }
+            $imports = @($libraryProject.SelectNodes('//*[local-name()="Import"]') | ForEach-Object { $_.GetAttribute('Project').Replace('/', '\') })
+            foreach ($requiredImport in @("UniversalDevKit.$name.Shared.vcxitems", "UniversalDevKit.$name.Dependencies.props", 'BuildLayout.props', 'Microsoft.Cpp.Default.props', 'Microsoft.Cpp.props', 'Microsoft.Cpp.targets')) {
+                if (-not @($imports | Where-Object { ($_ -split '\\')[-1] -ceq $requiredImport }).Count) {
+                    throw "Required import $requiredImport is missing from $relativePath. Existing project was not modified."
+                }
+            }
+        }
+        else {
+            # GUID детерминирован по GUID Shared-проекта и варианту библиотеки.
+            $hasher = [Security.Cryptography.SHA256]::Create()
+            try { $hash = $hasher.ComputeHash([Text.Encoding]::UTF8.GetBytes($binaryComponentRegistry[$name].SharedGuid.ToString('D') + ':' + $mode)) }
+            finally { $hasher.Dispose() }
+            $libraryGuid = [Guid]::new([byte[]]$hash[0..15])
+            $definitions = if ($mode -eq 'Dynamic') {
+                '      <PreprocessorDefinitions>UNIVERSALDEVKIT_' + $name.ToUpperInvariant() + '_DYNAMIC;UNIVERSALDEVKIT_' + $name.ToUpperInvariant() + '_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>'
+            } else { '' }
+            $content = $projectTemplate.Replace('@COMPONENT@', $name).Replace('@GUID@', $libraryGuid.ToString().ToUpperInvariant()).Replace('@CONFIGURATION_TYPE@', $configurationType).Replace('@DYNAMIC_DEFINITIONS@', $definitions).TrimEnd([char[]]"`r`n")
+            $updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $null })
+        }
+        if (-not $guids.Add($libraryGuid.ToString())) { throw "Duplicate library GUID: $relativePath" }
+        $libraryGuids["$name.$mode"] = '{' + $libraryGuid.ToString().ToUpperInvariant() + '}'
+    }
+}
+
+# Бинарные связи формируются из того же графа; статические архивы не объединяем.
+. (Join-Path $PSScriptRoot 'Modules/Module.Udk.Connection/Private/ConnectionPlan.ps1')
+foreach ($name in $componentNames) {
+    $lines = [Collections.Generic.List[string]]::new()
+    $lines.Add('<?xml version="1.0" encoding="utf-8"?>')
+    $lines.Add('<!-- Сформировано из Components.json; не редактируйте вручную. -->')
+    $lines.Add('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
+    foreach ($mode in @('Static', 'Dynamic')) {
+        $graph = Resolve-UdkLinkageGraph @($name) @{ $name = $mode } $binaryComponentRegistry
+        $roots = @($binaryComponentRegistry[$name].Dependencies | ForEach-Object { $_.Component })
+        $dependencyGraph = Resolve-UdkLinkageGraph $roots $graph.ResolvedModes $binaryComponentRegistry
+        $configurationType = if ($mode -eq 'Static') { 'StaticLibrary' } else { 'DynamicLibrary' }
+        $condition = "'`$(ConfigurationType)' == '$configurationType'"
+        $lines.Add('  <ItemGroup Condition="' + $condition + '">')
+        foreach ($dependencyName in @($graph.ResolvedComponents | Where-Object { $_ -ne $name })) {
+            $dependencyMode = $graph.ResolvedModes[$dependencyName]
+            $dependencyGuid = $libraryGuids["$dependencyName.$dependencyMode"]
+            $link = if ($mode -eq 'Dynamic' -and $dependencyName -cin $dependencyGraph.LinkComponents) { 'true' } else { 'false' }
+            $lines.Add('    <ProjectReference Include="$(MSBuildThisFileDirectory)..\' + $dependencyName + '\UniversalDevKit.' + $dependencyName + '.' + $dependencyMode + '.vcxproj">')
+            $lines.Add('      <Project>' + $dependencyGuid + '</Project>')
+            $lines.Add('      <LinkLibraryDependencies>' + $link + '</LinkLibraryDependencies>')
+            $lines.Add('    </ProjectReference>')
+        }
+        $lines.Add('  </ItemGroup>')
+        $definitions = @($dependencyGraph.DefinitionComponents | ForEach-Object { 'UNIVERSALDEVKIT_' + $_.ToUpperInvariant() + '_DYNAMIC' })
+        if ($definitions.Count) {
+            $lines.Add('  <ItemDefinitionGroup Condition="' + $condition + '">')
+            $lines.Add('    <ClCompile><PreprocessorDefinitions>' + ($definitions -join ';') + ';%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile>')
+            $lines.Add('  </ItemDefinitionGroup>')
+        }
+    }
+    $lines.Add('</Project>')
+    $relativePath = "Projects/MsBuild/$name/UniversalDevKit.$name.Dependencies.props"
+    $targetPath = Join-Path $repositoryPath $relativePath
+    $content = Format-UdkXmlAttributes ($lines -join "`n")
+    $original = if (Test-Path -LiteralPath $targetPath) { [IO.File]::ReadAllText($targetPath) } else { $null }
+    if ($null -eq $original -or $original.Replace("`r`n", "`n") -cne $content) {
+        $updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $original })
+    }
+}
+
+# Позволяет получить план генерации без записи файлов.
+if ($PassThru) { return $updates.ToArray() }
 if ($Check) {
     if ($updates.Count) { throw ('Generated projects are out of date: ' + (($updates | ForEach-Object { $_.RelativePath }) -join ', ')) }
     Write-Output 'Component projects are up to date.'

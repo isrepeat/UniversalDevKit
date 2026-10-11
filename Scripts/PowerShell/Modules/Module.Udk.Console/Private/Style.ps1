@@ -9,6 +9,7 @@ function Write-UdkConsoleText {
         Mark = @{ Rgb = '180;204;149'; Fallback = 'Green' }
         Focus = @{ Rgb = '216;196;120'; Fallback = 'Yellow' }
         Progress = @{ Rgb = '216;196;120'; Fallback = 'DarkYellow' }
+        Blocked = @{ Rgb = '220;105;105'; Fallback = 'Red' }
     }
     $color = $palette[$Role]
     if ($Host.UI.SupportsVirtualTerminal -and -not [Console]::IsOutputRedirected) {

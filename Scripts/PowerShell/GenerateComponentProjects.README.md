@@ -1,10 +1,10 @@
-# Генерация Shared-проектов
+# Генерация проектов компонентов
 
 Корневой `Components.json` содержит `schemaVersion` и массив `includes` с путями отдельных описаний: `Projects/Components/Helpers.json`, `Projects/Components/Diagnostic.json`. Пути includes отсчитываются от корневого файла. Вложенные include запрещены; объединённый JSON на диске не создаётся.
 
 Каждое описание содержит `name`, `msbuildGuid`, `headers` и `sources`, а также необязательный объект `filters`. `name` определяет компонент и имя `.vcxitems`. `msbuildGuid` сохраняет идентификатор Shared-проекта; при добавлении компонента нужен новый уникальный GUID.
 
-После изменения реестра запустите `Scripts/GenerateComponentProjects.cmd` либо `pwsh -File Scripts/PowerShell/GenerateComponentProjects.ps1`. Один запуск обновляет `.vcxitems`, затем вызывает внутренний `UpdateProjectFilters.ps1` для обновления `.filters` всех проектов. Сгенерированные файлы хранятся в Git. После завершения обоих этапов перезагрузите проект или solution в Visual Studio.
+После изменения реестра компонентов запустите `Scripts/GenerateComponentProjects.cmd` либо `pwsh -File Scripts/PowerShell/GenerateComponentProjects.ps1`. Один запуск обновляет `.vcxitems`, затем вызывает внутренний `UpdateProjectFilters.ps1` для обновления `.filters` всех проектов. Сгенерированные файлы хранятся в Git. После завершения обоих этапов перезагрузите проект или solution в Visual Studio.
 
 Для проверки без записи: `pwsh -File Scripts/PowerShell/GenerateComponentProjects.ps1 -Check` или `Scripts/GenerateComponentProjects.cmd -Check`. Неактуальные или отсутствующие `.vcxitems` либо `.filters` вызывают ошибку. Если устарели проекты, проверка останавливается на первом этапе; после их актуализации проверяются фильтры. Ни один этап проверки не записывает файлы.
 
@@ -16,7 +16,13 @@
 
 Для добавления исходника измените только JSON соответствующего компонента. Для добавления компонента создайте его JSON и внесите путь в корневой includes. Удаление записи не удаляет ранее сгенерированные проекты автоматически.
 
-Connect получает доступные компоненты из сгенерированного каталога Sources.targets. При добавлении компонента генератор создаёт его Shared-проект и импорт, а меню Connect обновляется автоматически. CMake и отдельные Static/Dynamic-проекты по-прежнему настраиваются отдельно.
+Connect получает доступные компоненты из сгенерированного реестра компонентов Sources.targets. При добавлении компонента генератор создаёт его Shared-проект и импорт, а меню Connect обновляется автоматически. Отсутствующие Static/Dynamic-проекты создаются по шаблону Templates/Component.vcxproj.in для Windows x64 Debug/Release. CMake-описание и записи в solution добавляются отдельно.
+
+Существующие Static/Dynamic-проекты не переписываются. Проверяются единственный корректный ProjectGuid и обязательные импорты Shared.vcxitems, Dependencies.props, BuildLayout.props и стандартных Microsoft.Cpp-файлов. При отсутствии импорта выдаётся ошибка до записи; исправлять существующий проект нужно явно.
+
+GUID новых библиотечных проектов детерминированно вычисляются из msbuildGuid Shared-проекта и варианта Static/Dynamic через SHA-256. GUID существующих проектов сохраняются; проверяется уникальность GUID всех вариантов и компонентов. GUID зависимостей определяются до формирования Dependencies.props, поэтому одновременно можно добавить несколько новых связанных компонентов.
+
+Shared.vcxitems, Sources.targets и Dependencies.props полностью управляются генератором. Static/Dynamic vcxproj создаются только при отсутствии; повторный запуск сохраняет пользовательские настройки. Изменение шаблона не обновляет существующие проекты. Удаление проекта позволяет создать его заново; после смены msbuildGuid проверьте GUID в solution и внешних ссылках.
 
 ## Зависимости при подключении исходников
 
@@ -24,15 +30,19 @@ Connect получает доступные компоненты из сгене
 
 ```json
 "dependencies": [
-  { "component": "Helpers", "visibility": "private", "linkage": "same" }
+  {
+    "component": "Helpers",
+    "visibility": "private",
+    "linkage": "same"
+  }
 ]
 ```
 
-component должен точно совпадать с name существующего компонента. visibility принимает private/public, linkage — same/static. В режиме исходников оба варианта visibility подключают всю цепочку, а linkage не влияет на сборку. Эти поля пока не настраивают CMake или бинарные MSBuild-проекты.
+component должен точно совпадать с name существующего компонента. visibility принимает private/public, linkage — same/static. В режиме исходников оба варианта visibility подключают всю цепочку, а linkage не влияет на сборку. Для бинарных проектов формируется Dependencies.props: same наследует вариант библиотеки, static выбирает Static. CMake читает эти же свойства из JSON.
 
 GenerateComponentProjects проверяет неизвестные компоненты, повторяющиеся зависимости и циклы, затем формирует UniversalDevKit.Sources.targets. Каждый Shared-проект импортируется один раз, даже если он нужен нескольким выбранным компонентам. В потребителе сохраняется только исходный выбор UniversalDevKitComponents; зависимости раскрываются MSBuild при каждой сборке. После изменения графа запустите генератор; повторно запускать Connect в потребителе не требуется.
 
-Connect перед записью проверяет актуальность сгенерированных файлов. Если проверка не проходит, сначала запустите GenerateComponentProjects.cmd. Отключение доступно независимо от актуальности реестра. В текущих Helpers и Diagnostic зависимости пусты, поскольку их код не использует друг друга.
+Connect перед записью проверяет актуальность сгенерированных файлов. Если проверка не проходит, сначала запустите GenerateComponentProjects.cmd. Diagnostic использует Helpers с visibility=private и linkage=static. Для обычных Shared References и бинарного подключения после изменения JSON повторите Connect; ProjectOnly раскрывает Shared-зависимости при сборке.
 
 ## Виртуальные папки Visual Studio
 

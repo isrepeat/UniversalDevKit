@@ -1,7 +1,11 @@
 {
   "name": "Diagnostic",
   "dependencies": [
-    { "component": "Helpers", "visibility": "private", "linkage": "static" }
+    {
+      "component": "Helpers",
+      "visibility": "private",
+      "linkage": "static"
+    }
   ],
   "msbuildGuid": "{28F717C7-A2EF-405E-96F1-538329030ACF}",
   "headers": [
@@ -12,8 +16,14 @@
   ],
   "filters": {
     "roots": [
-      { "path": "Includes/UniversalDevKit/Diagnostic", "filter": "" },
-      { "path": "Sources/Diagnostic", "filter": "" }
+      {
+        "path": "Includes/UniversalDevKit/Diagnostic",
+        "filter": ""
+      },
+      {
+        "path": "Sources/Diagnostic",
+        "filter": ""
+      }
     ],
     "files": {}
   }

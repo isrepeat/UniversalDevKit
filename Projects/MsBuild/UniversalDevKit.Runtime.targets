@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- После изменения реестра компонентов нужно повторно рассчитать ссылки и runtime-набор. -->
+  <Target Name="__UniversalDevKitValidateComponentRegistry"
+          BeforeTargets="PrepareForBuild"
+          Condition="'$(DesignTimeBuild)' != 'true' and '@(__UniversalDevKitComponentRegistryFile)' != ''">
+    <GetFileHash Files="@(__UniversalDevKitComponentRegistryFile)"
+                 Algorithm="SHA256">
+      <Output TaskParameter="Items"
+              ItemName="__UniversalDevKitComponentRegistryHash" />
+    </GetFileHash>
+    <Error Condition="'%(__UniversalDevKitComponentRegistryHash.FileHash)' != '%(__UniversalDevKitComponentRegistryHash.ExpectedHash)'"
+           Text="UniversalDevKit component registry changed: %(__UniversalDevKitComponentRegistryHash.Identity). Update the connection using Connect." />
+  </Target>
+  <!-- Получаем фактические TargetPath всех транзитивных DLL после успешной сборки. -->
+  <Target Name="__UniversalDevKitCopyDynamicLibraries"
+          AfterTargets="Build"
+          Condition="'$(DesignTimeBuild)' != 'true' and '@(__UniversalDevKitRuntimeProject)' != ''">
+    <ItemGroup>
+      <__UniversalDevKitRuntimeFile Remove="@(__UniversalDevKitRuntimeFile)" />
+    </ItemGroup>
+    <MSBuild Projects="@(__UniversalDevKitRuntimeProject)"
+             Targets="GetTargetPath"
+             Properties="Configuration=$(Configuration);Platform=$(Platform)"
+             BuildInParallel="true">
+      <Output TaskParameter="TargetOutputs"
+              ItemName="__UniversalDevKitRuntimeFile" />
+    </MSBuild>
+    <Copy SourceFiles="@(__UniversalDevKitRuntimeFile)"
+          DestinationFolder="$(OutDir)"
+          SkipUnchangedFiles="true" />
+  </Target>
+</Project>

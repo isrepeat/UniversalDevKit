@@ -8,7 +8,7 @@ function Show-UdkConnectionWizard {
         [switch]$ProjectOnly,
         [switch]$Disconnect,
         [string]$RepositoryPath,
-        [hashtable]$Catalog
+        [hashtable]$ComponentRegistry
     )
 
     if (-not $Components -and $ComponentModes.Count) { $Components = @($ComponentModes.Keys) }
@@ -99,10 +99,10 @@ function Show-UdkConnectionWizard {
                     continue Selection
                 }
             }
-            $menuCatalog = $Catalog
-            $menuItems = if ($Disconnect) { @(Module.Udk.Connection\Resolve-UdkComponents $connectedComponents $menuCatalog) } else { @($Catalog.Keys | Sort-Object) }
+            $menuComponentRegistry = $ComponentRegistry
+            $menuItems = if ($Disconnect) { @(Module.Udk.Connection\Resolve-UdkComponents $connectedComponents $menuComponentRegistry) } else { @($ComponentRegistry.Keys | Sort-Object) }
             $title = if ($Disconnect) { 'Select components to disconnect' } else { 'Select components to connect' }
-            $selection = SelectConsoleComponents -Title $title -Items $menuItems -InitialModes $currentModes -Removal:$Disconnect -Catalog $menuCatalog
+            $selection = SelectConsoleComponents -Title $title -Items $menuItems -InitialModes $currentModes -Removal:$Disconnect -ComponentRegistry $menuComponentRegistry -ProjectOnly:$ProjectOnly
             if ($null -eq $selection) {
                 $Disconnect = $explicitDisconnect
                 if ($explicitDisconnect) {

@@ -55,8 +55,33 @@ function SelectConsoleItem {
     finally { [Console]::CursorVisible = $previousCursorVisible }
 }
 
+function Get-UdkMenuModeConflict {
+    param([hashtable]$InitialModes, [hashtable]$Marked, [hashtable]$ComponentRegistry, [string]$Name, [string]$Mode, [switch]$Removal, [switch]$ProjectOnly)
+
+    # Проверяем предполагаемый выбор по тому же реестру компонентов и плану, что перед записью.
+    $previewModes = @{}
+    foreach ($rootName in $InitialModes.Keys) { $previewModes[$rootName] = $InitialModes[$rootName] }
+    foreach ($rootName in $Marked.Keys) {
+        if ($Removal) { $previewModes.Remove($rootName) }
+        else { $previewModes[$rootName] = $Marked[$rootName] }
+    }
+    if ($Name) { $previewModes[$Name] = $Mode }
+    if (-not $previewModes.Count) { return $null }
+    $request = [pscustomobject]@{
+        Components = @($previewModes.Keys | Sort-Object)
+        ComponentModes = $previewModes
+        ProjectOnly = [bool]$ProjectOnly
+        Disconnect = $false
+    }
+    try {
+        Module.Udk.Connection\New-UdkConnectionPlan $request ([pscustomobject]@{ Components = @(); Modes = @{} }) $ComponentRegistry '' | Out-Null
+        return $null
+    }
+    catch { return $_.Exception.Message }
+}
+
 function SelectConsoleComponents {
-    param([string]$Title, [string[]]$Items, [hashtable]$InitialModes = @{}, [switch]$Removal, [hashtable]$Catalog = @{})
+    param([string]$Title, [string[]]$Items, [hashtable]$InitialModes = @{}, [switch]$Removal, [hashtable]$ComponentRegistry = @{}, [switch]$ProjectOnly)
 
     if (-not $Items.Count) { throw 'No components available for this operation.' }
     if ([Console]::IsInputRedirected -or [Console]::IsOutputRedirected) {
@@ -77,6 +102,17 @@ function SelectConsoleComponents {
     try {
         [Console]::CursorVisible = $false
         while ($true) {
+            # Заблокированные варианты пересчитываются после каждого изменения отметок.
+            $blockedModes = @{}
+            if (-not $Removal) {
+                foreach ($name in $Items) {
+                    foreach ($mode in $modes) {
+                        $conflict = Get-UdkMenuModeConflict $InitialModes $marked $ComponentRegistry -Name $name -Mode $mode -ProjectOnly:$ProjectOnly
+                        if ($conflict) { $blockedModes["$name.$mode"] = $conflict }
+                    }
+                }
+            }
+            $currentConflict = Get-UdkMenuModeConflict $InitialModes $marked $ComponentRegistry -Removal:$Removal -ProjectOnly:$ProjectOnly
             # Пересчитываем предварительный набор, сохраняя самостоятельные подключения.
             $roots = if ($Removal) {
                 @($InitialModes.Keys | Where-Object { -not $marked.ContainsKey($_) })
@@ -84,8 +120,8 @@ function SelectConsoleComponents {
             else { @(@($InitialModes.Keys) + @($marked.Keys) | Select-Object -Unique) }
             $requiredBy = @{}
             foreach ($rootName in $roots) {
-                if (-not $Catalog.ContainsKey($rootName)) { continue }
-                foreach ($dependency in @(Module.Udk.Connection\Resolve-UdkComponents @($rootName) $Catalog)) {
+                if (-not $ComponentRegistry.ContainsKey($rootName)) { continue }
+                foreach ($dependency in @(Module.Udk.Connection\Resolve-UdkComponents @($rootName) $ComponentRegistry)) {
                     if ($dependency -eq $rootName) { continue }
                     if (-not $requiredBy.ContainsKey($dependency)) { $requiredBy[$dependency] = @() }
                     $requiredBy[$dependency] += $rootName
@@ -93,19 +129,21 @@ function SelectConsoleComponents {
             }
             $dependencies = @()
             $activeName = if ($selected -lt $Items.Count) { $Items[$selected] } else { $null }
-            if ($showDependencies -and $activeName -and $Catalog.ContainsKey($activeName)) {
-                $dependencies = @(Module.Udk.Connection\Resolve-UdkComponents @($activeName) $Catalog | Where-Object { $_ -ne $activeName })
+            if ($showDependencies -and $activeName -and $ComponentRegistry.ContainsKey($activeName)) {
+                $dependencies = @(Module.Udk.Connection\Resolve-UdkComponents @($activeName) $ComponentRegistry | Where-Object { $_ -ne $activeName })
             }
             [Console]::Clear()
             Write-UdkConsoleText $Title Title
             Write-UdkConsoleText 'Up/Down: component | Left/Right: mode | Space: toggle | Enter on Apply: confirm | Backspace: back | Esc: cancel' Hint
             Write-UdkConsoleText '/ or .: show/hide dependencies | *: required transitively, not explicitly selected' Hint
+            if (-not $Removal) { Write-UdkConsoleText 'Red [!]: unavailable mode. Focus it to see why.' Hint }
             Write-Host ''
             for ($index = 0; $index -le $Items.Count; $index++) {
                 $rowRole = if ($index -eq $selected) { 'Focus' } else { 'Text' }
                 $prefix = if ($index -eq $selected) { '> ' } else { '  ' }
                 Write-UdkConsoleText $prefix $rowRole -NoNewline
                 if ($index -eq $Items.Count) {
+                    if ($currentConflict) { $rowRole = 'Blocked' }
                     Write-UdkConsoleText 'Apply' $rowRole
                     continue
                 }
@@ -128,6 +166,11 @@ function SelectConsoleComponents {
                     $check = if ($marked[$name] -eq $modes[$modeIndex]) { 'x' } else { ' ' }
                     $markRole = if ($check -eq 'x') { 'Mark' } else { 'Text' }
                     $modeRole = if ($focused) { 'Focus' } else { 'Text' }
+                    if ($blockedModes.ContainsKey("$name.$($modes[$modeIndex])")) {
+                        $modeRole = 'Blocked'
+                        $markRole = 'Blocked'
+                        if ($check -ne 'x') { $check = '!' }
+                    }
                     $left = if ($focused) { '<' } else { ' ' }
                     $right = if ($focused) { '>' } else { ' ' }
                     Write-UdkConsoleText $left $modeRole -NoNewline
@@ -158,6 +201,11 @@ function SelectConsoleComponents {
                 }
                 Write-UdkConsoleText $separator Hint
             }
+            $focusedConflict = if ($activeName -and -not $Removal) { $blockedModes["$activeName.$($modes[$column])"] } elseif ($selected -eq $Items.Count) { $currentConflict } else { $null }
+            if ($focusedConflict) {
+                Write-Host ''
+                Write-UdkConsoleText $focusedConflict Blocked
+            }
             if ($notice) {
                 Write-Host ''
                 Write-UdkConsoleText $notice Hint
@@ -182,11 +230,15 @@ function SelectConsoleComponents {
                         }
                         $mode = if ($Removal) { $InitialModes[$name] } else { $modes[$column] }
                         if ($marked[$name] -eq $mode) { $marked.Remove($name) }
+                        elseif (-not $Removal -and $blockedModes.ContainsKey("$name.$mode")) {
+                            $notice = $blockedModes["$name.$mode"]
+                        }
                         else { $marked[$name] = $mode }
                     }
                 }
                 'Enter' {
                     if ($selected -eq $Items.Count -and $marked.Count) {
+                        if ($currentConflict) { $notice = $currentConflict; continue }
                         return $marked
                     }
                     $notice = if ($selected -eq $Items.Count) {

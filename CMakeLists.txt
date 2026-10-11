@@ -27,8 +27,7 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
 # Каждый компонент самостоятельно создаёт Static/Dynamic targets и их зависимости.
-add_subdirectory("Projects/Cmake/Helpers")
-add_subdirectory("Projects/Cmake/Diagnostic")
+include("Projects/Cmake/ComponentDependencies.cmake")
 
 # Установка объединяет библиотеки и требования к ним в один набор экспорта.
 set_target_properties(universaldevkit_headers PROPERTIES EXPORT_NAME Headers)

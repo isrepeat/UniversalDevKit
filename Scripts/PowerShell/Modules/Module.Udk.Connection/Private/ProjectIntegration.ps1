@@ -1,6 +1,7 @@
 function Invoke-UdkConnectionPlan {
     param(
         $Plan,
+        [switch]$Preview,
         [scriptblock]$WriteStatus = { param($Text, $Role) Write-Information $Text -InformationAction Continue },
         [scriptblock]$ResolveTool = { param($RepositoryPath, $LocalPath) & (Join-Path $RepositoryPath 'Scripts/PowerShell/GetSolutionInjector.ps1') -LocalPath $LocalPath }
     )
@@ -24,7 +25,7 @@ function Invoke-UdkConnectionPlan {
     $Disconnect = $Plan.Disconnect
     $cleanupRequested = $Plan.CleanupRequested
 
-    if ($SolutionPath) {
+    if ($SolutionPath -and -not $Preview) {
         & $WriteStatus 'Preparing SolutionInjector...' Title
         $solutionInjector = & $ResolveTool $repositoryPath $SolutionInjectorPath
     }
@@ -50,13 +51,13 @@ function Invoke-UdkConnectionPlan {
     $previousSharedProjects = @()
     if ($SolutionPath) {
         $sourceSolution = Join-Path $repositoryPath 'UniversalDevKit.sln'
-        if (-not $Disconnect) {
+        if (-not $Disconnect -and -not $Preview) {
             # Повторная вставка восстанавливает удалённые очисткой компоненты без дублирования оставшихся.
             & $WriteStatus 'Updating solution projects...' Title
             & $solutionInjector $sourceSolution $targetSolution --rootName UniversalDevKit -f MsBuild | ForEach-Object { & $WriteStatus $_ Hint }
             if ($LASTEXITCODE -ne 0) { throw "SolutionInjector failed with exit code $LASTEXITCODE." }
         }
-        if (-not $Disconnect) { RemoveSolutionBuildItems $targetSolution }
+        if (-not $Disconnect -and -not $Preview) { RemoveSolutionBuildItems $targetSolution }
         $solutionSharedProjects = GetSolutionSharedProjects $targetSolution
         $previousSharedPaths = @($root.SelectNodes('*[local-name()="ImportGroup" and @Label="Shared" and @Condition="' + $sharedReferencesCondition + '"]/*[local-name()="Import"]') |
             ForEach-Object {
@@ -125,10 +126,8 @@ function Invoke-UdkConnectionPlan {
             $compilerSettings = $document.CreateElement('ItemDefinitionGroup', $namespace)
             $compilerSettings.SetAttribute('Label', 'UniversalDevKit')
             $dynamicDefinitions = @()
-            $copyTarget = $document.CreateElement('Target', $namespace)
-            $copyTarget.SetAttribute('Label', 'UniversalDevKit')
-            $copyTarget.SetAttribute('Name', '__UniversalDevKitCopyDynamicLibraries')
-            $copyTarget.SetAttribute('AfterTargets', 'Build')
+            $runtimeItems = $document.CreateElement('ItemGroup', $namespace)
+            $runtimeItems.SetAttribute('Label', 'UniversalDevKit')
             foreach ($name in $resolvedComponents) {
                 $mode = $resolvedModes[$name]
                 if ($mode -eq 'Shared') { continue }
@@ -139,15 +138,17 @@ function Invoke-UdkConnectionPlan {
                 $guid = $document.CreateElement('Project', $namespace)
                 $guid.InnerText = $libraryProject.Project.PropertyGroup.ProjectGuid | Where-Object { $_ }
                 [void]$reference.AppendChild($guid)
+                $link = $document.CreateElement('LinkLibraryDependencies', $namespace)
+                $link.InnerText = if ($name -cin $Plan.LinkComponents) { 'true' } else { 'false' }
+                [void]$reference.AppendChild($link)
                 [void]$libraryReferences.AppendChild($reference)
-                if ($mode -eq 'Dynamic') {
+                if ($name -cin $Plan.DefinitionComponents) {
                     $dynamicDefinitions += 'UNIVERSALDEVKIT_' + $name.ToUpperInvariant() + '_DYNAMIC'
-                    $copy = $document.CreateElement('Copy', $namespace)
-                    $dllPath = GetRelativePath $projectDirectory (Join-Path $repositoryPath "!artifacts/Windows-`$(Platform)/msbuild/UniversalDevKit.$name.Dynamic/`$(Configuration)/bin/UniversalDevKit.$name.Dynamic.dll")
-                    $copy.SetAttribute('SourceFiles', $dllPath)
-                    $copy.SetAttribute('DestinationFolder', '$(OutDir)')
-                    $copy.SetAttribute('SkipUnchangedFiles', 'true')
-                    [void]$copyTarget.AppendChild($copy)
+                }
+                if ($name -cin $Plan.RuntimeComponents) {
+                    $runtime = $document.CreateElement('__UniversalDevKitRuntimeProject', $namespace)
+                    $runtime.SetAttribute('Include', (GetRelativePath $projectDirectory $libraryPath))
+                    [void]$runtimeItems.AppendChild($runtime)
                 }
             }
             if ($libraryReferences.HasChildNodes) {
@@ -162,8 +163,26 @@ function Invoke-UdkConnectionPlan {
                 [void]$compilerSettings.AppendChild($compile)
                 [void]$root.InsertBefore($document.CreateWhitespace($newline + '  '), $anchor)
                 [void]$root.InsertBefore($compilerSettings, $anchor)
+            }
+            # Отпечатки реестра компонентов останавливают сборку устаревшего подключения до компиляции.
+            $manifest = Get-Content -LiteralPath (Join-Path $repositoryPath 'Components.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+            foreach ($componentRegistryPath in @('Components.json') + @($manifest.includes)) {
+                $componentRegistryFile = Join-Path $repositoryPath $componentRegistryPath
+                $componentRegistryItem = $document.CreateElement('__UniversalDevKitComponentRegistryFile', $namespace)
+                $componentRegistryItem.SetAttribute('Include', (GetRelativePath $projectDirectory $componentRegistryFile))
+                $expectedHash = $document.CreateElement('ExpectedHash', $namespace)
+                $expectedHash.InnerText = (Get-FileHash -LiteralPath $componentRegistryFile -Algorithm SHA256).Hash
+                [void]$componentRegistryItem.AppendChild($expectedHash)
+                [void]$runtimeItems.AppendChild($componentRegistryItem)
+            }
+            if ($runtimeItems.HasChildNodes) {
+                [void]$root.InsertBefore($document.CreateWhitespace($newline + '  '), $anchor)
+                [void]$root.InsertBefore($runtimeItems, $anchor)
+                $runtimeImport = $document.CreateElement('Import', $namespace)
+                $runtimeImport.SetAttribute('Label', 'UniversalDevKit')
+                $runtimeImport.SetAttribute('Project', (GetRelativePath $projectDirectory (Join-Path $repositoryPath 'Projects/MsBuild/UniversalDevKit.Runtime.targets')))
                 [void]$root.AppendChild($document.CreateWhitespace($newline + '  '))
-                [void]$root.AppendChild($copyTarget)
+                [void]$root.AppendChild($runtimeImport)
             }
             $sharedGroup = $document.CreateElement('ImportGroup', $namespace)
             $sharedGroup.SetAttribute('Label', 'Shared')
@@ -205,6 +224,15 @@ function Invoke-UdkConnectionPlan {
     }
     foreach ($node in @($root.SelectNodes('*[@Label="UniversalDevKit"]'))) { FormatIntegrationNode $node 1 }
     $updated = $document.OuterXml.TrimEnd([char[]]"`r`n")
+    # Форматируем атрибуты только собственных блоков Connect, сохраняя остальной проект.
+    $integrationNodes = @($root.SelectNodes('*[@Label="UniversalDevKit"]'))
+    $integrationNodes += @($root.SelectNodes('*[local-name()="ImportGroup" and @Label="Shared" and @Condition="' + $sharedReferencesCondition + '"]'))
+    foreach ($node in $integrationNodes) {
+        $originalNode = $node.OuterXml.Replace(' xmlns="' + $namespace + '"', '')
+        $formattedNode = (Format-UdkXmlAttributes ('  ' + $originalNode)).Substring(2)
+        $updated = $updated.Replace($originalNode, $formattedNode)
+    }
+    if ($Preview) { return $updated }
     if ($updated -cne $original) {
         [IO.File]::WriteAllText($projectFile, $updated, [Text.UTF8Encoding]::new($false))
         & $WriteStatus "Updated: $projectFile" Mark
