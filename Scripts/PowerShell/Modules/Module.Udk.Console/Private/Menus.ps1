@@ -1,11 +1,12 @@
 function SelectConsoleItem {
-    param([string]$Title, [string[]]$Items, [hashtable]$MenuState = @{}, [string]$StateKey = $Title)
+    param([string]$Title, [string[]]$Items, [hashtable]$MenuState = @{}, [string]$StateKey = $Title, [hashtable]$UnavailableItems = @{})
 
     if (-not $Items.Count) { throw 'Menu has no items.' }
     if ([Console]::IsInputRedirected -or [Console]::IsOutputRedirected) {
         throw 'Interactive selection requires a console. Use PowerShell parameters for non-interactive execution.'
     }
     $selected = 0
+    $notice = $null
     # Запоминаем сам пункт, чтобы позиция сохранялась и при изменении порядка списка.
     if ($MenuState.ContainsKey($StateKey)) {
         $previousIndex = [Array]::IndexOf($Items, $MenuState[$StateKey])
@@ -26,11 +27,20 @@ function SelectConsoleItem {
                 }
                 else { Write-UdkConsoleText ('  ' + $Items[$index]) }
             }
+            if ($notice) {
+                Write-Host ''
+                Write-UdkConsoleText $notice Hint
+            }
             $key = [Console]::ReadKey($true)
+            $notice = $null
             switch ($key.Key) {
                 'UpArrow' { $selected = ($selected + $Items.Count - 1) % $Items.Count }
                 'DownArrow' { $selected = ($selected + 1) % $Items.Count }
                 'Enter' {
+                    if ($UnavailableItems.ContainsKey($Items[$selected])) {
+                        $notice = $UnavailableItems[$Items[$selected]]
+                        continue
+                    }
                     $MenuState[$StateKey] = $Items[$selected]
                     return $selected
                 }
@@ -62,6 +72,7 @@ function SelectConsoleComponents {
     $selected = 0
     $column = 0
     $showDependencies = $false
+    $notice = $null
     $previousCursorVisible = [Console]::CursorVisible
     try {
         [Console]::CursorVisible = $false
@@ -147,7 +158,12 @@ function SelectConsoleComponents {
                 }
                 Write-UdkConsoleText $separator Hint
             }
+            if ($notice) {
+                Write-Host ''
+                Write-UdkConsoleText $notice Hint
+            }
             $key = [Console]::ReadKey($true)
+            $notice = $null
             if ($key.KeyChar -eq '/' -or $key.KeyChar -eq '.') {
                 $showDependencies = -not $showDependencies
                 continue
@@ -160,7 +176,10 @@ function SelectConsoleComponents {
                 'Spacebar' {
                     if ($selected -lt $Items.Count) {
                         $name = $Items[$selected]
-                        if ($Removal -and -not $InitialModes.ContainsKey($name)) { continue }
+                        if ($Removal -and -not $InitialModes.ContainsKey($name)) {
+                            $notice = 'This component is required transitively. Disconnect the components that require it.'
+                            continue
+                        }
                         $mode = if ($Removal) { $InitialModes[$name] } else { $modes[$column] }
                         if ($marked[$name] -eq $mode) { $marked.Remove($name) }
                         else { $marked[$name] = $mode }
@@ -170,6 +189,11 @@ function SelectConsoleComponents {
                     if ($selected -eq $Items.Count -and $marked.Count) {
                         return $marked
                     }
+                    $notice = if ($selected -eq $Items.Count) {
+                        if ($Removal) { 'Select at least one component to disconnect using Space, then choose Apply.' }
+                        else { 'Select at least one component and its mode using Space, then choose Apply.' }
+                    }
+                    else { 'Use Space to select this component. Move to Apply and press Enter to confirm.' }
                 }
                 'Escape' { throw 'Operation cancelled. No project changes were written.' }
                 'Backspace' { return $null }

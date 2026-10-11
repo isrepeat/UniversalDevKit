@@ -6,6 +6,7 @@ $ErrorActionPreference = 'Stop'
 
 Export-ModuleMember -Function @(
     'Write-UdkConsoleText'
+    'Write-UdkConsoleProgress'
     'Invoke-UdkConsoleProgress'
     'Show-UdkConnectionWizard'
 )

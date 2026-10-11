@@ -28,7 +28,8 @@ $writeStatus = { param($Text, $Role) Module.Udk.Console\Write-UdkConsoleText $Te
 $resolveTool = {
     param($RepositoryPath, $LocalPath)
     Module.Udk.Console\Invoke-UdkConsoleProgress -Action ({
-        & (Join-Path $RepositoryPath 'Scripts/PowerShell/GetSolutionInjector.ps1') -LocalPath $LocalPath
+        param($ProgressCallback)
+        & (Join-Path $RepositoryPath 'Scripts/PowerShell/GetSolutionInjector.ps1') -LocalPath $LocalPath -ProgressCallback $ProgressCallback
     }.GetNewClosure())
 }
 Module.Udk.Connection\Invoke-UdkConnectionPlan -Plan $plan -WriteStatus $writeStatus -ResolveTool $resolveTool

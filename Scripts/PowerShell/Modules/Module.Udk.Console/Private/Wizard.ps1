@@ -67,7 +67,12 @@ function Show-UdkConnectionWizard {
             }
         }
         if ($interactive -and -not $Disconnect) {
-            $action = SelectConsoleItem -Title $ProjectPath -Items @('Connect / update', 'Disconnect') -MenuState $menuState -StateKey "Action:$ProjectPath"
+            $unavailableItems = @{}
+            $actionState = Module.Udk.Connection\Get-UdkConnectionState -ProjectPath $ProjectPath
+            if (-not $actionState.Components.Count) {
+                $unavailableItems['Disconnect'] = 'No UniversalDevKit components are connected to this project.'
+            }
+            $action = SelectConsoleItem -Title $ProjectPath -Items @('Connect / update', 'Disconnect') -MenuState $menuState -StateKey "Action:$ProjectPath" -UnavailableItems $unavailableItems
             if ($action -eq -1) {
                 $ProjectPath = $null
                 if ($ProjectOnly -or $projects.Count -eq 1) { $SolutionPath = $solutionDirectory }
@@ -86,8 +91,13 @@ function Show-UdkConnectionWizard {
         }
         if ($interactive -and -not $Components) {
             if ($Disconnect -and -not $connectedComponents.Count) {
-                Write-UdkConsoleText 'No UniversalDevKit components are connected to this project.' Hint
-                return
+                # Даже при явном -Disconnect остаёмся в меню; выход возможен через Backspace или Esc.
+                $action = SelectConsoleItem -Title $ProjectPath -Items @('Disconnect') -MenuState $menuState -StateKey "Action:$ProjectPath" -UnavailableItems @{ Disconnect = 'No UniversalDevKit components are connected to this project.' }
+                if ($action -eq -1) {
+                    $ProjectPath = $null
+                    if ($ProjectOnly -or $projects.Count -eq 1) { $SolutionPath = $solutionDirectory }
+                    continue Selection
+                }
             }
             $menuCatalog = $Catalog
             $menuItems = if ($Disconnect) { @(Module.Udk.Connection\Resolve-UdkComponents $connectedComponents $menuCatalog) } else { @($Catalog.Keys | Sort-Object) }
