@@ -174,7 +174,62 @@ function SelectConsoleItem {
     finally { [Console]::CursorVisible = $previousCursorVisible }
 }
 
-$interactive = -not $ProjectPath -and -not $SolutionPath
+function SelectConsoleComponents {
+    param([string]$Title, [string[]]$Items)
+
+    if (-not $Items.Count) { throw 'No components available for this operation.' }
+    if ([Console]::IsInputRedirected -or [Console]::IsOutputRedirected) {
+        throw 'Interactive selection requires a console. Specify Components for non-interactive execution.'
+    }
+    $marked = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    $selected = 0
+    $previousCursorVisible = [Console]::CursorVisible
+    try {
+        [Console]::CursorVisible = $false
+        while ($true) {
+            [Console]::Clear()
+            Write-Host $Title
+            Write-Host 'Up/Down: navigate | Space: toggle | Enter on Apply: confirm | Esc: cancel'
+            Write-Host ''
+            for ($index = 0; $index -le $Items.Count; $index++) {
+                $text = if ($index -eq $Items.Count) { 'Apply' } else {
+                    $check = if ($marked.Contains($Items[$index])) { 'x' } else { ' ' }
+                    "[$check] " + $Items[$index]
+                }
+                if ($index -eq $selected) { Write-Host ("> $text") -ForegroundColor Cyan }
+                else { Write-Host ("  $text") }
+            }
+            $key = [Console]::ReadKey($true)
+            switch ($key.Key) {
+                'UpArrow' { $selected = ($selected + $Items.Count) % ($Items.Count + 1) }
+                'DownArrow' { $selected = ($selected + 1) % ($Items.Count + 1) }
+                'Spacebar' {
+                    if ($selected -lt $Items.Count) {
+                        if (-not $marked.Remove($Items[$selected])) { [void]$marked.Add($Items[$selected]) }
+                    }
+                }
+                'Enter' {
+                    if ($selected -eq $Items.Count -and $marked.Count) {
+                        return @($Items | Where-Object { $marked.Contains($_) })
+                    }
+                }
+                'Escape' { throw 'Operation cancelled. No project changes were written.' }
+            }
+        }
+    }
+    finally { [Console]::CursorVisible = $previousCursorVisible }
+}
+
+function GetConnectedComponents([string]$Path) {
+    [xml]$project = [IO.File]::ReadAllText($Path)
+    $property = $project.SelectSingleNode('/*[local-name()="Project"]/*[local-name()="PropertyGroup" and @Label="UniversalDevKit"]/*[local-name()="UniversalDevKitComponents"]')
+    if ($property) {
+        return @($property.InnerText.Split(';') | Where-Object { $_ } | Select-Object -Unique)
+    }
+    return @()
+}
+
+$interactive = -not $Components -and -not [Console]::IsInputRedirected -and -not [Console]::IsOutputRedirected
 if ($ProjectOnly) {
     if ($SolutionPath) { throw 'ProjectOnly cannot be combined with SolutionPath.' }
     if (-not $ProjectPath) { $ProjectPath = (Read-Host 'Path to consumer .vcxproj').Trim('"') }
@@ -209,18 +264,43 @@ else {
     elseif ($projects.Count -eq 1) { $ProjectPath = $projects[0] }
     else { $ProjectPath = $projects[(SelectConsoleItem -Title 'Select consumer project' -Items $projects)] }
 }
-if ($interactive) {
+if ($interactive -and -not $Disconnect) {
     $action = SelectConsoleItem -Title $ProjectPath -Items @('Connect / update', 'Disconnect')
     if ($action -eq 1) { $Disconnect = $true }
-    if (-not $Disconnect) {
-        $availableComponents = @(GetAvailableComponents)
-        $menuItems = @($availableComponents) + @('All components')
-        $selection = SelectConsoleItem -Title 'Select component' -Items $menuItems
-        $Components = if ($selection -eq $availableComponents.Count) { $availableComponents } else { @($availableComponents[$selection]) }
+}
+
+# 1. Выбираем явные компоненты; автоматически раскрытые зависимости отдельно не отключаются.
+$connectedComponents = @(GetConnectedComponents $ProjectPath)
+if ($interactive -and -not $Components) {
+    if ($Disconnect -and -not $connectedComponents.Count) {
+        Write-Host 'No UniversalDevKit components are connected to this project.'
+        return
     }
+    $menuItems = if ($Disconnect) { $connectedComponents } else { @(GetAvailableComponents) }
+    $title = if ($Disconnect) { 'Select components to disconnect' } else { 'Select components to connect' }
+    $Components = @(SelectConsoleComponents -Title $title -Items $menuItems)
     [Console]::Clear()
     Write-Host ('Consumer: ' + $ProjectPath)
 }
+
+# 2. Получаем итоговый набор корней, сохраняя компоненты, не выбранные для удаления.
+$cleanupRequested = [bool]$Disconnect
+if ($cleanupRequested) {
+    if ($Components) {
+        foreach ($component in $Components) {
+            if ($component -cnotin $connectedComponents) { throw "Component is not explicitly connected: $component" }
+        }
+        $componentsToRemove = @($Components)
+        $Components = @($connectedComponents | Where-Object { $_ -cnotin $componentsToRemove })
+    }
+    else { $Components = @() }
+    $Disconnect = -not $Components.Count
+}
+else {
+    $Components = @(@($connectedComponents) + @($Components) | Select-Object -Unique)
+}
+
+# 3. Для оставшихся корней обычная интеграция заново раскрывает зависимости.
 if ($SolutionPath) {
     $solutionInjector = & (Join-Path $PSScriptRoot 'GetSolutionInjector.ps1') -LocalPath $SolutionInjectorPath
 }
@@ -350,7 +430,7 @@ if ($SolutionPath) {
     $referencesToAdd = if ($Disconnect) { @() } else { $sharedProjects }
     UpdateSolutionSharedReferences $targetSolution $consumerGuid $referencesToRemove $referencesToAdd
 
-    if ($Disconnect) {
+    if ($cleanupRequested) {
         # 1. Ищем корневую папку по типу и имени; повторное отключение без дерева ничего не меняет.
         $content = [IO.File]::ReadAllText($targetSolution)
         $scopePattern = '(?m)^Project\("\{2150E333-8FDC-42A3-9474-1A3956D46DE8\}"\)\s*=\s*"UniversalDevKit",\s*"[^"]+",\s*"\{([^}]+)\}"'
