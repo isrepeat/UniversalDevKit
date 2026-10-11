@@ -10,10 +10,18 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\UniversalDevKit\Helpers\Math.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\UniversalDevKit\Helpers\Text.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Helpers\Math.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\Helpers\Math.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Helpers\Text.cpp">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ObjectFileName>$(IntDir)UniversalDevKit\Helpers\Text.obj</ObjectFileName>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -14,8 +14,8 @@ target_link_libraries(universaldevkit_diagnostic_dynamic PUBLIC UniversalDevKit:
 
 # Потоковая поддержка нужна реализации Logging.cpp; CMake выбирает настройки платформы.
 find_package(Threads REQUIRED)
-target_link_libraries(universaldevkit_diagnostic PRIVATE Threads::Threads)
-target_link_libraries(universaldevkit_diagnostic_dynamic PRIVATE Threads::Threads)
+target_link_libraries(universaldevkit_diagnostic PRIVATE Threads::Threads UniversalDevKit::Helpers.Static)
+target_link_libraries(universaldevkit_diagnostic_dynamic PRIVATE Threads::Threads UniversalDevKit::Helpers.Static)
 target_compile_definitions(universaldevkit_diagnostic_dynamic
     PUBLIC UNIVERSALDEVKIT_DIAGNOSTIC_DYNAMIC
     PRIVATE UNIVERSALDEVKIT_DIAGNOSTIC_EXPORTS

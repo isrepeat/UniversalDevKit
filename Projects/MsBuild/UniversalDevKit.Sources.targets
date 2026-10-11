@@ -19,7 +19,7 @@
     <__HasUniversalDevKitDiagnostic>false</__HasUniversalDevKitDiagnostic>
     <__HasUniversalDevKitDiagnostic Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;'))">true</__HasUniversalDevKitDiagnostic>
     <__HasUniversalDevKitHelpers>false</__HasUniversalDevKitHelpers>
-    <__HasUniversalDevKitHelpers Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;'))">true</__HasUniversalDevKitHelpers>
+    <__HasUniversalDevKitHelpers Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;'))">true</__HasUniversalDevKitHelpers>
   </PropertyGroup>
   <Import Project="Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems" Condition="'$(__HasUniversalDevKitDiagnostic)' == 'true'" Label="Shared" />
   <Import Project="Helpers\UniversalDevKit.Helpers.Shared.vcxitems" Condition="'$(__HasUniversalDevKitHelpers)' == 'true'" Label="Shared" />

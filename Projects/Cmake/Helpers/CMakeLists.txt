@@ -1,6 +1,7 @@
 # Компонент Helpers сам описывает варианты библиотеки и единый набор исходников.
 set(universaldevkit_helpers_sources
     "${CMAKE_CURRENT_LIST_DIR}/../../../Sources/Helpers/Math.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../../../Sources/Helpers/Text.cpp"
 )
 
 # Настоящие targets используют внутренние имена; потребители выбирают явный вариант.

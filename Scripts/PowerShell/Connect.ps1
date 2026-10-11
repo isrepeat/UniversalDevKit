@@ -1,6 +1,7 @@
 param(
     [string]$ProjectPath,
     [string[]]$Components,
+    [hashtable]$ComponentModes = @{},
     [string]$SolutionPath,
     [string]$SolutionInjectorPath,
     [switch]$ProjectOnly,
@@ -175,26 +176,44 @@ function SelectConsoleItem {
 }
 
 function SelectConsoleComponents {
-    param([string]$Title, [string[]]$Items)
+    param([string]$Title, [string[]]$Items, [hashtable]$InitialModes = @{}, [switch]$Removal)
 
     if (-not $Items.Count) { throw 'No components available for this operation.' }
     if ([Console]::IsInputRedirected -or [Console]::IsOutputRedirected) {
         throw 'Interactive selection requires a console. Specify Components for non-interactive execution.'
     }
-    $marked = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    $marked = @{}
+    if (-not $Removal) {
+        foreach ($name in $Items) {
+            if ($InitialModes.ContainsKey($name)) { $marked[$name] = $InitialModes[$name] }
+        }
+    }
+    $modes = @('Shared', 'Static', 'Dynamic')
     $selected = 0
+    $column = 0
     $previousCursorVisible = [Console]::CursorVisible
     try {
         [Console]::CursorVisible = $false
         while ($true) {
             [Console]::Clear()
             Write-Host $Title
-            Write-Host 'Up/Down: navigate | Space: toggle | Enter on Apply: confirm | Esc: cancel'
+            Write-Host 'Up/Down: component | Left/Right: mode | Space: toggle | Enter on Apply: confirm | Esc: cancel'
             Write-Host ''
             for ($index = 0; $index -le $Items.Count; $index++) {
                 $text = if ($index -eq $Items.Count) { 'Apply' } else {
-                    $check = if ($marked.Contains($Items[$index])) { 'x' } else { ' ' }
-                    "[$check] " + $Items[$index]
+                    $name = $Items[$index]
+                    if ($Removal) {
+                        $check = if ($marked.ContainsKey($name)) { 'x' } else { ' ' }
+                        "[$check] $name ($($InitialModes[$name]))"
+                    }
+                    else {
+                        $cells = @(for ($modeIndex = 0; $modeIndex -lt $modes.Count; $modeIndex++) {
+                            $check = if ($marked[$name] -eq $modes[$modeIndex]) { 'x' } else { ' ' }
+                            $cell = "[$check] $($modes[$modeIndex])"
+                            if ($index -eq $selected -and $modeIndex -eq $column) { "<$cell>" } else { " $cell " }
+                        })
+                        $name.PadRight(24) + ($cells -join '  ')
+                    }
                 }
                 if ($index -eq $selected) { Write-Host ("> $text") -ForegroundColor Cyan }
                 else { Write-Host ("  $text") }
@@ -203,14 +222,19 @@ function SelectConsoleComponents {
             switch ($key.Key) {
                 'UpArrow' { $selected = ($selected + $Items.Count) % ($Items.Count + 1) }
                 'DownArrow' { $selected = ($selected + 1) % ($Items.Count + 1) }
+                'LeftArrow' { $column = ($column + $modes.Count - 1) % $modes.Count }
+                'RightArrow' { $column = ($column + 1) % $modes.Count }
                 'Spacebar' {
                     if ($selected -lt $Items.Count) {
-                        if (-not $marked.Remove($Items[$selected])) { [void]$marked.Add($Items[$selected]) }
+                        $name = $Items[$selected]
+                        $mode = if ($Removal) { $InitialModes[$name] } else { $modes[$column] }
+                        if ($marked[$name] -eq $mode) { $marked.Remove($name) }
+                        else { $marked[$name] = $mode }
                     }
                 }
                 'Enter' {
                     if ($selected -eq $Items.Count -and $marked.Count) {
-                        return @($Items | Where-Object { $marked.Contains($_) })
+                        return $marked
                     }
                 }
                 'Escape' { throw 'Operation cancelled. No project changes were written.' }
@@ -229,6 +253,7 @@ function GetConnectedComponents([string]$Path) {
     return @()
 }
 
+if (-not $Components -and $ComponentModes.Count) { $Components = @($ComponentModes.Keys) }
 $interactive = -not $Components -and -not [Console]::IsInputRedirected -and -not [Console]::IsOutputRedirected
 if ($ProjectOnly) {
     if ($SolutionPath) { throw 'ProjectOnly cannot be combined with SolutionPath.' }
@@ -271,6 +296,12 @@ if ($interactive -and -not $Disconnect) {
 
 # 1. Выбираем явные компоненты; автоматически раскрытые зависимости отдельно не отключаются.
 $connectedComponents = @(GetConnectedComponents $ProjectPath)
+[xml]$currentProject = [IO.File]::ReadAllText($ProjectPath)
+$currentModes = @{}
+foreach ($name in $connectedComponents) {
+    $modeNode = $currentProject.SelectSingleNode('/*[local-name()="Project"]/*[local-name()="PropertyGroup" and @Label="UniversalDevKit"]/*[local-name()="UniversalDevKit' + $name + 'Linkage"]')
+    $currentModes[$name] = if ($modeNode) { $modeNode.InnerText } else { 'Shared' }
+}
 if ($interactive -and -not $Components) {
     if ($Disconnect -and -not $connectedComponents.Count) {
         Write-Host 'No UniversalDevKit components are connected to this project.'
@@ -278,7 +309,9 @@ if ($interactive -and -not $Components) {
     }
     $menuItems = if ($Disconnect) { $connectedComponents } else { @(GetAvailableComponents) }
     $title = if ($Disconnect) { 'Select components to disconnect' } else { 'Select components to connect' }
-    $Components = @(SelectConsoleComponents -Title $title -Items $menuItems)
+    $selection = SelectConsoleComponents -Title $title -Items $menuItems -InitialModes $currentModes -Removal:$Disconnect
+    $Components = @($selection.Keys)
+    if (-not $Disconnect) { $ComponentModes = $selection }
     [Console]::Clear()
     Write-Host ('Consumer: ' + $ProjectPath)
 }
@@ -315,6 +348,25 @@ if (-not $Disconnect) {
     $Components = @($Components | Select-Object -Unique)
     $componentCatalog = GetComponentCatalog
     $resolvedComponents = @(GetResolvedComponents $Components $componentCatalog)
+    foreach ($name in $ComponentModes.Keys) {
+        if ($name -cnotin $Components) { throw "Linkage specified for an unselected component: $name" }
+    }
+    # Режимы проверяем до изменения consumer и решения; старые подключения считаем Shared.
+    $resolvedModes = @{}
+    foreach ($name in $Components) {
+        $mode = if ($ComponentModes.ContainsKey($name)) { $ComponentModes[$name] } elseif ($currentModes.ContainsKey($name)) { $currentModes[$name] } else { 'Shared' }
+        if ($mode -cnotin @('Shared', 'Static', 'Dynamic')) { throw "Unsupported linkage for ${name}: $mode" }
+        if ($ProjectOnly -and $mode -ne 'Shared') { throw 'Static/Dynamic linkage requires SolutionPath.' }
+        if ($mode -ne 'Shared' -and $componentCatalog[$name].Dependencies.Count) {
+            throw "Compiled dependencies are not yet configured for ${name}; use Shared for this component."
+        }
+        foreach ($dependency in @(GetResolvedComponents @($name) $componentCatalog)) {
+            if ($resolvedModes.ContainsKey($dependency) -and $resolvedModes[$dependency] -ne $mode) {
+                throw "Conflicting linkage for dependency: $dependency"
+            }
+            $resolvedModes[$dependency] = $mode
+        }
+    }
 }
 $projectFile = (Resolve-Path -LiteralPath $ProjectPath).Path
 if ([IO.Path]::GetExtension($projectFile) -ne '.vcxproj') { throw 'Expected .vcxproj file.' }
@@ -352,6 +404,7 @@ if ($SolutionPath) {
     $previousSharedProjects = @($solutionSharedProjects.Values | Where-Object { $_.Path -in $previousSharedPaths })
     if (-not $Disconnect) {
         foreach ($component in $resolvedComponents) {
+            if ($resolvedModes[$component] -ne 'Shared') { continue }
             if (-not $solutionSharedProjects.ContainsKey($component)) {
                 throw "Shared project is missing from solution: UniversalDevKit.$component.Shared"
             }
@@ -382,6 +435,12 @@ if (-not $Disconnect) {
     $property.InnerText = $Components -join ';'
     [void]$group.AppendChild($document.CreateWhitespace($newline + '    '))
     [void]$group.AppendChild($property)
+    foreach ($name in $Components) {
+        $modeProperty = $document.CreateElement('UniversalDevKit' + $name + 'Linkage', $namespace)
+        $modeProperty.InnerText = $resolvedModes[$name]
+        [void]$group.AppendChild($document.CreateWhitespace($newline + '    '))
+        [void]$group.AppendChild($modeProperty)
+    }
     if ($SolutionPath) {
         $sharedProperty = $document.CreateElement('__IsUniversalDevKitSharedReferences', $namespace)
         $sharedProperty.InnerText = 'true'
@@ -394,6 +453,57 @@ if (-not $Disconnect) {
     [void]$root.InsertBefore($document.CreateWhitespace($newline + '  '), $anchor)
     [void]$root.InsertBefore($group, $anchor)
     if ($SolutionPath) {
+        # Общие публичные настройки импортируем независимо от способа линковки.
+        $publicImport = $document.CreateElement('Import', $namespace)
+        $publicImport.SetAttribute('Label', 'UniversalDevKit')
+        $publicImport.SetAttribute('Project', (GetRelativePath $projectDirectory (Join-Path $repositoryPath 'Projects/MsBuild/UniversalDevKit.props')))
+        [void]$root.InsertBefore($document.CreateWhitespace($newline + '  '), $anchor)
+        [void]$root.InsertBefore($publicImport, $anchor)
+        $libraryReferences = $document.CreateElement('ItemGroup', $namespace)
+        $libraryReferences.SetAttribute('Label', 'UniversalDevKit')
+        $compilerSettings = $document.CreateElement('ItemDefinitionGroup', $namespace)
+        $compilerSettings.SetAttribute('Label', 'UniversalDevKit')
+        $dynamicDefinitions = @()
+        $copyTarget = $document.CreateElement('Target', $namespace)
+        $copyTarget.SetAttribute('Label', 'UniversalDevKit')
+        $copyTarget.SetAttribute('Name', '__UniversalDevKitCopyDynamicLibraries')
+        $copyTarget.SetAttribute('AfterTargets', 'Build')
+        foreach ($name in $resolvedComponents) {
+            $mode = $resolvedModes[$name]
+            if ($mode -eq 'Shared') { continue }
+            $libraryPath = Join-Path $repositoryPath "Projects/MsBuild/$name/UniversalDevKit.$name.$mode.vcxproj"
+            $reference = $document.CreateElement('ProjectReference', $namespace)
+            $reference.SetAttribute('Include', (GetRelativePath $projectDirectory $libraryPath))
+            [xml]$libraryProject = [IO.File]::ReadAllText($libraryPath)
+            $guid = $document.CreateElement('Project', $namespace)
+            $guid.InnerText = $libraryProject.Project.PropertyGroup.ProjectGuid | Where-Object { $_ }
+            [void]$reference.AppendChild($guid)
+            [void]$libraryReferences.AppendChild($reference)
+            if ($mode -eq 'Dynamic') {
+                $dynamicDefinitions += 'UNIVERSALDEVKIT_' + $name.ToUpperInvariant() + '_DYNAMIC'
+                $copy = $document.CreateElement('Copy', $namespace)
+                $dllPath = GetRelativePath $projectDirectory (Join-Path $repositoryPath "!artifacts/Windows-`$(Platform)/msbuild/UniversalDevKit.$name.Dynamic/`$(Configuration)/bin/UniversalDevKit.$name.Dynamic.dll")
+                $copy.SetAttribute('SourceFiles', $dllPath)
+                $copy.SetAttribute('DestinationFolder', '$(OutDir)')
+                $copy.SetAttribute('SkipUnchangedFiles', 'true')
+                [void]$copyTarget.AppendChild($copy)
+            }
+        }
+        if ($libraryReferences.HasChildNodes) {
+            [void]$root.InsertBefore($document.CreateWhitespace($newline + '  '), $anchor)
+            [void]$root.InsertBefore($libraryReferences, $anchor)
+        }
+        if ($dynamicDefinitions.Count) {
+            $compile = $document.CreateElement('ClCompile', $namespace)
+            $definitions = $document.CreateElement('PreprocessorDefinitions', $namespace)
+            $definitions.InnerText = ($dynamicDefinitions -join ';') + ';%(PreprocessorDefinitions)'
+            [void]$compile.AppendChild($definitions)
+            [void]$compilerSettings.AppendChild($compile)
+            [void]$root.InsertBefore($document.CreateWhitespace($newline + '  '), $anchor)
+            [void]$root.InsertBefore($compilerSettings, $anchor)
+            [void]$root.AppendChild($document.CreateWhitespace($newline + '  '))
+            [void]$root.AppendChild($copyTarget)
+        }
         $sharedGroup = $document.CreateElement('ImportGroup', $namespace)
         $sharedGroup.SetAttribute('Label', 'Shared')
         $sharedGroup.SetAttribute('Condition', $sharedReferencesCondition)
@@ -418,6 +528,21 @@ if (-not $Disconnect) {
         [void]$root.InsertBefore($document.CreateWhitespace($newline + '  '), $anchor)
     }
 }
+# Форматируем новые блоки интеграции, не меняя содержимое соседних настроек consumer.
+function FormatIntegrationNode($Node, [int]$Depth) {
+    $children = @($Node.ChildNodes | Where-Object { $_.NodeType -eq [Xml.XmlNodeType]::Element })
+    if (-not $children.Count) { return }
+    foreach ($child in $children) {
+        FormatIntegrationNode $child ($Depth + 1)
+        if (-not $child.PreviousSibling -or $child.PreviousSibling.NodeType -ne [Xml.XmlNodeType]::Whitespace) {
+            [void]$Node.InsertBefore($document.CreateWhitespace($newline + ('  ' * ($Depth + 1))), $child)
+        }
+    }
+    if ($Node.LastChild.NodeType -ne [Xml.XmlNodeType]::Whitespace) {
+        [void]$Node.AppendChild($document.CreateWhitespace($newline + ('  ' * $Depth)))
+    }
+}
+foreach ($node in @($root.SelectNodes('*[@Label="UniversalDevKit"]'))) { FormatIntegrationNode $node 1 }
 $updated = $document.OuterXml.TrimEnd([char[]]"`r`n")
 if ($updated -cne $original) {
     [IO.File]::WriteAllText($projectFile, $updated, [Text.UTF8Encoding]::new($false))
@@ -430,7 +555,7 @@ if ($SolutionPath) {
     $referencesToAdd = if ($Disconnect) { @() } else { $sharedProjects }
     UpdateSolutionSharedReferences $targetSolution $consumerGuid $referencesToRemove $referencesToAdd
 
-    if ($cleanupRequested) {
+    if ($cleanupRequested -or $ComponentModes.Count) {
         # 1. Ищем корневую папку по типу и имени; повторное отключение без дерева ничего не меняет.
         $content = [IO.File]::ReadAllText($targetSolution)
         $scopePattern = '(?m)^Project\("\{2150E333-8FDC-42A3-9474-1A3956D46DE8\}"\)\s*=\s*"UniversalDevKit",\s*"[^"]+",\s*"\{([^}]+)\}"'
