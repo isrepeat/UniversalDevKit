@@ -1,3 +1,4 @@
 /!artifacts/
+/!tools/
 /.vs/
 *.vcxproj.user
