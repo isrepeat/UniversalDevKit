@@ -1,0 +1,25 @@
+# Проверки UniversalDevKit
+
+Запускайте через Windows PowerShell 5.1:
+
+```powershell
+powershell.exe -NoProfile -File Tests/RunTests.ps1
+powershell.exe -NoProfile -File Tests/RunTests.ps1 -Mode Submodule -Revision HEAD
+powershell.exe -NoProfile -File Tests/RunTests.ps1 -Scenario Static
+```
+
+Нужны Git и Visual Studio с C++ tools/MSBuild. Если не задан `-SolutionInjectorPath`, Connect загружает инструмент в изолированную копию UDK; для автономного запуска можно передать путь к уже загруженному совместимому EXE. Отсутствие инструмента или ошибка проверки возвращает код 1.
+
+`Fixtures/Consumer` содержит неподключённое решение с двумя приложениями. Шаблон напрямую не собирается: App1 требует подключения UDK. App2 независимо от UDK проверяет сохранность соседнего проекта. Не изменяйте шаблоны в процессе теста.
+
+Каждый запуск создаёт отдельный Git-репозиторий Consumer под `!artifacts/tests/<run-id>/`. WorkingTree копирует tracked и untracked файлы UDK, включая текущие изменения; ignored-файлы, удалённые файлы и Tests исключаются. Submodule добавляет настоящий локальный Git submodule на выбранной ревизии; незакоммиченные изменения UDK в этот режим не попадают. Ревизия должна содержать проверяемые инструменты подключения.
+
+Первый сценарий запускает существующие проверки графа и меню, подключает Helpers/Diagnostic Shared через настоящий Connect, повторяет Apply и проверяет неизменность настроек consumer, состава проектов и Shared-связей solution, отсутствие повторных Shared imports. Изменение форматирования или папок solution выводится отдельно как NOTE. Затем собирает всё решение в Debug/Release x64 и запускает оба приложения. MSBuild text logs и binlogs сохраняются в `logs/` окружения.
+
+## Хранение вариантов
+
+Fixtures содержит готовые неподключённые `.sln/.vcxproj` и исходники. Один Consumer используется сценариями Shared, Static, Dynamic, ModeSwitch и Disconnect из Integration. Общие проверки находятся в Integration/Connect.Tests.ps1; способы подключения меняются только через настоящий Connect. Каждый сценарий получает отдельное окружение. По умолчанию запускаются все сценарии; параметр Scenario выбирает нужные. В PowerShell можно передать массив: `./Tests/RunTests.ps1 -Scenario Shared,Dynamic`.
+
+Новый способ подключения добавляется сценарием, а не копией solution. Новый тип приложения, например host с плагинами, получает отдельный шаблон Fixtures. Тестовые компоненты и JSON графа в будущем размещаются в Fixtures/Components и устанавливаются только во временную копию библиотеки. Итоговые подключённые решения в Git не сохраняются.
+
+Окружение сохраняется по умолчанию и всегда при ошибке. `-CleanOnSuccess` удаляет только успешно проверенный каталог сценария. Рабочий UDK и внешние consumer не изменяются. ModeSwitch проверяет Shared → Static → Dynamic → Shared; Disconnect удаляет оба компонента и проверяет независимую сборку App2. Проверки интерактивных клавиш, графа A/B/C/D, обновления submodule, очистки старых DLL и запуска DLL из чистого каталога пока не реализованы; PASS их не подтверждает.

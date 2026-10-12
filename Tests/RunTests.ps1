@@ -1,0 +1,34 @@
+param(
+    [ValidateSet('WorkingTree', 'Submodule')][string]$Mode = 'WorkingTree',
+    [string]$Revision = 'HEAD',
+    [string]$SolutionInjectorPath,
+    [switch]$CleanOnSuccess,
+    [ValidateSet('Shared', 'Static', 'Dynamic', 'ModeSwitch', 'Disconnect')]
+    [string[]]$Scenario = @('Shared', 'Static', 'Dynamic', 'ModeSwitch', 'Disconnect')
+)
+
+$ErrorActionPreference = 'Stop'
+$repositoryPath = Split-Path -Parent $PSScriptRoot
+. (Join-Path $PSScriptRoot 'Infrastructure/TestWorkspace.ps1')
+. (Join-Path $PSScriptRoot 'Infrastructure/BuildTools.ps1')
+. (Join-Path $PSScriptRoot 'Integration/Connect.Tests.ps1')
+$workspace = $null
+try {
+    $msbuild = Get-TestMSBuild
+    if (-not (Get-Command git -ErrorAction SilentlyContinue)) { throw 'Git is required.' }
+    foreach ($name in ($Scenario | Select-Object -Unique)) {
+        $workspace = New-TestWorkspace $repositoryPath $Mode $Revision
+        Write-Host "Scenario: $name; workspace: $($workspace.Root)"
+        # В каждом сценарии собственные consumer и копия библиотеки.
+        & (Join-Path $workspace.Library 'Scripts/PowerShell/Connect.Tests.ps1') | Out-Host
+        & (Join-Path $PSScriptRoot "Integration/$name.Tests.ps1") $workspace $msbuild $SolutionInjectorPath
+        Write-Host "PASS: $name ($Mode), Debug/Release x64."
+        if ($CleanOnSuccess) { Remove-TestWorkspace $repositoryPath $workspace }
+    }
+    exit 0
+}
+catch {
+    Write-Host "FAIL: $($_.Exception.Message)" -ForegroundColor Red
+    if ($workspace) { Write-Host "Preserved workspace: $($workspace.Root)" }
+    exit 1
+}
