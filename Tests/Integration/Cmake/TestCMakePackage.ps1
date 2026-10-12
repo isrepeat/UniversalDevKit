@@ -1,7 +1,7 @@
 param([string]$CMake = 'cmake', [string]$Generator = 'Visual Studio 18 2026')
 
 $ErrorActionPreference = 'Stop'
-$repository = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
 $run = Join-Path $repository ('!artifacts/Windows-x64/cmake/PackageTest-' + [Guid]::NewGuid().ToString('N'))
 $build = Join-Path $run 'build'
 $install = Join-Path $run 'install'
@@ -30,7 +30,7 @@ foreach ($packageDirectory in @($install, $relocated)) {
     }
 }
 Move-Item -LiteralPath $install -Destination $relocated
-InvokeCMake @('-S', (Join-Path $repository 'Tests/CmakePackage'), '-B', $consumer, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug;Release', "-DCMAKE_PREFIX_PATH=$relocated")
+InvokeCMake @('-S', (Join-Path $repository 'Tests/Fixtures/Consumers/CmakePackage'), '-B', $consumer, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug;Release', "-DCMAKE_PREFIX_PATH=$relocated")
 foreach ($configuration in @('Debug', 'Release')) {
     InvokeCMake @('--build', $consumer, '--config', $configuration)
     $ctest = Join-Path (Split-Path -Parent (Get-Command $CMake).Source) 'ctest.exe'
@@ -41,7 +41,7 @@ foreach ($configuration in @('Debug', 'Release')) {
 }
 
 # Неизвестный обязательный компонент обязан отклоняться при конфигурации.
-& $CMake -S (Join-Path $repository 'Tests/CmakePackage') -B (Join-Path $run 'invalid') -G $Generator -A x64 "-DCMAKE_PREFIX_PATH=$relocated" -DUDK_TEST_COMPONENT=Unknown
+& $CMake -S (Join-Path $repository 'Tests/Fixtures/Consumers/CmakePackage') -B (Join-Path $run 'invalid') -G $Generator -A x64 "-DCMAKE_PREFIX_PATH=$relocated" -DUDK_TEST_COMPONENT=Unknown
 if ($LASTEXITCODE -eq 0) {
     throw 'Unknown component was accepted.'
 }
@@ -59,7 +59,7 @@ function AssertConfigurationFails([string]$Scenario, [string[]]$Arguments, [stri
     Write-Output "Expected rejection: $Scenario"
 }
 
-$contractSource = Join-Path $repository 'Tests/CmakeContract'
+$contractSource = Join-Path $repository 'Tests/Fixtures/Consumers/CmakeContract'
 $contractArguments = @('-S', $contractSource, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Release')
 
 # Проверяем прямой и транзитивный конфликт у установленного пакета.
@@ -88,10 +88,10 @@ AssertConfigurationFails 'Incompatible x86 architecture' (@('-S', $contractSourc
 Write-Output 'Package contract checks passed.'
 
 # Новый компонент проверяет передачу C++20, threads, системной .lib и динамического сервиса.
-InvokeCMake @('-P', (Join-Path $repository 'Tests/RequirementValidation.cmake'))
+InvokeCMake @('-P', (Join-Path $repository 'Tests/Integration/Cmake/RequirementValidation.cmake'))
 $requirementsBuild = Join-Path $run 'requirements-build'
 $requirementsInstall = Join-Path $run 'requirements-install'
-InvokeCMake @('-S', (Join-Path $repository 'Tests/RegistryFixture'), '-B', $requirementsBuild, '-G', $Generator, '-A', 'x64', "-DCMAKE_INSTALL_PREFIX=$requirementsInstall")
+InvokeCMake @('-S', (Join-Path $repository 'Tests/Fixtures/Libraries/Registry'), '-B', $requirementsBuild, '-G', $Generator, '-A', 'x64', "-DCMAKE_INSTALL_PREFIX=$requirementsInstall")
 InvokeCMake @('--build', $requirementsBuild, '--config', 'Release')
 & $ctest --test-dir $requirementsBuild -C Release --output-on-failure
 if ($LASTEXITCODE -ne 0) {
@@ -99,7 +99,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 InvokeCMake @('--install', $requirementsBuild, '--config', 'Release')
 $requirementsConsumer = Join-Path $run 'requirements-consumer'
-InvokeCMake @('-S', (Join-Path $repository 'Tests/RequirementsPackage'), '-B', $requirementsConsumer, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Release', "-DCMAKE_PREFIX_PATH=$requirementsInstall")
+InvokeCMake @('-S', (Join-Path $repository 'Tests/Fixtures/Consumers/RequirementsPackage'), '-B', $requirementsConsumer, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Release', "-DCMAKE_PREFIX_PATH=$requirementsInstall")
 InvokeCMake @('--build', $requirementsConsumer, '--config', 'Release')
 & $ctest --test-dir $requirementsConsumer -C Release --output-on-failure
 if ($LASTEXITCODE -ne 0) {

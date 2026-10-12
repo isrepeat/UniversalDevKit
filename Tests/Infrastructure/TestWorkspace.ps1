@@ -11,7 +11,7 @@ function New-TestWorkspace {
     $library = Join-Path $consumer 'external/UniversalDevKit'
     [void][IO.Directory]::CreateDirectory($consumer)
     # Копируем только шаблон, независимо от артефактов предыдущих запусков.
-    Get-ChildItem -LiteralPath (Join-Path $RepositoryPath 'Tests/Fixtures/Consumer') -Force | Copy-Item -Destination $consumer -Recurse
+    Get-ChildItem -LiteralPath (Join-Path $RepositoryPath 'Tests/Fixtures/Consumers/MsBuild') -Force | Copy-Item -Destination $consumer -Recurse
     Invoke-TestGit $consumer @('init', '-b', 'test')
     if ($Mode -eq 'Submodule') {
         Invoke-TestGit $consumer @('-c', 'protocol.file.allow=always', 'submodule', 'add', '--', $RepositoryPath, 'external/UniversalDevKit')

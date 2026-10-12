@@ -9,28 +9,28 @@
 ```powershell
 ./Scripts/PowerShell/GenerateComponentProjects.ps1 -Check
 ./Scripts/PowerShell/Connect.Tests.ps1
-./Scripts/PowerShell/TestComponentRegistry.ps1
+./Tests/Infrastructure/TestComponentRegistry.ps1
 ```
 
 Первая команда проверяет актуальность генерируемых проектов, зависимостей, solution и фильтров. Вторая проверяет расчёт вариантов, графы зависимостей и части меню. Третья рассчитывает добавление нового компонента без записи и проверяет платформенные элементы MSBuild. Эти проверки не заменяют сборку реального consumer.
 
-Tests/RegistryFixture также является отдельным CMake-проектом с общим и Windows-исходником. Его можно конфигурировать через `cmake -S Tests/RegistryFixture -B !artifacts/Windows-x64/cmake/RegistryFixture` с подходящим генератором.
+Tests/Fixtures/Libraries/Registry также является отдельным CMake-проектом с общим и Windows-исходником. Его можно конфигурировать через `cmake -S Tests/Fixtures/Libraries/Registry -B !artifacts/Windows-x64/cmake/RegistryFixture` с подходящим генератором.
 
 ## 2. Проверить установленный CMake-пакет
 
 ```powershell
-./Scripts/PowerShell/TestCMakePackage.ps1 -CMake 'C:/Path/To/cmake.exe'
+./Tests/Integration/Cmake/TestCMakePackage.ps1 -CMake 'C:/Path/To/cmake.exe'
 ```
 
 По умолчанию скрипт использует Visual Studio 18 2026 x64. Он создаёт уникальное дерево !artifacts, собирает и устанавливает Debug/Release, переносит установленный prefix и собирает отдельный consumer. CTest запускает Static и Dynamic в обеих конфигурациях; неизвестный обязательный компонент проверяется ожидаемой ошибкой конфигурации.
 
-Исходный prefix после переноса отсутствует. Проверка показывает, что установленный экспорт работает после смены пути; исходники самого тестового приложения берутся из Tests/CmakePackage. Результаты сохраняются в !artifacts для анализа.
+Исходный prefix после переноса отсутствует. Проверка показывает, что установленный экспорт работает после смены пути; исходники самого тестового приложения берутся из Tests/Fixtures/Consumers/CmakePackage. Результаты сохраняются в !artifacts для анализа.
 
-Тот же скрипт проверяет контракт через Tests/CmakeContract: прямой и транзитивный конфликт вариантов, внутреннюю статическую зависимость DLL, конфликт при add_subdirectory, исключённый компонент и отсутствующий Dynamic-target. Отдельный Release-only пакет Helpers.Static собирается и запускается; запрос Debug и попытка подключения x64-пакета из Win32 отклоняются. Отрицательные проверки требуют не только ненулевой код, но и ожидаемую диагностику.
+Тот же скрипт проверяет контракт через Tests/Fixtures/Consumers/CmakeContract: прямой и транзитивный конфликт вариантов, внутреннюю статическую зависимость DLL, конфликт при add_subdirectory, исключённый компонент и отсутствующий Dynamic-target. Отдельный Release-only пакет Helpers.Static собирается и запускается; запрос Debug и попытка подключения x64-пакета из Win32 отклоняются. Отрицательные проверки требуют не только ненулевой код, но и ожидаемую диагностику.
 
 ## 3. Что ещё нужно проверять вручную
 
-TestCMakePackage также собирает и устанавливает Tests/RegistryFixture, затем проверяет Tests/RequirementsPackage: C++20, threads, ws2_32 и сервисную DLL. Проверка схемы отдельно запускается командой `cmake -P Tests/RequirementValidation.cmake`.
+TestCMakePackage также собирает и устанавливает Tests/Fixtures/Libraries/Registry, затем проверяет Tests/Fixtures/Consumers/RequirementsPackage: C++20, threads, ws2_32 и сервисную DLL. Проверка схемы отдельно запускается командой `cmake -P Tests/Integration/Cmake/RequirementValidation.cmake`.
 
 После изменения Connect пройдите интерактивное подключение, смену режима, повторный Apply, частичный и полный Disconnect. Проверьте solution с несколькими consumer: очистка одного подключения должна сохранять проекты, нужные другому.
 

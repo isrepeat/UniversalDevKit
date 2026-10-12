@@ -19,8 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", 
 		Scripts\PowerShell\GetSolutionInjector.ps1 = Scripts\PowerShell\GetSolutionInjector.ps1
 		Scripts\PowerShell\GenerateComponentProjects.ps1 = Scripts\PowerShell\GenerateComponentProjects.ps1
 		Scripts\PowerShell\UpdateProjectFilters.ps1 = Scripts\PowerShell\UpdateProjectFilters.ps1
-		Scripts\PowerShell\TestCMakePackage.ps1 = Scripts\PowerShell\TestCMakePackage.ps1
-		Scripts\PowerShell\TestComponentRegistry.ps1 = Scripts\PowerShell\TestComponentRegistry.ps1
+		Tests\Integration\Cmake\TestCMakePackage.ps1 = Tests\Integration\Cmake\TestCMakePackage.ps1
+		Tests\Infrastructure\TestComponentRegistry.ps1 = Tests\Infrastructure\TestComponentRegistry.ps1
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Static", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Static.vcxproj", "{C6B94069-54C2-4B96-880D-4C058A605C56}"

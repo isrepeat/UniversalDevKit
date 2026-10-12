@@ -1,4 +1,4 @@
-include("${CMAKE_CURRENT_LIST_DIR}/../Projects/Cmake/ComponentRequirements.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../../../Projects/Cmake/ComponentRequirements.cmake")
 set(CMAKE_SYSTEM_NAME Windows)
 if(TEST_CASE STREQUAL "unknown")
     udkReadComponentRequirements("{\"requirements\":{\"unknown\":true}}")
