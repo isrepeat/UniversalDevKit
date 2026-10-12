@@ -13,6 +13,7 @@ foreach(mode IN ITEMS Static Dynamic)
         )
     endif()
 endforeach()
+
 enable_testing()
 add_test(NAME Static COMMAND consumer_Static)
 add_test(NAME Dynamic COMMAND consumer_Dynamic)

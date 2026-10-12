@@ -61,7 +61,7 @@ Helpers.Static всё равно создаётся, поскольку JSON т�
 
 Корневой CMakeLists включает Projects/Cmake/ComponentDependencies.cmake. Модуль читает JSON, раскрывает необходимые варианты и проверяет неизвестные компоненты, циклы и поддерживаемую ОС. Затем создаёт библиотеки из общих и платформенных файлов, добавляет alias targets, определения и настройки экспорта.
 
-После создания targets применяются межкомпонентные связи PUBLIC/PRIVATE и Static/same. Необязательный Projects/Cmake/<компонент>/CMakeLists.txt расширяет созданные варианты через currentComponentTargets. Diagnostic добавляет Threads::Threads; установленный пакет получает соответствующий find_dependency(Threads).
+После создания targets применяются межкомпонентные связи PUBLIC/PRIVATE и same/static/dynamic. ComponentRequirements.cmake читает стандарт C++, потоки и системные библиотеки из JSON; установленный пакет получает необходимые find_dependency. Подробнее — [Requirements](Requirements.md). Необязательный Projects/Cmake/<компонент>/CMakeLists.txt расширяет созданные варианты через currentComponentTargets для требований, которых пока нет в общем формате.
 
 Сам consumer этот модуль напрямую не включает. Изменения JSON отслеживаются через CMAKE_CONFIGURE_DEPENDS и вызывают переконфигурацию сборочного дерева.
 

@@ -1,10 +1,37 @@
 {
   "name": "Example",
   "msbuildGuid": "{C6B70835-6844-42F4-A981-A2834221C7EF}",
-  "headers": [],
-  "sources": ["Sources/Example/Common.cpp"],
+  "headers": [
+    "Includes/UniversalDevKit/Example/Example.h"
+  ],
+  "sources": [
+    "Sources/Example/Common.cpp"
+  ],
   "stateScope": "module",
-  "dependencies": [{"component":"Service","visibility":"private","linkage":"dynamic"}],
-  "supportedPlatforms": ["Windows"],
-  "platformSources": {"Windows": ["Sources/Example/platform/Windows/Native.cpp"]}
+  "requirements": {
+    "cxxStandard": 20,
+    "threads": true
+  },
+  "platformRequirements": {
+    "Windows": {
+      "linkLibraries": [
+        "ws2_32"
+      ]
+    }
+  },
+  "dependencies": [
+    {
+      "component": "Service",
+      "visibility": "private",
+      "linkage": "dynamic"
+    }
+  ],
+  "supportedPlatforms": [
+    "Windows"
+  ],
+  "platformSources": {
+    "Windows": [
+      "Sources/Example/platform/Windows/Native.cpp"
+    ]
+  }
 }

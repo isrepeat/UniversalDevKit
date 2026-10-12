@@ -188,6 +188,26 @@ function Invoke-UdkConnectionPlan {
                 [void]$root.InsertBefore($document.CreateWhitespace($newline + '  '), $anchor)
                 [void]$root.InsertBefore($compilerSettings, $anchor)
             }
+            # Публичные требования языка и системные библиотеки финальной статической линковки.
+            $requirementRegistry = Get-UdkComponentRegistry $repositoryPath
+            $requirementGroup = $document.CreateElement('ItemGroup', $namespace)
+            $requirementGroup.SetAttribute('Label', 'UniversalDevKit')
+            foreach ($name in $resolvedComponents) {
+                $compile = $name -cin $Plan.RequirementComponents
+                $system = $name -cin $Plan.SystemLibraryComponents
+                [xml]$requirementXml = '<Project xmlns="' + $namespace + '">' + (Get-UdkRequirementItemsXml $name $requirementRegistry[$name].Requirements $compile $system) + '</Project>'
+                foreach ($item in @($requirementXml.DocumentElement.FirstChild.ChildNodes)) {
+                    [void]$requirementGroup.AppendChild($document.ImportNode($item, $true))
+                }
+            }
+            [void]$root.InsertBefore($document.CreateWhitespace($newline + '  '), $anchor)
+            [void]$root.InsertBefore($requirementGroup, $anchor)
+            $requirementsImport = $document.CreateElement('Import', $namespace)
+            $requirementsImport.SetAttribute('Label', 'UniversalDevKit')
+            $requirementsImport.SetAttribute('Condition', '''$(__IsUniversalDevKitRequirementsImported)'' != ''true''')
+            $requirementsImport.SetAttribute('Project', (GetRelativePath $projectDirectory (Join-Path $repositoryPath 'Projects/MsBuild/UniversalDevKit.Requirements.targets')))
+            [void]$root.InsertBefore($document.CreateWhitespace($newline + '  '), $anchor)
+            [void]$root.InsertBefore($requirementsImport, $anchor)
             # Отпечатки реестра компонентов останавливают сборку устаревшего подключения до компиляции.
             $manifest = Get-Content -LiteralPath (Join-Path $repositoryPath 'Components.json') -Raw -Encoding UTF8 | ConvertFrom-Json
             foreach ($componentRegistryPath in @('Components.json') + @($manifest.includes)) {

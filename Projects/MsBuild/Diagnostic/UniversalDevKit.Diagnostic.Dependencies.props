@@ -2,10 +2,20 @@
 <!-- Сформировано из Components.json; не редактируйте вручную. -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Condition="'$(ConfigurationType)' == 'StaticLibrary'">
+    <__UniversalDevKitCompileRequirement Include="Helpers">
+      <MinimumStandard>17</MinimumStandard>
+    </__UniversalDevKitCompileRequirement>
+  </ItemGroup>
+  <ItemGroup Condition="'$(ConfigurationType)' == 'StaticLibrary'">
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\Helpers\UniversalDevKit.Helpers.Static.vcxproj">
       <Project>{A7CE4335-D8E6-4E53-B810-7D932E87BA59}</Project>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(ConfigurationType)' == 'DynamicLibrary'">
+    <__UniversalDevKitCompileRequirement Include="Helpers">
+      <MinimumStandard>17</MinimumStandard>
+    </__UniversalDevKitCompileRequirement>
   </ItemGroup>
   <ItemGroup Condition="'$(ConfigurationType)' == 'DynamicLibrary'">
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\Helpers\UniversalDevKit.Helpers.Static.vcxproj">

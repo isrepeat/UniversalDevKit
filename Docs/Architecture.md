@@ -32,7 +32,7 @@ Components.json перечисляет описания Projects/Components/*.js
 
 **CMake:** корневой CMakeLists включает ComponentDependencies.cmake. Модуль читает реестр, выбирает компоненты/варианты и платформенные файлы, создаёт все нужные targets, затем связывает их. CMake генерирует выбранную систему сборки; компиляцию запускает cmake --build.
 
-Connect не настраивает CMake. ComponentDependencies.cmake не используется MSBuild. Общим источником описания файлов и межкомпонентных связей является JSON; системные настройки пока задаются в сборочных описаниях.
+Connect не настраивает CMake. ComponentDependencies.cmake не используется MSBuild. Файлы, межкомпонентные связи и базовые системные требования задаются в JSON. Требования языка, потоков и системных библиотек описаны в [Requirements](Requirements.md).
 
 ## 5. Checkout и установленный пакет
 

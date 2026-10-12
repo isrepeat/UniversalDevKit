@@ -6,6 +6,7 @@
 
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'FormatXmlAttributes.ps1')
+. (Join-Path $PSScriptRoot 'Modules/Module.Udk.Connection/Private/Requirements.ps1')
 $repositoryPath = [IO.Path]::GetFullPath($RepositoryRoot)
 $manifest = Get-Content -LiteralPath (Join-Path $repositoryPath 'Components.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 if ($manifest.schemaVersion -ne 1) {
@@ -150,7 +151,7 @@ foreach ($includePath in $manifest.includes) {
     }
     # Не игнорируем будущие поля: для зависимостей и платформ потребуется расширение генератора.
     foreach ($field in $component.PSObject.Properties.Name) {
-        if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope')) {
+        if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements')) {
             throw "Unsupported field ${name}: $field"
         }
     }
@@ -196,6 +197,7 @@ foreach ($includePath in $manifest.includes) {
     $binaryComponentRegistry[$name] = [pscustomobject]@{
         SharedGuid = $guid
         StateScope = $component.stateScope
+        Requirements = Get-UdkRequirementDefinition $component
         Dependencies = @($component.dependencies | ForEach-Object {
             [pscustomobject]@{ Component = $_.component; Visibility = $_.visibility; Linkage = $_.linkage }
         })
@@ -302,6 +304,8 @@ foreach ($includePath in $manifest.includes) {
         $lines.Add('    <Error Condition="' + (EscapeXml $unsupportedCondition) + '" Text="Unsupported platform for UniversalDevKit.' + $name + ': $(UniversalDevKitTargetOS)" />')
         $lines.Add('  </Target>')
     }
+    $lines.Add((Get-UdkRequirementItemsXml $name $binaryComponentRegistry[$name].Requirements $true $true $true))
+    $lines.Add('  <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.Requirements.targets" Condition="''$(__IsUniversalDevKitRequirementsImported)'' != ''true''" />')
     $lines.Add('</Project>')
     $relativePath = "Projects/MsBuild/$name/UniversalDevKit.$name.Shared.vcxitems"
     $targetPath = Join-Path $repositoryPath $relativePath
@@ -408,6 +412,19 @@ foreach ($name in $componentNames) {
     }
 }
 $lines.Add('  <Import Project="UniversalDevKit.Runtime.targets" />')
+foreach ($name in $componentNames) {
+    $compileSelectors = @($sourceGraphs.Keys | Where-Object { $name -cin $sourceGraphs[$_].RequirementComponents } | Sort-Object)
+    $systemSelectors = @($sourceGraphs.Keys | Where-Object { $name -cin $sourceGraphs[$_].SystemLibraryComponents } | Sort-Object)
+    if ($compileSelectors.Count) {
+        $xml = Get-UdkRequirementItemsXml $name $binaryComponentRegistry[$name].Requirements $true $false
+        $lines.Add($xml.Replace('<ItemGroup>', '<ItemGroup Condition="' + (GetSourceCondition $compileSelectors) + '">'))
+    }
+    if ($systemSelectors.Count) {
+        $xml = Get-UdkRequirementItemsXml $name $binaryComponentRegistry[$name].Requirements $false $true
+        $lines.Add($xml.Replace('<ItemGroup>', '<ItemGroup Condition="' + (GetSourceCondition $systemSelectors) + '">'))
+    }
+}
+$lines.Add('  <Import Project="UniversalDevKit.Requirements.targets" Condition="''$(__IsUniversalDevKitRequirementsImported)'' != ''true''" />')
 $lines.Add('  <Target Name="__UniversalDevKitValidateComponents" BeforeTargets="PrepareForBuild">')
 $lines.Add('    <Error Condition="''$(UniversalDevKitComponents)'' == ''''" Text="UniversalDevKitComponents must be specified." />')
 $invalidConditions = @($componentNames | ForEach-Object { '''%(__UniversalDevKitComponent.Identity)'' != ''' + $_ + '''' })
@@ -488,7 +505,19 @@ foreach ($name in $componentNames) {
             } else {
                 ''
             }
-            $content = $projectTemplate.Replace('@COMPONENT@', $name).Replace('@GUID@', $libraryGuid.ToString().ToUpperInvariant()).Replace('@CONFIGURATION_TYPE@', $configurationType).Replace('@DYNAMIC_DEFINITIONS@', $definitions).TrimEnd([char[]]"`r`n")
+            $ownGraph = Resolve-UdkLinkageGraph @($name) @{ $name = $mode } $binaryComponentRegistry
+            $dependencyRoots = @($binaryComponentRegistry[$name].Dependencies | ForEach-Object { $_.Component })
+            $dependencyRequirements = Resolve-UdkLinkageGraph $dependencyRoots $ownGraph.ResolvedModes $binaryComponentRegistry
+            $minimumStandard = 17
+            foreach ($requiredName in @($name) + @($dependencyRequirements.RequirementComponents)) {
+                $minimumStandard = [Math]::Max($minimumStandard, $binaryComponentRegistry[$requiredName].Requirements.CxxStandard)
+            }
+            $languageStandard = if ($minimumStandard -eq 23) {
+                'stdcpplatest'
+            } else {
+                'stdcpp' + $minimumStandard
+            }
+            $content = $projectTemplate.Replace('<LanguageStandard>stdcpp17</LanguageStandard>', '<LanguageStandard>' + $languageStandard + '</LanguageStandard>').Replace('@COMPONENT@', $name).Replace('@GUID@', $libraryGuid.ToString().ToUpperInvariant()).Replace('@CONFIGURATION_TYPE@', $configurationType).Replace('@DYNAMIC_DEFINITIONS@', $definitions).TrimEnd([char[]]"`r`n")
             $updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $null })
         }
         if (-not $guids.Add($libraryGuid.ToString())) {
@@ -518,6 +547,12 @@ foreach ($name in $componentNames) {
             'DynamicLibrary'
         }
         $condition = "'`$(ConfigurationType)' == '$configurationType'"
+        foreach ($dependencyName in $dependencyGraph.ResolvedComponents) {
+            $compile = $dependencyName -cin $dependencyGraph.RequirementComponents
+            $system = $mode -eq 'Dynamic' -and $dependencyName -cin $dependencyGraph.SystemLibraryComponents
+            $xml = Get-UdkRequirementItemsXml $dependencyName $binaryComponentRegistry[$dependencyName].Requirements $compile $system
+            $lines.Add($xml.Replace('<ItemGroup>', '<ItemGroup Condition="' + $condition + '">'))
+        }
         $lines.Add('  <ItemGroup Condition="' + $condition + '">')
         foreach ($dependencyName in @($graph.ResolvedComponents | Where-Object { $_ -ne $name })) {
             $dependencyMode = $graph.ResolvedModes[$dependencyName]

@@ -9,6 +9,7 @@ if(TEST_CHECK STREQUAL "SourceConflict")
 else()
     find_package(UniversalDevKit 0.1 CONFIG REQUIRED COMPONENTS ${TEST_COMPONENT})
 endif()
+
 add_executable(contract Main.cpp)
 target_link_libraries(contract PRIVATE UniversalDevKit::${TEST_TARGET})
 if(TEST_CONFLICT)

@@ -34,3 +34,23 @@ $sourceTargets = @($updates | Where-Object RelativePath -eq 'Projects/MsBuild/Un
 if (-not $sourceTargets.Contains('Service.Dynamic.vcxproj') -or -not $sourceTargets.Contains('UNIVERSALDEVKIT_SERVICE_DYNAMIC')) {
     throw 'Shared-to-Dynamic dependency is missing from ProjectOnly targets'
 }
+
+if (-not $shared[0].Content.Contains('<MinimumStandard>20</MinimumStandard>') -or -not $shared[0].Content.Contains('ws2_32.lib')) {
+    throw 'Common requirements were not emitted for Shared'
+}
+$staticProject = @($updates | Where-Object RelativePath -like '*Example.Static.vcxproj')[0].Content
+if (-not $staticProject.Contains('<LanguageStandard>stdcpp20</LanguageStandard>')) {
+    throw 'New library project did not select the required standard'
+}
+. (Join-Path $PSScriptRoot 'Modules/Module.Udk.Connection/Private/Requirements.ps1')
+foreach ($json in @('{"requirements":{"unknown":true}}', '{"requirements":{"cxxStandard":16}}', '{"requirements":{"threads":"true"}}')) {
+    $rejected = $false
+    try {
+        Get-UdkRequirementDefinition ($json | ConvertFrom-Json) | Out-Null
+    } catch {
+        $rejected = $true
+    }
+    if (-not $rejected) {
+        throw "Invalid requirement was accepted: $json"
+    }
+}

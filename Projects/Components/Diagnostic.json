@@ -1,5 +1,9 @@
 {
   "name": "Diagnostic",
+  "requirements": {
+    "cxxStandard": 17,
+    "threads": true
+  },
   "dependencies": [
     {
       "component": "Helpers",

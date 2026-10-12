@@ -75,6 +75,8 @@ Connect перед записью проверяет актуальность с
 
 Необязательное stateScope принимает module/process. process допускает только Dynamic. Подробнее, включая Shared-to-Dynamic и миграцию существующих проектов, — [общее состояние](StateScope.md).
 
+Необязательные requirements и platformRequirements задают стандарт C++, потоки и системные библиотеки. Их формат, области передачи и различия адаптеров описаны в [Requirements](Requirements.md).
+
 ## Платформенные файлы
 
 Необязательный supportedPlatforms — непустой массив Windows/Linux/Android. Без него компонент не ограничивает ОС. Необязательный platformSources — объект с именами платформ и массивами путей .cpp; общие файлы остаются в sources. Пути задаются относительно репозитория. Один файл не должен повторяться в общих и платформенных списках.
@@ -91,7 +93,7 @@ CMake использует CMAKE_SYSTEM_NAME, MSBuild — UniversalDevKitTargetO
 
 ## CMake без дублирования списков
 
-ComponentDependencies.cmake читает headers/sources/platformSources непосредственно из JSON и создаёт выбранные варианты с зависимостями. При добавлении обычного компонента отдельный CMake-файл не создаётся: он не нужен. Необязательный Projects/Cmake/<компонент>/CMakeLists.txt выполняется через include и получает список currentComponentTargets для специальных настроек, например Threads. Это файл расширения общей сборки, а не самостоятельный проект для add_subdirectory.
+ComponentDependencies.cmake читает headers/sources/platformSources непосредственно из JSON и создаёт выбранные варианты с зависимостями. ComponentRequirements.cmake обрабатывает стандарт C++, потоки и системные библиотеки. При добавлении обычного компонента отдельный CMake-файл не создаётся: он не нужен. Необязательный Projects/Cmake/<компонент>/CMakeLists.txt выполняется через include и получает список currentComponentTargets для специальных настроек, отсутствующих в общем формате. Это файл расширения общей сборки, а не самостоятельный проект для add_subdirectory.
 
 ## Связанные документы
 

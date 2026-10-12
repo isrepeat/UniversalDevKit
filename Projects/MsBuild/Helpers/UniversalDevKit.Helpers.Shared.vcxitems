@@ -24,4 +24,10 @@
       <ObjectFileName>$(IntDir)UniversalDevKit\Helpers\Text.obj</ObjectFileName>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <__UniversalDevKitCompileRequirement Include="Helpers">
+      <MinimumStandard>17</MinimumStandard>
+    </__UniversalDevKitCompileRequirement>
+  </ItemGroup>
+  <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.Requirements.targets" Condition="'$(__IsUniversalDevKitRequirementsImported)' != 'true'" />
 </Project>

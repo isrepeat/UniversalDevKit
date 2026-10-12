@@ -36,6 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4
 	ProjectSection(SolutionItems) = preProject
 		Projects\Cmake\UniversalDevKitConfig.cmake.in = Projects\Cmake\UniversalDevKitConfig.cmake.in
 		Projects\Cmake\ComponentDependencies.cmake = Projects\Cmake\ComponentDependencies.cmake
+		Projects\Cmake\ComponentRequirements.cmake = Projects\Cmake\ComponentRequirements.cmake
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{8CB5D103-21B9-4651-A4A1-671107F28847}"
@@ -44,22 +45,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", 
 		Projects\Components\Diagnostic.json = Projects\Components\Diagnostic.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{23CA4B7F-EBE4-4934-A198-BE258D8FBACB}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\Helpers\CMakeLists.txt = Projects\Cmake\Helpers\CMakeLists.txt
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{DD8EB3A1-297D-4465-9859-1EDD908CCA73}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\Diagnostic\CMakeLists.txt = Projects\Cmake\Diagnostic\CMakeLists.txt
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}"
 	ProjectSection(SolutionItems) = preProject
 		Projects\MsBuild\BuildLayout.props = Projects\MsBuild\BuildLayout.props
 		Projects\MsBuild\UniversalDevKit.props = Projects\MsBuild\UniversalDevKit.props
 		Projects\MsBuild\UniversalDevKit.Runtime.targets = Projects\MsBuild\UniversalDevKit.Runtime.targets
 		Projects\MsBuild\UniversalDevKit.Sources.targets = Projects\MsBuild\UniversalDevKit.Sources.targets
+		Projects\MsBuild\UniversalDevKit.Requirements.targets = Projects\MsBuild\UniversalDevKit.Requirements.targets
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Shared", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems", "{F27F4562-11C4-42EF-AC5A-26101FD26F46}"
@@ -96,6 +88,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{BB41
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionPlan.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionPlan.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\SolutionIntegration.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\SolutionIntegration.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ProjectIntegration.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ProjectIntegration.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\Requirements.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\Requirements.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Module.Udk.Console", "Module.Udk.Console", "{D9146E66-5EB7-4919-B6CC-F36544D8ACE4}"
@@ -126,6 +119,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{0458F395-E
 		Docs\StateScope.md = Docs\StateScope.md
 		Docs\Tools.md = Docs\Tools.md
 		Docs\Validation.md = Docs\Validation.md
+		Docs\Requirements.md = Docs\Requirements.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "Repository", "{01643071-A00B-441F-B890-826B2408BC9D}"
@@ -142,6 +136,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{75E9BBC5-6A5A-4C7F-BCB9-30ED29C2CF97}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\RequirementValidation.cmake = Tests\RequirementValidation.cmake
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CmakeContract", "CmakeContract", "{8FF13B81-E592-4B31-ACA4-88226F561561}"
 	ProjectSection(SolutionItems) = preProject
@@ -200,6 +197,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{C898
 		Tests\RegistryFixture\Sources\Service\Service.cpp = Tests\RegistryFixture\Sources\Service\Service.cpp
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RequirementsPackage", "RequirementsPackage", "{841D46F1-F812-4E79-A988-85207E532F20}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\RequirementsPackage\CMakeLists.txt = Tests\RequirementsPackage\CMakeLists.txt
+		Tests\RequirementsPackage\Main.cpp = Tests\RequirementsPackage\Main.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example", "Example", "{112F46F6-C2B0-4B2E-9688-5ED3090AF5BC}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\RegistryFixture\Includes\UniversalDevKit\Example\Example.h = Tests\RegistryFixture\Includes\UniversalDevKit\Example\Example.h
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -227,6 +235,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{841D46F1-F812-4E79-A988-85207E532F20} = {75E9BBC5-6A5A-4C7F-BCB9-30ED29C2CF97}
+		{112F46F6-C2B0-4B2E-9688-5ED3090AF5BC} = {B08EB3A0-BB49-487F-B606-70EA2492B4D9}
 		{A2BAABAE-02D4-4685-9081-F599C5AF7D30} = {D832A37F-03A2-4EBD-9FF9-BC27D415378B}
 		{8FF13B81-E592-4B31-ACA4-88226F561561} = {75E9BBC5-6A5A-4C7F-BCB9-30ED29C2CF97}
 		{E8DEBDF0-D638-4A16-B71D-AECBFB585134} = {75E9BBC5-6A5A-4C7F-BCB9-30ED29C2CF97}
@@ -252,8 +262,6 @@ Global
 		{D832A37F-03A2-4EBD-9FF9-BC27D415378B} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
 		{C6B94069-54C2-4B96-880D-4C058A605C56} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}
 		{26DC63D4-1E80-4386-ACBA-A8B9D984FC44} = {13DA8639-4234-4E82-9423-056A19840860}
-		{23CA4B7F-EBE4-4934-A198-BE258D8FBACB} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
-		{DD8EB3A1-297D-4465-9859-1EDD908CCA73} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
 		{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83} = {13DA8639-4234-4E82-9423-056A19840860}
 		{F27F4562-11C4-42EF-AC5A-26101FD26F46} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
 		{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}

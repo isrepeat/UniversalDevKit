@@ -71,6 +71,8 @@ function Resolve-UdkLinkageGraph {
         ResolvedComponents = @($resolvedModes.Keys | Sort-Object)
         LinkComponents = @($link | Sort-Object)
         DefinitionComponents = @($definitions | Where-Object { $resolvedModes[$_] -eq 'Dynamic' } | Sort-Object)
+        RequirementComponents = @($definitions | Sort-Object)
+        SystemLibraryComponents = @($resolvedModes.Keys | Where-Object { $resolvedModes[$_] -eq 'Shared' -or ($resolvedModes[$_] -eq 'Static' -and $link.Contains($_)) } | Sort-Object)
         RuntimeComponents = @($resolvedModes.Keys | Where-Object { $resolvedModes[$_] -eq 'Dynamic' } | Sort-Object)
     }
 }
@@ -169,6 +171,8 @@ function New-UdkConnectionPlan {
         ResolvedModes = $resolvedModes
         LinkComponents = @($graph.LinkComponents)
         DefinitionComponents = @($graph.DefinitionComponents)
+        RequirementComponents = @($graph.RequirementComponents)
+        SystemLibraryComponents = @($graph.SystemLibraryComponents)
         RuntimeComponents = @($graph.RuntimeComponents)
         Disconnect = [bool]$Disconnect
         CleanupRequested = $cleanupRequested

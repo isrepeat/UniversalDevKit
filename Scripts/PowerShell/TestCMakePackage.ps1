@@ -86,3 +86,22 @@ AssertConfigurationFails 'Unavailable Dynamic variant' ($contractArguments + @('
 AssertConfigurationFails 'Missing Debug configuration' (@('-S', $contractSource, '-B', (Join-Path $run 'missing-debug'), '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug', "-DCMAKE_PREFIX_PATH=$limitedInstall")) 'IMPORTED_LOCATION|IMPORTED_IMPLIB'
 AssertConfigurationFails 'Incompatible x86 architecture' (@('-S', $contractSource, '-B', (Join-Path $run 'wrong-architecture'), '-G', $Generator, '-A', 'Win32', '-DCMAKE_CONFIGURATION_TYPES=Release', "-DCMAKE_PREFIX_PATH=$limitedInstall")) '64bit|not compatible|not accepted'
 Write-Output 'Package contract checks passed.'
+
+# Новый компонент проверяет передачу C++20, threads, системной .lib и динамического сервиса.
+InvokeCMake @('-P', (Join-Path $repository 'Tests/RequirementValidation.cmake'))
+$requirementsBuild = Join-Path $run 'requirements-build'
+$requirementsInstall = Join-Path $run 'requirements-install'
+InvokeCMake @('-S', (Join-Path $repository 'Tests/RegistryFixture'), '-B', $requirementsBuild, '-G', $Generator, '-A', 'x64', "-DCMAKE_INSTALL_PREFIX=$requirementsInstall")
+InvokeCMake @('--build', $requirementsBuild, '--config', 'Release')
+& $ctest --test-dir $requirementsBuild -C Release --output-on-failure
+if ($LASTEXITCODE -ne 0) {
+    throw 'Component requirements fixture failed.'
+}
+InvokeCMake @('--install', $requirementsBuild, '--config', 'Release')
+$requirementsConsumer = Join-Path $run 'requirements-consumer'
+InvokeCMake @('-S', (Join-Path $repository 'Tests/RequirementsPackage'), '-B', $requirementsConsumer, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Release', "-DCMAKE_PREFIX_PATH=$requirementsInstall")
+InvokeCMake @('--build', $requirementsConsumer, '--config', 'Release')
+& $ctest --test-dir $requirementsConsumer -C Release --output-on-failure
+if ($LASTEXITCODE -ne 0) {
+    throw 'Installed component requirements failed.'
+}

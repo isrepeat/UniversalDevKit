@@ -16,4 +16,11 @@
       <ObjectFileName>$(IntDir)UniversalDevKit\Diagnostic\Logging.obj</ObjectFileName>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <__UniversalDevKitCompileRequirement Include="Diagnostic">
+      <MinimumStandard>17</MinimumStandard>
+    </__UniversalDevKitCompileRequirement>
+    <__UniversalDevKitThreadRequirement Include="Diagnostic" />
+  </ItemGroup>
+  <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.Requirements.targets" Condition="'$(__IsUniversalDevKitRequirementsImported)' != 'true'" />
 </Project>

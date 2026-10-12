@@ -30,6 +30,8 @@ Tests/RegistryFixture также является отдельным CMake-пр�
 
 ## 3. Что ещё нужно проверять вручную
 
+TestCMakePackage также собирает и устанавливает Tests/RegistryFixture, затем проверяет Tests/RequirementsPackage: C++20, threads, ws2_32 и сервисную DLL. Проверка схемы отдельно запускается командой `cmake -P Tests/RequirementValidation.cmake`.
+
 После изменения Connect пройдите интерактивное подключение, смену режима, повторный Apply, частичный и полный Disconnect. Проверьте solution с несколькими consumer: очистка одного подключения должна сохранять проекты, нужные другому.
 
 При смене Dynamic на другой режим используйте чистый каталог запуска: Connect пока не удаляет старые DLL из OutDir. Наличие лишней DLL может скрывать ошибку расчёта runtime-набора.

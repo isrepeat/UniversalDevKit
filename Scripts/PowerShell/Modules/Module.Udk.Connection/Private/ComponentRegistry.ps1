@@ -35,6 +35,7 @@ function Get-UdkComponentRegistry {
             Name = $component.name
             Guid = $guid
             StateScope = $component.stateScope
+            Requirements = Get-UdkRequirementDefinition $component
             Dependencies = @($component.dependencies | ForEach-Object {
                 [pscustomobject]@{
                     Component = $_.component

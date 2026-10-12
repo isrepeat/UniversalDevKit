@@ -29,6 +29,22 @@
           Condition="'$(__HasUniversalDevKitHelpers)' == 'true'"
           Label="Shared" />
   <Import Project="UniversalDevKit.Runtime.targets" />
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;'))">
+    <__UniversalDevKitCompileRequirement Include="Diagnostic">
+      <MinimumStandard>17</MinimumStandard>
+    </__UniversalDevKitCompileRequirement>
+  </ItemGroup>
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;'))">
+  </ItemGroup>
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;'))">
+    <__UniversalDevKitCompileRequirement Include="Helpers">
+      <MinimumStandard>17</MinimumStandard>
+    </__UniversalDevKitCompileRequirement>
+  </ItemGroup>
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;'))">
+  </ItemGroup>
+  <Import Project="UniversalDevKit.Requirements.targets"
+          Condition="'$(__IsUniversalDevKitRequirementsImported)' != 'true'" />
   <Target Name="__UniversalDevKitValidateComponents"
           BeforeTargets="PrepareForBuild">
     <Error Condition="'$(UniversalDevKitComponents)' == ''"

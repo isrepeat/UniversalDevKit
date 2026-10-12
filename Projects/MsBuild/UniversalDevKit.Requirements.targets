@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <__IsUniversalDevKitRequirementsImported>true</__IsUniversalDevKitRequirementsImported>
+  </PropertyGroup>
+  <!-- Проверяем эффективный стандарт каждого C++-файла, не понижая настройки consumer. -->
+  <Target Name="__UniversalDevKitValidateRequirements" BeforeTargets="ClCompile" Condition="'$(DesignTimeBuild)' != 'true'">
+    <PropertyGroup>
+      <__UniversalDevKitRequiredStandards>@(__UniversalDevKitCompileRequirement-&gt;'%(MinimumStandard)', ';')</__UniversalDevKitRequiredStandards>
+      <__UniversalDevKitMinimumStandard>17</__UniversalDevKitMinimumStandard>
+      <__UniversalDevKitMinimumStandard Condition="$([System.String]::Copy('$(__UniversalDevKitRequiredStandards)').Contains('20'))">20</__UniversalDevKitMinimumStandard>
+      <__UniversalDevKitMinimumStandard Condition="$([System.String]::Copy('$(__UniversalDevKitRequiredStandards)').Contains('23'))">23</__UniversalDevKitMinimumStandard>
+    </PropertyGroup>
+    <ItemGroup>
+      <__UniversalDevKitCompileCheck Remove="@(__UniversalDevKitCompileCheck)" />
+      <__UniversalDevKitCompileCheck Include="@(ClCompile)" Condition="'%(ClCompile.Extension)' != '.c'">
+        <ConfiguredStandard>14</ConfiguredStandard>
+        <ConfiguredStandard Condition="'%(ClCompile.LanguageStandard)' == 'stdcpp17'">17</ConfiguredStandard>
+        <ConfiguredStandard Condition="'%(ClCompile.LanguageStandard)' == 'stdcpp20'">20</ConfiguredStandard>
+        <ConfiguredStandard Condition="'%(ClCompile.LanguageStandard)' == 'stdcpp23' or '%(ClCompile.LanguageStandard)' == 'stdcpp23preview' or '%(ClCompile.LanguageStandard)' == 'stdcpplatest'">23</ConfiguredStandard>
+      </__UniversalDevKitCompileCheck>
+    </ItemGroup>
+    <Error Condition="'@(__UniversalDevKitCompileRequirement)' != '' and '@(__UniversalDevKitCompileCheck)' != '' and '%(__UniversalDevKitCompileCheck.ConfiguredStandard)' &lt; '$(__UniversalDevKitMinimumStandard)'"
+           Text="UniversalDevKit requires C++$(__UniversalDevKitMinimumStandard): %(__UniversalDevKitCompileCheck.Identity). Set LanguageStandard without lowering an existing higher standard." />
+    <Error Condition="'@(__UniversalDevKitThreadRequirement)' != '' and '$(UniversalDevKitTargetOS)' != 'Windows'"
+           Text="UniversalDevKit: the MSBuild threads adapter supports Windows only." />
+    <Error Condition="'@(__UniversalDevKitUnsupportedSystemRequirement)' != ''"
+           Text="UniversalDevKit: no MSBuild system-library adapter for $(UniversalDevKitTargetOS)." />
+  </Target>
+  <!-- Link-элементы уже сформированы зависимостями цели; системные .lib добавляем финальному линкеру. -->
+  <Target Name="__UniversalDevKitApplySystemLibraries" BeforeTargets="Link" Condition="'@(__UniversalDevKitSystemLibrary)' != '' and '$(DesignTimeBuild)' != 'true'">
+    <ItemGroup>
+      <__UniversalDevKitUniqueSystemLibrary Remove="@(__UniversalDevKitUniqueSystemLibrary)" />
+    </ItemGroup>
+    <RemoveDuplicates Inputs="@(__UniversalDevKitSystemLibrary)">
+      <Output TaskParameter="Filtered" ItemName="__UniversalDevKitUniqueSystemLibrary" />
+    </RemoveDuplicates>
+    <ItemGroup>
+      <Link>
+        <AdditionalDependencies>@(__UniversalDevKitUniqueSystemLibrary);%(Link.AdditionalDependencies)</AdditionalDependencies>
+      </Link>
+    </ItemGroup>
+  </Target>
+</Project>
