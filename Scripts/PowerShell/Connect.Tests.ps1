@@ -99,4 +99,36 @@ $conflict = Get-UdkMenuModeConflict @{ Diagnostic = 'Dynamic'; Helpers = 'Dynami
 if ($conflict) {
     throw "Menu blocked removal that resolves conflict: $conflict"
 }
+# Общий сервис остаётся Dynamic даже внутри Shared/Static-потребителя.
+$serviceRegistry = @{
+    ComponentA = [pscustomobject]@{ StateScope = 'process'; Dependencies = @() }
+    ComponentB = [pscustomobject]@{ StateScope = 'module'; Dependencies = @([pscustomobject]@{ Component = 'ComponentA'; Visibility = 'private'; Linkage = 'dynamic' }) }
+}
+foreach ($mode in @('Shared', 'Static', 'Dynamic')) {
+    $graph = Resolve-UdkLinkageGraph @('ComponentB') @{ ComponentB = $mode } $serviceRegistry
+    AssertEqual $graph.ResolvedModes.ComponentA 'Dynamic' 'Process dependency variant'
+    $expectedRuntime = if ($mode -eq 'Dynamic') {
+        @('ComponentA', 'ComponentB')
+    } else {
+        @('ComponentA')
+    }
+    AssertEqual $graph.RuntimeComponents $expectedRuntime 'Process dependency runtime'
+    if ($mode -eq 'Shared') {
+        AssertEqual $graph.LinkComponents @('ComponentA') 'Shared-to-Dynamic linking'
+        AssertEqual $graph.DefinitionComponents @('ComponentA') 'Shared-to-Dynamic import'
+    }
+}
+foreach ($mode in @('Shared', 'Static')) {
+    AssertFails { Resolve-UdkLinkageGraph @('ComponentA') @{ ComponentA = $mode } $serviceRegistry } 'requires Dynamic'
+}
+$serviceRegistry.ComponentB.Dependencies[0].Linkage = 'static'
+AssertFails { Resolve-UdkLinkageGraph @('ComponentB') @{ ComponentB = 'Dynamic' } $serviceRegistry } 'requires Dynamic'
+$serviceRegistry.ComponentB.Dependencies[0].Linkage = 'dynamic'
+$serviceRequest = [pscustomobject]@{ Components = @('ComponentA'); ComponentModes = @{}; ProjectOnly = $false; Disconnect = $false }
+$servicePlan = New-UdkConnectionPlan $serviceRequest ([pscustomobject]@{ Components = @(); Modes = @{} }) $serviceRegistry ''
+AssertEqual $servicePlan.ResolvedModes.ComponentA 'Dynamic' 'Default process-state variant'
+$conflict = Get-UdkMenuModeConflict @{} @{} $serviceRegistry -Name ComponentA -Mode Shared
+if ($conflict -notmatch 'requires Dynamic') {
+    throw 'Menu accepted Shared process state'
+}
 Write-Output 'Connect dependency and menu validation tests passed.'

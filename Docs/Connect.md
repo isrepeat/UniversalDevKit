@@ -149,7 +149,7 @@ visibility=public означает, что публичные требовани
 }
 ```
 
-component — имя компонента. visibility допускает private/public. linkage допускает static/same: static принудительно выбирает Static для бинарной зависимости, same наследует вариант родителя. Shared раскрывается отдельно и всегда компилирует исходники зависимостей.
+component — имя компонента. visibility допускает private/public. linkage допускает static/same/dynamic: static выбирает Static для бинарной зависимости, same наследует вариант родителя, dynamic требует Dynamic. При Shared same/static подключаются исходниками, dynamic остаётся библиотечной зависимостью. stateScope=process запрещает Shared/Static для самого сервиса; подробнее — [общее состояние](StateScope.md).
 
 GenerateComponentProjects формирует Shared-списки, Sources.targets и файлы *.Dependencies.props для библиотечных проектов. Последние импортируются Static/Dynamic-проектами. CMake читает тот же JSON, сначала создаёт все компонентные targets, затем связывает их согласно visibility/linkage. Межкомпонентные связи не следует дублировать вручную. Системные зависимости, например Threads, остаются в описании сборки компонента.
 

@@ -3,7 +3,8 @@
   "msbuildGuid": "{C6B70835-6844-42F4-A981-A2834221C7EF}",
   "headers": [],
   "sources": ["Sources/Example/Common.cpp"],
-  "dependencies": [],
+  "stateScope": "module",
+  "dependencies": [{"component":"Service","visibility":"private","linkage":"dynamic"}],
   "supportedPlatforms": ["Windows"],
   "platformSources": {"Windows": ["Sources/Example/platform/Windows/Native.cpp"]}
 }

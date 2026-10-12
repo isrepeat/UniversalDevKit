@@ -20,7 +20,7 @@ Shared — MSBuild Shared Project: .vcxitems добавляет файлы в и
 
 Components.json перечисляет описания Projects/Components/*.json. Каждое описание задаёт имя, GUID Shared-проекта, файлы, зависимости и необязательные платформенные списки/фильтры.
 
-Зависимость содержит component, visibility и linkage. visibility=public передаёт публичные требования, private оставляет их внутренними. linkage=static требует статический вариант; same наследует вариант бинарного родителя. При Shared все необходимые реализации компилируются исходниками.
+Зависимость содержит component, visibility и linkage. visibility=public передаёт публичные требования, private оставляет их внутренними. linkage=static требует статический вариант; same наследует вариант бинарного родителя; dynamic требует Dynamic. При Shared зависимости same/static компилируются исходниками, dynamic подключается библиотекой. stateScope=process ограничивает компонент режимом Dynamic; подробнее — [общее состояние](StateScope.md).
 
 Текущая связь Diagnostic → Helpers имеет private/static: Diagnostic вызывает EndsWithLineBreak из Helpers. Diagnostic.Dynamic включает необходимую реализацию Helpers.Static в DLL; Diagnostic.Static оставляет разрешение этих символов финальному линкеру.
 

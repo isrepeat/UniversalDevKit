@@ -1,1 +1,3 @@
-int CommonValue() { return 1; }
+#include <UniversalDevKit/Service/Service.h>
+
+int CommonValue() { return IncrementCounter(); }

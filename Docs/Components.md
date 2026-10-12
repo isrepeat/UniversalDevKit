@@ -40,9 +40,9 @@ Shared.vcxitems, Sources.targets и Dependencies.props полностью упр
 ]
 ```
 
-component должен точно совпадать с name существующего компонента. visibility принимает private/public, linkage — same/static. В режиме исходников оба варианта visibility подключают всю цепочку, а linkage не влияет на сборку. Для бинарных проектов формируется Dependencies.props: same наследует вариант библиотеки, static выбирает Static. CMake читает эти же свойства из JSON.
+component должен точно совпадать с name существующего компонента. visibility принимает private/public, linkage — same/static/dynamic. В Shared зависимости same/static подключаются исходниками; dynamic сохраняет библиотечную зависимость с import-макросами и runtime-набором. Для бинарных проектов формируется Dependencies.props: same наследует вариант библиотеки, static выбирает Static, dynamic выбирает Dynamic. CMake читает эти же свойства из JSON.
 
-GenerateComponentProjects проверяет неизвестные компоненты, повторяющиеся зависимости и циклы, затем формирует UniversalDevKit.Sources.targets. Каждый Shared-проект импортируется один раз, даже если он нужен нескольким выбранным компонентам. В потребителе сохраняется только исходный выбор UniversalDevKitComponents; зависимости раскрываются MSBuild при каждой сборке. После изменения графа запустите генератор. В режиме ProjectOnly зависимости раскрываются при сборке; для обычного подключения через solution повторите Connect.
+GenerateComponentProjects проверяет неизвестные компоненты, повторяющиеся зависимости и циклы, затем формирует UniversalDevKit.Sources.targets. Каждый Shared-проект импортируется один раз, даже если он нужен нескольким выбранным компонентам. В ProjectOnly сохраняется выбор UniversalDevKitComponents; Sources.targets раскрывает смешанный граф при каждой сборке. После изменения графа запустите генератор. В режиме ProjectOnly зависимости раскрываются при сборке; для обычного подключения через solution повторите Connect.
 
 Connect перед записью проверяет актуальность сгенерированных файлов. Если проверка не проходит, сначала запустите GenerateComponentProjects.cmd. Diagnostic использует Helpers с visibility=private и linkage=static. Для обычных Shared References и бинарного подключения после изменения JSON повторите Connect; ProjectOnly раскрывает Shared-зависимости при сборке.
 
@@ -70,6 +70,10 @@ Connect перед записью проверяет актуальность с
 Генератор записывает вычисленные папки в метаданные `__UniversalDevKitFilter` каждого элемента `.vcxitems`. UpdateProjectFilters переносит их в `.filters`, создавая родительские папки и пропуская пустые. Для остальных проектов остаётся прежняя поддержка UniversalDevKitFilterRoots. Изменения влияют только на отображение, исходники не перемещаются.
 
 После изменения filters выполните только GenerateComponentProjects. В Helpers и Diagnostic явно заданы пустые корневые фильтры для сохранения прежнего объединённого дерева.
+
+## Политика состояния
+
+Необязательное stateScope принимает module/process. process допускает только Dynamic. Подробнее, включая Shared-to-Dynamic и миграцию существующих проектов, — [общее состояние](StateScope.md).
 
 ## Платформенные файлы
 

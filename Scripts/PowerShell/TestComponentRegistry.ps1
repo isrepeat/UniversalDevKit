@@ -13,7 +13,7 @@ foreach ($mode in @('Shared', 'Static', 'Dynamic')) {
         throw "Missing solution project: $mode"
     }
 }
-$shared = @($updates | Where-Object RelativePath -like '*.Shared.vcxitems')
+$shared = @($updates | Where-Object RelativePath -like '*Example.Shared.vcxitems')
 if ($shared.Count -ne 1 -or -not $shared[0].Content.Contains('UniversalDevKitTargetOS')) {
     throw 'Missing platform selection'
 }
@@ -23,3 +23,14 @@ if ($sources.Count -ne 2 -or -not $sources[1].HasAttribute('Condition')) {
     throw 'Invalid platform sources'
 }
 Write-Output 'New component, solution entries and conditional platform sources passed.'
+
+if (@($updates | Where-Object RelativePath -like '*Service.Static.vcxproj').Count) {
+    throw 'Process-state Static project was generated'
+}
+if ($solution[0].Content.Contains('UniversalDevKit.Service.Shared') -or $solution[0].Content.Contains('UniversalDevKit.Service.Static')) {
+    throw 'Forbidden process-state projects were added to solution'
+}
+$sourceTargets = @($updates | Where-Object RelativePath -eq 'Projects/MsBuild/UniversalDevKit.Sources.targets')[0].Content
+if (-not $sourceTargets.Contains('Service.Dynamic.vcxproj') -or -not $sourceTargets.Contains('UNIVERSALDEVKIT_SERVICE_DYNAMIC')) {
+    throw 'Shared-to-Dynamic dependency is missing from ProjectOnly targets'
+}

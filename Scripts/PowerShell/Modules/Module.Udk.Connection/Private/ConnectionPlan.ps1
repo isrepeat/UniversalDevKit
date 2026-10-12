@@ -13,6 +13,9 @@ function Resolve-UdkLinkageGraph {
         if ($Mode -cnotin @('Shared', 'Static', 'Dynamic')) {
             throw "Unsupported linkage for ${Name}: $Mode"
         }
+        if ($ComponentRegistry[$Name].StateScope -eq 'process' -and $Mode -ne 'Dynamic') {
+            throw "Component $Name has process state and requires Dynamic linkage."
+        }
         if ($resolvedModes.ContainsKey($Name)) {
             if ($resolvedModes[$Name] -cne $Mode) {
                 throw "Conflicting linkage for ${Name}: $($resolvedModes[$Name]) via $($origins[$Name]); $Mode via $(($Stack + $Name) -join ' -> ')."
@@ -22,7 +25,9 @@ function Resolve-UdkLinkageGraph {
         $resolvedModes[$Name] = $Mode
         $origins[$Name] = ($Stack + $Name) -join ' -> '
         foreach ($dependency in $ComponentRegistry[$Name].Dependencies) {
-            $dependencyMode = if ($Mode -eq 'Shared') {
+            $dependencyMode = if ($dependency.Linkage -eq 'dynamic') {
+                'Dynamic'
+            } elseif ($Mode -eq 'Shared') {
                 'Shared'
             } elseif ($dependency.Linkage -eq 'static') {
                 'Static'
@@ -37,11 +42,11 @@ function Resolve-UdkLinkageGraph {
     # Финальный линкер раскрывает статические зависимости и публичные требования DLL.
     $link = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     function VisitLink([string]$Name) {
-        if ($resolvedModes[$Name] -eq 'Shared' -or -not $link.Add($Name)) {
+        if ($resolvedModes[$Name] -ne 'Shared' -and -not $link.Add($Name)) {
             return
         }
         foreach ($dependency in $ComponentRegistry[$Name].Dependencies) {
-            if ($resolvedModes[$Name] -eq 'Static' -or $dependency.Visibility -eq 'public') {
+            if ($resolvedModes[$Name] -in @('Shared', 'Static') -or $dependency.Visibility -eq 'public') {
                 VisitLink $dependency.Component
             }
         }
@@ -55,7 +60,7 @@ function Resolve-UdkLinkageGraph {
             return
         }
         foreach ($dependency in $ComponentRegistry[$Name].Dependencies) {
-            if ($dependency.Visibility -eq 'public') {
+            if ($resolvedModes[$Name] -eq 'Shared' -or $dependency.Visibility -eq 'public') {
                 VisitPublic $dependency.Component
             }
         }
@@ -137,7 +142,11 @@ function New-UdkConnectionPlan {
             } elseif ($currentModes.ContainsKey($name)) {
                 $currentModes[$name]
             } else {
-                'Shared'
+                if ($ComponentRegistry[$name].StateScope -eq 'process') {
+                    'Dynamic'
+                } else {
+                    'Shared'
+                }
             }
             if ($mode -cnotin @('Shared', 'Static', 'Dynamic')) {
                 throw "Unsupported linkage for ${name}: $mode"

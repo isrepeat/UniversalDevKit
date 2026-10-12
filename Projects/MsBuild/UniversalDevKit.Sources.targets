@@ -28,6 +28,7 @@
   <Import Project="Helpers\UniversalDevKit.Helpers.Shared.vcxitems"
           Condition="'$(__HasUniversalDevKitHelpers)' == 'true'"
           Label="Shared" />
+  <Import Project="UniversalDevKit.Runtime.targets" />
   <Target Name="__UniversalDevKitValidateComponents"
           BeforeTargets="PrepareForBuild">
     <Error Condition="'$(UniversalDevKitComponents)' == ''"

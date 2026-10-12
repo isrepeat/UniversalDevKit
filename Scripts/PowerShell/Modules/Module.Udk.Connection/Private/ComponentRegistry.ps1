@@ -34,6 +34,7 @@ function Get-UdkComponentRegistry {
         $componentRegistry[$component.name] = [pscustomobject]@{
             Name = $component.name
             Guid = $guid
+            StateScope = $component.stateScope
             Dependencies = @($component.dependencies | ForEach-Object {
                 [pscustomobject]@{
                     Component = $_.component

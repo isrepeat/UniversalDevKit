@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$RepositoryRoot = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)),
     [switch]$Check,
     [switch]$PassThru
@@ -150,11 +150,14 @@ foreach ($includePath in $manifest.includes) {
     }
     # Не игнорируем будущие поля: для зависимостей и платформ потребуется расширение генератора.
     foreach ($field in $component.PSObject.Properties.Name) {
-        if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources')) {
+        if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope')) {
             throw "Unsupported field ${name}: $field"
         }
     }
     $guid = [Guid]::Empty
+    if ($component.PSObject.Properties['stateScope'] -and $component.stateScope -cnotin @('module', 'process')) {
+        throw "Invalid stateScope for component: $name"
+    }
     if (-not [Guid]::TryParse([string]$component.msbuildGuid, [ref]$guid) -or -not $guids.Add($guid.ToString())) {
         throw "Invalid or duplicate msbuildGuid: $name"
     }
@@ -180,7 +183,7 @@ foreach ($includePath in $manifest.includes) {
             if ($dependency.component -isnot [string] -or $dependency.component -notmatch '^[A-Z][A-Za-z0-9]*$') {
                 throw "Invalid dependency component in $name"
             }
-            if ($dependency.visibility -cnotin @('private', 'public') -or $dependency.linkage -cnotin @('same', 'static')) {
+            if ($dependency.visibility -cnotin @('private', 'public') -or $dependency.linkage -cnotin @('same', 'static', 'dynamic')) {
                 throw "Invalid dependency visibility or linkage in $name"
             }
             if ($dependencies.Contains($dependency.component)) {
@@ -192,6 +195,7 @@ foreach ($includePath in $manifest.includes) {
     $componentGraph[$name] = $dependencies.ToArray()
     $binaryComponentRegistry[$name] = [pscustomobject]@{
         SharedGuid = $guid
+        StateScope = $component.stateScope
         Dependencies = @($component.dependencies | ForEach-Object {
             [pscustomobject]@{ Component = $_.component; Visibility = $_.visibility; Linkage = $_.linkage }
         })
@@ -286,6 +290,12 @@ foreach ($includePath in $manifest.includes) {
         $lines.Add('    </ClCompile>')
     }
     $lines.Add('  </ItemGroup>')
+    if ($component.stateScope -eq 'process') {
+        # Список файлов нужен самой DLL, но запрещён для компиляции внутри consumer.
+        $lines.Add('  <Target Name="__UniversalDevKitValidate' + $name + 'StateScope" BeforeTargets="PrepareForBuild">')
+        $lines.Add('    <Error Condition="''$(ConfigurationType)'' != ''DynamicLibrary'' or ''$(MSBuildProjectName)'' != ''UniversalDevKit.' + $name + '.Dynamic''" Text="UniversalDevKit.' + $name + ' has process state; use its Dynamic project." />')
+        $lines.Add('  </Target>')
+    }
     if ($component.supportedPlatforms) {
         $unsupportedCondition = (@($component.supportedPlatforms | ForEach-Object { "'`$(UniversalDevKitTargetOS)' != '$_'" }) -join ' and ')
         $lines.Add('  <Target Name="__UniversalDevKitValidate' + $name + 'Platform" BeforeTargets="PrepareForBuild">')
@@ -344,24 +354,85 @@ $lines.Add('  <ItemGroup>')
 $lines.Add('    <__UniversalDevKitAvailableComponent Include="' + ($componentNames -join ';') + '" />')
 $lines.Add('    <__UniversalDevKitComponent Include="$(UniversalDevKitComponents)" />')
 $lines.Add('  </ItemGroup>')
+# Для ProjectOnly раскрываем Shared-граф, сохраняя явно динамические зависимости.
+. (Join-Path $PSScriptRoot 'Modules/Module.Udk.Connection/Private/ConnectionPlan.ps1')
+$sourceGraphs = @{}
+foreach ($rootName in $componentNames) {
+    if ($binaryComponentRegistry[$rootName].StateScope -ne 'process') {
+        $sourceGraphs[$rootName] = Resolve-UdkLinkageGraph @($rootName) @{ $rootName = 'Shared' } $binaryComponentRegistry
+    }
+}
+function GetSourceCondition([string[]]$Roots) {
+    return (@($Roots | ForEach-Object {
+        '$([System.String]::Copy('';$(UniversalDevKitComponents);'').Contains('';' + $_ + ';''))'
+    }) -join ' Or ')
+}
 $lines.Add('  <PropertyGroup>')
 foreach ($name in $componentNames) {
-    $selectors = @($componentNames | Where-Object { $name -cin $closures[$_] })
-    $conditions = @($selectors | ForEach-Object {
-        '$([System.String]::Copy('';$(UniversalDevKitComponents);'').Contains('';' + $_ + ';''))'
-    })
+    $selectors = @($sourceGraphs.Keys | Where-Object { $sourceGraphs[$_].ResolvedModes[$name] -eq 'Shared' } | Sort-Object)
     $lines.Add('    <__HasUniversalDevKit' + $name + '>false</__HasUniversalDevKit' + $name + '>')
-    $lines.Add('    <__HasUniversalDevKit' + $name + ' Condition="' + ($conditions -join ' Or ') + '">true</__HasUniversalDevKit' + $name + '>')
+    if ($selectors.Count) {
+        $lines.Add('    <__HasUniversalDevKit' + $name + ' Condition="' + (GetSourceCondition $selectors) + '">true</__HasUniversalDevKit' + $name + '>')
+    }
 }
 $lines.Add('  </PropertyGroup>')
 foreach ($name in $componentNames) {
-    $lines.Add('  <Import Project="' + $name + '\UniversalDevKit.' + $name + '.Shared.vcxitems" Condition="' +
-        '''$(__HasUniversalDevKit' + $name + ')'' == ''true''" Label="Shared" />')
+    if ($binaryComponentRegistry[$name].StateScope -ne 'process') {
+        $lines.Add('  <Import Project="' + $name + '\UniversalDevKit.' + $name + '.Shared.vcxitems" Condition="' +
+            '''$(__HasUniversalDevKit' + $name + ')'' == ''true''" Label="Shared" />')
+    }
+    foreach ($variant in @('Static', 'Dynamic')) {
+        $selectors = @($sourceGraphs.Keys | Where-Object { $sourceGraphs[$_].ResolvedModes[$name] -eq $variant } | Sort-Object)
+        if (-not $selectors.Count) {
+            continue
+        }
+        $condition = GetSourceCondition $selectors
+        $lines.Add('  <ItemGroup Condition="' + $condition + '">')
+        $lines.Add('    <ProjectReference Include="$(MSBuildThisFileDirectory)' + $name + '\UniversalDevKit.' + $name + '.' + $variant + '.vcxproj">')
+        $linkSelectors = @($selectors | Where-Object { $name -cin $sourceGraphs[$_].LinkComponents })
+        $lines.Add('      <LinkLibraryDependencies>false</LinkLibraryDependencies>')
+        if ($linkSelectors.Count) {
+            $lines.Add('      <LinkLibraryDependencies Condition="' + (GetSourceCondition $linkSelectors) + '">true</LinkLibraryDependencies>')
+        }
+        $lines.Add('    </ProjectReference>')
+        if ($variant -eq 'Dynamic') {
+            $lines.Add('    <__UniversalDevKitRuntimeProject Include="$(MSBuildThisFileDirectory)' + $name + '\UniversalDevKit.' + $name + '.Dynamic.vcxproj" />')
+        }
+        $lines.Add('  </ItemGroup>')
+        $definitionSelectors = @($selectors | Where-Object { $name -cin $sourceGraphs[$_].DefinitionComponents })
+        if ($definitionSelectors.Count) {
+            $lines.Add('  <ItemDefinitionGroup Condition="' + (GetSourceCondition $definitionSelectors) + '">')
+            $lines.Add('    <ClCompile><PreprocessorDefinitions>UNIVERSALDEVKIT_' + $name.ToUpperInvariant() + '_DYNAMIC;%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile>')
+            $lines.Add('  </ItemDefinitionGroup>')
+        }
+    }
 }
+$lines.Add('  <Import Project="UniversalDevKit.Runtime.targets" />')
 $lines.Add('  <Target Name="__UniversalDevKitValidateComponents" BeforeTargets="PrepareForBuild">')
 $lines.Add('    <Error Condition="''$(UniversalDevKitComponents)'' == ''''" Text="UniversalDevKitComponents must be specified." />')
 $invalidConditions = @($componentNames | ForEach-Object { '''%(__UniversalDevKitComponent.Identity)'' != ''' + $_ + '''' })
 $lines.Add('    <Error Condition="' + ($invalidConditions -join ' and ') + '" Text="Unsupported UniversalDevKit component: %(__UniversalDevKitComponent.Identity)" />')
+foreach ($rootName in $componentNames) {
+    if ($binaryComponentRegistry[$rootName].StateScope -eq 'process') {
+        $lines.Add('    <Error Condition="' + (GetSourceCondition @($rootName)) + '" Text="Process-state component requires Dynamic: ' + $rootName + '. Use Connect with a solution." />')
+    }
+}
+# Отклоняем несовместимые варианты, выбранные разными Shared-корнями.
+foreach ($name in $componentNames) {
+    foreach ($firstRoot in @($sourceGraphs.Keys | Sort-Object)) {
+        foreach ($secondRoot in @($sourceGraphs.Keys | Sort-Object)) {
+            if ($firstRoot -cge $secondRoot) {
+                continue
+            }
+            $firstMode = $sourceGraphs[$firstRoot].ResolvedModes[$name]
+            $secondMode = $sourceGraphs[$secondRoot].ResolvedModes[$name]
+            if ($firstMode -and $secondMode -and $firstMode -cne $secondMode) {
+                $condition = '(' + (GetSourceCondition @($firstRoot)) + ') And (' + (GetSourceCondition @($secondRoot)) + ')'
+                $lines.Add('    <Error Condition="' + $condition + '" Text="Conflicting linkage for component: ' + $name + '" />')
+            }
+        }
+    }
+}
 $lines.Add('  </Target>')
 $lines.Add('</Project>')
 $relativePath = 'Projects/MsBuild/UniversalDevKit.Sources.targets'
@@ -381,6 +452,9 @@ $libraryGuids = @{}
 $projectTemplate = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Templates/Component.vcxproj.in'))
 foreach ($name in $componentNames) {
     foreach ($mode in @('Static', 'Dynamic')) {
+        if ($mode -eq 'Static' -and $binaryComponentRegistry[$name].StateScope -eq 'process') {
+            continue
+        }
         $relativePath = "Projects/MsBuild/$name/UniversalDevKit.$name.$mode.vcxproj"
         $targetPath = Join-Path $repositoryPath $relativePath
         $configurationType = if ($mode -eq 'Static') {
@@ -432,6 +506,9 @@ foreach ($name in $componentNames) {
     $lines.Add('<!-- Сформировано из Components.json; не редактируйте вручную. -->')
     $lines.Add('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
     foreach ($mode in @('Static', 'Dynamic')) {
+        if ($mode -eq 'Static' -and $binaryComponentRegistry[$name].StateScope -eq 'process') {
+            continue
+        }
         $graph = Resolve-UdkLinkageGraph @($name) @{ $name = $mode } $binaryComponentRegistry
         $roots = @($binaryComponentRegistry[$name].Dependencies | ForEach-Object { $_.Component })
         $dependencyGraph = Resolve-UdkLinkageGraph $roots $graph.ResolvedModes $binaryComponentRegistry
@@ -490,6 +567,9 @@ if (Test-Path -LiteralPath $solutionPath) {
     }
     foreach ($name in $componentNames) {
         foreach ($mode in @('Shared', 'Static', 'Dynamic')) {
+            if ($mode -ne 'Dynamic' -and $binaryComponentRegistry[$name].StateScope -eq 'process') {
+                continue
+            }
             $extension = if ($mode -eq 'Shared') {
                 'vcxitems'
             } else {
