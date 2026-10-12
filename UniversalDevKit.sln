@@ -13,15 +13,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{D832A37F-03A2-4EBD-9FF9-BC27D415378B}"
 	ProjectSection(SolutionItems) = preProject
 		Scripts\PowerShell\Connect.ps1 = Scripts\PowerShell\Connect.ps1
-		Scripts\PowerShell\Connect.README.md = Scripts\PowerShell\Connect.README.md
 		Scripts\PowerShell\Connect.Tests.ps1 = Scripts\PowerShell\Connect.Tests.ps1
 		Scripts\PowerShell\FormatXmlAttributes.ps1 = Scripts\PowerShell\FormatXmlAttributes.ps1
-		Scripts\PowerShell\Templates\Component.vcxproj.in = Scripts\PowerShell\Templates\Component.vcxproj.in
 		Scripts\PowerShell\ConnectConsole.ps1 = Scripts\PowerShell\ConnectConsole.ps1
 		Scripts\PowerShell\GetSolutionInjector.ps1 = Scripts\PowerShell\GetSolutionInjector.ps1
 		Scripts\PowerShell\GenerateComponentProjects.ps1 = Scripts\PowerShell\GenerateComponentProjects.ps1
-		Scripts\PowerShell\GenerateComponentProjects.README.md = Scripts\PowerShell\GenerateComponentProjects.README.md
 		Scripts\PowerShell\UpdateProjectFilters.ps1 = Scripts\PowerShell\UpdateProjectFilters.ps1
+		Scripts\PowerShell\TestCMakePackage.ps1 = Scripts\PowerShell\TestCMakePackage.ps1
+		Scripts\PowerShell\TestComponentRegistry.ps1 = Scripts\PowerShell\TestComponentRegistry.ps1
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Static", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Static.vcxproj", "{C6B94069-54C2-4B96-880D-4C058A605C56}"
@@ -72,8 +71,14 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Dynamic", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj", "{88573491-8330-4D25-A3C2-FAAB1D69E589}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{8B6DD9E6-3057-45B9-80F6-B813601BE33B}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Dependencies.props = Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Dependencies.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dependencies.props = Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dependencies.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{066DAD5F-063F-43BF-8ADC-0E76A36CA54D}"
 EndProject
@@ -111,6 +116,90 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{CB7EEAB5
 		Scripts\Tools\README.md = Scripts\Tools\README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{0458F395-ECF0-44BA-9C83-38D6F7E56AF3}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\Architecture.md = Docs\Architecture.md
+		Docs\CMake.md = Docs\CMake.md
+		Docs\Components.md = Docs\Components.md
+		Docs\Connect.md = Docs\Connect.md
+		Docs\MSBuild.md = Docs\MSBuild.md
+		Docs\StateScope.md = Docs\StateScope.md
+		Docs\Tools.md = Docs\Tools.md
+		Docs\Validation.md = Docs\Validation.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "Repository", "{01643071-A00B-441F-B890-826B2408BC9D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		AGENTS.md = AGENTS.md
+		README.md = README.md
+		TODO.md = TODO.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{A2BAABAE-02D4-4685-9081-F599C5AF7D30}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\PowerShell\Templates\Component.vcxproj.in = Scripts\PowerShell\Templates\Component.vcxproj.in
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{75E9BBC5-6A5A-4C7F-BCB9-30ED29C2CF97}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CmakeContract", "CmakeContract", "{8FF13B81-E592-4B31-ACA4-88226F561561}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\CmakeContract\CMakeLists.txt = Tests\CmakeContract\CMakeLists.txt
+		Tests\CmakeContract\Main.cpp = Tests\CmakeContract\Main.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CmakePackage", "CmakePackage", "{E8DEBDF0-D638-4A16-B71D-AECBFB585134}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\CmakePackage\CMakeLists.txt = Tests\CmakePackage\CMakeLists.txt
+		Tests\CmakePackage\Main.cpp = Tests\CmakePackage\Main.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RegistryFixture", "RegistryFixture", "{FDF08BBA-0AE2-454B-B59B-BD76C430ADE1}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\RegistryFixture\CMakeLists.txt = Tests\RegistryFixture\CMakeLists.txt
+		Tests\RegistryFixture\Components.json = Tests\RegistryFixture\Components.json
+		Tests\RegistryFixture\Main.cpp = Tests\RegistryFixture\Main.cpp
+		Tests\RegistryFixture\Plugin.cpp = Tests\RegistryFixture\Plugin.cpp
+		Tests\RegistryFixture\UniversalDevKit.sln = Tests\RegistryFixture\UniversalDevKit.sln
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Includes", "Includes", "{CC4214B5-B1AF-4B31-820B-39A4B723C991}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniversalDevKit", "UniversalDevKit", "{B08EB3A0-BB49-487F-B606-70EA2492B4D9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{FC265B74-D62F-45AE-849D-66668D100250}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\RegistryFixture\Includes\UniversalDevKit\Service\Service.h = Tests\RegistryFixture\Includes\UniversalDevKit\Service\Service.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{4E99AF35-2256-4109-9517-748586CC5677}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{A4EEF1FE-62BE-49F7-9419-231E142DF697}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\RegistryFixture\Projects\Components\Example.json = Tests\RegistryFixture\Projects\Components\Example.json
+		Tests\RegistryFixture\Projects\Components\Service.json = Tests\RegistryFixture\Projects\Components\Service.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{ADDD4A8E-2173-4EF7-98F1-C081E57C91A5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example", "Example", "{CD255A25-23DC-47EE-A607-5A357DC7FA03}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\RegistryFixture\Sources\Example\Common.cpp = Tests\RegistryFixture\Sources\Example\Common.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "platform", "platform", "{89E6A705-77F8-474B-B5F1-EDAB1D6EDC5D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{11A99650-D891-4D42-9F92-7637627159A9}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\RegistryFixture\Sources\Example\platform\Windows\Native.cpp = Tests\RegistryFixture\Sources\Example\platform\Windows\Native.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{C89835AC-BCDD-40EF-A69C-3AFEE4BC76F7}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\RegistryFixture\Sources\Service\Service.cpp = Tests\RegistryFixture\Sources\Service\Service.cpp
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -138,6 +227,20 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{A2BAABAE-02D4-4685-9081-F599C5AF7D30} = {D832A37F-03A2-4EBD-9FF9-BC27D415378B}
+		{8FF13B81-E592-4B31-ACA4-88226F561561} = {75E9BBC5-6A5A-4C7F-BCB9-30ED29C2CF97}
+		{E8DEBDF0-D638-4A16-B71D-AECBFB585134} = {75E9BBC5-6A5A-4C7F-BCB9-30ED29C2CF97}
+		{FDF08BBA-0AE2-454B-B59B-BD76C430ADE1} = {75E9BBC5-6A5A-4C7F-BCB9-30ED29C2CF97}
+		{FC265B74-D62F-45AE-849D-66668D100250} = {B08EB3A0-BB49-487F-B606-70EA2492B4D9}
+		{B08EB3A0-BB49-487F-B606-70EA2492B4D9} = {CC4214B5-B1AF-4B31-820B-39A4B723C991}
+		{CC4214B5-B1AF-4B31-820B-39A4B723C991} = {FDF08BBA-0AE2-454B-B59B-BD76C430ADE1}
+		{A4EEF1FE-62BE-49F7-9419-231E142DF697} = {4E99AF35-2256-4109-9517-748586CC5677}
+		{4E99AF35-2256-4109-9517-748586CC5677} = {FDF08BBA-0AE2-454B-B59B-BD76C430ADE1}
+		{CD255A25-23DC-47EE-A607-5A357DC7FA03} = {ADDD4A8E-2173-4EF7-98F1-C081E57C91A5}
+		{ADDD4A8E-2173-4EF7-98F1-C081E57C91A5} = {FDF08BBA-0AE2-454B-B59B-BD76C430ADE1}
+		{11A99650-D891-4D42-9F92-7637627159A9} = {89E6A705-77F8-474B-B5F1-EDAB1D6EDC5D}
+		{89E6A705-77F8-474B-B5F1-EDAB1D6EDC5D} = {CD255A25-23DC-47EE-A607-5A357DC7FA03}
+		{C89835AC-BCDD-40EF-A69C-3AFEE4BC76F7} = {ADDD4A8E-2173-4EF7-98F1-C081E57C91A5}
 		{8B6A058C-7402-4392-8956-6B1489D9E118} = {D832A37F-03A2-4EBD-9FF9-BC27D415378B}
 		{18F6F60D-7635-4701-A27F-616A9A9C251A} = {8B6A058C-7402-4392-8956-6B1489D9E118}
 		{BB4173F9-2ECC-455A-AE66-4115A51C9396} = {18F6F60D-7635-4701-A27F-616A9A9C251A}

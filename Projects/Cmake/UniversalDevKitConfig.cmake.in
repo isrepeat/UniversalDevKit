@@ -15,6 +15,31 @@ include(CMakeFindDependencyMacro)
 # Путь отсчитывается от установленного файла конфигурации.
 include("${CMAKE_CURRENT_LIST_DIR}/UniversalDevKitTargets.cmake")
 
+# Запрещаем неявную подстановку Release вместо Debug и наоборот.
+# Проверка CMake применяется только к targets, используемым consumer.
+set(packageConsumerConfigurations "${CMAKE_CONFIGURATION_TYPES}")
+if(NOT packageConsumerConfigurations)
+    if(CMAKE_BUILD_TYPE)
+        set(packageConsumerConfigurations "${CMAKE_BUILD_TYPE}")
+    else()
+        set(packageConsumerConfigurations NOCONFIG)
+    endif()
+endif()
+foreach(componentName IN ITEMS @availablePackageComponents@)
+    foreach(componentVariant IN ITEMS Static Dynamic)
+        set(componentImportedTarget "UniversalDevKit::${componentName}.${componentVariant}")
+        if(TARGET ${componentImportedTarget})
+            if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+                set_property(TARGET ${componentImportedTarget} PROPERTY MAP_IMPORTED_CONFIG_ NOCONFIG)
+            endif()
+            foreach(consumerConfiguration IN LISTS packageConsumerConfigurations)
+                string(TOUPPER "${consumerConfiguration}" consumerConfigurationUpper)
+                set_property(TARGET ${componentImportedTarget} PROPERTY "MAP_IMPORTED_CONFIG_${consumerConfigurationUpper}" "${consumerConfigurationUpper}")
+            endforeach()
+        endif()
+    endforeach()
+endforeach()
+
 # Все targets загружаются вместе, но эти признаки позволяют проверить COMPONENTS.
 # Неизвестный компонент не получает значение TRUE и считается ненайденным.
 set(UniversalDevKit_AVAILABLE_COMPONENTS "@availablePackageComponents@")
