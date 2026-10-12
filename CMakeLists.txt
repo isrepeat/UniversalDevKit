@@ -10,7 +10,8 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     endif()
 endif()
 
-project(UniversalDevKit VERSION 0.1.0 LANGUAGES CXX)
+include("Projects/Cmake/Version.cmake")
+project(UniversalDevKit VERSION ${udkReleaseVersion} LANGUAGES CXX)
 
 set(UniversalDevKit_COMPONENTS "ALL" CACHE STRING "Components to build; ALL or a semicolon-separated list")
 option(UniversalDevKit_BUILD_STATIC "Build static variants" ON)

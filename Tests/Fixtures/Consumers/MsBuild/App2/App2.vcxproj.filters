@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сгенерировано UpdateProjectFilters.ps1. Изменяйте файлы проектов и настройки фильтров. -->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Tests" />
+    <Filter Include="Tests\Fixtures" />
+    <Filter Include="Tests\Fixtures\Consumers" />
+    <Filter Include="Tests\Fixtures\Consumers\MsBuild" />
+    <Filter Include="Tests\Fixtures\Consumers\MsBuild\App2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>Tests\Fixtures\Consumers\MsBuild\App2</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

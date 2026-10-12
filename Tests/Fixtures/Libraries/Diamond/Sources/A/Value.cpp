@@ -1,7 +1,7 @@
-#include <UniversalDevKit/A/Value.h>
+#include "../../Includes/UniversalDevKit/A/Value.h"
 
-#include <UniversalDevKit/B/Value.h>
-#include <UniversalDevKit/C/Value.h>
+#include "../../Includes/UniversalDevKit/B/Value.h"
+#include "../../Includes/UniversalDevKit/C/Value.h"
 
 namespace udk_test {
     int ValueA() { return ValueB() + ValueC(); }

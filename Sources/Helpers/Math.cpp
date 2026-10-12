@@ -1,4 +1,4 @@
-#include <UniversalDevKit/Helpers/Math.h>
+#include "../../Includes/UniversalDevKit/Helpers/Math.h"
 
 namespace universaldevkit::math {
     bool IsPowerOfTwo(unsigned int value) noexcept {

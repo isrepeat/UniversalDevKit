@@ -2,6 +2,8 @@
 
 ## Архитектура
 
+RunExport.cmd проверяет общий API-макрос: Static/Dynamic Debug/Release Windows x64, вызов публичной функции отдельным consumer и таблицу экспортов DLL через dumpbin. Сценарий Export включён в общий запуск; Linux/Android в этой проверке не используются. Политика версий и ABI описана в Docs/Abi.md в корне репозитория.
+
 Fixtures/Consumers содержит приложения-потребители: MsBuild, CmakePackage, CmakeContract и RequirementsPackage. Fixtures/Libraries содержит искусственные библиотеки Diamond и Registry; их заголовки UniversalDevKit принадлежат тестовым компонентам, а не публичному API рабочего UDK.
 
 Integration/MsBuild содержит сценарии Connect, Integration/Cmake — проверки CMake-пакета и схемы требований. Infrastructure содержит общие инструменты и проверку генератора реестра. Scripts содержит точки запуска.

@@ -242,8 +242,8 @@ foreach ($includePath in $manifest.includes) {
     $objects = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
     $lines = [Collections.Generic.List[string]]::new()
     $lines.Add('<?xml version="1.0" encoding="utf-8"?>')
+    $lines.Add('<!-- Сгенерировано GenerateComponentProjects.ps1. Изменяйте реестр компонентов. -->')
     $lines.Add('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
-    $lines.Add('  <!-- Сформировано из Components.json; изменяйте реестр компонентов и запускайте GenerateComponentProjects. -->')
     $lines.Add('  <PropertyGroup Label="Globals">')
     $lines.Add('    <HasSharedItems>true</HasSharedItems>')
     $lines.Add('    <ItemsProjectGuid>{' + $guid.ToString().ToUpperInvariant() + '}</ItemsProjectGuid>')
@@ -342,7 +342,7 @@ foreach ($name in $componentNames) { $closures[$name] = @(GetDependencyClosure $
 
 $lines = [Collections.Generic.List[string]]::new()
 $lines.Add('<?xml version="1.0" encoding="utf-8"?>')
-$lines.Add('<!-- Этот файл полностью формируется Scripts/PowerShell/GenerateComponentProjects.ps1')
+$lines.Add('<!-- Сгенерировано GenerateComponentProjects.ps1. Этот файл полностью формируется')
 $lines.Add('     из Components.json и включённых описаний в Projects/Components/.')
 $lines.Add('     Не редактируйте его вручную: изменения будут заменены при следующей генерации.')
 $lines.Add('     Для обновления измените JSON и запустите Scripts/GenerateComponentProjects.cmd.')
@@ -532,7 +532,7 @@ foreach ($name in $componentNames) {
 foreach ($name in $componentNames) {
     $lines = [Collections.Generic.List[string]]::new()
     $lines.Add('<?xml version="1.0" encoding="utf-8"?>')
-    $lines.Add('<!-- Сформировано из Components.json; не редактируйте вручную. -->')
+    $lines.Add('<!-- Сгенерировано GenerateComponentProjects.ps1. Изменяйте реестр компонентов. -->')
     $lines.Add('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
     foreach ($mode in @('Static', 'Dynamic')) {
         if ($mode -eq 'Static' -and $binaryComponentRegistry[$name].StateScope -eq 'process') {
@@ -639,6 +639,39 @@ if (Test-Path -LiteralPath $solutionPath) {
     if ($solutionContent -cne $solutionOriginal) {
         $updates.Add([pscustomobject]@{ Path = $solutionPath; RelativePath = 'UniversalDevKit.sln'; Content = $solutionContent.TrimEnd([char[]]"`r`n"); Original = $solutionOriginal })
     }
+}
+
+# Заголовки экспорта формируются для любого компонента, включая тестовые реестры.
+function AddGeneratedMetadata([string]$RelativePath, [string]$Content) {
+    $path = Join-Path $repositoryPath $RelativePath
+    $content = $Content.TrimEnd([char[]]"`r`n")
+    $original = if (Test-Path -LiteralPath $path) { [IO.File]::ReadAllText($path) } else { $null }
+    if ($original -cne $content) {
+        $updates.Add([pscustomobject]@{ Path = $path; RelativePath = $RelativePath; Content = $content; Original = $original })
+    }
+}
+$exportTemplate = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Templates/Export.h.in'))
+$componentExportTemplate = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Templates/ComponentExport.h.in'))
+AddGeneratedMetadata 'Includes/UniversalDevKit/Export.h' $exportTemplate
+foreach ($name in $componentNames) {
+    AddGeneratedMetadata "Includes/UniversalDevKit/$name/Export.h" ($componentExportTemplate.Replace('@COMPONENT@', $name.ToUpperInvariant()))
+}
+$versionPath = Join-Path $repositoryPath 'Version.json'
+if (Test-Path -LiteralPath $versionPath) {
+    $version = Get-Content -LiteralPath $versionPath -Raw -Encoding UTF8 | ConvertFrom-Json
+    if ($version.version -notmatch '^\d+\.\d+\.\d+$' -or [string]$version.abiVersion -notmatch '^\d+$') { throw 'Invalid Version.json' }
+    AddGeneratedMetadata 'Includes/UniversalDevKit/Version.h' ("// Сгенерировано GenerateComponentProjects.ps1. Изменяйте Version.json.`n#pragma once`n`n#define UNIVERSALDEVKIT_VERSION `"$($version.version)`"`n#define UNIVERSALDEVKIT_ABI_VERSION $($version.abiVersion)")
+    $versionLines = @(
+        '<?xml version="1.0" encoding="utf-8"?>'
+        '<!-- Сгенерировано GenerateComponentProjects.ps1. Изменяйте Version.json. -->'
+        '<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">'
+        '  <PropertyGroup>'
+        ('    <UniversalDevKitVersion>' + $version.version + '</UniversalDevKitVersion>')
+        ('    <UniversalDevKitAbiVersion>' + $version.abiVersion + '</UniversalDevKitAbiVersion>')
+        '  </PropertyGroup>'
+        '</Project>'
+    )
+    AddGeneratedMetadata 'Projects/MsBuild/UniversalDevKit.Version.props' ($versionLines -join "`n")
 }
 
 if ($PassThru) {

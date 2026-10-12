@@ -1,0 +1,7 @@
+{
+  "name": "ExportProbe",
+  "msbuildGuid": "{501F4BCD-EC51-4D98-9993-7E3B987A54E8}",
+  "dependencies": [],
+  "headers": ["Includes/UniversalDevKit/ExportProbe/Probe.h"],
+  "sources": ["Sources/ExportProbe/Probe.cpp"]
+}

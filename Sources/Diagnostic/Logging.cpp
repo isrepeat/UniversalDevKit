@@ -1,5 +1,6 @@
-#include <UniversalDevKit/Diagnostic/Logging.h>
-#include <UniversalDevKit/Helpers/Text.h>
+#include "../../Includes/UniversalDevKit/Diagnostic/Logging.h"
+
+#include "../../Includes/UniversalDevKit/Helpers/Text.h"
 
 #include <iostream>
 #include <mutex>

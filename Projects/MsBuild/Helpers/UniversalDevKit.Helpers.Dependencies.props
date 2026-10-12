@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Сформировано из Components.json; не редактируйте вручную. -->
+<!-- Сгенерировано GenerateComponentProjects.ps1. Изменяйте реестр компонентов. -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Condition="'$(ConfigurationType)' == 'StaticLibrary'">
   </ItemGroup>

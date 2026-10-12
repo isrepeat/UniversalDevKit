@@ -1,4 +1,4 @@
-#include <UniversalDevKit/Helpers/Text.h>
+#include "../../Includes/UniversalDevKit/Helpers/Text.h"
 
 namespace universaldevkit::text {
     bool EndsWithLineBreak(std::string_view text) noexcept {

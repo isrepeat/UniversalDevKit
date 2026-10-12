@@ -1,0 +1,13 @@
+// Сгенерировано GenerateComponentProjects.ps1. API-макрос компонента; изменяйте шаблон.
+#pragma once
+#include "../Export.h"
+
+#if defined(UNIVERSALDEVKIT_@COMPONENT@_DYNAMIC)
+#if defined(UNIVERSALDEVKIT_@COMPONENT@_EXPORTS)
+#define UNIVERSALDEVKIT_@COMPONENT@_API UNIVERSALDEVKIT_API_EXPORT
+#else
+#define UNIVERSALDEVKIT_@COMPONENT@_API UNIVERSALDEVKIT_API_IMPORT
+#endif
+#else
+#define UNIVERSALDEVKIT_@COMPONENT@_API
+#endif

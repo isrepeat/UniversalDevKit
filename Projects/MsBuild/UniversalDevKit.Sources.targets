@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Этот файл полностью формируется Scripts/PowerShell/GenerateComponentProjects.ps1
+<!-- Сгенерировано GenerateComponentProjects.ps1. Этот файл полностью формируется
      из Components.json и включённых описаний в Projects/Components/.
      Не редактируйте его вручную: изменения будут заменены при следующей генерации.
      Для обновления измените JSON и запустите Scripts/GenerateComponentProjects.cmd.

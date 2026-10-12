@@ -70,6 +70,7 @@ foreach ($project in $projects) {
 
     $lines = [Collections.Generic.List[string]]::new()
     $lines.Add('<?xml version="1.0" encoding="utf-8"?>')
+    $lines.Add('<!-- Сгенерировано UpdateProjectFilters.ps1. Изменяйте файлы проектов и настройки фильтров. -->')
     $lines.Add('<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
     $lines.Add('  <ItemGroup>')
     foreach ($filter in ($filters | Sort-Object -CaseSensitive)) {

@@ -1,7 +1,7 @@
 #include <winsock2.h>
 
-#include <UniversalDevKit/Example/Example.h>
-#include <UniversalDevKit/Service/Service.h>
+#include "../../Includes/UniversalDevKit/Example/Example.h"
+#include "../../Includes/UniversalDevKit/Service/Service.h"
 
 #include <span>
 
