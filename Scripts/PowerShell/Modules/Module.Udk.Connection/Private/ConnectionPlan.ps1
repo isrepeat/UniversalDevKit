@@ -4,9 +4,15 @@ function Resolve-UdkLinkageGraph {
     $resolvedModes = @{}
     $origins = @{}
     function VisitComponent([string]$Name, [string]$Mode, [string[]]$Stack) {
-        if ($Name -cin $Stack) { throw ('Component dependency cycle: ' + (($Stack + $Name) -join ' -> ')) }
-        if (-not $ComponentRegistry.ContainsKey($Name)) { throw "Unknown component: $Name" }
-        if ($Mode -cnotin @('Shared', 'Static', 'Dynamic')) { throw "Unsupported linkage for ${Name}: $Mode" }
+        if ($Name -cin $Stack) {
+            throw ('Component dependency cycle: ' + (($Stack + $Name) -join ' -> '))
+        }
+        if (-not $ComponentRegistry.ContainsKey($Name)) {
+            throw "Unknown component: $Name"
+        }
+        if ($Mode -cnotin @('Shared', 'Static', 'Dynamic')) {
+            throw "Unsupported linkage for ${Name}: $Mode"
+        }
         if ($resolvedModes.ContainsKey($Name)) {
             if ($resolvedModes[$Name] -cne $Mode) {
                 throw "Conflicting linkage for ${Name}: $($resolvedModes[$Name]) via $($origins[$Name]); $Mode via $(($Stack + $Name) -join ' -> ')."
@@ -16,7 +22,13 @@ function Resolve-UdkLinkageGraph {
         $resolvedModes[$Name] = $Mode
         $origins[$Name] = ($Stack + $Name) -join ' -> '
         foreach ($dependency in $ComponentRegistry[$Name].Dependencies) {
-            $dependencyMode = if ($Mode -eq 'Shared') { 'Shared' } elseif ($dependency.Linkage -eq 'static') { 'Static' } else { $Mode }
+            $dependencyMode = if ($Mode -eq 'Shared') {
+                'Shared'
+            } elseif ($dependency.Linkage -eq 'static') {
+                'Static'
+            } else {
+                $Mode
+            }
             VisitComponent $dependency.Component $dependencyMode @($Stack + $Name)
         }
     }
@@ -25,9 +37,13 @@ function Resolve-UdkLinkageGraph {
     # Финальный линкер раскрывает статические зависимости и публичные требования DLL.
     $link = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     function VisitLink([string]$Name) {
-        if ($resolvedModes[$Name] -eq 'Shared' -or -not $link.Add($Name)) { return }
+        if ($resolvedModes[$Name] -eq 'Shared' -or -not $link.Add($Name)) {
+            return
+        }
         foreach ($dependency in $ComponentRegistry[$Name].Dependencies) {
-            if ($resolvedModes[$Name] -eq 'Static' -or $dependency.Visibility -eq 'public') { VisitLink $dependency.Component }
+            if ($resolvedModes[$Name] -eq 'Static' -or $dependency.Visibility -eq 'public') {
+                VisitLink $dependency.Component
+            }
         }
     }
     foreach ($name in $Components) { VisitLink $name }
@@ -35,9 +51,13 @@ function Resolve-UdkLinkageGraph {
     # Макросы импорта нужны корням и только публично доступным зависимостям.
     $definitions = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     function VisitPublic([string]$Name) {
-        if (-not $definitions.Add($Name)) { return }
+        if (-not $definitions.Add($Name)) {
+            return
+        }
         foreach ($dependency in $ComponentRegistry[$Name].Dependencies) {
-            if ($dependency.Visibility -eq 'public') { VisitPublic $dependency.Component }
+            if ($dependency.Visibility -eq 'public') {
+                VisitPublic $dependency.Component
+            }
         }
     }
     foreach ($name in $Components) { VisitPublic $name }
@@ -71,12 +91,16 @@ function New-UdkConnectionPlan {
     if ($cleanupRequested) {
         if ($Components) {
             foreach ($component in $Components) {
-                if ($component -cnotin $connectedComponents) { throw "Component is not explicitly connected: $component" }
+                if ($component -cnotin $connectedComponents) {
+                    throw "Component is not explicitly connected: $component"
+                }
             }
             $componentsToRemove = @($Components)
             $Components = @($connectedComponents | Where-Object { $_ -cnotin $componentsToRemove })
         }
-        else { $Components = @() }
+        else {
+            $Components = @()
+        }
         $Disconnect = -not $Components.Count
     }
     else {
@@ -87,22 +111,40 @@ function New-UdkConnectionPlan {
     if (-not $Disconnect) {
         $availableComponents = @($ComponentRegistry.Keys | Sort-Object)
         if (-not $Components) {
-            $Components = if ('Helpers' -cin $availableComponents) { @('Helpers') } else { @($availableComponents[0]) }
+            $Components = if ('Helpers' -cin $availableComponents) {
+                @('Helpers')
+            } else {
+                @($availableComponents[0])
+            }
         }
         foreach ($component in $Components) {
-            if ($component -cnotin $availableComponents) { throw "Unsupported component: $component" }
+            if ($component -cnotin $availableComponents) {
+                throw "Unsupported component: $component"
+            }
         }
         $Components = @($Components | Select-Object -Unique)
         $componentRegistry = $ComponentRegistry
         foreach ($name in $ComponentModes.Keys) {
-            if ($name -cnotin $Components) { throw "Linkage specified for an unselected component: $name" }
+            if ($name -cnotin $Components) {
+                throw "Linkage specified for an unselected component: $name"
+            }
         }
         # Режимы проверяем до изменения consumer и решения; старые подключения считаем Shared.
         $rootModes = @{}
         foreach ($name in $Components) {
-            $mode = if ($ComponentModes.ContainsKey($name)) { $ComponentModes[$name] } elseif ($currentModes.ContainsKey($name)) { $currentModes[$name] } else { 'Shared' }
-            if ($mode -cnotin @('Shared', 'Static', 'Dynamic')) { throw "Unsupported linkage for ${name}: $mode" }
-            if ($ProjectOnly -and $mode -ne 'Shared') { throw 'Static/Dynamic linkage requires SolutionPath.' }
+            $mode = if ($ComponentModes.ContainsKey($name)) {
+                $ComponentModes[$name]
+            } elseif ($currentModes.ContainsKey($name)) {
+                $currentModes[$name]
+            } else {
+                'Shared'
+            }
+            if ($mode -cnotin @('Shared', 'Static', 'Dynamic')) {
+                throw "Unsupported linkage for ${name}: $mode"
+            }
+            if ($ProjectOnly -and $mode -ne 'Shared') {
+                throw 'Static/Dynamic linkage requires SolutionPath.'
+            }
             $rootModes[$name] = $mode
         }
         $graph = Resolve-UdkLinkageGraph $Components $rootModes $ComponentRegistry

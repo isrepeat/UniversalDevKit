@@ -1,0 +1,1 @@
+int WindowsValue() { return 2; }

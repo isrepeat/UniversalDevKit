@@ -12,7 +12,9 @@ function GetSolutionSharedProjects([string]$Path) {
     $pattern = '(?m)^Project\("[^\r\n]+"\)\s*=\s*"UniversalDevKit\.([A-Z][A-Za-z0-9]*)\.Shared",\s*"([^"]+\.vcxitems)",\s*"\{([^}]+)\}"'
     foreach ($match in [regex]::Matches([IO.File]::ReadAllText($Path), $pattern)) {
         $guid = [Guid]::Empty
-        if (-not [Guid]::TryParse($match.Groups[3].Value, [ref]$guid)) { throw 'Invalid Shared-project GUID in solution.' }
+        if (-not [Guid]::TryParse($match.Groups[3].Value, [ref]$guid)) {
+            throw 'Invalid Shared-project GUID in solution.'
+        }
         $componentPath = [IO.Path]::GetFullPath((Join-Path $solutionDirectory $match.Groups[2].Value))
         $result[$match.Groups[1].Value] = [pscustomobject]@{
             Name = $match.Groups[1].Value
@@ -26,7 +28,11 @@ function GetSolutionSharedProjects([string]$Path) {
 
 function UpdateSolutionSharedReferences([string]$Path, [Guid]$ConsumerGuid, $RemoveProjects, $AddProjects, [scriptblock]$WriteStatus) {
     $original = [IO.File]::ReadAllText($Path)
-    $newline = if ($original.Contains("`r`n")) { "`r`n" } else { "`n" }
+    $newline = if ($original.Contains("`r`n")) {
+        "`r`n"
+    } else {
+        "`n"
+    }
     $consumerKey = $ConsumerGuid.ToString().ToLowerInvariant()
     $lines = [Collections.Generic.List[string]]::new()
     foreach ($project in $AddProjects) {
@@ -34,7 +40,9 @@ function UpdateSolutionSharedReferences([string]$Path, [Guid]$ConsumerGuid, $Rem
     }
     $sectionPattern = '(?ms)^(\tGlobalSection\(SharedMSBuildProjectFiles\) = preSolution\r?\n)(.*?)(^\tEndGlobalSection)'
     if (-not [regex]::IsMatch($original, $sectionPattern)) {
-        if (-not $AddProjects.Count) { return }
+        if (-not $AddProjects.Count) {
+            return
+        }
         $section = "`tGlobalSection(SharedMSBuildProjectFiles) = preSolution$newline"
         $section += (($lines | ForEach-Object { "`t`t$_$newline" }) -join '')
         $section += "`tEndGlobalSection$newline"

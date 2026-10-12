@@ -12,6 +12,11 @@ endif()
 
 project(UniversalDevKit VERSION 0.1.0 LANGUAGES CXX)
 
+set(UniversalDevKit_COMPONENTS "ALL" CACHE STRING "Components to build; ALL or a semicolon-separated list")
+option(UniversalDevKit_BUILD_STATIC "Build static variants" ON)
+option(UniversalDevKit_BUILD_DYNAMIC "Build dynamic variants" ON)
+option(UniversalDevKit_INSTALL "Generate installation rules" ON)
+
 # INTERFACE передаёт заголовки и требования C++ потребителю, не создавая библиотеку.
 add_library(universaldevkit_headers INTERFACE)
 add_library(UniversalDevKit::Headers ALIAS universaldevkit_headers)
@@ -30,8 +35,9 @@ include(CMakePackageConfigHelpers)
 include("Projects/Cmake/ComponentDependencies.cmake")
 
 # Установка объединяет библиотеки и требования к ним в один набор экспорта.
+if(UniversalDevKit_INSTALL)
 set_target_properties(universaldevkit_headers PROPERTIES EXPORT_NAME Headers)
-install(TARGETS universaldevkit_headers ${universaldevkit_component_targets} EXPORT UniversalDevKitTargets
+install(TARGETS universaldevkit_headers ${exportedComponentTargets} EXPORT UniversalDevKitTargets
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
@@ -50,11 +56,11 @@ configure_package_config_file(
 )
 write_basic_package_version_file(
     "${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKitConfigVersion.cmake"
-    COMPATIBILITY SameMajorVersion
-    ARCH_INDEPENDENT
+    COMPATIBILITY SameMinorVersion
 )
 install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKitConfig.cmake"
     "${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKitConfigVersion.cmake"
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/UniversalDevKit"
 )
+endif()

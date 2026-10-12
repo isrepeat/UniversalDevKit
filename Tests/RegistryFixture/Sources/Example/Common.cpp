@@ -1,0 +1,1 @@
+int CommonValue() { return 1; }

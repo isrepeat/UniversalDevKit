@@ -5,11 +5,15 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Modules/Module.Udk.Connection/Private/ConnectionPlan.ps1')
 
 function AssertEqual($Actual, $Expected, [string]$Label) {
-    if (($Actual -join ';') -cne ($Expected -join ';')) { throw "${Label}: expected $($Expected -join ';'), got $($Actual -join ';')" }
+    if (($Actual -join ';') -cne ($Expected -join ';')) {
+        throw "${Label}: expected $($Expected -join ';'), got $($Actual -join ';')"
+    }
 }
 function AssertFails([scriptblock]$Action, [string]$Pattern) {
     try { & $Action | Out-Null } catch {
-        if ($_.Exception.Message -notmatch $Pattern) { throw }
+        if ($_.Exception.Message -notmatch $Pattern) {
+            throw
+        }
         return
     }
     throw "Expected failure: $Pattern"
@@ -19,8 +23,12 @@ function AssertFails([scriptblock]$Action, [string]$Pattern) {
 $xmlInput = '<Root><!-- <Node A="1" B="2" /> --><Node A="x > y" B="2" /></Root>'
 $xmlFormatted = Format-UdkXmlAttributes $xmlInput
 AssertEqual (Format-UdkXmlAttributes $xmlFormatted) $xmlFormatted 'XML formatting stability'
-if (-not $xmlFormatted.Contains('<!-- <Node A="1" B="2" /> -->')) { throw 'XML comment changed' }
-if ($xmlFormatted -notmatch 'A="x > y"\r?\n +B="2"') { throw 'XML attributes were not split' }
+if (-not $xmlFormatted.Contains('<!-- <Node A="1" B="2" /> -->')) {
+    throw 'XML comment changed'
+}
+if ($xmlFormatted -notmatch 'A="x > y"\r?\n +B="2"') {
+    throw 'XML attributes were not split'
+}
 $null = [xml]$xmlFormatted
 
 # Проверяем транзитивную DLL с внутренней статической зависимостью.
@@ -72,13 +80,23 @@ AssertEqual $plan.LinkComponents @() 'Disconnect link set'
 # Меню учитывает существующие подключения, переключение режима и удаление корней.
 . (Join-Path $PSScriptRoot 'Modules/Module.Udk.Console/Private/Menus.ps1')
 $conflict = Get-UdkMenuModeConflict @{ Diagnostic = 'Dynamic' } @{} $componentRegistry -Name Helpers -Mode Dynamic
-if ($conflict -notmatch 'Conflicting linkage for Helpers') { throw 'Menu did not block Helpers.Dynamic' }
+if ($conflict -notmatch 'Conflicting linkage for Helpers') {
+    throw 'Menu did not block Helpers.Dynamic'
+}
 $conflict = Get-UdkMenuModeConflict @{ Diagnostic = 'Dynamic' } @{} $componentRegistry -Name Helpers -Mode Static
-if ($conflict) { throw "Menu blocked compatible Static: $conflict" }
+if ($conflict) {
+    throw "Menu blocked compatible Static: $conflict"
+}
 $conflict = Get-UdkMenuModeConflict @{ Helpers = 'Shared' } @{ Helpers = 'Static' } $componentRegistry -Name Diagnostic -Mode Dynamic
-if ($conflict) { throw "Menu ignored the pending mode change: $conflict" }
+if ($conflict) {
+    throw "Menu ignored the pending mode change: $conflict"
+}
 $conflict = Get-UdkMenuModeConflict @{} @{} $componentRegistry -Name Helpers -Mode Dynamic -ProjectOnly
-if ($conflict -notmatch 'requires SolutionPath') { throw 'Menu did not block binary ProjectOnly mode' }
+if ($conflict -notmatch 'requires SolutionPath') {
+    throw 'Menu did not block binary ProjectOnly mode'
+}
 $conflict = Get-UdkMenuModeConflict @{ Diagnostic = 'Dynamic'; Helpers = 'Dynamic' } @{ Helpers = 'Dynamic' } $componentRegistry -Removal
-if ($conflict) { throw "Menu blocked removal that resolves conflict: $conflict" }
+if ($conflict) {
+    throw "Menu blocked removal that resolves conflict: $conflict"
+}
 Write-Output 'Connect dependency and menu validation tests passed.'

@@ -14,7 +14,11 @@ function Get-UdkConnectionState {
     $modes = @{}
     foreach ($name in $components) {
         $node = $project.SelectSingleNode('/*[local-name()="Project"]/*[local-name()="PropertyGroup" and @Label="UniversalDevKit"]/*[local-name()="UniversalDevKit' + $name + 'Linkage"]')
-        $modes[$name] = if ($node) { $node.InnerText } else { 'Shared' }
+        $modes[$name] = if ($node) {
+            $node.InnerText
+        } else {
+            'Shared'
+        }
     }
     return [pscustomobject]@{ Components = $components; Modes = $modes }
 }

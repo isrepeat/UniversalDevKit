@@ -19,6 +19,7 @@
   <PropertyGroup>
     <!-- Импортирующие файлы проверяют этот признак, чтобы избежать повторного импорта. -->
     <__IsUniversalDevKitPublicPropsImported>true</__IsUniversalDevKitPublicPropsImported>
+    <UniversalDevKitTargetOS Condition="'$(UniversalDevKitTargetOS)' == ''">Windows</UniversalDevKitTargetOS>
   </PropertyGroup>
 
   <ItemDefinitionGroup>

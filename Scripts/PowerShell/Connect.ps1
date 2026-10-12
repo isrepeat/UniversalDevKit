@@ -17,7 +17,9 @@ Import-Module (Join-Path $PSScriptRoot 'Modules/Module.Udk.Console/Module.Udk.Co
 # 1. Получаем реестр компонентов и запрос без изменения проектов.
 $componentRegistry = Module.Udk.Connection\Get-UdkComponentRegistry -RepositoryPath $repositoryPath
 $request = Module.Udk.Console\Show-UdkConnectionWizard @PSBoundParameters -RepositoryPath $repositoryPath -ComponentRegistry $componentRegistry
-if ($null -eq $request) { return }
+if ($null -eq $request) {
+    return
+}
 
 # 2. Рассчитываем и проверяем итоговую схему подключения.
 $state = Module.Udk.Connection\Get-UdkConnectionState -ProjectPath $request.ProjectPath

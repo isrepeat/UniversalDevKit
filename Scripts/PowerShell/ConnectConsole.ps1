@@ -20,7 +20,9 @@ catch {
     if (Get-Command Module.Udk.Console\Write-UdkConsoleText -ErrorAction SilentlyContinue) {
         Module.Udk.Console\Write-UdkConsoleText ('Failed: ' + $_.Exception.Message) Focus
     }
-    else { Write-Host ('Failed: ' + $_.Exception.Message) -ForegroundColor Yellow }
+    else {
+        Write-Host ('Failed: ' + $_.Exception.Message) -ForegroundColor Yellow
+    }
 }
 
 if (Get-Command Module.Udk.Console\Write-UdkConsoleText -ErrorAction SilentlyContinue) {

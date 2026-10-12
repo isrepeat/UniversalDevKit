@@ -1,0 +1,99 @@
+# Сборка через CMake
+
+[← README](../README.md) · [Архитектура](Architecture.md)
+
+## 1. Конфигурация и сборка — разные этапы
+
+CMake версии 3.22 или выше читает описания и генерирует систему сборки. cmake --build запускает компилятор и линкер через выбранный генератор. Корневой проект требует C++17.
+
+Для Windows x64 в среде с настроенными MSVC и Ninja:
+
+```powershell
+cmake --preset windows-x64
+cmake --build --preset windows-x64-release
+```
+
+Preset использует Ninja Multi-Config. Debug/Release выбирается при сборке, а каталог конфигурации общий. Самостоятельная конфигурация UDK должна находиться внутри !artifacts; для add_subdirectory это ограничение не действует.
+
+## 2. Подключить checkout к приложению
+
+```cmake
+add_subdirectory(external/UniversalDevKit)
+target_link_libraries(MyApplication PRIVATE UniversalDevKit::Diagnostic.Static)
+```
+
+Targets передают include-путь, минимальный стандарт языка и необходимые зависимости. Diagnostic.Static требует Helpers.Static; вручную повторять эту связь не нужно.
+
+Для динамического варианта используйте UniversalDevKit::Diagnostic.Dynamic. На Windows consumer получает import-макрос; DLL должна быть доступна при запуске. Например, для CMake 3.22 и известного набора runtime DLL:
+
+```cmake
+if(WIN32)
+    add_custom_command(TARGET MyApplication POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:MyApplication> $<TARGET_FILE_DIR:MyApplication>
+        COMMAND_EXPAND_LISTS
+    )
+endif()
+```
+
+Этот пример применяют при наличии DLL-зависимостей. Для Linux/Android доставка SO и пути загрузчика настраиваются по правилам целевой платформы; MSBuild runtime-target в CMake не используется.
+
+## 3. Выбрать состав сборки
+
+| Настройка | По умолчанию | Значение |
+|---|---|---|
+| UniversalDevKit_COMPONENTS | ALL | Корневые компоненты через `;`; пустая строка исключает все корни |
+| UniversalDevKit_BUILD_STATIC | ON | Создавать статические варианты корней |
+| UniversalDevKit_BUILD_DYNAMIC | ON | Создавать динамические варианты корней |
+| UniversalDevKit_INSTALL | ON | Создавать правила установки |
+
+Пример конфигурации только Diagnostic.Dynamic:
+
+```powershell
+cmake --preset windows-x64 -DUniversalDevKit_COMPONENTS=Diagnostic -DUniversalDevKit_BUILD_STATIC=OFF
+```
+
+Helpers.Static всё равно создаётся, поскольку JSON требует его для Diagnostic.Dynamic. BUILD_STATIC=OFF запрещает статические варианты корней, но не обязательных зависимостей. При отключении обоих вариантов остаётся Headers; им можно пользоваться для шаблонного кода. Targets, не вошедшие в расчёт, не создаются.
+
+При add_subdirectory настройки можно задать заранее как обычные переменные при стандартной политике CMake родительского проекта. Выбор в меню Connect этих настроек не меняет.
+
+## 4. Что делает ComponentDependencies.cmake
+
+Корневой CMakeLists включает Projects/Cmake/ComponentDependencies.cmake. Модуль читает JSON, раскрывает необходимые варианты и проверяет неизвестные компоненты, циклы и поддерживаемую ОС. Затем создаёт библиотеки из общих и платформенных файлов, добавляет alias targets, определения и настройки экспорта.
+
+После создания targets применяются межкомпонентные связи PUBLIC/PRIVATE и Static/same. Необязательный Projects/Cmake/<компонент>/CMakeLists.txt расширяет созданные варианты через currentComponentTargets. Diagnostic добавляет Threads::Threads; установленный пакет получает соответствующий find_dependency(Threads).
+
+Сам consumer этот модуль напрямую не включает. Изменения JSON отслеживаются через CMAKE_CONFIGURE_DEPENDS и вызывают переконфигурацию сборочного дерева.
+
+## 5. Установить пакет
+
+После сборки выбранной конфигурации:
+
+```powershell
+cmake --install '!artifacts/Windows-x64/cmake/UniversalDevKit' --config Release
+```
+
+Preset задаёт prefix установки внутри этого дерева, в install/. Для другой цели используйте --prefix. Пакет содержит include/, библиотеки и конфигурацию в `<libdir>/cmake/UniversalDevKit/`; libdir выбирается GNUInstallDirs. На Windows DLL находятся в bin/.
+
+Debug-имена бинарников имеют суффикс d, поэтому Debug и Release можно устанавливать в один prefix без перезаписи библиотек. Обе конфигурации нужно предварительно собрать и установить; пакет не создаёт отсутствующую конфигурацию автоматически.
+
+## 6. Подключить установленный пакет
+
+В отдельном consumer:
+
+```cmake
+find_package(UniversalDevKit 0.1 CONFIG REQUIRED COMPONENTS Diagnostic)
+target_link_libraries(MyApplication PRIVATE UniversalDevKit::Diagnostic.Static)
+```
+
+При конфигурации укажите CMAKE_PREFIX_PATH с корнем установки либо UniversalDevKit_DIR с каталогом конфигурации пакета. find_package загружает экспортированные targets с путями и usage requirements; исходный checkout и ComponentDependencies.cmake не нужны.
+
+COMPONENTS проверяет наличие компонента в установленном наборе, но не выбирает Static/Dynamic: вариант выбирается именем target. Конфигурация загружает весь установленный экспорт, а не только перечисленные COMPONENTS. Unknown или исключённый обязательный компонент должен отклоняться.
+
+SameMinorVersion ограничивает совместимость версии в пределах 0.1.x. ARCH_INDEPENDENT удалён, стандартная архитектурная проверка версии включена. Это не полная проверка ABI: совместимость toolchain и CRT остаётся отдельным требованием.
+
+## 7. Ограничения и проверка
+
+Режимы и платформенный реестр не заменяют toolchain. Встроенный preset проверен только на Windows x64. CMake пока не обеспечивает общий запрет всех конфликтующих комбинаций targets, эквивалентный Connect.
+
+Проверка переноса пакета, запуска Static/Dynamic и ограничений описана в [Validation](Validation.md). Схема JSON и расширения компонентных настроек — в [Components](Components.md).

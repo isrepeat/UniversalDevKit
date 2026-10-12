@@ -19,7 +19,11 @@ function EscapeXml([string]$Value) {
 foreach ($project in $projects) {
     [xml]$document = Get-Content -LiteralPath $project.FullName -Raw -Encoding UTF8
     $rootNode = $document.SelectSingleNode("/*[local-name()='Project']/*[local-name()='PropertyGroup']/*[local-name()='UniversalDevKitFilterRoots']")
-    $filterRoots = if ($rootNode) { @($rootNode.InnerText -split ';' | Where-Object { $_ }) } else { @() }
+    $filterRoots = if ($rootNode) {
+        @($rootNode.InnerText -split ';' | Where-Object { $_ })
+    } else {
+        @()
+    }
     $items = @{}
     $filters = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     foreach ($node in $document.SelectNodes("/*[local-name()='Project']/*[local-name()='ItemGroup']/*[@Include]")) {
@@ -34,7 +38,9 @@ foreach ($project in $projects) {
         }
         $absolute = if ([IO.Path]::IsPathRooted($resolvedInclude)) {
             [IO.Path]::GetFullPath($resolvedInclude)
-        } else { [IO.Path]::GetFullPath((Join-Path $project.DirectoryName $resolvedInclude)) }
+        } else {
+            [IO.Path]::GetFullPath((Join-Path $project.DirectoryName $resolvedInclude))
+        }
         if (-not $absolute.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)) {
             throw "File outside repository: $absolute"
         }
@@ -46,11 +52,15 @@ foreach ($project in $projects) {
                 break
             }
         }
-        if ($node.LocalName -eq 'None') { $relative = 'Build\' + $relative }
+        if ($node.LocalName -eq 'None') {
+            $relative = 'Build\' + $relative
+        }
         $filter = [IO.Path]::GetDirectoryName($relative)
         # Генератор компонентов передаёт готовую виртуальную папку, включая пустую.
         $explicitFilter = $node.SelectSingleNode("*[local-name()='__UniversalDevKitFilter']")
-        if ($null -ne $explicitFilter) { $filter = $explicitFilter.InnerText }
+        if ($null -ne $explicitFilter) {
+            $filter = $explicitFilter.InnerText
+        }
         $items[$node.LocalName + '|' + $include] = @($node.LocalName, $include, $filter)
         while ($filter) {
             [void]$filters.Add($filter)
@@ -84,14 +94,22 @@ foreach ($project in $projects) {
     $expected = $lines -join "`n"
     $destination = $project.FullName + '.filters'
     $exists = Test-Path -LiteralPath $destination
-    $actual = if ($exists) { [IO.File]::ReadAllText($destination).Replace("`r`n", "`n") } else { '' }
-    if ($actual -ceq $expected) { continue }
+    $actual = if ($exists) {
+        [IO.File]::ReadAllText($destination).Replace("`r`n", "`n")
+    } else {
+        ''
+    }
+    if ($actual -ceq $expected) {
+        continue
+    }
     $relativeDestination = $destination.Substring($prefix.Length).Replace('\', '/')
     $updates.Add(@{ Path = $destination; Content = $expected; RelativePath = $relativeDestination })
 }
 
 if ($Check) {
-    if ($updates.Count) { throw ('Project filters are out of date: ' + (($updates | ForEach-Object { $_.RelativePath }) -join ', ')) }
+    if ($updates.Count) {
+        throw ('Project filters are out of date: ' + (($updates | ForEach-Object { $_.RelativePath }) -join ', '))
+    }
     Write-Output 'Project filters are up to date.'
     return
 }

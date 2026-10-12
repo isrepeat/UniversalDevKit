@@ -1,4 +1,4 @@
-﻿param(
+param(
     [string]$RepositoryRoot = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)),
     [switch]$Check,
     [switch]$PassThru
@@ -8,9 +8,13 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'FormatXmlAttributes.ps1')
 $repositoryPath = [IO.Path]::GetFullPath($RepositoryRoot)
 $manifest = Get-Content -LiteralPath (Join-Path $repositoryPath 'Components.json') -Raw -Encoding UTF8 | ConvertFrom-Json
-if ($manifest.schemaVersion -ne 1) { throw 'Unsupported Components.json schemaVersion.' }
+if ($manifest.schemaVersion -ne 1) {
+    throw 'Unsupported Components.json schemaVersion.'
+}
 foreach ($field in $manifest.PSObject.Properties.Name) {
-    if ($field -notin @('schemaVersion', 'includes')) { throw "Unsupported manifest field: $field" }
+    if ($field -notin @('schemaVersion', 'includes')) {
+        throw "Unsupported manifest field: $field"
+    }
 }
 if ($manifest.includes -isnot [Array] -or -not $manifest.includes.Count) {
     throw 'Components.json must contain a nonempty includes array.'
@@ -47,29 +51,50 @@ function ValidateFilterPath($Value, [string]$Label) {
 }
 
 function ValidateFilterSettings($Settings, $Component) {
-    if ($null -eq $Settings) { return }
-    if ($Settings -isnot [pscustomobject]) { throw 'filters must be an object.' }
+    if ($null -eq $Settings) {
+        return
+    }
+    if ($Settings -isnot [pscustomobject]) {
+        throw 'filters must be an object.'
+    }
     foreach ($field in $Settings.PSObject.Properties.Name) {
-        if ($field -notin @('roots', 'files')) { throw "Unsupported filters field: $field" }
+        if ($field -notin @('roots', 'files')) {
+            throw "Unsupported filters field: $field"
+        }
     }
     if ($Settings.PSObject.Properties['roots']) {
-        if ($Settings.roots -isnot [Array]) { throw 'filters.roots must be an array.' }
+        if ($Settings.roots -isnot [Array]) {
+            throw 'filters.roots must be an array.'
+        }
         $seen = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
         foreach ($rule in $Settings.roots) {
-            if ($rule -isnot [pscustomobject]) { throw 'Filter root must be an object.' }
+            if ($rule -isnot [pscustomobject]) {
+                throw 'Filter root must be an object.'
+            }
             foreach ($field in $rule.PSObject.Properties.Name) {
-                if ($field -notin @('path', 'filter')) { throw "Unsupported filter root field: $field" }
+                if ($field -notin @('path', 'filter')) {
+                    throw "Unsupported filter root field: $field"
+                }
             }
             ValidateFilterPath $rule.path 'roots.path'
             ValidateFilterPath $rule.filter 'roots.filter'
-            if ($rule.path -eq '' -or -not $seen.Add($rule.path)) { throw "Empty or duplicate filter root: $($rule.path)" }
+            if ($rule.path -eq '' -or -not $seen.Add($rule.path)) {
+                throw "Empty or duplicate filter root: $($rule.path)"
+            }
         }
     }
     if ($Settings.PSObject.Properties['files']) {
-        if ($Settings.files -isnot [pscustomobject]) { throw 'filters.files must be an object.' }
+        if ($Settings.files -isnot [pscustomobject]) {
+            throw 'filters.files must be an object.'
+        }
         $knownFiles = @($Component.headers) + @($Component.sources)
+        if ($Component.platformSources) {
+            foreach ($platformEntry in $Component.platformSources.PSObject.Properties) { $knownFiles += @($platformEntry.Value) }
+        }
         foreach ($entry in $Settings.files.PSObject.Properties) {
-            if ($entry.Name -cnotin $knownFiles) { throw "Unknown filters.files entry: $($entry.Name)" }
+            if ($entry.Name -cnotin $knownFiles) {
+                throw "Unknown filters.files entry: $($entry.Name)"
+            }
             ValidateFilterPath $entry.Value $entry.Name
         }
     }
@@ -79,18 +104,24 @@ function GetComponentFilter([string]$Path, $Settings) {
     # Исключение файла имеет приоритет; пустая строка помещает файл в корень проекта.
     if ($null -ne $Settings -and $null -ne $Settings.files) {
         $entry = $Settings.files.PSObject.Properties[$Path]
-        if ($entry) { return $entry.Value.Replace('/', '\') }
+        if ($entry) {
+            return $entry.Value.Replace('/', '\')
+        }
     }
     $mapped = $Path
     if ($null -ne $Settings) {
         $best = $null
         foreach ($rule in $Settings.roots) {
             if ($Path.StartsWith($rule.path + '/', [StringComparison]::Ordinal) -and
-                ($null -eq $best -or $rule.path.Length -gt $best.path.Length)) { $best = $rule }
+                ($null -eq $best -or $rule.path.Length -gt $best.path.Length)) {
+                $best = $rule
+            }
         }
         if ($null -ne $best) {
             $mapped = $Path.Substring($best.path.Length + 1)
-            if ($best.filter -ne '') { $mapped = $best.filter + '/' + $mapped }
+            if ($best.filter -ne '') {
+                $mapped = $best.filter + '/' + $mapped
+            }
         }
     }
     return [IO.Path]::GetDirectoryName($mapped.Replace('/', '\'))
@@ -103,15 +134,25 @@ foreach ($includePath in $manifest.includes) {
         [IO.Path]::GetExtension($includePath) -cne '.json') {
         throw "Invalid component include path: $includePath"
     }
-    if (-not $includePaths.Add($includePath)) { throw "Duplicate component include: $includePath" }
+    if (-not $includePaths.Add($includePath)) {
+        throw "Duplicate component include: $includePath"
+    }
     $component = Get-Content -LiteralPath (Join-Path $repositoryPath $includePath) -Raw -Encoding UTF8 | ConvertFrom-Json
     $name = $component.name
-    if ($name -isnot [string]) { throw "Component name must be a string: $includePath" }
-    if ($name -notmatch '^[A-Z][A-Za-z0-9]*$') { throw "Invalid component name: $name" }
-    if (-not $names.Add($name)) { throw "Duplicate component name: $name" }
+    if ($name -isnot [string]) {
+        throw "Component name must be a string: $includePath"
+    }
+    if ($name -notmatch '^[A-Z][A-Za-z0-9]*$') {
+        throw "Invalid component name: $name"
+    }
+    if (-not $names.Add($name)) {
+        throw "Duplicate component name: $name"
+    }
     # Не игнорируем будущие поля: для зависимостей и платформ потребуется расширение генератора.
     foreach ($field in $component.PSObject.Properties.Name) {
-        if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies')) { throw "Unsupported field ${name}: $field" }
+        if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources')) {
+            throw "Unsupported field ${name}: $field"
+        }
     }
     $guid = [Guid]::Empty
     if (-not [Guid]::TryParse([string]$component.msbuildGuid, [ref]$guid) -or -not $guids.Add($guid.ToString())) {
@@ -124,11 +165,17 @@ foreach ($includePath in $manifest.includes) {
     }
     $dependencies = [Collections.Generic.List[string]]::new()
     if ($component.PSObject.Properties['dependencies']) {
-        if ($component.dependencies -isnot [Array]) { throw "${name}.dependencies must be an array." }
+        if ($component.dependencies -isnot [Array]) {
+            throw "${name}.dependencies must be an array."
+        }
         foreach ($dependency in $component.dependencies) {
-            if ($dependency -isnot [pscustomobject]) { throw "Invalid dependency in $name" }
+            if ($dependency -isnot [pscustomobject]) {
+                throw "Invalid dependency in $name"
+            }
             foreach ($field in $dependency.PSObject.Properties.Name) {
-                if ($field -notin @('component', 'visibility', 'linkage')) { throw "Unsupported dependency field: $field" }
+                if ($field -notin @('component', 'visibility', 'linkage')) {
+                    throw "Unsupported dependency field: $field"
+                }
             }
             if ($dependency.component -isnot [string] -or $dependency.component -notmatch '^[A-Z][A-Za-z0-9]*$') {
                 throw "Invalid dependency component in $name"
@@ -136,7 +183,9 @@ foreach ($includePath in $manifest.includes) {
             if ($dependency.visibility -cnotin @('private', 'public') -or $dependency.linkage -cnotin @('same', 'static')) {
                 throw "Invalid dependency visibility or linkage in $name"
             }
-            if ($dependencies.Contains($dependency.component)) { throw "Duplicate dependency in ${name}: $($dependency.component)" }
+            if ($dependencies.Contains($dependency.component)) {
+                throw "Duplicate dependency in ${name}: $($dependency.component)"
+            }
             $dependencies.Add($dependency.component)
         }
     }
@@ -149,6 +198,38 @@ foreach ($includePath in $manifest.includes) {
     }
     if ($component.PSObject.Properties['filters'] -and $null -eq $component.filters) {
         throw "${name}.filters must be an object."
+    }
+    $componentSources = @($component.sources)
+    $platformFileConditions = @{}
+    if ($component.PSObject.Properties['supportedPlatforms']) {
+        if ($component.supportedPlatforms -isnot [Array] -or -not $component.supportedPlatforms.Count) {
+            throw "${name}.supportedPlatforms must be a nonempty array."
+        }
+        foreach ($platform in $component.supportedPlatforms) {
+            if ($platform -cnotin @('Windows', 'Linux', 'Android')) {
+                throw "Unsupported platform: $platform"
+            }
+        }
+    }
+    if ($component.PSObject.Properties['platformSources']) {
+        if ($component.platformSources -isnot [pscustomobject]) {
+            throw "${name}.platformSources must be an object."
+        }
+        foreach ($platformEntry in $component.platformSources.PSObject.Properties) {
+            if ($platformEntry.Name -cnotin @('Windows', 'Linux', 'Android') -or $platformEntry.Value -isnot [Array]) {
+                throw "Invalid platformSources entry: $($platformEntry.Name)"
+            }
+            if ($component.supportedPlatforms -and $platformEntry.Name -cnotin $component.supportedPlatforms) {
+                throw "Platform sources outside supportedPlatforms: $($platformEntry.Name)"
+            }
+            foreach ($platformFile in $platformEntry.Value) {
+                if ($platformFile -isnot [string] -or $platformFileConditions.ContainsKey($platformFile)) {
+                    throw "Invalid or duplicate platform source: $platformFile"
+                }
+                $componentSources += $platformFile
+                $platformFileConditions[$platformFile] = "'`$(UniversalDevKitTargetOS)' == '$($platformEntry.Name)'"
+            }
+        }
     }
     ValidateFilterSettings $component.filters $component
     $files = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
@@ -164,35 +245,62 @@ foreach ($includePath in $manifest.includes) {
     $lines.Add('  <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.props" Condition="''$(__IsUniversalDevKitPublicPropsImported)'' != ''true''" />')
     $lines.Add('  <ItemGroup>')
     foreach ($path in $component.headers) {
-        if ($path -isnot [string]) { throw "${name}.headers must contain strings." }
+        if ($path -isnot [string]) {
+            throw "${name}.headers must contain strings."
+        }
         ValidateFile $path "Includes/UniversalDevKit/$name/"
-        if (-not $files.Add($path)) { throw "Duplicate component file: $path" }
+        if (-not $files.Add($path)) {
+            throw "Duplicate component file: $path"
+        }
         $include = EscapeXml ('$' + '(MSBuildThisFileDirectory)..\..\..\' + $path.Replace('/', '\'))
         $lines.Add('    <ClInclude Include="' + $include + '">')
         $lines.Add('      <__UniversalDevKitFilter>' + (EscapeXml (GetComponentFilter $path $component.filters)) + '</__UniversalDevKitFilter>')
         $lines.Add('    </ClInclude>')
     }
-    foreach ($path in $component.sources) {
-        if ($path -isnot [string]) { throw "${name}.sources must contain strings." }
+    foreach ($path in $componentSources) {
+        if ($path -isnot [string]) {
+            throw "${name}.sources must contain strings."
+        }
         ValidateFile $path "Sources/$name/"
-        if (-not $files.Add($path)) { throw "Duplicate component file: $path" }
-        if ([IO.Path]::GetExtension($path) -cne '.cpp') { throw "Expected .cpp source: $path" }
+        if (-not $files.Add($path)) {
+            throw "Duplicate component file: $path"
+        }
+        if ([IO.Path]::GetExtension($path) -cne '.cpp') {
+            throw "Expected .cpp source: $path"
+        }
         $relative = $path.Substring("Sources/$name/".Length)
         $object = [IO.Path]::ChangeExtension($relative, '.obj').Replace('/', '\')
-        if (-not $objects.Add($object)) { throw "Duplicate object path: $path" }
+        if (-not $objects.Add($object)) {
+            throw "Duplicate object path: $path"
+        }
         $include = EscapeXml ('$' + '(MSBuildThisFileDirectory)..\..\..\' + $path.Replace('/', '\'))
-        $lines.Add('    <ClCompile Include="' + $include + '">')
+        $conditionAttribute = if ($platformFileConditions.ContainsKey($path)) {
+            ' Condition="' + (EscapeXml $platformFileConditions[$path]) + '"'
+        } else {
+            ''
+        }
+        $lines.Add('    <ClCompile Include="' + $include + '"' + $conditionAttribute + '>')
         $lines.Add('      <__UniversalDevKitFilter>' + (EscapeXml (GetComponentFilter $path $component.filters)) + '</__UniversalDevKitFilter>')
         $lines.Add('      <PrecompiledHeader>NotUsing</PrecompiledHeader>')
         $lines.Add('      <ObjectFileName>$(IntDir)UniversalDevKit\' + $name + '\' + (EscapeXml $object) + '</ObjectFileName>')
         $lines.Add('    </ClCompile>')
     }
     $lines.Add('  </ItemGroup>')
+    if ($component.supportedPlatforms) {
+        $unsupportedCondition = (@($component.supportedPlatforms | ForEach-Object { "'`$(UniversalDevKitTargetOS)' != '$_'" }) -join ' and ')
+        $lines.Add('  <Target Name="__UniversalDevKitValidate' + $name + 'Platform" BeforeTargets="PrepareForBuild">')
+        $lines.Add('    <Error Condition="' + (EscapeXml $unsupportedCondition) + '" Text="Unsupported platform for UniversalDevKit.' + $name + ': $(UniversalDevKitTargetOS)" />')
+        $lines.Add('  </Target>')
+    }
     $lines.Add('</Project>')
     $relativePath = "Projects/MsBuild/$name/UniversalDevKit.$name.Shared.vcxitems"
     $targetPath = Join-Path $repositoryPath $relativePath
     $content = $lines -join "`n"
-    $original = if (Test-Path -LiteralPath $targetPath) { [IO.File]::ReadAllText($targetPath) } else { $null }
+    $original = if (Test-Path -LiteralPath $targetPath) {
+        [IO.File]::ReadAllText($targetPath)
+    } else {
+        $null
+    }
     # Различие CRLF/LF само по себе не требует перезаписи.
     if ($null -eq $original -or $original.Replace("`r`n", "`n") -cne $content) {
         $updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $original })
@@ -201,8 +309,12 @@ foreach ($includePath in $manifest.includes) {
 
 # Замыкание зависимостей вычисляется до записи; цикл или неизвестное имя останавливают генерацию.
 function GetDependencyClosure([string]$Name, [string[]]$Stack) {
-    if ($Name -cin $Stack) { throw ('Component dependency cycle: ' + (($Stack + $Name) -join ' -> ')) }
-    if ($Name -cnotin @($componentGraph.Keys)) { throw "Unknown dependency component: $Name" }
+    if ($Name -cin $Stack) {
+        throw ('Component dependency cycle: ' + (($Stack + $Name) -join ' -> '))
+    }
+    if ($Name -cnotin @($componentGraph.Keys)) {
+        throw "Unknown dependency component: $Name"
+    }
     $result = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     [void]$result.Add($Name)
     foreach ($dependency in $componentGraph[$Name]) {
@@ -255,7 +367,11 @@ $lines.Add('</Project>')
 $relativePath = 'Projects/MsBuild/UniversalDevKit.Sources.targets'
 $targetPath = Join-Path $repositoryPath $relativePath
 $content = Format-UdkXmlAttributes ($lines -join "`n")
-$original = if (Test-Path -LiteralPath $targetPath) { [IO.File]::ReadAllText($targetPath) } else { $null }
+$original = if (Test-Path -LiteralPath $targetPath) {
+    [IO.File]::ReadAllText($targetPath)
+} else {
+    $null
+}
 if ($null -eq $original -or $original.Replace("`r`n", "`n") -cne $content) {
     $updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $original })
 }
@@ -267,7 +383,11 @@ foreach ($name in $componentNames) {
     foreach ($mode in @('Static', 'Dynamic')) {
         $relativePath = "Projects/MsBuild/$name/UniversalDevKit.$name.$mode.vcxproj"
         $targetPath = Join-Path $repositoryPath $relativePath
-        $configurationType = if ($mode -eq 'Static') { 'StaticLibrary' } else { 'DynamicLibrary' }
+        $configurationType = if ($mode -eq 'Static') {
+            'StaticLibrary'
+        } else {
+            'DynamicLibrary'
+        }
         if (Test-Path -LiteralPath $targetPath) {
             # Существующие проекты не переписываем; проверяем обязательные связи.
             [xml]$libraryProject = [IO.File]::ReadAllText($targetPath)
@@ -291,11 +411,15 @@ foreach ($name in $componentNames) {
             $libraryGuid = [Guid]::new([byte[]]$hash[0..15])
             $definitions = if ($mode -eq 'Dynamic') {
                 '      <PreprocessorDefinitions>UNIVERSALDEVKIT_' + $name.ToUpperInvariant() + '_DYNAMIC;UNIVERSALDEVKIT_' + $name.ToUpperInvariant() + '_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>'
-            } else { '' }
+            } else {
+                ''
+            }
             $content = $projectTemplate.Replace('@COMPONENT@', $name).Replace('@GUID@', $libraryGuid.ToString().ToUpperInvariant()).Replace('@CONFIGURATION_TYPE@', $configurationType).Replace('@DYNAMIC_DEFINITIONS@', $definitions).TrimEnd([char[]]"`r`n")
             $updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $null })
         }
-        if (-not $guids.Add($libraryGuid.ToString())) { throw "Duplicate library GUID: $relativePath" }
+        if (-not $guids.Add($libraryGuid.ToString())) {
+            throw "Duplicate library GUID: $relativePath"
+        }
         $libraryGuids["$name.$mode"] = '{' + $libraryGuid.ToString().ToUpperInvariant() + '}'
     }
 }
@@ -311,13 +435,21 @@ foreach ($name in $componentNames) {
         $graph = Resolve-UdkLinkageGraph @($name) @{ $name = $mode } $binaryComponentRegistry
         $roots = @($binaryComponentRegistry[$name].Dependencies | ForEach-Object { $_.Component })
         $dependencyGraph = Resolve-UdkLinkageGraph $roots $graph.ResolvedModes $binaryComponentRegistry
-        $configurationType = if ($mode -eq 'Static') { 'StaticLibrary' } else { 'DynamicLibrary' }
+        $configurationType = if ($mode -eq 'Static') {
+            'StaticLibrary'
+        } else {
+            'DynamicLibrary'
+        }
         $condition = "'`$(ConfigurationType)' == '$configurationType'"
         $lines.Add('  <ItemGroup Condition="' + $condition + '">')
         foreach ($dependencyName in @($graph.ResolvedComponents | Where-Object { $_ -ne $name })) {
             $dependencyMode = $graph.ResolvedModes[$dependencyName]
             $dependencyGuid = $libraryGuids["$dependencyName.$dependencyMode"]
-            $link = if ($mode -eq 'Dynamic' -and $dependencyName -cin $dependencyGraph.LinkComponents) { 'true' } else { 'false' }
+            $link = if ($mode -eq 'Dynamic' -and $dependencyName -cin $dependencyGraph.LinkComponents) {
+                'true'
+            } else {
+                'false'
+            }
             $lines.Add('    <ProjectReference Include="$(MSBuildThisFileDirectory)..\' + $dependencyName + '\UniversalDevKit.' + $dependencyName + '.' + $dependencyMode + '.vcxproj">')
             $lines.Add('      <Project>' + $dependencyGuid + '</Project>')
             $lines.Add('      <LinkLibraryDependencies>' + $link + '</LinkLibraryDependencies>')
@@ -335,16 +467,72 @@ foreach ($name in $componentNames) {
     $relativePath = "Projects/MsBuild/$name/UniversalDevKit.$name.Dependencies.props"
     $targetPath = Join-Path $repositoryPath $relativePath
     $content = Format-UdkXmlAttributes ($lines -join "`n")
-    $original = if (Test-Path -LiteralPath $targetPath) { [IO.File]::ReadAllText($targetPath) } else { $null }
+    $original = if (Test-Path -LiteralPath $targetPath) {
+        [IO.File]::ReadAllText($targetPath)
+    } else {
+        $null
+    }
     if ($null -eq $original -or $original.Replace("`r`n", "`n") -cne $content) {
         $updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $original })
     }
 }
 
 # Позволяет получить план генерации без записи файлов.
-if ($PassThru) { return $updates.ToArray() }
+# Новые компоненты добавляем в solution, сохраняя существующее дерево и ручные настройки.
+$solutionPath = Join-Path $repositoryPath 'UniversalDevKit.sln'
+if (Test-Path -LiteralPath $solutionPath) {
+    $solutionOriginal = [IO.File]::ReadAllText($solutionPath)
+    $solutionContent = $solutionOriginal
+    $solutionNewline = if ($solutionOriginal.Contains("`r`n")) {
+        "`r`n"
+    } else {
+        "`n"
+    }
+    foreach ($name in $componentNames) {
+        foreach ($mode in @('Shared', 'Static', 'Dynamic')) {
+            $extension = if ($mode -eq 'Shared') {
+                'vcxitems'
+            } else {
+                'vcxproj'
+            }
+            $projectPath = "Projects\MsBuild\$name\UniversalDevKit.$name.$mode.$extension"
+            if ($solutionContent.Contains('"' + $projectPath + '"')) {
+                continue
+            }
+            $projectGuid = if ($mode -eq 'Shared') {
+                '{' + $binaryComponentRegistry[$name].SharedGuid.ToString().ToUpperInvariant() + '}'
+            } else {
+                $libraryGuids["$name.$mode"]
+            }
+            $projectType = if ($mode -eq 'Shared') {
+                '{D954291E-2A0B-460D-934E-DC6B0785DB48}'
+            } else {
+                '{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}'
+            }
+            $entry = 'Project("' + $projectType + '") = "UniversalDevKit.' + $name + '.' + $mode + '", "' + $projectPath + '", "' + $projectGuid + '"' + $solutionNewline + 'EndProject' + $solutionNewline
+            $solutionContent = [regex]::Replace($solutionContent, '(?m)^Global\r?$', { param($match) $entry + $match.Value }, 1)
+            if ($mode -ne 'Shared') {
+                $configurationLines = ''
+                foreach ($configuration in @('Debug', 'Release')) {
+                    $configurationLines += "`t`t$projectGuid.$configuration|x64.ActiveCfg = $configuration|x64$solutionNewline"
+                    $configurationLines += "`t`t$projectGuid.$configuration|x64.Build.0 = $configuration|x64$solutionNewline"
+                }
+                $solutionContent = [regex]::Replace($solutionContent, '(?m)^(\s*GlobalSection\(ProjectConfigurationPlatforms\) = postSolution\r?\n)', { param($match) $match.Value + $configurationLines }, 1)
+            }
+        }
+    }
+    if ($solutionContent -cne $solutionOriginal) {
+        $updates.Add([pscustomobject]@{ Path = $solutionPath; RelativePath = 'UniversalDevKit.sln'; Content = $solutionContent.TrimEnd([char[]]"`r`n"); Original = $solutionOriginal })
+    }
+}
+
+if ($PassThru) {
+    return $updates.ToArray()
+}
 if ($Check) {
-    if ($updates.Count) { throw ('Generated projects are out of date: ' + (($updates | ForEach-Object { $_.RelativePath }) -join ', ')) }
+    if ($updates.Count) {
+        throw ('Generated projects are out of date: ' + (($updates | ForEach-Object { $_.RelativePath }) -join ', '))
+    }
     Write-Output 'Component projects are up to date.'
     & (Join-Path $PSScriptRoot 'UpdateProjectFilters.ps1') -RepositoryRoot $repositoryPath -Check
     return

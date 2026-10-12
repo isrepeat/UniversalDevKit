@@ -26,7 +26,11 @@ function DownloadToolArchive([string]$Url, [string]$Destination) {
         # Заголовки получаем отдельно, чтобы читать ответ порциями и показывать реальные байты.
         $response = $client.GetAsync($Url, [Net.Http.HttpCompletionOption]::ResponseHeadersRead).GetAwaiter().GetResult()
         [void]$response.EnsureSuccessStatusCode()
-        $total = if ($response.Content.Headers.ContentLength) { [long]$response.Content.Headers.ContentLength } else { -1L }
+        $total = if ($response.Content.Headers.ContentLength) {
+            [long]$response.Content.Headers.ContentLength
+        } else {
+            -1L
+        }
         $inputStream = $response.Content.ReadAsStreamAsync().GetAwaiter().GetResult()
         $outputStream = [IO.File]::Create($Destination)
         $buffer = [byte[]]::new(131072)
@@ -44,9 +48,15 @@ function DownloadToolArchive([string]$Url, [string]$Destination) {
         SendToolProgress 'Downloading SolutionInjector' $completed $total $true
     }
     finally {
-        if ($outputStream) { $outputStream.Dispose() }
-        if ($inputStream) { $inputStream.Dispose() }
-        if ($response) { $response.Dispose() }
+        if ($outputStream) {
+            $outputStream.Dispose()
+        }
+        if ($inputStream) {
+            $inputStream.Dispose()
+        }
+        if ($response) {
+            $response.Dispose()
+        }
         $client.Dispose()
     }
 }
@@ -87,7 +97,9 @@ function ExpandToolArchive([string]$Path, [string]$Destination) {
                 }
             }
             finally {
-                if ($outputStream) { $outputStream.Dispose() }
+                if ($outputStream) {
+                    $outputStream.Dispose()
+                }
                 $inputStream.Dispose()
             }
         }
@@ -97,7 +109,9 @@ function ExpandToolArchive([string]$Path, [string]$Destination) {
 }
 
 function AssertExecutable([string]$Path) {
-    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) { throw "SolutionInjector not found: $Path" }
+    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
+        throw "SolutionInjector not found: $Path"
+    }
     if ((Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash -ne $manifest.exeSha256) {
         throw 'SolutionInjector executable SHA-256 mismatch.'
     }
@@ -130,7 +144,9 @@ else {
         Move-Item -LiteralPath $temporaryArchive -Destination $archive
     }
     finally {
-        if (Test-Path -LiteralPath $temporaryArchive) { Remove-Item -LiteralPath $temporaryArchive }
+        if (Test-Path -LiteralPath $temporaryArchive) {
+            Remove-Item -LiteralPath $temporaryArchive
+        }
     }
 }
 # Распаковываем проверенный архив повторно, восстанавливая также runtime DLL.
