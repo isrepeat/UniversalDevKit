@@ -10,7 +10,7 @@ function New-TestWorkspace {
     $consumer = Join-Path $root 'Consumer'
     $library = Join-Path $consumer 'external/UniversalDevKit'
     [void][IO.Directory]::CreateDirectory($consumer)
-    # Копируем только шаблон, независимо от артефактов предыдущих запусков.
+    # Copy only the template, independently of previous build artifacts.
     Get-ChildItem -LiteralPath (Join-Path $RepositoryPath 'Tests/Fixtures/Consumers/MsBuild') -Force | Copy-Item -Destination $consumer -Recurse
     Invoke-TestGit $consumer @('init', '-b', 'test')
     if ($Mode -eq 'Submodule') {
@@ -20,7 +20,7 @@ function New-TestWorkspace {
     }
     else {
         [void][IO.Directory]::CreateDirectory($library)
-        # Git задаёт набор файлов: учитываем незакоммиченные правки и новые файлы, но не ignored.
+        # Git selects modified and untracked files, excluding ignored files.
         $files = @(& git -C $RepositoryPath -c core.quotepath=false ls-files --cached --others --exclude-standard)
         if ($LASTEXITCODE -ne 0) { throw 'Cannot enumerate UDK files.' }
         foreach ($file in ($files | Sort-Object -Unique)) {
@@ -37,7 +37,7 @@ function New-TestWorkspace {
 
 function Remove-TestWorkspace {
     param([string]$RepositoryPath, $Workspace)
-    # Разрешаем удаление только конкретного каталога запуска под выделенным корнем.
+    # Allow deletion only of the specific run directory under the dedicated root.
     $parent = [IO.Path]::GetFullPath((Join-Path $RepositoryPath '!artifacts/tests')).TrimEnd('\')
     $target = [IO.Path]::GetFullPath($Workspace.Root).TrimEnd('\')
     if ([IO.Path]::GetDirectoryName($target) -cne $parent -or [IO.Path]::GetFileName($target) -notmatch '^[0-9a-f]{32}$') {

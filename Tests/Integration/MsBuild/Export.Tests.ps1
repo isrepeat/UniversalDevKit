@@ -8,7 +8,7 @@ Copy-Item -LiteralPath (Join-Path $fixture 'Components.json') -Destination $Work
 Copy-Item -LiteralPath (Join-Path $fixture 'Main.cpp') -Destination (Join-Path $Workspace.Consumer 'App1/Main.cpp') -Force
 & (Join-Path $Workspace.Library 'Scripts/PowerShell/GenerateComponentProjects.ps1') | Out-Host
 
-# Проверяем согласованность с единственным источником версии выпуска.
+# Check consistency with the single release version source.
 $version = Get-Content -LiteralPath (Join-Path $Workspace.Library 'Version.json') -Raw | ConvertFrom-Json
 $versionHeader = [IO.File]::ReadAllText((Join-Path $Workspace.Library 'Includes/Core/UniversalDevKit/Version.h'))
 [xml]$versionProps = [IO.File]::ReadAllText((Join-Path $Workspace.Library 'Projects/MsBuild/UniversalDevKit.Version.props'))
@@ -16,10 +16,10 @@ if ($versionHeader -notmatch [regex]::Escape('"' + $version.version + '"') -or $
     throw 'Generated version metadata is inconsistent.'
 }
 
-# ProjectOnly здесь не нужен: consumer связывается с готовым проектом, независимо от дерева solution.
+# ProjectOnly is unnecessary: the consumer references an existing project independently of the solution tree.
 foreach ($mode in @('Static', 'Dynamic')) {
     $project = Join-Path $Workspace.Consumer 'App1/App1.vcxproj'
-    # Используем модуль и режим решения; сгенерированный проект присутствует в UDK solution.
+    # Use the module in solution mode; the generated project is in the UDK solution.
     & (Join-Path $Workspace.Library 'Scripts/PowerShell/Connect.ps1') -SolutionPath (Join-Path $Workspace.Consumer 'Consumer.sln') -ProjectPath $project -Components ExportProbe -ComponentModes @{ ExportProbe = $mode } -SolutionInjectorPath $SolutionInjectorPath | Out-Host
     foreach ($configuration in @('Debug', 'Release')) {
         Invoke-TestBuild $MSBuild $project $configuration (Join-Path $Workspace.Root "logs/$mode")

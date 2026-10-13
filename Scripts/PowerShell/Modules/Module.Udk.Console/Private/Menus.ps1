@@ -9,7 +9,7 @@ function SelectConsoleItem {
     }
     $selected = 0
     $notice = $null
-    # Запоминаем сам пункт, чтобы позиция сохранялась и при изменении порядка списка.
+    # Remember the selected item to preserve selection when list order changes.
     if ($MenuState.ContainsKey($StateKey)) {
         $previousIndex = [Array]::IndexOf($Items, $MenuState[$StateKey])
         if ($previousIndex -ge 0) {
@@ -20,7 +20,7 @@ function SelectConsoleItem {
     try {
         [Console]::CursorVisible = $false
         while ($true) {
-            # Перерисовываем меню целиком, чтобы длинные пути не нарушали положение курсора.
+            # Redraw the entire menu so long paths do not disturb cursor positioning.
             [Console]::Clear()
             Write-UdkConsoleText $Title Title
             Write-UdkConsoleText 'Up/Down: select | Enter: confirm | Backspace: back | Esc: cancel' Hint
@@ -64,7 +64,7 @@ function SelectConsoleItem {
 function Get-UdkMenuModeConflict {
     param([hashtable]$InitialModes, [hashtable]$Marked, [hashtable]$ComponentRegistry, [string]$Name, [string]$Mode, [switch]$Removal, [switch]$ProjectOnly)
 
-    # Проверяем предполагаемый выбор по тому же реестру компонентов и плану, что перед записью.
+    # Validate the proposed selection using the same registry and plan as before writing.
     $previewModes = @{}
     foreach ($rootName in $InitialModes.Keys) { $previewModes[$rootName] = $InitialModes[$rootName] }
     foreach ($rootName in $Marked.Keys) {
@@ -120,7 +120,7 @@ function SelectConsoleComponents {
     try {
         [Console]::CursorVisible = $false
         while ($true) {
-            # Заблокированные варианты пересчитываются после каждого изменения отметок.
+            # Recalculate blocked variants after each selection change.
             $blockedModes = @{}
             if (-not $Removal) {
                 foreach ($name in $Items) {
@@ -133,7 +133,7 @@ function SelectConsoleComponents {
                 }
             }
             $currentConflict = Get-UdkMenuModeConflict $InitialModes $marked $ComponentRegistry -Removal:$Removal -ProjectOnly:$ProjectOnly
-            # Пересчитываем предварительный набор, сохраняя самостоятельные подключения.
+            # Recalculate the preview while preserving independent connections.
             $roots = if ($Removal) {
                 @($InitialModes.Keys | Where-Object { -not $marked.ContainsKey($_) })
             }
@@ -275,7 +275,7 @@ function SelectConsoleComponents {
             if ($showDependencies -and $activeName) {
                 Write-Host ''
                 Write-UdkConsoleText ("Dependencies: $activeName") Title
-                # Два независимых вертикальных списка: строки не обозначают связь между колонками.
+                # Two independent vertical lists; rows do not represent relationships between columns.
                 $dependsOnNames = @(if ($dependencies.Count) {
                     $dependencies
                 } else {

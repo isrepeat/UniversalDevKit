@@ -16,7 +16,7 @@ function InvokeChecked([string]$Tool, [string[]]$Arguments) {
 }
 
 try {
-    # 1. Создаём проекты только в изолированной копии UDK.
+    # 1. Create projects only in an isolated UDK copy.
     & (Join-Path $workspace.Library 'Scripts/PowerShell/GenerateComponentProjects.ps1') -RepositoryRoot $workspace.Library
     $build = Join-Path $workspace.Library '!artifacts/g'
     $install = Join-Path $workspace.Root 'install'
@@ -26,20 +26,20 @@ try {
     $firstWrite = (Get-Item -LiteralPath $header).LastWriteTimeUtc
     InvokeChecked $CMake @('--build', $build, '--config', 'Debug', '--parallel', '4')
     if ((Get-Item -LiteralPath $header).LastWriteTimeUtc -ne $firstWrite) { throw 'Unnecessary CMake regeneration' }
-    # Изменение времени входа моделирует обновление файла без изменения исходного fixture.
+    # Changing the input timestamp simulates an update without modifying the original fixture.
     $input = Join-Path $workspace.Library 'Projects/Generation/Input.txt'
     (Get-Item -LiteralPath $input).LastWriteTimeUtc = [DateTime]::UtcNow.AddSeconds(2)
     InvokeChecked $CMake @('--build', $build, '--config', 'Debug', '--parallel', '4')
     if ((Get-Item -LiteralPath $header).LastWriteTimeUtc -eq $firstWrite) { throw 'CMake did not regenerate changed input' }
     InvokeChecked $CMake @('--install', $build, '--config', 'Debug')
 
-    # 2. Пакетный consumer использует готовые заголовки без запуска генератора.
+    # 2. The package consumer uses generated headers without running the generator.
     $consumerBuild = Join-Path $workspace.Root 'consumer-build'
     InvokeChecked $CMake @('-S', (Join-Path $workspace.Library 'Consumer'), '-B', $consumerBuild, '-G', 'Visual Studio 18 2026', '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug', "-DCMAKE_PREFIX_PATH=$install")
     InvokeChecked $CMake @('--build', $consumerBuild, '--config', 'Debug')
     InvokeChecked (Join-Path $consumerBuild 'Debug/GeneratedConsumer.exe') @()
 
-    # 3. Shared генерирует реализацию внутри IntDir потребителя.
+    # 3. Shared generates its implementation inside the consumer IntDir.
     $msbuild = Get-TestMSBuild
     $project = Join-Path $workspace.Library 'Consumer/Shared.vcxproj'
     Copy-Item -LiteralPath ($project + '.in') -Destination $project
@@ -54,7 +54,7 @@ try {
     InvokeChecked $msbuild $arguments
     if ((Get-Item -LiteralPath $sharedHeader).LastWriteTimeUtc -eq $firstWrite) { throw 'MSBuild did not regenerate changed input' }
     InvokeChecked (Join-Path $workspace.Library 'Consumer/bin/Shared.exe') @()
-    # Отдельный IntDir заставляет выполнить генерацию без доступного host-инструмента.
+    # A separate IntDir forces generation without an available host tool.
     & $msbuild $project '/p:Configuration=Debug' '/p:Platform=x64' '/p:IntDir=obj-missing-tool/' '/p:UniversalDevKitHostCMake=' '/v:minimal' '/nologo' | Out-Host
     if ($LASTEXITCODE -eq 0) { throw 'Missing host tool was accepted' }
     Write-Host "PASS: build extensions. Workspace: $($workspace.Root)"

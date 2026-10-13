@@ -2,7 +2,7 @@ $ErrorActionPreference = 'Stop'
 $repository = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $fixture = Join-Path $repository 'Tests/Fixtures/Libraries/Registry'
 
-# Рассчитываем изменения без записи в fixture или основной репозиторий.
+# Calculate changes without writing to the fixture or the main repository.
 $updates = @(& (Join-Path $repository 'Scripts/PowerShell/GenerateComponentProjects.ps1') -RepositoryRoot $fixture -PassThru)
 $solution = @($updates | Where-Object RelativePath -eq 'UniversalDevKit.sln')
 if ($solution.Count -ne 1) {

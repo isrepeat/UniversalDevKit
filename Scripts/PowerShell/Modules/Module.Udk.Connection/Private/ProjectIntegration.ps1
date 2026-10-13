@@ -58,7 +58,7 @@ function Invoke-UdkConnectionPlan {
     if ($SolutionPath) {
         $sourceSolution = Join-Path $repositoryPath 'UniversalDevKit.sln'
         if (-not $Disconnect -and -not $Preview) {
-            # Повторная вставка восстанавливает удалённые очисткой компоненты без дублирования оставшихся.
+            # Reinsertion restores pruned components without duplicating retained projects.
             & $WriteStatus 'Updating solution projects...' Title
             & $solutionInjector $sourceSolution $targetSolution --rootName UniversalDevKit -f MsBuild | ForEach-Object { & $WriteStatus $_ Hint }
             if ($LASTEXITCODE -ne 0) {
@@ -88,7 +88,7 @@ function Invoke-UdkConnectionPlan {
     }
     $owned = @($root.SelectNodes('*[@Label="UniversalDevKit"]'))
     $owned += @($root.SelectNodes('*[local-name()="ImportGroup" and @Label="Shared" and @Condition="' + $sharedReferencesCondition + '"]'))
-    # Удаляем только блоки интеграции; соседние настройки проекта сохраняются.
+    # Remove integration blocks only; preserve adjacent project settings.
     foreach ($node in $owned) {
         $previous = $node.PreviousSibling
         [void]$root.RemoveChild($node)
@@ -133,7 +133,7 @@ function Invoke-UdkConnectionPlan {
         [void]$root.InsertBefore($document.CreateWhitespace($newline + '  '), $anchor)
         [void]$root.InsertBefore($group, $anchor)
         if ($SolutionPath) {
-            # Общие публичные настройки импортируем независимо от способа линковки.
+            # Import common public settings independently of the linkage mode.
             $publicImport = $document.CreateElement('Import', $namespace)
             $publicImport.SetAttribute('Label', 'UniversalDevKit')
             $publicImport.SetAttribute('Project', (GetRelativePath $projectDirectory (Join-Path $repositoryPath 'Projects/MsBuild/UniversalDevKit.props')))
@@ -193,7 +193,7 @@ function Invoke-UdkConnectionPlan {
                 [void]$root.InsertBefore($document.CreateWhitespace($newline + '  '), $anchor)
                 [void]$root.InsertBefore($compilerSettings, $anchor)
             }
-            # Публичные требования языка и системные библиотеки финальной статической линковки.
+            # Public language requirements and system libraries for final static linking.
             $requirementRegistry = Get-UdkComponentRegistry $repositoryPath
             $requirementGroup = $document.CreateElement('ItemGroup', $namespace)
             $requirementGroup.SetAttribute('Label', 'UniversalDevKit')
@@ -213,7 +213,7 @@ function Invoke-UdkConnectionPlan {
             $requirementsImport.SetAttribute('Project', (GetRelativePath $projectDirectory (Join-Path $repositoryPath 'Projects/MsBuild/UniversalDevKit.Requirements.targets')))
             [void]$root.InsertBefore($document.CreateWhitespace($newline + '  '), $anchor)
             [void]$root.InsertBefore($requirementsImport, $anchor)
-            # Отпечатки реестра компонентов останавливают сборку устаревшего подключения до компиляции.
+            # Registry fingerprints stop stale connections before compilation.
             $manifest = Get-Content -LiteralPath (Join-Path $repositoryPath 'Components.json') -Raw -Encoding UTF8 | ConvertFrom-Json
             foreach ($componentRegistryPath in @('Components.json') + @($manifest.includes)) {
                 $componentRegistryFile = Join-Path $repositoryPath $componentRegistryPath
@@ -257,7 +257,7 @@ function Invoke-UdkConnectionPlan {
             [void]$root.InsertBefore($document.CreateWhitespace($newline + '  '), $anchor)
         }
     }
-    # Форматируем новые блоки интеграции, не меняя содержимое соседних настроек consumer.
+    # Format new integration blocks without changing adjacent consumer settings.
     function FormatIntegrationNode($Node, [int]$Depth) {
         $children = @($Node.ChildNodes | Where-Object { $_.NodeType -eq [Xml.XmlNodeType]::Element })
         if (-not $children.Count) {
@@ -275,7 +275,7 @@ function Invoke-UdkConnectionPlan {
     }
     foreach ($node in @($root.SelectNodes('*[@Label="UniversalDevKit"]'))) { FormatIntegrationNode $node 1 }
     $updated = $document.OuterXml.TrimEnd([char[]]"`r`n")
-    # Форматируем атрибуты только собственных блоков Connect, сохраняя остальной проект.
+    # Format attributes only in Connect-owned blocks, preserving the rest of the project.
     $integrationNodes = @($root.SelectNodes('*[@Label="UniversalDevKit"]'))
     $integrationNodes += @($root.SelectNodes('*[local-name()="ImportGroup" and @Label="Shared" and @Condition="' + $sharedReferencesCondition + '"]'))
     foreach ($node in $integrationNodes) {
@@ -304,7 +304,7 @@ function Invoke-UdkConnectionPlan {
         UpdateSolutionSharedReferences $targetSolution $consumerGuid $referencesToRemove $referencesToAdd -WriteStatus $WriteStatus
 
         if ($cleanupRequested -or $ComponentModes.Count) {
-            # 1. Ищем корневую папку по типу и имени; повторное отключение без дерева ничего не меняет.
+            # 1. Find the root folder by type and name; repeated disconnect without a tree is a no-op.
             $content = [IO.File]::ReadAllText($targetSolution)
             $scopePattern = '(?m)^Project\("\{2150E333-8FDC-42A3-9474-1A3956D46DE8\}"\)\s*=\s*"UniversalDevKit",\s*"[^"]+",\s*"\{([^}]+)\}"'
             $scopes = [regex]::Matches($content, $scopePattern)
@@ -312,8 +312,8 @@ function Invoke-UdkConnectionPlan {
                 throw 'Ambiguous UniversalDevKit scope; automatic cleanup was not applied.'
             }
             if ($scopes.Count -eq 1) {
-                # 2. Рассчитываем и применяем очистку после записи всех связей consumer.
-                # SolutionInjector сохраняет используемые другими проектами зависимости и резервную копию .sln.
+                # 2. Calculate and apply cleanup after writing all consumer references.
+                # SolutionInjector preserves dependencies used by other projects and backs up the solution.
                 $scopeGuid = '{' + $scopes[0].Groups[1].Value + '}'
                 & $WriteStatus 'Analyzing dependencies and cleaning unused projects...' Title
                 $cleanupOutput = & $solutionInjector prune $targetSolution --scope $scopeGuid --apply --json
@@ -326,7 +326,7 @@ function Invoke-UdkConnectionPlan {
                     throw 'Unsupported SolutionInjector cleanup report version.'
                 }
 
-                # 3. При неоднозначном анализе оставляем дерево решения и показываем причины.
+                # 3. Preserve the solution tree and report reasons when analysis is ambiguous.
                 if ($cleanupExitCode -eq 2 -or $cleanupReport.blocked) {
                     foreach ($issue in $cleanupReport.issues) { & $WriteStatus "Cleanup skipped: $issue" Focus }
                     & $WriteStatus 'Consumer was disconnected; solution projects were retained because dependency analysis was blocked.' Focus

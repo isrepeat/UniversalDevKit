@@ -23,7 +23,7 @@ function DownloadToolArchive([string]$Url, [string]$Destination) {
     $inputStream = $null
     $outputStream = $null
     try {
-        # Заголовки получаем отдельно, чтобы читать ответ порциями и показывать реальные байты.
+        # Read response headers first to stream data and report actual byte counts.
         $response = $client.GetAsync($Url, [Net.Http.HttpCompletionOption]::ResponseHeadersRead).GetAwaiter().GetResult()
         [void]$response.EnsureSuccessStatusCode()
         $total = if ($response.Content.Headers.ContentLength) {
@@ -65,7 +65,7 @@ function ExpandToolArchive([string]$Path, [string]$Destination) {
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $zip = [IO.Compression.ZipFile]::OpenRead($Path)
     try {
-        # Считаем объём распакованных данных, чтобы размер файлов учитывался в процентах.
+        # Count uncompressed bytes to weight extraction progress by file size.
         $total = 0L
         foreach ($entry in $zip.Entries) { $total += $entry.Length }
         $completed = 0L
@@ -117,7 +117,7 @@ function AssertExecutable([string]$Path) {
     }
 }
 
-# Локальный путь позволяет работать без сети с тем же проверенным бинарником.
+# A local path allows offline use of the same verified executable.
 if ($LocalPath) {
     $executable = (Resolve-Path -LiteralPath $LocalPath).Path
     AssertExecutable $executable
@@ -134,7 +134,7 @@ if (Test-Path -LiteralPath $archive) {
     }
 }
 else {
-    # Сначала проверяем временный архив; неполная загрузка не становится кешем.
+    # Validate a temporary archive first; incomplete downloads must not enter the cache.
     $temporaryArchive = Join-Path $toolDirectory ([Guid]::NewGuid().ToString() + '.zip')
     try {
         DownloadToolArchive $manifest.url $temporaryArchive
@@ -149,7 +149,7 @@ else {
         }
     }
 }
-# Распаковываем проверенный архив повторно, восстанавливая также runtime DLL.
+# Extract the verified archive again to restore runtime DLLs as well.
 ExpandToolArchive $archive $toolDirectory
 AssertExecutable $executable
 return $executable

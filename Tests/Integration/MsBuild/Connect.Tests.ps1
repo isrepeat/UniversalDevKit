@@ -19,7 +19,7 @@ function Test-ComponentConnection {
     [xml]$beforeXml = $before
     [xml]$xml = [IO.File]::ReadAllText($project)
     if ($xml.OuterXml -cne $beforeXml.OuterXml) { throw 'Repeated Apply changed consumer settings.' }
-    # Порядок секций и папки solution могут переписываться инструментом; проверяем реальные связи.
+    # The tool may rewrite section order and solution folders; verify actual references.
     $solutionAfter = [IO.File]::ReadAllText($arguments.SolutionPath)
     $pattern = '^Project\(.*\).*\.(vcxproj|vcxitems)"|SharedItemsImports ='
     $linksBefore = @(($solutionBefore -split '\r?\n') | Where-Object { $_ -match $pattern } | Sort-Object)

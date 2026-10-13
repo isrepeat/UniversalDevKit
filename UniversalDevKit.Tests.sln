@@ -225,6 +225,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{9256B785-9B89-482B-888A-AD4A0573129B}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Infrastructure\BuildTools.ps1 = Tests\Infrastructure\BuildTools.ps1
+		Tests\Infrastructure\TestPublicHeaders.ps1 = Tests\Infrastructure\TestPublicHeaders.ps1
 		Tests\Infrastructure\TestBuildExtensions.ps1 = Tests\Infrastructure\TestBuildExtensions.ps1
 		Tests\Infrastructure\TestRegistryContract.ps1 = Tests\Infrastructure\TestRegistryContract.ps1
 		Tests\Infrastructure\TestComponentRegistry.ps1 = Tests\Infrastructure\TestComponentRegistry.ps1
@@ -264,7 +265,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{4161
 		Tests\Scripts\RunStatic.cmd = Tests\Scripts\RunStatic.cmd
 		Tests\Scripts\RunSubmodule.cmd = Tests\Scripts\RunSubmodule.cmd
 		Tests\Scripts\RunTests.cmd = Tests\Scripts\RunTests.cmd
-		Tests\Scripts\RunTests.ps1 = Tests\Scripts\RunTests.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeaderIsolation", "HeaderIsolation", "{4B1389B8-69D3-4DA0-972F-A790EAE8AE64}"
@@ -369,11 +369,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manifest", "Manifest", "{3E
 		Tests\Fixtures\RegistryContract\Manifest\UnsupportedVersion.json = Tests\Fixtures\RegistryContract\Manifest\UnsupportedVersion.json
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{9AD8DC26-E566-46A9-BF27-E965ACBDACF5}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Scripts\PowerShell\RunTests.ps1 = Tests\Scripts\PowerShell\RunTests.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PublicHeaders", "PublicHeaders", "{8DDA1F51-D758-44E8-8F6B-EEC71393E1A3}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Integration\Cmake\PublicHeaders\CMakeLists.txt = Tests\Integration\Cmake\PublicHeaders\CMakeLists.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{9AD8DC26-E566-46A9-BF27-E965ACBDACF5} = {41619890-3A56-45F7-B0B8-45C4A554206B}
+		{8DDA1F51-D758-44E8-8F6B-EEC71393E1A3} = {D24CA339-B1D6-4107-AB4C-BEC63541F901}
 		{A906BCD2-2361-4B2F-8CA0-85E792F16BF9} = {DD08FE8B-4418-425A-B2D5-CDBEE609C4AF}
 		{6E1B973A-A6B8-4F80-B8A6-D82C5AAF16D5} = {A906BCD2-2361-4B2F-8CA0-85E792F16BF9}
 		{50470167-B1BE-4380-8544-3272E256F161} = {A906BCD2-2361-4B2F-8CA0-85E792F16BF9}

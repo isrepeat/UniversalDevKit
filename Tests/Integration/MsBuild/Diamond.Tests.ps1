@@ -4,7 +4,7 @@ $fixture = Join-Path $repositoryPath 'Tests/Fixtures/Libraries/Diamond'
 foreach ($variant in @('Shared', 'Static', 'Dynamic', 'PrivateStatic')) {
     $case = New-TestWorkspace $repositoryPath $Workspace.Mode $Revision
     Write-Host "Diamond $variant workspace: $($case.Root)"
-    # Реестр и исходники устанавливаем только в копию UDK; consumer сохраняет настоящий шаблон проектов.
+    # Install the registry and sources only in the UDK copy; preserve the consumer project template.
     foreach ($directory in @('Includes', 'Sources', 'Projects')) {
         Copy-Item -LiteralPath (Join-Path $fixture $directory) -Destination $case.Library -Recurse -Force
     }
@@ -56,7 +56,7 @@ foreach ($variant in @('Shared', 'Static', 'Dynamic', 'PrivateStatic')) {
             $actual = @(Get-ChildItem -LiteralPath $bin -Filter '*.dll' | ForEach-Object Name | Sort-Object)
             $dlls = @($expected | ForEach-Object { "UniversalDevKit.$_.Dynamic.dll" } | Sort-Object)
             if (($actual -join ';') -cne ($dlls -join ';')) { throw "Incorrect runtime set: $variant/$app ($actual)" }
-            # Запускаем только EXE и доставленные DLL в отдельном каталоге без путей к библиотекам.
+            # Run only the EXE and delivered DLLs in a separate directory without library search paths.
             $clean = Join-Path $case.Root "run/$configuration/$app"
             [void][IO.Directory]::CreateDirectory($clean)
             Copy-Item -LiteralPath (Join-Path $bin "$app.exe") -Destination $clean

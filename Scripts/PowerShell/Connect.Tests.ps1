@@ -19,7 +19,7 @@ function AssertFails([scriptblock]$Action, [string]$Pattern) {
     throw "Expected failure: $Pattern"
 }
 
-# Проверяем перенос атрибутов, сохранение комментариев и повторное форматирование.
+# Verify attribute wrapping, comment preservation and repeated formatting.
 $xmlInput = '<Root><!-- <Node A="1" B="2" /> --><Node A="x > y" B="2" /></Root>'
 $xmlFormatted = Format-UdkXmlAttributes $xmlInput
 AssertEqual (Format-UdkXmlAttributes $xmlFormatted) $xmlFormatted 'XML formatting stability'
@@ -31,7 +31,7 @@ if ($xmlFormatted -notmatch 'A="x > y"\r?\n +B="2"') {
 }
 $null = [xml]$xmlFormatted
 
-# Проверяем транзитивную DLL с внутренней статической зависимостью.
+# Verify a transitive DLL with a private static dependency.
 $componentRegistry = @{
     A = [pscustomobject]@{ Dependencies = @([pscustomobject]@{ Component = 'B'; Visibility = 'private'; Linkage = 'same' }) }
     B = [pscustomobject]@{ Dependencies = @([pscustomobject]@{ Component = 'C'; Visibility = 'private'; Linkage = 'static' }) }
@@ -43,7 +43,7 @@ AssertEqual $graph.RuntimeComponents @('A', 'B') 'Transitive runtime set'
 AssertEqual $graph.DefinitionComponents @('A') 'Private import definitions'
 AssertEqual $graph.ResolvedModes.C 'Static' 'Forced static dependency'
 
-# Публичная DLL передаёт ссылку и import-макрос потребителю.
+# A public DLL propagates its reference and import macro to the consumer.
 $componentRegistry.A.Dependencies[0].Visibility = 'public'
 $graph = Resolve-UdkLinkageGraph @('A') @{ A = 'Dynamic' } $componentRegistry
 AssertEqual $graph.LinkComponents @('A', 'B') 'Public DLL link set'
@@ -55,7 +55,7 @@ $graph = Resolve-UdkLinkageGraph @('A') @{ A = 'Shared' } $componentRegistry
 AssertEqual $graph.LinkComponents @() 'Shared link set'
 AssertEqual @($graph.ResolvedModes.Values | Sort-Object -Unique) @('Shared') 'Shared closure'
 
-# Конфликт вариантов и цикл обнаруживаются до изменения файлов.
+# Detect variant conflicts and cycles before changing files.
 AssertFails { Resolve-UdkLinkageGraph @('A', 'C') @{ A = 'Dynamic'; C = 'Dynamic' } $componentRegistry } 'Conflicting linkage for C'
 AssertFails { Resolve-UdkLinkageGraph @('A', 'B') @{ A = 'Shared'; B = 'Static' } $componentRegistry } 'Conflicting linkage for B'
 $componentRegistry.C.Dependencies = @([pscustomobject]@{ Component = 'A'; Visibility = 'private'; Linkage = 'same' })
@@ -63,7 +63,7 @@ AssertFails { Resolve-UdkLinkageGraph @('A') @{ A = 'Static' } $componentRegistr
 $componentRegistry.C.Dependencies = @([pscustomobject]@{ Component = 'Missing'; Visibility = 'private'; Linkage = 'same' })
 AssertFails { Resolve-UdkLinkageGraph @('A') @{ A = 'Static' } $componentRegistry } 'Unknown component'
 
-# Проверяем реальный реестр компонентов и сохранение новых полей JSON.
+# Verify the real component registry and preservation of new JSON fields.
 Import-Module (Join-Path $PSScriptRoot 'Modules/Module.Udk.Connection/Module.Udk.Connection.psm1') -Force
 $componentRegistry = Module.Udk.Connection\Get-UdkComponentRegistry $RepositoryPath
 AssertEqual $componentRegistry.Diagnostic.Dependencies[0].Visibility 'private' 'ComponentRegistry visibility'
@@ -77,7 +77,7 @@ $request.Disconnect = $true
 $request.Components = @()
 $plan = Module.Udk.Connection\New-UdkConnectionPlan $request $state $componentRegistry $RepositoryPath
 AssertEqual $plan.LinkComponents @() 'Disconnect link set'
-# Меню учитывает существующие подключения, переключение режима и удаление корней.
+# The menu accounts for existing connections, mode changes and root removal.
 . (Join-Path $PSScriptRoot 'Modules/Module.Udk.Console/Private/Menus.ps1')
 $conflict = Get-UdkMenuModeConflict @{ Diagnostic = 'Dynamic' } @{} $componentRegistry -Name Helpers -Mode Dynamic
 if ($conflict -notmatch 'Conflicting linkage for Helpers') {
@@ -99,7 +99,7 @@ $conflict = Get-UdkMenuModeConflict @{ Diagnostic = 'Dynamic'; Helpers = 'Dynami
 if ($conflict) {
     throw "Menu blocked removal that resolves conflict: $conflict"
 }
-# Общий сервис остаётся Dynamic даже внутри Shared/Static-потребителя.
+# A process service remains Dynamic even in Shared/Static consumers.
 $serviceRegistry = @{
     ComponentA = [pscustomobject]@{ StateScope = 'process'; Dependencies = @() }
     ComponentB = [pscustomobject]@{ StateScope = 'module'; Dependencies = @([pscustomobject]@{ Component = 'ComponentA'; Visibility = 'private'; Linkage = 'dynamic' }) }

@@ -6,7 +6,7 @@ function Format-UdkXmlAttributes {
     } else {
         "`n"
     }
-    # Комментарии и CDATA пропускаем целиком; символ > внутри значения не завершает тег.
+    # Skip comments and CDATA entirely; > inside an attribute does not end the tag.
     $pattern = '<!--[\s\S]*?-->|<!\[CDATA\[[\s\S]*?\]\]>|<[A-Za-z_:][\w:.-]*(?:[^<>"'']|"[^"]*"|''[^'']*'')*>'
     $attributePattern = '[\w:.-]+\s*=\s*(?:"[^"]*"|''[^'']*'')'
     return [regex]::Replace($Content, $pattern, [Text.RegularExpressions.MatchEvaluator]{
@@ -20,7 +20,7 @@ function Format-UdkXmlAttributes {
             return $tag.Value
         }
 
-        # Выравниваем продолжения по первому атрибуту с учётом позиции тега в строке.
+        # Align continuation lines with the first attribute, accounting for the tag position.
         $lineStart = $Content.LastIndexOf("`n", $tag.Index) + 1
         $indent = ' ' * ($tag.Index - $lineStart + $name.Length + 1)
         $parts = @($attributes | ForEach-Object { $_.Value })

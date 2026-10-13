@@ -23,7 +23,7 @@ foreach ($runtime in @('Dynamic', 'Static')) {
     InvokeCMake @('-S', $repository, '-B', $build, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug;Release', "-DUniversalDevKitRuntime=$runtime")
     foreach ($configuration in @('Debug', 'Release')) {
         InvokeCMake @('--build', $build, '--config', $configuration)
-        # Явный --prefix должен проверяться так же, как CMAKE_INSTALL_PREFIX.
+        # Validate explicit --prefix just like CMAKE_INSTALL_PREFIX.
         InvokeCMake @('--install', $build, '--config', $configuration, '--prefix', $prefix)
         $recordPath = Join-Path $prefix "lib/cmake/UniversalDevKit/UniversalDevKit.Build-$configuration.json"
         $record = Get-Content -LiteralPath $recordPath -Raw | ConvertFrom-Json
@@ -49,7 +49,7 @@ foreach ($runtime in @('Dynamic', 'Static')) {
     }
 }
 
-# Несовместимая установка останавливается до перезаписи бинарников.
+# Stop incompatible installation before overwriting binaries.
 $mdPrefix = Join-Path $run 'install-Dynamic'
 $before = (Get-FileHash (Join-Path $mdPrefix 'bin/universaldevkit_diagnostic_dynamic.dll')).Hash
 AssertFails @('--install', (Join-Path $run 'build-Static'), '--config', 'Release', '--prefix', $mdPrefix) 'incompatible package'

@@ -52,7 +52,7 @@ function UpdateSolutionSharedReferences([string]$Path, [Guid]$ConsumerGuid, $Rem
         $updated = [regex]::Replace($original, $sectionPattern, {
             param($match)
             $content = $match.Groups[2].Value
-            # Переводим прежние записи Connect с двумя GUID в стандартный формат MSBuild.
+            # Convert legacy Connect entries with two GUIDs to standard MSBuild format.
             foreach ($project in (GetSolutionSharedProjects $Path).Values) {
                 $legacyPrefix = [regex]::Escape($project.SolutionRelativePath + '*{' + $project.Guid.ToString().ToLowerInvariant() + '}*')
                 $replacement = $project.SolutionRelativePath + '*'
@@ -80,7 +80,7 @@ function UpdateSolutionSharedReferences([string]$Path, [Guid]$ConsumerGuid, $Rem
 
 function RemoveSolutionBuildItems([string]$Path) {
     $original = [IO.File]::ReadAllText($Path)
-    # Убираем только служебные элементы импортированной папки MsBuild, не сборочные imports.
+    # Remove only administrative items from the imported MsBuild folder, not build imports.
     $pattern = '(?ms)^Project\("\{2150E333-8FDC-42A3-9474-1A3956D46DE8\}"\) = "MsBuild", "MsBuild", "\{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83\}"\r?\n.*?^EndProject'
     $updated = [regex]::Replace($original, $pattern, {
         param($match)
@@ -88,8 +88,8 @@ function RemoveSolutionBuildItems([string]$Path) {
             '(?m)^\t\tProjects\\MsBuild\\(?:BuildLayout\.props|UniversalDevKit\.props|UniversalDevKit\.Sources\.targets) = [^\r\n]+\r?\n', '')
         return [regex]::Replace($block, '(?m)^\tProjectSection\(SolutionItems\) = preProject\r?\n\tEndProjectSection\r?\n', '')
     })
-    # Библиотеки строятся через consumer с его CRT/toolset. Прямой запуск из solution
-    # создаёт второй экземпляр MSBuild с теми же путями и вызывает гонку PDB.
+    # Build libraries through the consumer with its CRT/toolset. Direct solution builds
+    # create another MSBuild instance using the same paths, causing a PDB race.
     foreach ($project in [regex]::Matches($updated, '(?m)^Project\("\{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942\}"\) = "UniversalDevKit\.[^"\r\n]+\.(?:Static|Dynamic)", "[^"\r\n]+", "(\{[^}]+\})"')) {
         $projectGuid = [regex]::Escape($project.Groups[1].Value)
         $updated = [regex]::Replace($updated, '(?m)^\s*' + $projectGuid + '\.[^\r\n]+\.Build\.0 = [^\r\n]+\r?\n', '')

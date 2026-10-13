@@ -43,7 +43,7 @@ function Resolve-UdkLinkageGraph {
     }
     foreach ($name in $Components) { VisitComponent $name $Modes[$name] @() }
 
-    # Финальный линкер раскрывает статические зависимости и публичные требования DLL.
+    # Resolve static dependencies and public DLL requirements for the final linker.
     $link = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     function VisitLink([string]$Name) {
         if ($resolvedModes[$Name] -ne 'Shared' -and -not $link.Add($Name)) {
@@ -57,7 +57,7 @@ function Resolve-UdkLinkageGraph {
     }
     foreach ($name in $Components) { VisitLink $name }
 
-    # Макросы импорта нужны корням и только публично доступным зависимостям.
+    # Import macros are required for roots and public dependencies only.
     $definitions = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
     function VisitPublic([string]$Name) {
         if (-not $definitions.Add($Name)) {
@@ -97,7 +97,7 @@ function New-UdkConnectionPlan {
     $resolvedComponents = @()
     $resolvedModes = @{}
 
-    # 1. Получаем итоговый набор корней, сохраняя компоненты, не выбранные для удаления.
+    # 1. Determine remaining roots, preserving components not selected for removal.
     $cleanupRequested = [bool]$Disconnect
     if ($cleanupRequested) {
         if ($Components) {
@@ -118,7 +118,7 @@ function New-UdkConnectionPlan {
         $Components = @(@($connectedComponents) + @($Components) | Select-Object -Unique)
     }
 
-    # 2. Для оставшихся корней раскрываем зависимости и проверяем режимы.
+    # 2. Resolve dependencies and validate modes for the remaining roots.
     if (-not $Disconnect) {
         $availableComponents = @($ComponentRegistry.Keys | Sort-Object)
         if (-not $Components) {
@@ -140,7 +140,7 @@ function New-UdkConnectionPlan {
                 throw "Linkage specified for an unselected component: $name"
             }
         }
-        # Режимы проверяем до изменения consumer и решения; старые подключения считаем Shared.
+        # Validate modes before modifying the consumer or solution; treat legacy connections as Shared.
         $rootModes = @{}
         foreach ($name in $Components) {
             $mode = if ($ComponentModes.ContainsKey($name)) {

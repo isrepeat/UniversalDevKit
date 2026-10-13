@@ -15,14 +15,14 @@ function InvokeCMake([string[]]$Arguments) {
     }
 }
 
-# Проверяем обе конфигурации в одном установленном пакете.
+# Verify both configurations in one installed package.
 InvokeCMake @('-S', $repository, '-B', $build, '-G', $Generator, '-A', 'x64', "-DCMAKE_INSTALL_PREFIX=$install")
 foreach ($configuration in @('Debug', 'Release')) {
     InvokeCMake @('--build', $build, '--config', $configuration)
     InvokeCMake @('--install', $build, '--config', $configuration)
 }
 
-# Переносим только установленный пакет; исходный prefix больше не существует.
+# Relocate only the installed package; the original prefix no longer exists.
 $runPrefix = [IO.Path]::GetFullPath($run).TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar
 foreach ($packageDirectory in @($install, $relocated)) {
     if (-not [IO.Path]::GetFullPath($packageDirectory).StartsWith($runPrefix, [StringComparison]::OrdinalIgnoreCase)) {
@@ -40,13 +40,13 @@ foreach ($configuration in @('Debug', 'Release')) {
     }
 }
 
-# Неизвестный обязательный компонент обязан отклоняться при конфигурации.
+# Reject unknown required components during configuration.
 & $CMake -S (Join-Path $repository 'Tests/Fixtures/Consumers/CmakePackage') -B (Join-Path $run 'invalid') -G $Generator -A x64 "-DCMAKE_PREFIX_PATH=$relocated" -DUDK_TEST_COMPONENT=Unknown
 if ($LASTEXITCODE -eq 0) {
     throw 'Unknown component was accepted.'
 }
 function AssertConfigurationFails([string]$Scenario, [string[]]$Arguments, [string]$ExpectedMessage) {
-    # Windows PowerShell не должен прерывать сбор ожидаемой диагностики stderr.
+    # Windows PowerShell must not interrupt collection of expected stderr diagnostics.
     $ErrorActionPreference = 'Continue'
     $output = & $CMake @Arguments 2>&1
     $result = $LASTEXITCODE
@@ -60,7 +60,7 @@ function AssertConfigurationFails([string]$Scenario, [string[]]$Arguments, [stri
 }
 
 $contractSource = Join-Path $repository 'Tests/Fixtures/Consumers/CmakeContract'
-# Проверяем заголовки без бинарников и доступность только своего компонента/Core.
+# Verify headers without binaries and access only to the selected component and Core.
 $headerBuild = Join-Path $run 'header-isolation'
 InvokeCMake @('-S', (Join-Path $repository 'Tests/Fixtures/Consumers/HeaderIsolation'), '-B', $headerBuild, '-G', $Generator, '-A', 'x64')
 InvokeCMake @('--build', $headerBuild, '--config', 'Release')
@@ -72,13 +72,13 @@ AssertConfigurationFails 'Changed runtime in existing build tree' @('-S', $repos
 AssertConfigurationFails 'Invalid runtime choice' @('-S', $repository, '-B', (Join-Path $run 'invalid-runtime'), '-G', $Generator, '-A', 'x64', '-DUniversalDevKitRuntime=Unknown') 'UniversalDevKitRuntime must be'
 $contractArguments = @('-S', $contractSource, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Release')
 
-# Проверяем прямой и транзитивный конфликт у установленного пакета.
+# Verify direct and transitive conflicts in the installed package.
 AssertConfigurationFails 'Installed variant conflict' ($contractArguments + @('-B', (Join-Path $run 'conflict'), "-DCMAKE_PREFIX_PATH=$relocated", '-DTEST_CONFLICT=Helpers.Dynamic')) 'UDK_COMPONENT_VARIANT_Helpers'
 AssertConfigurationFails 'Direct variant conflict' ($contractArguments + @('-B', (Join-Path $run 'direct-conflict'), "-DCMAKE_PREFIX_PATH=$relocated", '-DTEST_CHECK=DirectConflict', '-DTEST_CONFLICT=Helpers.Dynamic')) 'UDK_COMPONENT_VARIANT_Helpers'
 AssertConfigurationFails 'Private DLL dependency conflict' ($contractArguments + @('-B', (Join-Path $run 'private-conflict'), "-DCMAKE_PREFIX_PATH=$relocated", '-DTEST_TARGET=Diagnostic.Dynamic', '-DTEST_CONFLICT=Helpers.Dynamic')) 'UDK_COMPONENT_VARIANT_Helpers'
 AssertConfigurationFails 'Source variant conflict' ($contractArguments + @('-B', (Join-Path $run 'source-conflict'), '-DTEST_CHECK=SourceConflict', '-DTEST_CONFLICT=Helpers.Dynamic')) 'UDK_COMPONENT_VARIANT_Helpers'
 
-# Создаём отдельный пакет только с Helpers.Static и только Release.
+# Create a separate Release-only package containing Helpers.Static.
 $limitedBuild = Join-Path $run 'limited-build'
 $limitedInstall = Join-Path $run 'limited-install'
 InvokeCMake @('-S', $repository, '-B', $limitedBuild, '-G', $Generator, '-A', 'x64', '-DUniversalDevKit_COMPONENTS=Helpers', '-DUniversalDevKit_BUILD_DYNAMIC=OFF', "-DCMAKE_INSTALL_PREFIX=$limitedInstall")
@@ -100,7 +100,7 @@ AssertConfigurationFails 'Missing Debug configuration' (@('-S', $contractSource,
 AssertConfigurationFails 'Incompatible x86 architecture' (@('-S', $contractSource, '-B', (Join-Path $run 'wrong-architecture'), '-G', $Generator, '-A', 'Win32', '-DCMAKE_CONFIGURATION_TYPES=Release', "-DCMAKE_PREFIX_PATH=$limitedInstall")) '64bit|not compatible|not accepted'
 Write-Output 'Package contract checks passed.'
 
-# Новый компонент проверяет передачу C++20, threads, системной .lib и динамического сервиса.
+# The new component checks C++20, threads, system libraries and a dynamic service.
 InvokeCMake @('-P', (Join-Path $repository 'Tests/Integration/Cmake/RequirementValidation.cmake'))
 $requirementsBuild = Join-Path $run 'requirements-build'
 $requirementsInstall = Join-Path $run 'requirements-install'

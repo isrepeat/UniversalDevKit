@@ -15,7 +15,7 @@ function InvokeChecked([string]$Tool, [string[]]$Arguments) {
 }
 
 try {
-    # 1. Header-only создаёт Shared и INTERFACE, без пустых архивов и DLL.
+    # 1. Header-only creates Shared and INTERFACE targets without empty archives or DLLs.
     & $generator -RepositoryRoot $workspace.Library
     . (Join-Path $workspace.Library 'Scripts/PowerShell/Modules/Module.Udk.Connection/Private/ConnectionPlan.ps1')
     $registry = @{
@@ -42,7 +42,7 @@ try {
     InvokeChecked (Get-TestMSBuild) @($project, '/p:Configuration=Debug', '/p:Platform=x64', '/v:minimal', '/nologo')
     InvokeChecked (Join-Path $workspace.Library 'Consumer/bin/Shared.exe') @()
 
-    # 2. Одни и те же неверные описания должны отклоняться обоими readers.
+    # 2. Both readers must reject the same invalid descriptions.
     foreach ($case in Get-ChildItem (Join-Path $repository 'Tests/Fixtures/RegistryContract') -Filter '*.json') {
         Copy-Item -LiteralPath $case.FullName -Destination (Join-Path $workspace.Library 'Projects/Components/HeaderProbe.json') -Force
         $rejected = $false

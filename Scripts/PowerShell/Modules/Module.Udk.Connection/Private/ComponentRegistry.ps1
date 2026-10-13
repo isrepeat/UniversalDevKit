@@ -1,7 +1,7 @@
 function GetAvailableComponents {
     param([string]$RepositoryPath)
     $integrationPath = Join-Path $RepositoryPath 'Projects/MsBuild/UniversalDevKit.Sources.targets'
-    # Реестр компонентов сформирован вместе с графом зависимостей; проверяем его актуальность без записи.
+    # The registry is generated with the dependency graph; check freshness without writing.
     & (Join-Path $RepositoryPath 'Scripts/PowerShell/GenerateComponentProjects.ps1') -Check | Out-Null
     [xml]$integration = Get-Content -LiteralPath $integrationPath -Raw -Encoding UTF8
     $componentRegistry = $integration.SelectSingleNode("/*[local-name()='Project']/*[local-name()='ItemGroup']/*[local-name()='__UniversalDevKitAvailableComponent']")

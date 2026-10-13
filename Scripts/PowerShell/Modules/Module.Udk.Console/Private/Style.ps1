@@ -1,7 +1,7 @@
 function Write-UdkConsoleText {
     param([string]$Text, [string]$Role = 'Text', [switch]$NoNewline)
 
-    # RGB-палитра Olive; для консоли без ANSI используем ближайшие стандартные цвета.
+    # Use the Olive RGB palette and nearest standard colors without ANSI support.
     $palette = @{
         Title = @{ Rgb = '166;185;129'; Fallback = 'DarkGreen' }
         Text = @{ Rgb = '170;170;170'; Fallback = 'Gray' }
@@ -34,7 +34,7 @@ function ReadMenuPath([string]$Prompt) {
 function Write-UdkConsoleProgress {
     param($Progress, [hashtable]$State)
 
-    # При перенаправлении вывода оставляем только начало и конец этапа без управляющих символов.
+    # For redirected output, show stage start and end without control sequences.
     if ([Console]::IsOutputRedirected -and -not $Progress.Finished -and $State.Stage -eq $Progress.Stage) {
         return
     }
@@ -59,7 +59,7 @@ function Write-UdkConsoleProgress {
         $detail = ' {0,3}%' -f $percent
     }
     else {
-        # Без известного размера показываем движение и объём, не выдумывая процент.
+        # Without a known size, show activity and bytes rather than inventing a percentage.
         $position = $State.Frame % $barWidth
         $State.Frame++
         $bar = (' ' * $position) + '=' + (' ' * ($barWidth - $position - 1))
@@ -93,7 +93,7 @@ function Write-UdkConsoleProgress {
 function Invoke-UdkConsoleProgress {
     param([scriptblock]$Action)
 
-    # Состояние индикатора принадлежит одной операции; при ошибке завершаем его строку.
+    # Progress state belongs to one operation; finish its line on failure.
     $state = @{ Stage = ''; Frame = 0; Length = 0; Open = $false }
     $callback = {
         param($Progress)

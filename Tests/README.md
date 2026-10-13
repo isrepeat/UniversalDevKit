@@ -1,5 +1,7 @@
 # Проверки UniversalDevKit
 
+Общий RunTests сначала проверяет самостоятельность публичных заголовков: для каждого .h в include-корнях компонентов реестра и Core создаётся отдельный .cpp с единственным include. Компиляция проходит без PCH и unity build в Debug/Release x64, без линковки приложения. Отдельный запуск: `powershell.exe -NoProfile -File Tests/Infrastructure/TestPublicHeaders.ps1`. Нужен CMake из PATH либо Visual Studio 2026 с компонентом CMake tools. Результаты остаются в !artifacts/tests/PublicHeaders-<id>.
+
 Контракт реестра и header-only компоненты: `pwsh -NoProfile -File Tests/Infrastructure/TestRegistryContract.ps1`. Общие JSON fixtures отклоняются CMake и PowerShell; корректная цепочка заголовков собирается через Shared MSBuild и установленный CMake-пакет без бинарников компонентов.
 
 `Tests/Integration/Cmake/TestBinaryCompatibility.ps1 -CMake <путь к cmake.exe>` отдельно проверяет метаданные выпуска, /MD и /MT в Static/Dynamic Debug/Release, несовместимые настройки target и защиту install-prefix. Параметры toolchain в отрицательных проверках синтетические; положительные сборки используют установленный MSVC.
@@ -41,15 +43,15 @@ powershell.exe -NoProfile -File Tests/Infrastructure/TestComponentRegistry.ps1
 Затем проверьте один способ подключения, например Shared или Dynamic:
 
 ```powershell
-powershell.exe -NoProfile -File Tests/Scripts/RunTests.ps1 -Scenario Shared
-powershell.exe -NoProfile -File Tests/Scripts/RunTests.ps1 -Scenario Dynamic
+powershell.exe -NoProfile -File Tests/Scripts/PowerShell/RunTests.ps1 -Scenario Shared
+powershell.exe -NoProfile -File Tests/Scripts/PowerShell/RunTests.ps1 -Scenario Dynamic
 ```
 
 Для полного набора MSBuild-сценариев и проверки закоммиченной версии через submodule:
 
 ```powershell
-powershell.exe -NoProfile -File Tests/Scripts/RunTests.ps1
-powershell.exe -NoProfile -File Tests/Scripts/RunTests.ps1 -Mode Submodule -Revision HEAD
+powershell.exe -NoProfile -File Tests/Scripts/PowerShell/RunTests.ps1
+powershell.exe -NoProfile -File Tests/Scripts/PowerShell/RunTests.ps1 -Mode Submodule -Revision HEAD
 ```
 
 WorkingTree используется по умолчанию и проверяет текущие tracked/untracked файлы, включая незакоммиченные изменения. Submodule проверяет выбранную ревизию; локальные изменения в неё не входят. Обёртки RunTests.cmd и RunSubmodule.cmd выполняют соответствующие запуски с паузой в конце.
@@ -114,9 +116,9 @@ Tests\Scripts\RunTests.cmd -Scenario Static -Mode Submodule -Revision HEAD
 Запускайте через Windows PowerShell 5.1:
 
 ```powershell
-powershell.exe -NoProfile -File Tests/Scripts/RunTests.ps1
-powershell.exe -NoProfile -File Tests/Scripts/RunTests.ps1 -Mode Submodule -Revision HEAD
-powershell.exe -NoProfile -File Tests/Scripts/RunTests.ps1 -Scenario Static
+powershell.exe -NoProfile -File Tests/Scripts/PowerShell/RunTests.ps1
+powershell.exe -NoProfile -File Tests/Scripts/PowerShell/RunTests.ps1 -Mode Submodule -Revision HEAD
+powershell.exe -NoProfile -File Tests/Scripts/PowerShell/RunTests.ps1 -Scenario Static
 ```
 
 Нужны Git и Visual Studio с C++ tools/MSBuild. Если не задан `-SolutionInjectorPath`, Connect загружает инструмент в изолированную копию UDK; для автономного запуска можно передать путь к уже загруженному совместимому EXE. Отсутствие инструмента или ошибка проверки возвращает код 1.
@@ -131,7 +133,7 @@ powershell.exe -NoProfile -File Tests/Scripts/RunTests.ps1 -Scenario Static
 
 Diamond использует отдельный Fixtures/Libraries/Diamond: A → B/C → D и App2 → C. RunDiamond.cmd или `RunTests.ps1 -Scenario Diamond` запускает Shared, Static, Dynamic и вариант A.Dynamic → private B.Static. Для Dynamic проверяется публичная B.Dynamic и транзитивный runtime-набор. EXE запускаются с ожидаемыми DLL из чистого каталога и ограниченным PATH; конфликт A.Dynamic/C.Static должен отклоняться без изменения consumer и solution. После отключения App1 повторно собирается App2. Сценарий входит в общий запуск. Библиотечный solution fixture хранится отдельно от consumer и описывает только тестовые компоненты. Fixture предназначен для MSBuild; CMake здесь не проверяется.
 
-Fixtures содержит готовые неподключённые `.sln/.vcxproj` и исходники. Один Consumer используется сценариями Shared, Static, Dynamic, ModeSwitch и Disconnect из Integration. Общие проверки находятся в Integration/MsBuild/Connect.Tests.ps1; способы подключения меняются только через настоящий Connect. Каждый сценарий получает отдельное окружение. По умолчанию запускаются все сценарии; параметр Scenario выбирает нужные. В PowerShell можно передать массив: `./Tests/Scripts/RunTests.ps1 -Scenario Shared,Dynamic`.
+Fixtures содержит готовые неподключённые `.sln/.vcxproj` и исходники. Один Consumer используется сценариями Shared, Static, Dynamic, ModeSwitch и Disconnect из Integration. Общие проверки находятся в Integration/MsBuild/Connect.Tests.ps1; способы подключения меняются только через настоящий Connect. Каждый сценарий получает отдельное окружение. По умолчанию запускаются все сценарии; параметр Scenario выбирает нужные. В PowerShell можно передать массив: `./Tests/Scripts/PowerShell/RunTests.ps1 -Scenario Shared,Dynamic`.
 
 Новый способ подключения добавляется сценарием, а не копией solution. Новый тип приложения, например host с плагинами, получает отдельный шаблон Fixtures. Тестовые компоненты и JSON графа размещаются в Fixtures/Libraries и устанавливаются только во временную копию библиотеки. Итоговые подключённые решения в Git не сохраняются.
 

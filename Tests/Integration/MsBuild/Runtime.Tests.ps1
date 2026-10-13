@@ -9,7 +9,7 @@ $arguments = @{
 if ($SolutionInjectorPath) { $arguments.SolutionInjectorPath = $SolutionInjectorPath }
 & (Join-Path $Workspace.Library 'Scripts/PowerShell/Connect.ps1') @arguments | Out-Host
 
-# Два consumer одного solution строят общие проекты с независимыми глобальными свойствами.
+# Consumers in one solution build common projects with independent global properties.
 $arguments.ProjectPath = Join-Path $Workspace.Consumer 'App2/App2.vcxproj'
 & (Join-Path $Workspace.Library 'Scripts/PowerShell/Connect.ps1') @arguments | Out-Host
 foreach ($configuration in @('Debug', 'Release')) {
@@ -32,7 +32,7 @@ foreach ($configuration in @('Debug', 'Release')) {
 $arguments.ProjectPath = Join-Path $Workspace.Consumer 'App1/App1.vcxproj'
 foreach ($configuration in @('Debug', 'Release')) {
     foreach ($runtime in @('Dynamic', 'Static')) {
-        # Явный параметр остаётся допустимым, если совпадает с CRT consumer.
+        # An explicit setting is allowed when it matches the consumer CRT.
         $runtimeLibrary = if ($configuration -eq 'Debug') { 'MultiThreadedDebug' } else { 'MultiThreaded' }
         if ($runtime -eq 'Dynamic') { $runtimeLibrary += 'DLL' }
         & $MSBuild $arguments.ProjectPath /m /nologo /v:minimal "/p:Configuration=$configuration" /p:Platform=x64 "/p:TestRuntimeLibrary=$runtimeLibrary" "/p:UniversalDevKitRuntime=$runtime" | Out-Host
@@ -41,7 +41,7 @@ foreach ($configuration in @('Debug', 'Release')) {
     }
 }
 
-# Оба варианта должны сохраняться одновременно, а не заменять друг друга.
+# Both variants must coexist without overwriting each other.
 $artifacts = Join-Path $Workspace.Library '!artifacts/Windows-x64/msbuild'
 foreach ($runtimeDirectory in @('md', 'mt')) {
     $binaries = @(Get-ChildItem $artifacts -Recurse -Filter 'UniversalDevKit.Diagnostic.Dynamic.dll' |
@@ -49,7 +49,7 @@ foreach ($runtimeDirectory in @('md', 'mt')) {
     if ($binaries.Count -ne 2) { throw "Expected Debug/Release DLLs in $runtimeDirectory" }
 }
 
-# Явно противоречащий выбор отклоняется до компиляции consumer.
+# Reject conflicting settings before compiling the consumer.
 $output = & $MSBuild $arguments.ProjectPath /nologo /v:minimal /p:Configuration=Release /p:Platform=x64 /p:TestRuntimeLibrary=MultiThreaded /p:UniversalDevKitRuntime=Dynamic 2>&1
 if ($LASTEXITCODE -eq 0 -or ($output -join "`n") -notmatch 'conflicts with consumer RuntimeLibrary') {
     throw 'Expected explicit CRT conflict rejection'

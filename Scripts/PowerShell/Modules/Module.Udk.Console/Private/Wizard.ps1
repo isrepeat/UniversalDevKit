@@ -18,7 +18,7 @@ function Show-UdkConnectionWizard {
     $explicitDisconnect = [bool]$Disconnect
     $solutionDirectory = $null
     $menuState = @{}
-    # Навигация завершается до любых изменений файлов; возврат повторяет только этапы выбора.
+    # Complete navigation before modifying files; Back repeats selection steps only.
     :Selection while ($true) {
         if ($ProjectOnly) {
             if ($SolutionPath) {
@@ -29,7 +29,7 @@ function Show-UdkConnectionWizard {
             }
         }
         else {
-            # Обычный сценарий начинается с решения; consumer выбирается только из его проектов.
+            # The normal flow starts with a solution; select a consumer from its projects only.
             if (-not $SolutionPath) {
                 if ([Console]::IsInputRedirected) {
                     throw 'Specify SolutionPath for Shared References, or ProjectOnly for a standalone project.'
@@ -39,7 +39,7 @@ function Show-UdkConnectionWizard {
             $targetSolution = (Resolve-Path -LiteralPath $SolutionPath).Path
             if (Test-Path -LiteralPath $targetSolution -PathType Container) {
                 $solutionDirectory = $targetSolution
-                # Ищем решения непосредственно в выбранной папке, без артефактов из подкаталогов.
+                # Find solutions directly in the selected directory, excluding subdirectory artifacts.
                 $solutions = @(Get-ChildItem -LiteralPath $targetSolution -Filter '*.sln' -File | Sort-Object Name | ForEach-Object FullName)
                 if (-not $solutions.Count) {
                     throw "No .sln files found in directory: $targetSolution"
@@ -59,7 +59,7 @@ function Show-UdkConnectionWizard {
             $projects = @(@(foreach ($line in Get-Content -LiteralPath $targetSolution) {
                 if ($line -match '^Project\(.*\)\s*=\s*"[^"]*",\s*"([^"]+\.vcxproj)"') {
                     $candidate = [IO.Path]::GetFullPath((Join-Path (Split-Path -Parent $targetSolution) $Matches[1]))
-                    # Проекты самой библиотеки не являются потребителями.
+                    # Library projects are not consumers.
                     if (-not $candidate.StartsWith($repositoryPath + '\', [StringComparison]::OrdinalIgnoreCase)) {
                         $candidate
                     }
@@ -105,7 +105,7 @@ function Show-UdkConnectionWizard {
             }
         }
 
-        # 1. Выбираем явные компоненты; автоматически раскрытые зависимости отдельно не отключаются.
+        # 1. Select explicit components; resolved dependencies cannot be disconnected separately.
         $connectedComponents = @((Module.Udk.Connection\Get-UdkConnectionState -ProjectPath $ProjectPath).Components)
         [xml]$currentProject = [IO.File]::ReadAllText($ProjectPath)
         $currentModes = @{}
@@ -119,7 +119,7 @@ function Show-UdkConnectionWizard {
         }
         if ($interactive -and -not $Components) {
             if ($Disconnect -and -not $connectedComponents.Count) {
-                # Даже при явном -Disconnect остаёмся в меню; выход возможен через Backspace или Esc.
+                # Stay in the menu even with explicit -Disconnect; Backspace or Esc exits.
                 $action = SelectConsoleItem -Title $ProjectPath -Items @('Disconnect') -MenuState $menuState -StateKey "Action:$ProjectPath" -UnavailableItems @{ Disconnect = 'No UniversalDevKit components are connected to this project.' }
                 if ($action -eq -1) {
                     $ProjectPath = $null
