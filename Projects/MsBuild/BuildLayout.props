@@ -31,6 +31,24 @@
       <RuntimeLibrary>$(__UniversalDevKitRuntimeLibrary)</RuntimeLibrary>
     </ClCompile>
   </ItemDefinitionGroup>
+  <!-- Consumer solutions disable direct library builds. Build transitive references
+       in the current library context before linking, even when solution mapping skips them. -->
+  <Target Name="__UniversalDevKitEnableLibraryReferenceBuild"
+          BeforeTargets="AssignProjectConfiguration"
+          Condition="'$(DesignTimeBuild)' != 'true' and '@(ProjectReference)' != ''">
+    <PropertyGroup>
+      <BuildProjectReferences>true</BuildProjectReferences>
+    </PropertyGroup>
+  </Target>
+  <Target Name="__UniversalDevKitConfigureLibraryReferences"
+          AfterTargets="AssignProjectConfiguration"
+          Condition="'$(DesignTimeBuild)' != 'true'">
+    <ItemGroup>
+      <ProjectReferenceWithConfiguration Condition="$([System.String]::Copy('%(ProjectReferenceWithConfiguration.Filename)').StartsWith('UniversalDevKit.'))">
+        <BuildReference>true</BuildReference>
+      </ProjectReferenceWithConfiguration>
+    </ItemGroup>
+  </Target>
   <Target Name="__UniversalDevKitValidateRuntime" BeforeTargets="PrepareForBuild">
     <Error Condition="'$(UniversalDevKitRuntime)' != 'Dynamic' and '$(UniversalDevKitRuntime)' != 'Static'"
            Text="UniversalDevKitRuntime must be Dynamic (MD) or Static (MT)." />
