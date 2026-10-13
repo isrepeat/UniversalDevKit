@@ -1,0 +1,7 @@
+{
+  "name": "HeaderLeaf",
+  "kind": "headerOnly",
+  "msbuildGuid": "{4BE9A9C7-8992-42D3-97AF-212780E6F620}",
+  "headers": ["Includes/HeaderLeaf/UniversalDevKit/HeaderLeaf/Value.h"],
+  "sources": []
+}

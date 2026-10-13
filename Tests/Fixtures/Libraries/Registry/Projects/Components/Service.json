@@ -1,0 +1,12 @@
+{
+  "name": "Service",
+  "stateScope": "process",
+  "msbuildGuid": "{9C51FF34-91AE-4F32-98AE-ABBAFE4219E1}",
+  "headers": [
+    "Includes/Service/UniversalDevKit/Service/Service.h"
+  ],
+  "sources": [
+    "Sources/Service/Service.cpp"
+  ],
+  "dependencies": []
+}

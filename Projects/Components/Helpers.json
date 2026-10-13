@@ -1,0 +1,26 @@
+{
+  "name": "Helpers",
+  "dependencies": [],
+  "msbuildGuid": "{F27F4562-11C4-42EF-AC5A-26101FD26F46}",
+  "headers": [
+    "Includes/Helpers/UniversalDevKit/Helpers/Math.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Text.h"
+  ],
+  "sources": [
+    "Sources/Helpers/Math.cpp",
+    "Sources/Helpers/Text.cpp"
+  ],
+  "filters": {
+    "roots": [
+      {
+        "path": "Includes/Helpers/UniversalDevKit/Helpers",
+        "filter": ""
+      },
+      {
+        "path": "Sources/Helpers",
+        "filter": ""
+      }
+    ],
+    "files": {}
+  }
+}

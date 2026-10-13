@@ -1,0 +1,22 @@
+{
+  "name": "A",
+  "dependencies": [
+    {
+      "component": "B",
+      "visibility": "public",
+      "linkage": "same"
+    },
+    {
+      "component": "C",
+      "visibility": "private",
+      "linkage": "same"
+    }
+  ],
+  "msbuildGuid": "{DA000000-0000-4000-8000-000000000001}",
+  "headers": [
+    "Includes/A/UniversalDevKit/A/Value.h"
+  ],
+  "sources": [
+    "Sources/A/Value.cpp"
+  ]
+}

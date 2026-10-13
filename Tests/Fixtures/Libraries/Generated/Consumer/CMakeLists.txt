@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.22)
+project(GeneratedConsumer LANGUAGES CXX)
+find_package(UniversalDevKit CONFIG REQUIRED COMPONENTS GeneratedProbe)
+add_executable(GeneratedConsumer ../Consumer.cpp)
+target_link_libraries(GeneratedConsumer PRIVATE UniversalDevKit::GeneratedProbe.Static)

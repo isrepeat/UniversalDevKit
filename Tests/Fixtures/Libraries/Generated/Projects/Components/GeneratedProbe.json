@@ -1,0 +1,11 @@
+{
+  "name": "GeneratedProbe",
+  "msbuildGuid": "{D3BAA8F7-5D3C-43D3-993F-54414F7559F8}",
+  "headers": [],
+  "sources": ["Sources/GeneratedProbe/Anchor.cpp"],
+  "dependencies": [],
+  "buildExtensions": {
+    "cmake": "Projects/Generation/Probe.cmake",
+    "msbuildTargets": "Projects/Generation/Probe.targets"
+  }
+}

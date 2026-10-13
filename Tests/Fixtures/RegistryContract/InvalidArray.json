@@ -1,0 +1,8 @@
+{
+  "name": "HeaderProbe",
+  "kind": "headerOnly",
+  "msbuildGuid": "{984F66E5-780A-40B6-A641-4ECFCD8E0EAF}",
+  "headers": {},
+  "sources": [],
+  "dependencies": []
+}

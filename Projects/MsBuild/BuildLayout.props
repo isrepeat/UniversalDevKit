@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Общая схема артефактов для собственных Static/Dynamic-проектов UniversalDevKit.
+       Если исходники UniversalDevKit подключены через Sources.targets к приложению,
+       их компилирует проект приложения и сохраняет результаты в свои каталоги.
+       Поэтому этот файл там не подключается, чтобы не менять пути сборки приложения. -->
+  <PropertyGroup>
+    <!-- Путь относительно этого файла не зависит от рабочего каталога или расположения solution. -->
+    <UniversalDevKitArtifactsRoot>$(MSBuildThisFileDirectory)..\..\!artifacts\</UniversalDevKitArtifactsRoot>
+    <!-- По умолчанию ОС и архитектура образуют Windows-x64; платформу можно задать заранее. -->
+    <UniversalDevKitTargetPlatform Condition="'$(UniversalDevKitTargetPlatform)' == ''">Windows-$(Platform)</UniversalDevKitTargetPlatform>
+    <!-- Вид CRT независим от Static/Dynamic компонента; Debug выбирает отладочный CRT. -->
+    <UniversalDevKitRuntime Condition="'$(UniversalDevKitRuntime)' == ''">Dynamic</UniversalDevKitRuntime>
+    <__UniversalDevKitRuntimeDirectory Condition="'$(UniversalDevKitRuntime)' == 'Dynamic'">md</__UniversalDevKitRuntimeDirectory>
+    <__UniversalDevKitRuntimeDirectory Condition="'$(UniversalDevKitRuntime)' == 'Static'">mt</__UniversalDevKitRuntimeDirectory>
+    <__UniversalDevKitRuntimeLibrary Condition="'$(UniversalDevKitRuntime)' == 'Dynamic' and '$(Configuration)' == 'Debug'">MultiThreadedDebugDLL</__UniversalDevKitRuntimeLibrary>
+    <__UniversalDevKitRuntimeLibrary Condition="'$(UniversalDevKitRuntime)' == 'Dynamic' and '$(Configuration)' != 'Debug'">MultiThreadedDLL</__UniversalDevKitRuntimeLibrary>
+    <__UniversalDevKitRuntimeLibrary Condition="'$(UniversalDevKitRuntime)' == 'Static' and '$(Configuration)' == 'Debug'">MultiThreadedDebug</__UniversalDevKitRuntimeLibrary>
+    <__UniversalDevKitRuntimeLibrary Condition="'$(UniversalDevKitRuntime)' == 'Static' and '$(Configuration)' != 'Debug'">MultiThreaded</__UniversalDevKitRuntimeLibrary>
+    <!-- Короткое имя сохраняет запас длины пути при подключении через submodule. -->
+    <__UniversalDevKitArtifactProject>$([System.String]::Copy('$(MSBuildProjectName)').Replace('UniversalDevKit.', ''))</__UniversalDevKitArtifactProject>
+
+		<!-- Разделяем платформу, систему сборки, проект и конфигурацию.
+         bin содержит результат сборки, obj — промежуточные файлы компиляции. -->
+    <OutDir>$(UniversalDevKitArtifactsRoot)$(UniversalDevKitTargetPlatform)\msbuild\$(PlatformToolset)\$(VCToolsVersion)\$(__UniversalDevKitRuntimeDirectory)\$(__UniversalDevKitArtifactProject)\$(Configuration)\bin\</OutDir>
+    <IntDir>$(UniversalDevKitArtifactsRoot)$(UniversalDevKitTargetPlatform)\msbuild\$(PlatformToolset)\$(VCToolsVersion)\$(__UniversalDevKitRuntimeDirectory)\$(__UniversalDevKitArtifactProject)\$(Configuration)\obj\</IntDir>
+    <TLogLocation>$(IntDir)tlog\</TLogLocation>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <RuntimeLibrary>$(__UniversalDevKitRuntimeLibrary)</RuntimeLibrary>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <!-- Consumer solutions disable direct library builds. Build transitive references
+       in the current library context before linking, even when solution mapping skips them. -->
+  <Target Name="__UniversalDevKitEnableLibraryReferenceBuild"
+          BeforeTargets="AssignProjectConfiguration"
+          Condition="'$(DesignTimeBuild)' != 'true' and '@(ProjectReference)' != ''">
+    <PropertyGroup>
+      <BuildProjectReferences>true</BuildProjectReferences>
+    </PropertyGroup>
+  </Target>
+  <Target Name="__UniversalDevKitConfigureLibraryReferences"
+          AfterTargets="AssignProjectConfiguration"
+          Condition="'$(DesignTimeBuild)' != 'true'">
+    <ItemGroup>
+      <ProjectReferenceWithConfiguration Condition="$([System.String]::Copy('%(ProjectReferenceWithConfiguration.Filename)').StartsWith('UniversalDevKit.'))">
+        <BuildReference>true</BuildReference>
+      </ProjectReferenceWithConfiguration>
+    </ItemGroup>
+  </Target>
+  <Target Name="__UniversalDevKitValidateRuntime" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(UniversalDevKitRuntime)' != 'Dynamic' and '$(UniversalDevKitRuntime)' != 'Static'"
+           Text="UniversalDevKitRuntime must be Dynamic (MD) or Static (MT)." />
+    <Error Condition="'%(ClCompile.RuntimeLibrary)' != '$(__UniversalDevKitRuntimeLibrary)'"
+           Text="UniversalDevKit RuntimeLibrary override conflicts with UniversalDevKitRuntime: %(ClCompile.Identity)." />
+  </Target>
+</Project>

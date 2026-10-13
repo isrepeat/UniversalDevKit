@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <__UniversalDevKitProbeInput>$(MSBuildThisFileDirectory)Input.txt</__UniversalDevKitProbeInput>
+    <__UniversalDevKitProbeGenerator>$(MSBuildThisFileDirectory)Generate.cmake</__UniversalDevKitProbeGenerator>
+    <__UniversalDevKitProbeOutput>$(IntDir)UniversalDevKit\GeneratedProbe\generated\</__UniversalDevKitProbeOutput>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(__UniversalDevKitProbeOutput)Includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="$(__UniversalDevKitProbeOutput)Sources\Value.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ObjectFileName>$(__UniversalDevKitProbeOutput)Value.obj</ObjectFileName>
+    </ClCompile>
+  </ItemGroup>
+  <Target Name="__UniversalDevKitGenerateProbe" BeforeTargets="ClCompile"
+          Inputs="$(__UniversalDevKitProbeInput);$(__UniversalDevKitProbeGenerator);$(MSBuildThisFileFullPath)"
+          Outputs="$(__UniversalDevKitProbeOutput)Includes\UniversalDevKit\GeneratedProbe\Generated\Value.h;$(__UniversalDevKitProbeOutput)Sources\Value.cpp">
+    <Error Condition="'$(UniversalDevKitHostCMake)' == '' or !Exists('$(UniversalDevKitHostCMake)')"
+           Text="Set UniversalDevKitHostCMake to an existing host cmake.exe." />
+    <Exec Command="&quot;$(UniversalDevKitHostCMake)&quot; &quot;-DOUTPUT_ROOT=$(__UniversalDevKitProbeOutput).&quot; &quot;-DINPUT_FILE=$(__UniversalDevKitProbeInput)&quot; -P &quot;$(__UniversalDevKitProbeGenerator)&quot;" />
+  </Target>
+</Project>

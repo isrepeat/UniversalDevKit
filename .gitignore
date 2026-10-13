@@ -1,6 +1,4 @@
-/build/
+/!artifacts/
+/!tools/
 /.vs/
-**/x64/
-**/Debug/
-**/Release/
 *.vcxproj.user

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Проверяем CRT каждого файла до сборки ссылок; Shared не получает новых настроек. -->
+  <Target Name="__UniversalDevKitConfigureConsumerRuntime"
+          BeforeTargets="AssignProjectConfiguration"
+          Condition="'$(DesignTimeBuild)' != 'true'">
+    <ItemGroup>
+      <__UniversalDevKitBinaryReference Include="@(ProjectReference)"
+                                         Condition="$([System.String]::Copy('%(ProjectReference.Filename)').StartsWith('UniversalDevKit.'))" />
+    </ItemGroup>
+    <PropertyGroup Condition="'@(__UniversalDevKitBinaryReference)' != ''">
+      <__UniversalDevKitConsumerRuntimeLibrary Condition="'$(Configuration)' == 'Debug'">MultiThreadedDebugDLL</__UniversalDevKitConsumerRuntimeLibrary>
+      <__UniversalDevKitConsumerRuntimeLibrary Condition="'$(Configuration)' != 'Debug'">MultiThreadedDLL</__UniversalDevKitConsumerRuntimeLibrary>
+    </PropertyGroup>
+    <ItemGroup Condition="'@(__UniversalDevKitBinaryReference)' != ''">
+      <__UniversalDevKitConsumerRuntimeValue Include="%(ClCompile.RuntimeLibrary)"
+                                            Condition="'%(ClCompile.RuntimeLibrary)' != ''" />
+    </ItemGroup>
+    <RemoveDuplicates Inputs="@(__UniversalDevKitConsumerRuntimeValue)">
+      <Output TaskParameter="Filtered" ItemName="__UniversalDevKitConsumerUniqueRuntime" />
+    </RemoveDuplicates>
+    <PropertyGroup Condition="'@(__UniversalDevKitConsumerUniqueRuntime)' != ''">
+      <__UniversalDevKitConsumerRuntimeLibrary>@(__UniversalDevKitConsumerUniqueRuntime)</__UniversalDevKitConsumerRuntimeLibrary>
+    </PropertyGroup>
+    <Error Condition="$([System.String]::Copy('$(__UniversalDevKitConsumerRuntimeLibrary)').Contains(';'))"
+           Text="UniversalDevKit requires one RuntimeLibrary for all consumer source files." />
+    <PropertyGroup Condition="'@(__UniversalDevKitBinaryReference)' != ''">
+      <__UniversalDevKitConsumerRuntime Condition="'$(__UniversalDevKitConsumerRuntimeLibrary)' == 'MultiThreadedDLL' or '$(__UniversalDevKitConsumerRuntimeLibrary)' == 'MultiThreadedDebugDLL'">Dynamic</__UniversalDevKitConsumerRuntime>
+      <__UniversalDevKitConsumerRuntime Condition="'$(__UniversalDevKitConsumerRuntimeLibrary)' == 'MultiThreaded' or '$(__UniversalDevKitConsumerRuntimeLibrary)' == 'MultiThreadedDebug'">Static</__UniversalDevKitConsumerRuntime>
+    </PropertyGroup>
+    <Error Condition="'@(__UniversalDevKitBinaryReference)' != '' and '$(__UniversalDevKitConsumerRuntime)' == ''"
+           Text="Unsupported consumer RuntimeLibrary for UniversalDevKit." />
+    <PropertyGroup>
+      <__UniversalDevKitSelectedRuntime Condition="'$(UniversalDevKitRuntime)' == ''">$(__UniversalDevKitConsumerRuntime)</__UniversalDevKitSelectedRuntime>
+      <__UniversalDevKitSelectedRuntime Condition="'$(UniversalDevKitRuntime)' != ''">$(UniversalDevKitRuntime)</__UniversalDevKitSelectedRuntime>
+    </PropertyGroup>
+    <Error Condition="'@(__UniversalDevKitBinaryReference)' != '' and '$(__UniversalDevKitSelectedRuntime)' != '$(__UniversalDevKitConsumerRuntime)'"
+           Text="UniversalDevKitRuntime conflicts with consumer RuntimeLibrary. Select the same runtime for this consumer." />
+    <PropertyGroup Condition="'@(__UniversalDevKitBinaryReference)' != ''">
+      <__UniversalDevKitExpectedConsumerRuntime>MultiThreaded</__UniversalDevKitExpectedConsumerRuntime>
+      <__UniversalDevKitExpectedConsumerRuntime Condition="'$(Configuration)' == 'Debug'">$(__UniversalDevKitExpectedConsumerRuntime)Debug</__UniversalDevKitExpectedConsumerRuntime>
+      <__UniversalDevKitExpectedConsumerRuntime Condition="'$(__UniversalDevKitSelectedRuntime)' == 'Dynamic'">$(__UniversalDevKitExpectedConsumerRuntime)DLL</__UniversalDevKitExpectedConsumerRuntime>
+    </PropertyGroup>
+    <Error Condition="'@(__UniversalDevKitBinaryReference)' != '' and '$(__UniversalDevKitConsumerRuntimeLibrary)' != '$(__UniversalDevKitExpectedConsumerRuntime)'"
+           Text="Consumer CRT debug/release variant does not match the UniversalDevKit configuration." />
+    <PropertyGroup>
+      <__UniversalDevKitRuntimeBuildProperties>Configuration=$(Configuration);Platform=$(Platform)</__UniversalDevKitRuntimeBuildProperties>
+      <__UniversalDevKitRuntimeBuildProperties Condition="'@(__UniversalDevKitBinaryReference)' != ''">$(__UniversalDevKitRuntimeBuildProperties);UniversalDevKitRuntime=$(__UniversalDevKitSelectedRuntime);PlatformToolset=$(PlatformToolset);VCToolsVersion=$(VCToolsVersion)</__UniversalDevKitRuntimeBuildProperties>
+      <!-- Solution не знает о нескольких CRT одного проекта; варианты строятся через consumer. -->
+      <BuildProjectReferences Condition="'@(__UniversalDevKitBinaryReference)' != ''">true</BuildProjectReferences>
+    </PropertyGroup>
+  </Target>
+  <!-- VC использует SetConfiguration также при получении библиотек для линковки.
+       Дополняем его после назначения конфигурации, до разделения ссылок. -->
+  <Target Name="__UniversalDevKitConfigureReferenceContext"
+          AfterTargets="AssignProjectConfiguration"
+          Condition="'$(DesignTimeBuild)' != 'true' and '@(__UniversalDevKitBinaryReference)' != ''">
+    <ItemGroup>
+      <ProjectReferenceWithConfiguration Condition="$([System.String]::Copy('%(ProjectReferenceWithConfiguration.Filename)').StartsWith('UniversalDevKit.'))">
+        <BuildReference>true</BuildReference>
+        <SetConfiguration>%(ProjectReferenceWithConfiguration.SetConfiguration);UniversalDevKitRuntime=$(__UniversalDevKitSelectedRuntime);PlatformToolset=$(PlatformToolset);VCToolsVersion=$(VCToolsVersion)</SetConfiguration>
+      </ProjectReferenceWithConfiguration>
+    </ItemGroup>
+  </Target>
+  <!-- После изменения реестра компонентов нужно повторно рассчитать ссылки и runtime-набор. -->
+  <Target Name="__UniversalDevKitValidateComponentRegistry"
+          BeforeTargets="PrepareForBuild"
+          Condition="'$(DesignTimeBuild)' != 'true' and '@(__UniversalDevKitComponentRegistryFile)' != ''">
+    <GetFileHash Files="@(__UniversalDevKitComponentRegistryFile)"
+                 Algorithm="SHA256">
+      <Output TaskParameter="Items"
+              ItemName="__UniversalDevKitComponentRegistryHash" />
+    </GetFileHash>
+    <Error Condition="'%(__UniversalDevKitComponentRegistryHash.FileHash)' != '%(__UniversalDevKitComponentRegistryHash.ExpectedHash)'"
+           Text="UniversalDevKit component registry changed: %(__UniversalDevKitComponentRegistryHash.Identity). Update the connection using Connect." />
+  </Target>
+  <!-- Получаем фактические TargetPath всех транзитивных DLL после успешной сборки. -->
+  <Target Name="__UniversalDevKitCopyDynamicLibraries"
+          AfterTargets="Build"
+          Condition="'$(DesignTimeBuild)' != 'true' and '@(__UniversalDevKitRuntimeProject)' != ''">
+    <ItemGroup>
+      <__UniversalDevKitRuntimeFile Remove="@(__UniversalDevKitRuntimeFile)" />
+    </ItemGroup>
+    <MSBuild Projects="@(__UniversalDevKitRuntimeProject)"
+             Targets="GetTargetPath"
+             Properties="$(__UniversalDevKitRuntimeBuildProperties)"
+             BuildInParallel="true">
+      <Output TaskParameter="TargetOutputs"
+              ItemName="__UniversalDevKitRuntimeFile" />
+    </MSBuild>
+    <Copy SourceFiles="@(__UniversalDevKitRuntimeFile)"
+          DestinationFolder="$(OutDir)"
+          SkipUnchangedFiles="true" />
+  </Target>
+</Project>
