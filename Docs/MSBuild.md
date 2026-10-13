@@ -1,8 +1,19 @@
 # Сборка через MSBuild
 
-[← README](../README.md) · [Архитектура](Architecture.md)
+**Навигация:** [Главная](../README.md) → [Документация](README.md) → MSBuild
 
-## 1. Собрать UDK отдельно
+## Содержание
+
+- [Собрать UDK отдельно](#собрать-udk-отдельно)
+- [Подключить consumer](#подключить-consumer)
+- [Как собирается Shared](#как-собирается-shared)
+- [Как собирается Static](#как-собирается-static)
+- [Как собирается Dynamic](#как-собирается-dynamic)
+- [Режим ProjectOnly](#режим-projectonly)
+- [Использовать только заголовки](#использовать-только-заголовки)
+- [Обновления и платформы](#обновления-и-платформы)
+
+## Собрать UDK отдельно
 
 Откройте UniversalDevKit.sln в Visual Studio с установленными средствами разработки C++. Выберите Debug/Release и x64, затем соберите нужный Static/Dynamic-проект. Shared-проекты содержат файлы для импорта и самостоятельно не компилируются.
 
@@ -14,31 +25,31 @@ msbuild UniversalDevKit.sln /m /p:Configuration=Release /p:Platform=x64
 
 Результаты собственных проектов направляются через BuildLayout.props в `!artifacts/Windows-x64/msbuild/<имя проекта>/<конфигурация>/bin/`, промежуточные файлы — в obj/. Публичный UniversalDevKit.props не меняет каталоги consumer.
 
-## 2. Подключить consumer
+## Подключить consumer
 
 Scripts/Connect.cmd позволяет выбрать solution, проект и режим каждого компонента. Connect меняет .sln и .vcxproj; эти изменения сохраняются в репозитории consumer. После Apply перезагрузите solution. Исходники остаются в UDK, поэтому относительное расположение checkout и consumer должно сохраняться.
 
 Подробные клавиши, команды, переключения и Disconnect находятся в [Connect](Connect.md).
 
-## 3. Как собирается Shared
+## Как собирается Shared
 
 Connect добавляет импорты выбранных Shared.vcxitems и транзитивных компонентов. MSBuild добавляет их ClCompile в проект consumer. Они компилируются с настройками consumer, с отключённым PCH и отдельными объектными путями в `$(IntDir)UniversalDevKit/`.
 
 Заголовки подключаются через UniversalDevKit.props. Стандарт C++17 или выше consumer задаёт сам. Shared References в solution нужны также для отображения связи в Visual Studio.
 
-## 4. Как собирается Static
+## Как собирается Static
 
 Connect добавляет ProjectReference на библиотечные проекты. MSBuild строит зависимости и передаёт требуемые .lib финальному линкеру. Сгенерированные Dependencies.props описывают межкомпонентные связи.
 
 Статические архивы UDK не объединяются автоматически в один архив. Например, Diagnostic.Static содержит свою реализацию, а consumer должен получить также Helpers.Static. Connect рассчитывает этот набор; у библиотечных ссылок различается LinkLibraryDependencies в зависимости от роли проекта.
 
-## 5. Как собирается Dynamic
+## Как собирается Dynamic
 
 DLL-проект компилируется с UNIVERSALDEVKIT_<КОМПОНЕНТ>_DYNAMIC и _EXPORTS. Consumer получает только _DYNAMIC, чтобы объявления использовали dllimport. _EXPORTS задавать consumer нельзя.
 
 Consumer линкуется с импортной .lib, а реализация выполняется из DLL. UniversalDevKit.Runtime.targets после успешной сборки получает GetTargetPath всех необходимых DLL-проектов и копирует файлы в `$(OutDir)`. При consumer-DLL итоговое приложение также должно обеспечивать обнаружение всего runtime-набора загрузчиком.
 
-## 6. Режим ProjectOnly
+## Режим ProjectOnly
 
 ```powershell
 ./Scripts/PowerShell/Connect.ps1 -ProjectOnly -ProjectPath C:/Projects/App/App.vcxproj -Components Diagnostic
@@ -46,7 +57,7 @@ Consumer линкуется с импортной .lib, а реализация 
 
 Этот режим изменяет только .vcxproj и поддерживает Shared. Sources.targets раскрывает зависимости во время вычисления проекта. Static/Dynamic через ProjectOnly сейчас не поддерживаются.
 
-## 7. Использовать только заголовки
+## Использовать только заголовки
 
 После Microsoft.Cpp.props импортируйте публичные настройки:
 
@@ -56,7 +67,7 @@ Consumer линкуется с импортной .lib, а реализация 
 
 Импорт добавляет Includes и сохраняет существующие include-пути. Он не добавляет .cpp, библиотеки, язык C++ или CRT. Наличие UDK в solution само по себе не подключает его к consumer.
 
-## 8. Обновления и платформы
+## Обновления и платформы
 
 После изменения JSON выполните GenerateComponentProjects, затем повторите обычный Connect. Runtime.targets сравнивает сохранённые SHA-256 JSON перед компиляцией; даже изменение форматирования реестра требует обновления подключения.
 

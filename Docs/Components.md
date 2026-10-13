@@ -1,6 +1,14 @@
 # Генерация проектов компонентов
 
-[← README](../README.md)
+**Навигация:** [Главная](../README.md) → [Документация](README.md) → Реестр компонентов
+
+## Содержание
+
+- [Зависимости при подключении исходников](#зависимости-при-подключении-исходников)
+- [Виртуальные папки Visual Studio](#виртуальные-папки-visual-studio)
+- [Политика состояния](#политика-состояния)
+- [Платформенные файлы](#платформенные-файлы)
+- [CMake без дублирования списков](#cmake-без-дублирования-списков)
 
 Корневой `Components.json` содержит `schemaVersion` и массив `includes` с путями отдельных описаний: `Projects/Components/Helpers.json`, `Projects/Components/Diagnostic.json`. Пути includes отсчитываются от корневого файла. Вложенные include запрещены; объединённый JSON на диске не создаётся.
 
@@ -94,7 +102,3 @@ CMake использует CMAKE_SYSTEM_NAME, MSBuild — UniversalDevKitTargetO
 ## CMake без дублирования списков
 
 ComponentDependencies.cmake читает headers/sources/platformSources непосредственно из JSON и создаёт выбранные варианты с зависимостями. ComponentRequirements.cmake обрабатывает стандарт C++, потоки и системные библиотеки. При добавлении обычного компонента отдельный CMake-файл не создаётся: он не нужен. Необязательный Projects/Cmake/<компонент>/CMakeLists.txt выполняется через include и получает список currentComponentTargets для специальных настроек, отсутствующих в общем формате. Это файл расширения общей сборки, а не самостоятельный проект для add_subdirectory.
-
-## Связанные документы
-
-[Архитектура](Architecture.md), [CMake](CMake.md), [Connect](Connect.md), [оглавление](../README.md).

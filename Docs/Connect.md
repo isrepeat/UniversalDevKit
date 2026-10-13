@@ -1,6 +1,21 @@
 # Connect: компоненты, варианты и зависимости
 
-[← README](../README.md)
+**Навигация:** [Главная](../README.md) → [Документация](README.md) → Connect
+
+## Содержание
+
+- [Управление и команды](#управление-и-команды)
+- [Helpers.Shared: отдельной библиотеки нет](#helpersshared-отдельной-библиотеки-нет)
+- [Helpers.Static: отдельная статическая библиотека .lib](#helpersstatic-отдельная-статическая-библиотека-lib)
+- [Helpers.Dynamic: импортная библиотека и DLL](#helpersdynamic-импортная-библиотека-и-dll)
+- [Diagnostic.Shared: исходники зависимости](#diagnosticshared-исходники-зависимости)
+- [Diagnostic.Static: зависимости доходят до линкера](#diagnosticstatic-зависимости-доходят-до-линкера)
+- [Diagnostic.Dynamic: внутренняя статическая зависимость](#diagnosticdynamic-внутренняя-статическая-зависимость)
+- [Прямой выбор Helpers и конфликты](#прямой-выбор-helpers-и-конфликты)
+- [Транзитивные DLL](#транзитивные-dll)
+- [Публичные зависимости](#публичные-зависимости)
+- [Новая зависимость в JSON](#новая-зависимость-в-json)
+- [Проверки и ограничения](#проверки-и-ограничения)
 
 Connect подключает UniversalDevKit к вашему C++-проекту Visual Studio/MSBuild. Далее этот проект называется приложением или потребителем (consumer), а solution — решением `.sln`. Исходники библиотеки остаются в UDK.
 
@@ -28,7 +43,7 @@ Connect / update добавляет компоненты или меняет и�
 
 ProjectOnly поддерживает Shared без изменения solution. Static/Dynamic требуют solution. После применения перезагрузите проекты в Visual Studio.
 
-## 1. Helpers.Shared: отдельной библиотеки нет
+## Helpers.Shared: отдельной библиотеки нет
 
 Connect подключает Shared-проект Helpers. Math.cpp и Text.cpp компилируются непосредственно в consumer с его настройками. Заголовки доступны через общий корень Includes; PCH для исходников UDK отключён. Объектные файлы изолированы внутри IntDir/UniversalDevKit/.
 
@@ -36,7 +51,7 @@ Connect подключает Shared-проект Helpers. Math.cpp и Text.cpp �
 Main.cpp + Math.cpp + Text.cpp → Application.exe
 ```
 
-## 2. Helpers.Static: отдельная статическая библиотека .lib
+## Helpers.Static: отдельная статическая библиотека .lib
 
 Connect добавляет в проект приложения `ProjectReference` — ссылку на проект Helpers.Static. При сборке MSBuild сначала создаёт `Helpers.Static.lib`, затем линкер объединяет код приложения с нужным кодом из этой библиотеки в `Application.exe`.
 
@@ -47,7 +62,7 @@ Math.cpp + Text.cpp → Helpers.Static.lib
 Main.obj + Helpers.Static.lib → Application.exe
 ```
 
-## 3. Helpers.Dynamic: импортная библиотека и DLL
+## Helpers.Dynamic: импортная библиотека и DLL
 
 Connect добавляет ссылку на проект Helpers.Dynamic и определение `UNIVERSALDEVKIT_HELPERS_DYNAMIC`, чтобы заголовки объявляли функции как импортируемые из DLL.
 
@@ -62,7 +77,7 @@ Helpers.Dynamic.dll → каталог запуска Application.exe
 
 UniversalDevKit.Runtime.targets после успешной сборки запрашивает GetTargetPath библиотечных проектов и копирует DLL в OutDir. Путь к !artifacts не зашит в consumer: учитываются фактические TargetName, OutDir и переданные свойства MSBuild. Файлы копируются с SkipUnchangedFiles.
 
-## 4. Diagnostic.Shared: исходники зависимости
+## Diagnostic.Shared: исходники зависимости
 
 Реализация `Diagnostic::Log` вызывает функцию `EndsWithLineBreak` из Helpers. Поэтому одного `Logging.cpp` недостаточно.
 
@@ -74,7 +89,7 @@ Main.cpp + Logging.cpp + Math.cpp + Text.cpp → Application.exe
 
 visibility не исключает приватные исходники: они всё равно нужны реализации. При ProjectOnly Sources.targets раскрывает актуальный граф во время вычисления MSBuild. Обычное подключение через solution сохраняет конкретные Shared References и требует обновления после изменения JSON.
 
-## 5. Diagnostic.Static: зависимости доходят до линкера
+## Diagnostic.Static: зависимости доходят до линкера
 
 В JSON указано, что Diagnostic использует Helpers внутри своей реализации (`visibility=private`) и требует статический вариант Helpers (`linkage=static`).
 
@@ -91,7 +106,7 @@ Diagnostic.Static.vcxproj → Helpers.Static.vcxproj (порядок сборк�
 
 В ссылках приложения на необходимые библиотеки Connect задаёт `LinkLibraryDependencies=true`. В ссылках между Static-проектами используется `false`: зависимость обеспечивает порядок сборки, а статические библиотеки остаются отдельными.
 
-## 6. Diagnostic.Dynamic: внутренняя статическая зависимость
+## Diagnostic.Dynamic: внутренняя статическая зависимость
 
 Если выбрать Diagnostic.Dynamic, `linkage=static` всё равно требует Helpers.Static.
 
@@ -109,7 +124,7 @@ Application.exe ← импортная Diagnostic.Dynamic.lib
 
 Для порядка сборки Connect также добавляет ссылки на внутренние проекты с `LinkLibraryDependencies=false`. Такая ссылка сохраняет проект зависимости в solution, но не подключает его `.lib` к линкеру приложения.
 
-## 7. Прямой выбор Helpers и конфликты
+## Прямой выбор Helpers и конфликты
 
 Diagnostic.Dynamic + Helpers.Static допустимы: обе цепочки требуют Static-вариант Helpers. Приложение самостоятельно использует Helpers и получает прямую статическую ссылку.
 
@@ -117,7 +132,7 @@ Diagnostic.Dynamic + Helpers.Dynamic отклоняются: одна цепоч
 
 Это консервативная политика: один вариант на имя компонента во всём графе одного consumer. Две реализации компонента без состояния технически могут работать, но такая комбинация пока не поддерживается. Совпадение режима не гарантирует единый экземпляр состояния во всём процессе: статический код может присутствовать в нескольких DLL. Сервисы с состоянием должны отдельно определять владение и время жизни.
 
-## 8. Транзитивные DLL
+## Транзитивные DLL
 
 Предположим, будущий Diagnostic зависит от Formatting с linkage=same, а Formatting — от Helpers с linkage=static. Для Dynamic корня получится:
 
@@ -131,13 +146,13 @@ Helpers.Static используется при создании Formatting DLL: 
 
 RuntimeComponents рассчитывается по всему графу, включая private-зависимости любой глубины, с устранением повторов. Для consumer, который сам является DLL, OutDir обозначает каталог этой DLL; окончательное приложение должно также получить runtime-набор. Connect не управляет поиском DLL загрузчиком и не доставляет сторонние runtime-библиотеки, не описанные компонентами UDK.
 
-## 9. Публичные зависимости
+## Публичные зависимости
 
 visibility=public означает, что публичные требования зависимости передаются потребителю. Например, если публичный интерфейс Diagnostic использует динамический Formatting, consumer получает его import-макрос и ссылку. public-цепочки раскрываются транзитивно; private-цепочка прерывает передачу публичных требований.
 
 Все текущие заголовки доступны через общий Includes. Специальные внешние include-пути и произвольные compile options реестр компонентов пока не описывает. Для CMake PUBLIC/PRIVATE передаются target_link_libraries и учитываются стандартным механизмом usage requirements.
 
-## 10. Новая зависимость в JSON
+## Новая зависимость в JSON
 
 Описание ребра:
 
@@ -169,7 +184,3 @@ GenerateComponentProjects формирует Shared-списки, Sources.target
 Connect.Tests.ps1 проверяет графы Shared/Static/Dynamic, публичные и приватные зависимости, транзитивные DLL, конфликты, циклы, неизвестные компоненты и Disconnect. Invoke-UdkConnectionPlan -Preview возвращает рассчитанное XML consumer без изменения файлов и без запуска SolutionInjector; нужные Shared-проекты уже должны присутствовать в указанном solution. GenerateComponentProjects.ps1 -PassThru возвращает план генерации без записи.
 
 Совместимость архитектуры, конфигурации и CRT обязательна. Текущие библиотечные проекты поддерживают Windows x64 Debug/Release. Connect работает с проектами из checkout UDK, а не с установленными NuGet/AAR или произвольными готовыми бинарниками. Он не удаляет старые DLL из OutDir после переключения режима: для проверки чистого runtime-набора используйте чистый каталог сборки. Полный Check/Repair, транзакционное изменение solution/consumer и кеш распакованного SolutionInjector остаются отдельными задачами.
-
-## Связанные документы
-
-[Архитектура](Architecture.md), [MSBuild](MSBuild.md), [реестр компонентов](Components.md), [проверки и ограничения](Validation.md), [оглавление](../README.md).
