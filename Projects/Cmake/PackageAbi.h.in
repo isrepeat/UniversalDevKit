@@ -1,0 +1,31 @@
+// Сгенерировано PackageMetadata.cmake. Проверяет фактические настройки компиляции consumer.
+#pragma once
+#include <yvals.h>
+
+#if _MSC_VER != @MSVC_VERSION@
+#error UniversalDevKit package compiler generation mismatch
+#endif
+
+#if $<STREQUAL:@udkPackageRuntime@,Dynamic>
+#if !defined(_DLL)
+#error UniversalDevKit package CRT mismatch: requires MD or MDd
+#endif
+#else
+#if defined(_DLL)
+#error UniversalDevKit package CRT mismatch: requires MT or MTd
+#endif
+#endif
+
+#if $<CONFIG:Debug>
+#if !defined(_DEBUG)
+#error UniversalDevKit package requires Debug CRT
+#endif
+#else
+#if defined(_DEBUG)
+#error UniversalDevKit package requires non-Debug CRT
+#endif
+#endif
+
+#if _ITERATOR_DEBUG_LEVEL != $<IF:$<CONFIG:Debug>,2,0>
+#error UniversalDevKit package STL iterator ABI mismatch
+#endif

@@ -1,0 +1,16 @@
+# Сгенерировано PackageMetadata.cmake. Изменяйте шаблон защиты установки.
+set(expectedContract [==[@udkPackageContract@]==])
+set(prefix "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}")
+file(MAKE_DIRECTORY "${prefix}")
+# Блокировка сохраняется до завершения всего процесса cmake --install.
+file(LOCK "${prefix}/.UniversalDevKit.Install.lock" GUARD PROCESS TIMEOUT 30)
+set(identity "${prefix}/.UniversalDevKit.PackageIdentity.json")
+if(EXISTS "${identity}")
+    file(READ "${identity}" installedContract)
+    if(NOT installedContract STREQUAL expectedContract)
+        message(FATAL_ERROR "UniversalDevKit install prefix contains an incompatible package (version/components/compiler/architecture/CRT). Use a separate prefix: ${CMAKE_INSTALL_PREFIX}")
+    endif()
+elseif(EXISTS "${prefix}/@CMAKE_INSTALL_LIBDIR@/cmake/UniversalDevKit/UniversalDevKitConfig.cmake")
+    message(FATAL_ERROR "UniversalDevKit install prefix contains a package without identity metadata. Use a clean prefix: ${CMAKE_INSTALL_PREFIX}")
+endif()
+file(WRITE "${identity}" "${expectedContract}")

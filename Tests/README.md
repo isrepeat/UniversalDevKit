@@ -1,5 +1,7 @@
 # Проверки UniversalDevKit
 
+`Tests/Integration/Cmake/TestBinaryCompatibility.ps1 -CMake <путь к cmake.exe>` отдельно проверяет метаданные выпуска, /MD и /MT в Static/Dynamic Debug/Release, несовместимые настройки target и защиту install-prefix. Параметры toolchain в отрицательных проверках синтетические; положительные сборки используют установленный MSVC.
+
 Необязательные сборочные расширения проверяются отдельно: `pwsh -NoProfile -File Tests/Infrastructure/TestBuildExtensions.ps1`. Fixture Generated создаёт публичный заголовок и реализацию, проверяет инкрементальную генерацию CMake/MSBuild, Shared и установленный CMake-пакет. Подробности — [сборочные расширения](../Docs/BuildExtensions.md).
 
 HeaderIsolation проверяет компонентный include-корень Helpers.Headers без сборки библиотек: Helpers и Core доступны, заголовки Diagnostic недоступны. Проверка входит в TestCMakePackage.ps1; ограниченный пакет также проверяется на отсутствие заголовков исключённого Diagnostic.

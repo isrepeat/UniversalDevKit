@@ -236,6 +236,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{D24CA339
 	ProjectSection(SolutionItems) = preProject
 		Tests\Integration\Cmake\RequirementValidation.cmake = Tests\Integration\Cmake\RequirementValidation.cmake
 		Tests\Integration\Cmake\TestCMakePackage.ps1 = Tests\Integration\Cmake\TestCMakePackage.ps1
+		Tests\Integration\Cmake\TestBinaryCompatibility.ps1 = Tests\Integration\Cmake\TestBinaryCompatibility.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{22F9FF80-DFE4-4C9D-A560-0F28D87C1E72}"
@@ -305,11 +306,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GeneratedProbe", "Generated
 		Tests\Fixtures\Libraries\Generated\Sources\GeneratedProbe\Anchor.cpp = Tests\Fixtures\Libraries\Generated\Sources\GeneratedProbe\Anchor.cpp
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BinaryCompatibility", "BinaryCompatibility", "{13003AE8-E41E-4227-8642-971A9AE004B2}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Consumers\BinaryCompatibility\CMakeLists.txt = Tests\Fixtures\Consumers\BinaryCompatibility\CMakeLists.txt
+		Tests\Fixtures\Consumers\BinaryCompatibility\Main.cpp = Tests\Fixtures\Consumers\BinaryCompatibility\Main.cpp
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{13003AE8-E41E-4227-8642-971A9AE004B2} = {F7C9315C-200F-4296-901A-39A3D4A00C48}
 		{52BED2B5-4FBC-4A59-8FF7-332C3AC443A9} = {DD08FE8B-4418-425A-B2D5-CDBEE609C4AF}
 		{A60B6204-0778-4772-B4C5-30A508E27E1A} = {52BED2B5-4FBC-4A59-8FF7-332C3AC443A9}
 		{D9A6CD46-CC35-425F-B8EE-FBE42B2DB04B} = {52BED2B5-4FBC-4A59-8FF7-332C3AC443A9}

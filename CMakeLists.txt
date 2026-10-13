@@ -32,6 +32,8 @@ set(udkBuildIdentity "${CMAKE_SYSTEM_NAME}|${CMAKE_SYSTEM_PROCESSOR}|${CMAKE_SIZ
 set(udkBuildIdentityPath "${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKitBuildIdentity.txt")
 if(EXISTS "${udkBuildIdentityPath}")
     file(READ "${udkBuildIdentityPath}" previousUdkBuildIdentity)
+    # configure_file может завершать результат переводом строки; он не часть идентификатора.
+    string(REGEX REPLACE "[\r\n]+$" "" previousUdkBuildIdentity "${previousUdkBuildIdentity}")
     if(NOT previousUdkBuildIdentity STREQUAL udkBuildIdentity)
         message(FATAL_ERROR "UniversalDevKit compiler/architecture/runtime changed: use a separate build directory")
     endif()
@@ -62,6 +64,7 @@ include("Projects/Cmake/ComponentDependencies.cmake")
 
 # Установка объединяет библиотеки и требования к ним в один набор экспорта.
 if(UniversalDevKit_INSTALL)
+include("Projects/Cmake/PackageMetadata.cmake")
 set_target_properties(universaldevkit_headers PROPERTIES EXPORT_NAME Headers)
 install(TARGETS universaldevkit_headers ${exportedComponentTargets} EXPORT UniversalDevKitTargets
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
