@@ -2,6 +2,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.10.12224.181
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Repository", "!Repository", "{01643071-A00B-441F-B890-826B2408BC9D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		AGENTS.md = AGENTS.md
+		CMakeLists.txt = CMakeLists.txt
+		CMakePresets.json = CMakePresets.json
+		Components.json = Components.json
+		README.md = README.md
+		TODO.md = TODO.md
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{75E9BBC5-6A5A-4C7F-BCB9-30ED29C2CF97}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\README.md = Tests\README.md

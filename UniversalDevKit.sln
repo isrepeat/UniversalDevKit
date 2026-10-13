@@ -23,11 +23,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Static", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Static.vcxproj", "{C6B94069-54C2-4B96-880D-4C058A605C56}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{13DA8639-4234-4E82-9423-056A19840860}"
-	ProjectSection(SolutionItems) = preProject
-		CMakeLists.txt = CMakeLists.txt
-		CMakePresets.json = CMakePresets.json
-		Components.json = Components.json
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4-1E80-4386-ACBA-A8B9D984FC44}"
 	ProjectSection(SolutionItems) = preProject
@@ -123,6 +118,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Repository", "!Repository"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		AGENTS.md = AGENTS.md
+		CMakeLists.txt = CMakeLists.txt
+		CMakePresets.json = CMakePresets.json
+		Components.json = Components.json
 		README.md = README.md
 		TODO.md = TODO.md
 	EndProjectSection
