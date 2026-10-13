@@ -9,9 +9,30 @@ $arguments = @{
 if ($SolutionInjectorPath) { $arguments.SolutionInjectorPath = $SolutionInjectorPath }
 & (Join-Path $Workspace.Library 'Scripts/PowerShell/Connect.ps1') @arguments | Out-Host
 
+# Два consumer одного solution строят общие проекты с независимыми глобальными свойствами.
+$arguments.ProjectPath = Join-Path $Workspace.Consumer 'App2/App2.vcxproj'
+& (Join-Path $Workspace.Library 'Scripts/PowerShell/Connect.ps1') @arguments | Out-Host
+foreach ($configuration in @('Debug', 'Release')) {
+    & $MSBuild $arguments.SolutionPath /m /nologo /v:minimal /p:TestMixedRuntime=true "/p:Configuration=$configuration" /p:Platform=x64 | Out-Host
+    if ($LASTEXITCODE -ne 0) { throw "Mixed consumer CRT build failed: $configuration" }
+    foreach ($app in @('App1', 'App2')) {
+        $outDir = Join-Path $Workspace.Consumer "!artifacts/x64/$configuration/$app/bin"
+        Invoke-TestApplication (Join-Path $outDir "$app.exe") "$app passed"
+        $runtimeDirectory = if ($app -eq 'App1') { 'md' } else { 'mt' }
+        $expected = @(Get-ChildItem (Join-Path $Workspace.Library '!artifacts/Windows-x64/msbuild') -Recurse -Filter 'UniversalDevKit.Diagnostic.Dynamic.dll' |
+            Where-Object { $_.FullName -match "[\\/]$runtimeDirectory[\\/]Diagnostic.Dynamic[\\/]$configuration[\\/]bin[\\/]" })
+        if ($expected.Count -ne 1) { throw "Missing unique DLL for $app/$configuration/$runtimeDirectory" }
+        $actual = Join-Path $outDir 'UniversalDevKit.Diagnostic.Dynamic.dll'
+        if ((Get-FileHash $actual).Hash -ne (Get-FileHash $expected[0].FullName).Hash) {
+            throw "Wrong CRT DLL copied to $app"
+        }
+    }
+}
+
+$arguments.ProjectPath = Join-Path $Workspace.Consumer 'App1/App1.vcxproj'
 foreach ($configuration in @('Debug', 'Release')) {
     foreach ($runtime in @('Dynamic', 'Static')) {
-        # Общий параметр сборки передаётся всем библиотечным ссылкам.
+        # Явный параметр остаётся допустимым, если совпадает с CRT consumer.
         $runtimeLibrary = if ($configuration -eq 'Debug') { 'MultiThreadedDebug' } else { 'MultiThreaded' }
         if ($runtime -eq 'Dynamic') { $runtimeLibrary += 'DLL' }
         & $MSBuild $arguments.ProjectPath /m /nologo /v:minimal "/p:Configuration=$configuration" /p:Platform=x64 "/p:TestRuntimeLibrary=$runtimeLibrary" "/p:UniversalDevKitRuntime=$runtime" | Out-Host

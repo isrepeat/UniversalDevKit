@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <!-- Два consumer выбирают разные CRT без общего UniversalDevKitRuntime. -->
+    <TestRuntimeLibrary Condition="'$(TestMixedRuntime)' == 'true'">MultiThreaded</TestRuntimeLibrary>
+    <TestRuntimeLibrary Condition="'$(TestMixedRuntime)' == 'true' and '$(Configuration)' == 'Debug'">MultiThreadedDebug</TestRuntimeLibrary>
+    <TestRuntimeLibrary Condition="'$(TestMixedRuntime)' == 'true' and '$(MSBuildProjectName)' == 'App1'">$(TestRuntimeLibrary)DLL</TestRuntimeLibrary>
     <OutDir>$(MSBuildProjectDirectory)\..\!artifacts\$(Platform)\$(Configuration)\$(MSBuildProjectName)\bin\</OutDir>
     <IntDir>$(MSBuildProjectDirectory)\..\!artifacts\$(Platform)\$(Configuration)\$(MSBuildProjectName)\obj\</IntDir>
   </PropertyGroup>
@@ -11,6 +15,7 @@
       <WarningLevel>Level4</WarningLevel>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary Condition="'$(TestRuntimeLibrary)' != ''">$(TestRuntimeLibrary)</RuntimeLibrary>
+      <PreprocessorDefinitions Condition="'$(TestMixedRuntime)' == 'true'">UDK_TEST_MIXED_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link><SubSystem>Console</SubSystem></Link>
   </ItemDefinitionGroup>

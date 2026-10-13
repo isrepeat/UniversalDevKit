@@ -11,7 +11,7 @@
 
 ## Политика 0.x
 
-Проверенный Windows-набор этого этапа: x64, Visual Studio 2026 toolset v145, VCToolsVersion 14.51.36231, Debug/Release. Основной CRT — /MDd и /MD. Отдельный Runtime-сценарий также проверяет /MTd и /MT при общем параметре MSBuild UniversalDevKitRuntime=Static. Проверка других toolsets, одновременно разных CRT у consumer одного solution и метаданные установленного бинарного пакета пока остаются открытыми.
+Проверенный Windows-набор этого этапа: x64, Visual Studio 2026 toolset v145, VCToolsVersion 14.51.36231, Debug/Release. Runtime-сценарий проверяет /MD(d) и /MT(d), в том числе два consumer с разными CRT в одном solution без общего UniversalDevKitRuntime. Проверка других toolsets и метаданные установленного бинарного пакета остаются открытыми.
 
 При обновлении UDK требуется пересборка consumer. Замена DLL/SO без пересборки пока не гарантируется. Несовместимые изменения публичного API требуют повышения minor-версии. Patch-выпуск сохраняет публичный API; это не обещание совместимости произвольных toolchains и CRT.
 

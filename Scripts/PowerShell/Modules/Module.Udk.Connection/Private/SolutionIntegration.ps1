@@ -88,6 +88,12 @@ function RemoveSolutionBuildItems([string]$Path) {
             '(?m)^\t\tProjects\\MsBuild\\(?:BuildLayout\.props|UniversalDevKit\.props|UniversalDevKit\.Sources\.targets) = [^\r\n]+\r?\n', '')
         return [regex]::Replace($block, '(?m)^\tProjectSection\(SolutionItems\) = preProject\r?\n\tEndProjectSection\r?\n', '')
     })
+    # Библиотеки строятся через consumer с его CRT/toolset. Прямой запуск из solution
+    # создаёт второй экземпляр MSBuild с теми же путями и вызывает гонку PDB.
+    foreach ($project in [regex]::Matches($updated, '(?m)^Project\("\{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942\}"\) = "UniversalDevKit\.[^"\r\n]+\.(?:Static|Dynamic)", "[^"\r\n]+", "(\{[^}]+\})"')) {
+        $projectGuid = [regex]::Escape($project.Groups[1].Value)
+        $updated = [regex]::Replace($updated, '(?m)^\s*' + $projectGuid + '\.[^\r\n]+\.Build\.0 = [^\r\n]+\r?\n', '')
+    }
     if ($updated -cne $original) {
         [IO.File]::WriteAllText($Path, $updated.TrimEnd([char[]]"`r`n"), [Text.UTF8Encoding]::new($false))
     }

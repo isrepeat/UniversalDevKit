@@ -68,7 +68,7 @@
 - [x] Описать проверенный набор: Windows x64, toolset v145, VCToolsVersion 14.51.36231, Debug/Release.
 - [x] Проверить /MD и /MT, включая отладочные варианты, сборкой и запуском consumer в Runtime-сценарии MSBuild. Для /MT используется общий параметр /p:UniversalDevKitRuntime=Static.
 - [ ] Закрепить поддерживаемую матрицу бинарного выпуска и правила отказа для неподдерживаемых архитектур и toolsets.
-- [ ] Автоматически передавать CRT отдельных consumer библиотечным проектам; проверить два consumer с разными CRT в одном solution.
+- [x] Автоматически передавать CRT отдельных consumer библиотечным проектам вместе с PlatformToolset/VCToolsVersion; проверить два consumer с разными CRT в одном solution, Debug/Release и доставку соответствующих DLL.
 - [ ] Проверить /MT для CMake сборкой, установкой и запуском отдельного consumer. Текущая проверка установленного CMake-пакета использует /MD.
 
 ### Матрицы Linux и Android

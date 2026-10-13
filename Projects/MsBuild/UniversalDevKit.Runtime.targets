@@ -31,11 +31,11 @@
     <Error Condition="'@(__UniversalDevKitBinaryReference)' != '' and '$(__UniversalDevKitConsumerRuntime)' == ''"
            Text="Unsupported consumer RuntimeLibrary for UniversalDevKit." />
     <PropertyGroup>
-      <__UniversalDevKitSelectedRuntime Condition="'$(UniversalDevKitRuntime)' == ''">Dynamic</__UniversalDevKitSelectedRuntime>
+      <__UniversalDevKitSelectedRuntime Condition="'$(UniversalDevKitRuntime)' == ''">$(__UniversalDevKitConsumerRuntime)</__UniversalDevKitSelectedRuntime>
       <__UniversalDevKitSelectedRuntime Condition="'$(UniversalDevKitRuntime)' != ''">$(UniversalDevKitRuntime)</__UniversalDevKitSelectedRuntime>
     </PropertyGroup>
     <Error Condition="'@(__UniversalDevKitBinaryReference)' != '' and '$(__UniversalDevKitSelectedRuntime)' != '$(__UniversalDevKitConsumerRuntime)'"
-           Text="UniversalDevKitRuntime conflicts with consumer RuntimeLibrary. Use a consistent global /p:UniversalDevKitRuntime=Dynamic or Static for the entire build." />
+           Text="UniversalDevKitRuntime conflicts with consumer RuntimeLibrary. Select the same runtime for this consumer." />
     <PropertyGroup Condition="'@(__UniversalDevKitBinaryReference)' != ''">
       <__UniversalDevKitExpectedConsumerRuntime>MultiThreaded</__UniversalDevKitExpectedConsumerRuntime>
       <__UniversalDevKitExpectedConsumerRuntime Condition="'$(Configuration)' == 'Debug'">$(__UniversalDevKitExpectedConsumerRuntime)Debug</__UniversalDevKitExpectedConsumerRuntime>
@@ -45,8 +45,22 @@
            Text="Consumer CRT debug/release variant does not match the UniversalDevKit configuration." />
     <PropertyGroup>
       <__UniversalDevKitRuntimeBuildProperties>Configuration=$(Configuration);Platform=$(Platform)</__UniversalDevKitRuntimeBuildProperties>
-      <__UniversalDevKitRuntimeBuildProperties Condition="'$(__UniversalDevKitConsumerRuntime)' == 'Static'">$(__UniversalDevKitRuntimeBuildProperties);UniversalDevKitRuntime=Static</__UniversalDevKitRuntimeBuildProperties>
+      <__UniversalDevKitRuntimeBuildProperties Condition="'@(__UniversalDevKitBinaryReference)' != ''">$(__UniversalDevKitRuntimeBuildProperties);UniversalDevKitRuntime=$(__UniversalDevKitSelectedRuntime);PlatformToolset=$(PlatformToolset);VCToolsVersion=$(VCToolsVersion)</__UniversalDevKitRuntimeBuildProperties>
+      <!-- Solution не знает о нескольких CRT одного проекта; варианты строятся через consumer. -->
+      <BuildProjectReferences Condition="'@(__UniversalDevKitBinaryReference)' != ''">true</BuildProjectReferences>
     </PropertyGroup>
+  </Target>
+  <!-- VC использует SetConfiguration также при получении библиотек для линковки.
+       Дополняем его после назначения конфигурации, до разделения ссылок. -->
+  <Target Name="__UniversalDevKitConfigureReferenceContext"
+          AfterTargets="AssignProjectConfiguration"
+          Condition="'$(DesignTimeBuild)' != 'true' and '@(__UniversalDevKitBinaryReference)' != ''">
+    <ItemGroup>
+      <ProjectReferenceWithConfiguration Condition="$([System.String]::Copy('%(ProjectReferenceWithConfiguration.Filename)').StartsWith('UniversalDevKit.'))">
+        <BuildReference>true</BuildReference>
+        <SetConfiguration>%(ProjectReferenceWithConfiguration.SetConfiguration);UniversalDevKitRuntime=$(__UniversalDevKitSelectedRuntime);PlatformToolset=$(PlatformToolset);VCToolsVersion=$(VCToolsVersion)</SetConfiguration>
+      </ProjectReferenceWithConfiguration>
+    </ItemGroup>
   </Target>
   <!-- После изменения реестра компонентов нужно повторно рассчитать ссылки и runtime-набор. -->
   <Target Name="__UniversalDevKitValidateComponentRegistry"
