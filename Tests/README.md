@@ -1,5 +1,7 @@
 # Проверки UniversalDevKit
 
+Для просмотра и редактирования тестов откройте `UniversalDevKit.Tests.sln` в корне репозитория. Solution повторяет дерево Tests; fixture-проекты представлены как Solution Items. Build этого решения не запускает сценарии: используйте `Tests/Scripts/RunTests.cmd` или отдельные команды ниже. Основное решение UniversalDevKit.sln содержит только ссылки на инструкцию, запуск и тестовое решение.
+
 ## Архитектура
 
 RunExport.cmd проверяет общий API-макрос: Static/Dynamic Debug/Release Windows x64, вызов публичной функции отдельным consumer и таблицу экспортов DLL через dumpbin. Сценарий Export включён в общий запуск; Linux/Android в этой проверке не используются. Политика версий и ABI описана в Docs/Abi.md в корне репозитория.

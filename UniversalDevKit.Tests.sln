@@ -1,0 +1,315 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.10.12224.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{75E9BBC5-6A5A-4C7F-BCB9-30ED29C2CF97}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\README.md = Tests\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fixtures", "Fixtures", "{64519B9E-018A-42CA-9F01-384DE3A209AB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Consumers", "Consumers", "{F7C9315C-200F-4296-901A-39A3D4A00C48}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CmakeContract", "CmakeContract", "{9DC9397B-FC4E-4C91-B0AB-EA426503A537}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Consumers\CmakeContract\CMakeLists.txt = Tests\Fixtures\Consumers\CmakeContract\CMakeLists.txt
+		Tests\Fixtures\Consumers\CmakeContract\Main.cpp = Tests\Fixtures\Consumers\CmakeContract\Main.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CmakePackage", "CmakePackage", "{B397F065-72CA-4B76-A612-E82A0DBF2F27}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Consumers\CmakePackage\CMakeLists.txt = Tests\Fixtures\Consumers\CmakePackage\CMakeLists.txt
+		Tests\Fixtures\Consumers\CmakePackage\Main.cpp = Tests\Fixtures\Consumers\CmakePackage\Main.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{716D026A-FDEF-4BBA-89DB-FC45C84E16DF}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Consumers\MsBuild\Consumer.props = Tests\Fixtures\Consumers\MsBuild\Consumer.props
+		Tests\Fixtures\Consumers\MsBuild\Consumer.sln = Tests\Fixtures\Consumers\MsBuild\Consumer.sln
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App1", "App1", "{4F76B0E8-03F0-4B3D-8A19-C7C65B2024D5}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Consumers\MsBuild\App1\App1.vcxproj = Tests\Fixtures\Consumers\MsBuild\App1\App1.vcxproj
+		Tests\Fixtures\Consumers\MsBuild\App1\App1.vcxproj.filters = Tests\Fixtures\Consumers\MsBuild\App1\App1.vcxproj.filters
+		Tests\Fixtures\Consumers\MsBuild\App1\Main.cpp = Tests\Fixtures\Consumers\MsBuild\App1\Main.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App2", "App2", "{FFD2872F-8FBF-45A0-A21D-2F62BA268AC9}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Consumers\MsBuild\App2\App2.vcxproj = Tests\Fixtures\Consumers\MsBuild\App2\App2.vcxproj
+		Tests\Fixtures\Consumers\MsBuild\App2\App2.vcxproj.filters = Tests\Fixtures\Consumers\MsBuild\App2\App2.vcxproj.filters
+		Tests\Fixtures\Consumers\MsBuild\App2\Main.cpp = Tests\Fixtures\Consumers\MsBuild\App2\Main.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RequirementsPackage", "RequirementsPackage", "{71E71C36-E888-4C22-BAA2-9BD76634579B}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Consumers\RequirementsPackage\CMakeLists.txt = Tests\Fixtures\Consumers\RequirementsPackage\CMakeLists.txt
+		Tests\Fixtures\Consumers\RequirementsPackage\Main.cpp = Tests\Fixtures\Consumers\RequirementsPackage\Main.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{DD08FE8B-4418-425A-B2D5-CDBEE609C4AF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diamond", "Diamond", "{21ABA426-6019-49BD-8A23-0A7A163E68F1}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Diamond\Components.json = Tests\Fixtures\Libraries\Diamond\Components.json
+		Tests\Fixtures\Libraries\Diamond\UniversalDevKit.sln = Tests\Fixtures\Libraries\Diamond\UniversalDevKit.sln
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Consumer", "Consumer", "{B0B49F19-9E6E-40C4-9C21-D446E1F66843}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App1", "App1", "{A13FFF49-C164-4245-AAA1-DDFE4E643FD3}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Diamond\Consumer\App1\Main.cpp = Tests\Fixtures\Libraries\Diamond\Consumer\App1\Main.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App2", "App2", "{1AFF25A9-E4A3-4151-8DA1-E13761DA4970}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Diamond\Consumer\App2\Main.cpp = Tests\Fixtures\Libraries\Diamond\Consumer\App2\Main.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Includes", "Includes", "{6574DCF6-DC32-4EEF-9A6A-6792B7E802BE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniversalDevKit", "UniversalDevKit", "{45506418-5992-4AAB-A38E-5FCE58CC1598}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "A", "A", "{227EB982-8F32-4360-8F07-B4225729750A}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Diamond\Includes\UniversalDevKit\A\Value.h = Tests\Fixtures\Libraries\Diamond\Includes\UniversalDevKit\A\Value.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "B", "B", "{92B831FE-7F38-4F1E-B670-064B4B62C4B9}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Diamond\Includes\UniversalDevKit\B\Value.h = Tests\Fixtures\Libraries\Diamond\Includes\UniversalDevKit\B\Value.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "C", "C", "{A468D50D-4F7A-40BA-BBBE-0F5808733E3D}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Diamond\Includes\UniversalDevKit\C\Value.h = Tests\Fixtures\Libraries\Diamond\Includes\UniversalDevKit\C\Value.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "D", "D", "{A603F039-8028-4F74-9A7E-2FEEC5228505}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Diamond\Includes\UniversalDevKit\D\Value.h = Tests\Fixtures\Libraries\Diamond\Includes\UniversalDevKit\D\Value.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PrivateStatic", "PrivateStatic", "{102FF0E7-A285-4A9C-B9D1-D404D3FDE82F}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Diamond\PrivateStatic\A.json = Tests\Fixtures\Libraries\Diamond\PrivateStatic\A.json
+		Tests\Fixtures\Libraries\Diamond\PrivateStatic\C.json = Tests\Fixtures\Libraries\Diamond\PrivateStatic\C.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{72D7F163-B4B1-4B29-8CA9-BF8F3E510ABF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{E62AC367-EDDD-4CF0-B20A-A498EB15AC7C}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Diamond\Projects\Components\A.json = Tests\Fixtures\Libraries\Diamond\Projects\Components\A.json
+		Tests\Fixtures\Libraries\Diamond\Projects\Components\B.json = Tests\Fixtures\Libraries\Diamond\Projects\Components\B.json
+		Tests\Fixtures\Libraries\Diamond\Projects\Components\C.json = Tests\Fixtures\Libraries\Diamond\Projects\Components\C.json
+		Tests\Fixtures\Libraries\Diamond\Projects\Components\D.json = Tests\Fixtures\Libraries\Diamond\Projects\Components\D.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{253CCDAA-0E84-4B8C-8808-2AF8576165A3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "A", "A", "{705A4A5C-4291-460D-A002-A677FB1ED288}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Diamond\Sources\A\Value.cpp = Tests\Fixtures\Libraries\Diamond\Sources\A\Value.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "B", "B", "{BDBE2687-A3D8-4AE4-8ECC-20BFFE8FBA5A}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Diamond\Sources\B\Value.cpp = Tests\Fixtures\Libraries\Diamond\Sources\B\Value.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "C", "C", "{8CD1CBF0-806F-4227-9293-9E5FB42012C1}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Diamond\Sources\C\Value.cpp = Tests\Fixtures\Libraries\Diamond\Sources\C\Value.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "D", "D", "{55C56066-CA8E-4EAA-8BB2-FC7474723A9F}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Diamond\Sources\D\Value.cpp = Tests\Fixtures\Libraries\Diamond\Sources\D\Value.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Export", "Export", "{5B566E14-D569-4467-B4CF-030D61A178BE}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Export\Components.json = Tests\Fixtures\Libraries\Export\Components.json
+		Tests\Fixtures\Libraries\Export\Main.cpp = Tests\Fixtures\Libraries\Export\Main.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Includes", "Includes", "{80E670C4-11B8-441B-B53F-811777EDE706}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniversalDevKit", "UniversalDevKit", "{9AEE8430-704B-4A18-95D3-4E6682504072}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExportProbe", "ExportProbe", "{43178A53-7BCB-43F3-9A89-8204DDBF7434}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Export\Includes\UniversalDevKit\ExportProbe\Probe.h = Tests\Fixtures\Libraries\Export\Includes\UniversalDevKit\ExportProbe\Probe.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{AFE7CA1D-A4CF-4770-AEF0-96A6FF6DF6A7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{E91CD989-E444-4712-930F-4176214D0C85}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Export\Projects\Components\ExportProbe.json = Tests\Fixtures\Libraries\Export\Projects\Components\ExportProbe.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{A95F304D-6C85-4E24-8C45-C0AF5222418A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExportProbe", "ExportProbe", "{0761EDEF-C7A6-41D3-8C50-C1B2B8A98295}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Export\Sources\ExportProbe\Probe.cpp = Tests\Fixtures\Libraries\Export\Sources\ExportProbe\Probe.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Registry", "Registry", "{52D6BED0-68D7-4196-908B-96EE3132ADBD}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Registry\CMakeLists.txt = Tests\Fixtures\Libraries\Registry\CMakeLists.txt
+		Tests\Fixtures\Libraries\Registry\Components.json = Tests\Fixtures\Libraries\Registry\Components.json
+		Tests\Fixtures\Libraries\Registry\Main.cpp = Tests\Fixtures\Libraries\Registry\Main.cpp
+		Tests\Fixtures\Libraries\Registry\Plugin.cpp = Tests\Fixtures\Libraries\Registry\Plugin.cpp
+		Tests\Fixtures\Libraries\Registry\UniversalDevKit.sln = Tests\Fixtures\Libraries\Registry\UniversalDevKit.sln
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Includes", "Includes", "{94A44B44-7339-4046-B3DE-8478086E2A9B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniversalDevKit", "UniversalDevKit", "{C453561F-A6DA-4A87-B81A-D079422110C0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example", "Example", "{F5599BAF-E34A-4D89-8A6A-10C475F9B96E}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Registry\Includes\UniversalDevKit\Example\Example.h = Tests\Fixtures\Libraries\Registry\Includes\UniversalDevKit\Example\Example.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{8C27DEE0-FF8C-4B9C-BE17-87FEEA4D0CA5}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Registry\Includes\UniversalDevKit\Service\Service.h = Tests\Fixtures\Libraries\Registry\Includes\UniversalDevKit\Service\Service.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{BB07248F-8869-44A9-9EBB-BCE99DFAD3DB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{D695A847-E244-4971-BA14-296C80BF07E0}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Registry\Projects\Components\Example.json = Tests\Fixtures\Libraries\Registry\Projects\Components\Example.json
+		Tests\Fixtures\Libraries\Registry\Projects\Components\Service.json = Tests\Fixtures\Libraries\Registry\Projects\Components\Service.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{B2D8CF5B-274B-4D3E-884B-7971A8EC2A5B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example", "Example", "{164B9CF6-5201-4085-AA67-6BD70DDA129E}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Registry\Sources\Example\Common.cpp = Tests\Fixtures\Libraries\Registry\Sources\Example\Common.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "platform", "platform", "{08F33884-4192-4DE4-95F4-9BEFDB7B464F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{E3895216-2401-438A-A761-6964873CDDF6}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Registry\Sources\Example\platform\Windows\Native.cpp = Tests\Fixtures\Libraries\Registry\Sources\Example\platform\Windows\Native.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{2FB828F0-7FEB-48DE-BA64-17BB731D8D18}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Registry\Sources\Service\Service.cpp = Tests\Fixtures\Libraries\Registry\Sources\Service\Service.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{9256B785-9B89-482B-888A-AD4A0573129B}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Infrastructure\BuildTools.ps1 = Tests\Infrastructure\BuildTools.ps1
+		Tests\Infrastructure\TestComponentRegistry.ps1 = Tests\Infrastructure\TestComponentRegistry.ps1
+		Tests\Infrastructure\TestWorkspace.ps1 = Tests\Infrastructure\TestWorkspace.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{BA1D3CEC-565A-4105-B574-7B7D63F20A53}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{D24CA339-B1D6-4107-AB4C-BEC63541F901}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Integration\Cmake\RequirementValidation.cmake = Tests\Integration\Cmake\RequirementValidation.cmake
+		Tests\Integration\Cmake\TestCMakePackage.ps1 = Tests\Integration\Cmake\TestCMakePackage.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{22F9FF80-DFE4-4C9D-A560-0F28D87C1E72}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Integration\MsBuild\Connect.Tests.ps1 = Tests\Integration\MsBuild\Connect.Tests.ps1
+		Tests\Integration\MsBuild\Diamond.Tests.ps1 = Tests\Integration\MsBuild\Diamond.Tests.ps1
+		Tests\Integration\MsBuild\Disconnect.Tests.ps1 = Tests\Integration\MsBuild\Disconnect.Tests.ps1
+		Tests\Integration\MsBuild\Dynamic.Tests.ps1 = Tests\Integration\MsBuild\Dynamic.Tests.ps1
+		Tests\Integration\MsBuild\Export.Tests.ps1 = Tests\Integration\MsBuild\Export.Tests.ps1
+		Tests\Integration\MsBuild\ModeSwitch.Tests.ps1 = Tests\Integration\MsBuild\ModeSwitch.Tests.ps1
+		Tests\Integration\MsBuild\Shared.Tests.ps1 = Tests\Integration\MsBuild\Shared.Tests.ps1
+		Tests\Integration\MsBuild\Static.Tests.ps1 = Tests\Integration\MsBuild\Static.Tests.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{41619890-3A56-45F7-B0B8-45C4A554206B}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Scripts\RunDiamond.cmd = Tests\Scripts\RunDiamond.cmd
+		Tests\Scripts\RunDisconnect.cmd = Tests\Scripts\RunDisconnect.cmd
+		Tests\Scripts\RunDynamic.cmd = Tests\Scripts\RunDynamic.cmd
+		Tests\Scripts\RunExport.cmd = Tests\Scripts\RunExport.cmd
+		Tests\Scripts\RunModeSwitch.cmd = Tests\Scripts\RunModeSwitch.cmd
+		Tests\Scripts\RunShared.cmd = Tests\Scripts\RunShared.cmd
+		Tests\Scripts\RunStatic.cmd = Tests\Scripts\RunStatic.cmd
+		Tests\Scripts\RunSubmodule.cmd = Tests\Scripts\RunSubmodule.cmd
+		Tests\Scripts\RunTests.cmd = Tests\Scripts\RunTests.cmd
+		Tests\Scripts\RunTests.ps1 = Tests\Scripts\RunTests.ps1
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{64519B9E-018A-42CA-9F01-384DE3A209AB} = {75E9BBC5-6A5A-4C7F-BCB9-30ED29C2CF97}
+		{F7C9315C-200F-4296-901A-39A3D4A00C48} = {64519B9E-018A-42CA-9F01-384DE3A209AB}
+		{9DC9397B-FC4E-4C91-B0AB-EA426503A537} = {F7C9315C-200F-4296-901A-39A3D4A00C48}
+		{B397F065-72CA-4B76-A612-E82A0DBF2F27} = {F7C9315C-200F-4296-901A-39A3D4A00C48}
+		{716D026A-FDEF-4BBA-89DB-FC45C84E16DF} = {F7C9315C-200F-4296-901A-39A3D4A00C48}
+		{4F76B0E8-03F0-4B3D-8A19-C7C65B2024D5} = {716D026A-FDEF-4BBA-89DB-FC45C84E16DF}
+		{FFD2872F-8FBF-45A0-A21D-2F62BA268AC9} = {716D026A-FDEF-4BBA-89DB-FC45C84E16DF}
+		{71E71C36-E888-4C22-BAA2-9BD76634579B} = {F7C9315C-200F-4296-901A-39A3D4A00C48}
+		{DD08FE8B-4418-425A-B2D5-CDBEE609C4AF} = {64519B9E-018A-42CA-9F01-384DE3A209AB}
+		{21ABA426-6019-49BD-8A23-0A7A163E68F1} = {DD08FE8B-4418-425A-B2D5-CDBEE609C4AF}
+		{B0B49F19-9E6E-40C4-9C21-D446E1F66843} = {21ABA426-6019-49BD-8A23-0A7A163E68F1}
+		{A13FFF49-C164-4245-AAA1-DDFE4E643FD3} = {B0B49F19-9E6E-40C4-9C21-D446E1F66843}
+		{1AFF25A9-E4A3-4151-8DA1-E13761DA4970} = {B0B49F19-9E6E-40C4-9C21-D446E1F66843}
+		{6574DCF6-DC32-4EEF-9A6A-6792B7E802BE} = {21ABA426-6019-49BD-8A23-0A7A163E68F1}
+		{45506418-5992-4AAB-A38E-5FCE58CC1598} = {6574DCF6-DC32-4EEF-9A6A-6792B7E802BE}
+		{227EB982-8F32-4360-8F07-B4225729750A} = {45506418-5992-4AAB-A38E-5FCE58CC1598}
+		{92B831FE-7F38-4F1E-B670-064B4B62C4B9} = {45506418-5992-4AAB-A38E-5FCE58CC1598}
+		{A468D50D-4F7A-40BA-BBBE-0F5808733E3D} = {45506418-5992-4AAB-A38E-5FCE58CC1598}
+		{A603F039-8028-4F74-9A7E-2FEEC5228505} = {45506418-5992-4AAB-A38E-5FCE58CC1598}
+		{102FF0E7-A285-4A9C-B9D1-D404D3FDE82F} = {21ABA426-6019-49BD-8A23-0A7A163E68F1}
+		{72D7F163-B4B1-4B29-8CA9-BF8F3E510ABF} = {21ABA426-6019-49BD-8A23-0A7A163E68F1}
+		{E62AC367-EDDD-4CF0-B20A-A498EB15AC7C} = {72D7F163-B4B1-4B29-8CA9-BF8F3E510ABF}
+		{253CCDAA-0E84-4B8C-8808-2AF8576165A3} = {21ABA426-6019-49BD-8A23-0A7A163E68F1}
+		{705A4A5C-4291-460D-A002-A677FB1ED288} = {253CCDAA-0E84-4B8C-8808-2AF8576165A3}
+		{BDBE2687-A3D8-4AE4-8ECC-20BFFE8FBA5A} = {253CCDAA-0E84-4B8C-8808-2AF8576165A3}
+		{8CD1CBF0-806F-4227-9293-9E5FB42012C1} = {253CCDAA-0E84-4B8C-8808-2AF8576165A3}
+		{55C56066-CA8E-4EAA-8BB2-FC7474723A9F} = {253CCDAA-0E84-4B8C-8808-2AF8576165A3}
+		{5B566E14-D569-4467-B4CF-030D61A178BE} = {DD08FE8B-4418-425A-B2D5-CDBEE609C4AF}
+		{80E670C4-11B8-441B-B53F-811777EDE706} = {5B566E14-D569-4467-B4CF-030D61A178BE}
+		{9AEE8430-704B-4A18-95D3-4E6682504072} = {80E670C4-11B8-441B-B53F-811777EDE706}
+		{43178A53-7BCB-43F3-9A89-8204DDBF7434} = {9AEE8430-704B-4A18-95D3-4E6682504072}
+		{AFE7CA1D-A4CF-4770-AEF0-96A6FF6DF6A7} = {5B566E14-D569-4467-B4CF-030D61A178BE}
+		{E91CD989-E444-4712-930F-4176214D0C85} = {AFE7CA1D-A4CF-4770-AEF0-96A6FF6DF6A7}
+		{A95F304D-6C85-4E24-8C45-C0AF5222418A} = {5B566E14-D569-4467-B4CF-030D61A178BE}
+		{0761EDEF-C7A6-41D3-8C50-C1B2B8A98295} = {A95F304D-6C85-4E24-8C45-C0AF5222418A}
+		{52D6BED0-68D7-4196-908B-96EE3132ADBD} = {DD08FE8B-4418-425A-B2D5-CDBEE609C4AF}
+		{94A44B44-7339-4046-B3DE-8478086E2A9B} = {52D6BED0-68D7-4196-908B-96EE3132ADBD}
+		{C453561F-A6DA-4A87-B81A-D079422110C0} = {94A44B44-7339-4046-B3DE-8478086E2A9B}
+		{F5599BAF-E34A-4D89-8A6A-10C475F9B96E} = {C453561F-A6DA-4A87-B81A-D079422110C0}
+		{8C27DEE0-FF8C-4B9C-BE17-87FEEA4D0CA5} = {C453561F-A6DA-4A87-B81A-D079422110C0}
+		{BB07248F-8869-44A9-9EBB-BCE99DFAD3DB} = {52D6BED0-68D7-4196-908B-96EE3132ADBD}
+		{D695A847-E244-4971-BA14-296C80BF07E0} = {BB07248F-8869-44A9-9EBB-BCE99DFAD3DB}
+		{B2D8CF5B-274B-4D3E-884B-7971A8EC2A5B} = {52D6BED0-68D7-4196-908B-96EE3132ADBD}
+		{164B9CF6-5201-4085-AA67-6BD70DDA129E} = {B2D8CF5B-274B-4D3E-884B-7971A8EC2A5B}
+		{08F33884-4192-4DE4-95F4-9BEFDB7B464F} = {164B9CF6-5201-4085-AA67-6BD70DDA129E}
+		{E3895216-2401-438A-A761-6964873CDDF6} = {08F33884-4192-4DE4-95F4-9BEFDB7B464F}
+		{2FB828F0-7FEB-48DE-BA64-17BB731D8D18} = {B2D8CF5B-274B-4D3E-884B-7971A8EC2A5B}
+		{9256B785-9B89-482B-888A-AD4A0573129B} = {75E9BBC5-6A5A-4C7F-BCB9-30ED29C2CF97}
+		{BA1D3CEC-565A-4105-B574-7B7D63F20A53} = {75E9BBC5-6A5A-4C7F-BCB9-30ED29C2CF97}
+		{D24CA339-B1D6-4107-AB4C-BEC63541F901} = {BA1D3CEC-565A-4105-B574-7B7D63F20A53}
+		{22F9FF80-DFE4-4C9D-A560-0F28D87C1E72} = {BA1D3CEC-565A-4105-B574-7B7D63F20A53}
+		{41619890-3A56-45F7-B0B8-45C4A554206B} = {75E9BBC5-6A5A-4C7F-BCB9-30ED29C2CF97}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {103D5DE3-AD49-40B1-9351-FDCD77C5B286}
+	EndGlobalSection
+EndGlobal
