@@ -18,7 +18,7 @@ if ($shared.Count -ne 1 -or -not $shared[0].Content.Contains('UniversalDevKitTar
     throw 'Missing platform selection'
 }
 [xml]$document = $shared[0].Content
-$sources = @($document.SelectNodes('//*[local-name()="ClCompile"]'))
+$sources = @($document.SelectNodes('//*[local-name()="ClCompile" and @Include]'))
 if ($sources.Count -ne 2 -or -not $sources[1].HasAttribute('Condition')) {
     throw 'Invalid platform sources'
 }

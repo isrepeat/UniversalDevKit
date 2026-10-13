@@ -87,22 +87,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniversalDevKit", "Universa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "A", "A", "{227EB982-8F32-4360-8F07-B4225729750A}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Diamond\Includes\UniversalDevKit\A\Value.h = Tests\Fixtures\Libraries\Diamond\Includes\UniversalDevKit\A\Value.h
+		Tests\Fixtures\Libraries\Diamond\Includes\A\UniversalDevKit\A\Value.h = Tests\Fixtures\Libraries\Diamond\Includes\A\UniversalDevKit\A\Value.h
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "B", "B", "{92B831FE-7F38-4F1E-B670-064B4B62C4B9}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Diamond\Includes\UniversalDevKit\B\Value.h = Tests\Fixtures\Libraries\Diamond\Includes\UniversalDevKit\B\Value.h
+		Tests\Fixtures\Libraries\Diamond\Includes\B\UniversalDevKit\B\Value.h = Tests\Fixtures\Libraries\Diamond\Includes\B\UniversalDevKit\B\Value.h
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "C", "C", "{A468D50D-4F7A-40BA-BBBE-0F5808733E3D}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Diamond\Includes\UniversalDevKit\C\Value.h = Tests\Fixtures\Libraries\Diamond\Includes\UniversalDevKit\C\Value.h
+		Tests\Fixtures\Libraries\Diamond\Includes\C\UniversalDevKit\C\Value.h = Tests\Fixtures\Libraries\Diamond\Includes\C\UniversalDevKit\C\Value.h
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "D", "D", "{A603F039-8028-4F74-9A7E-2FEEC5228505}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Diamond\Includes\UniversalDevKit\D\Value.h = Tests\Fixtures\Libraries\Diamond\Includes\UniversalDevKit\D\Value.h
+		Tests\Fixtures\Libraries\Diamond\Includes\D\UniversalDevKit\D\Value.h = Tests\Fixtures\Libraries\Diamond\Includes\D\UniversalDevKit\D\Value.h
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PrivateStatic", "PrivateStatic", "{102FF0E7-A285-4A9C-B9D1-D404D3FDE82F}"
@@ -155,7 +155,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniversalDevKit", "Universa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExportProbe", "ExportProbe", "{43178A53-7BCB-43F3-9A89-8204DDBF7434}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Export\Includes\UniversalDevKit\ExportProbe\Probe.h = Tests\Fixtures\Libraries\Export\Includes\UniversalDevKit\ExportProbe\Probe.h
+		Tests\Fixtures\Libraries\Export\Includes\ExportProbe\UniversalDevKit\ExportProbe\Probe.h = Tests\Fixtures\Libraries\Export\Includes\ExportProbe\UniversalDevKit\ExportProbe\Probe.h
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{AFE7CA1D-A4CF-4770-AEF0-96A6FF6DF6A7}"
@@ -187,12 +187,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniversalDevKit", "Universa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example", "Example", "{F5599BAF-E34A-4D89-8A6A-10C475F9B96E}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Registry\Includes\UniversalDevKit\Example\Example.h = Tests\Fixtures\Libraries\Registry\Includes\UniversalDevKit\Example\Example.h
+		Tests\Fixtures\Libraries\Registry\Includes\Example\UniversalDevKit\Example\Example.h = Tests\Fixtures\Libraries\Registry\Includes\Example\UniversalDevKit\Example\Example.h
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{8C27DEE0-FF8C-4B9C-BE17-87FEEA4D0CA5}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Registry\Includes\UniversalDevKit\Service\Service.h = Tests\Fixtures\Libraries\Registry\Includes\UniversalDevKit\Service\Service.h
+		Tests\Fixtures\Libraries\Registry\Includes\Service\UniversalDevKit\Service\Service.h = Tests\Fixtures\Libraries\Registry\Includes\Service\UniversalDevKit\Service\Service.h
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{BB07248F-8869-44A9-9EBB-BCE99DFAD3DB}"
@@ -264,11 +264,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{4161
 		Tests\Scripts\RunTests.ps1 = Tests\Scripts\RunTests.ps1
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeaderIsolation", "HeaderIsolation", "{4B1389B8-69D3-4DA0-972F-A790EAE8AE64}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Consumers\HeaderIsolation\CMakeLists.txt = Tests\Fixtures\Consumers\HeaderIsolation\CMakeLists.txt
+		Tests\Fixtures\Consumers\HeaderIsolation\Main.cpp = Tests\Fixtures\Consumers\HeaderIsolation\Main.cpp
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{4B1389B8-69D3-4DA0-972F-A790EAE8AE64} = {F7C9315C-200F-4296-901A-39A3D4A00C48}
 		{64519B9E-018A-42CA-9F01-384DE3A209AB} = {75E9BBC5-6A5A-4C7F-BCB9-30ED29C2CF97}
 		{F7C9315C-200F-4296-901A-39A3D4A00C48} = {64519B9E-018A-42CA-9F01-384DE3A209AB}
 		{9DC9397B-FC4E-4C91-B0AB-EA426503A537} = {F7C9315C-200F-4296-901A-39A3D4A00C48}

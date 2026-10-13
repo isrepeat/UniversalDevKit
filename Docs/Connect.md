@@ -45,7 +45,7 @@ ProjectOnly поддерживает Shared без изменения solution. 
 
 ## Helpers.Shared: отдельной библиотеки нет
 
-Connect подключает Shared-проект Helpers. Math.cpp и Text.cpp компилируются непосредственно в consumer с его настройками. Заголовки доступны через общий корень Includes; PCH для исходников UDK отключён. Объектные файлы изолированы внутри IntDir/UniversalDevKit/.
+Connect подключает Shared-проект Helpers. Math.cpp и Text.cpp компилируются непосредственно в consumer с его настройками. Заголовки доступны через Includes/Helpers и Includes/Core; остальные корни добавляются по графу зависимостей. PCH для исходников UDK отключён. Объектные файлы изолированы внутри IntDir/UniversalDevKit/.
 
 ```text
 Main.cpp + Math.cpp + Text.cpp → Application.exe

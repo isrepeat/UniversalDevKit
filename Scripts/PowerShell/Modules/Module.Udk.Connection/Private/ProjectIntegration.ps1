@@ -179,8 +179,13 @@ function Invoke-UdkConnectionPlan {
                 [void]$root.InsertBefore($document.CreateWhitespace($newline + '  '), $anchor)
                 [void]$root.InsertBefore($libraryReferences, $anchor)
             }
-            if ($dynamicDefinitions.Count) {
+            if ($Plan.RequirementComponents.Count) {
                 $compile = $document.CreateElement('ClCompile', $namespace)
+                $includeDirectories = $document.CreateElement('AdditionalIncludeDirectories', $namespace)
+                $includeDirectories.InnerText = (@($Plan.RequirementComponents | ForEach-Object {
+                    GetRelativePath $projectDirectory (Join-Path $repositoryPath "Includes/$_")
+                }) -join ';') + ';%(AdditionalIncludeDirectories)'
+                [void]$compile.AppendChild($includeDirectories)
                 $definitions = $document.CreateElement('PreprocessorDefinitions', $namespace)
                 $definitions.InnerText = ($dynamicDefinitions -join ';') + ';%(PreprocessorDefinitions)'
                 [void]$compile.AppendChild($definitions)

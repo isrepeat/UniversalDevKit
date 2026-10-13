@@ -249,12 +249,13 @@ foreach ($includePath in $manifest.includes) {
     $lines.Add('    <ItemsProjectGuid>{' + $guid.ToString().ToUpperInvariant() + '}</ItemsProjectGuid>')
     $lines.Add('  </PropertyGroup>')
     $lines.Add('  <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.props" Condition="''$(__IsUniversalDevKitPublicPropsImported)'' != ''true''" />')
+    $lines.Add('  <ItemDefinitionGroup><ClCompile><AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\Includes\' + $name + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile></ItemDefinitionGroup>')
     $lines.Add('  <ItemGroup>')
     foreach ($path in $component.headers) {
         if ($path -isnot [string]) {
             throw "${name}.headers must contain strings."
         }
-        ValidateFile $path "Includes/UniversalDevKit/$name/"
+        ValidateFile $path "Includes/$name/UniversalDevKit/$name/"
         if (-not $files.Add($path)) {
             throw "Duplicate component file: $path"
         }
@@ -406,6 +407,7 @@ foreach ($name in $componentNames) {
         $definitionSelectors = @($selectors | Where-Object { $name -cin $sourceGraphs[$_].DefinitionComponents })
         if ($definitionSelectors.Count) {
             $lines.Add('  <ItemDefinitionGroup Condition="' + (GetSourceCondition $definitionSelectors) + '">')
+            $lines.Add('    <ClCompile><AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\Includes\' + $name + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile>')
             $lines.Add('    <ClCompile><PreprocessorDefinitions>UNIVERSALDEVKIT_' + $name.ToUpperInvariant() + '_DYNAMIC;%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile>')
             $lines.Add('  </ItemDefinitionGroup>')
         }
@@ -547,6 +549,10 @@ foreach ($name in $componentNames) {
             'DynamicLibrary'
         }
         $condition = "'`$(ConfigurationType)' == '$configurationType'"
+        $dependencyIncludeRoots = @($dependencyGraph.RequirementComponents | ForEach-Object { '$(MSBuildThisFileDirectory)..\..\..\Includes\' + $_ })
+        if ($dependencyIncludeRoots.Count) {
+            $lines.Add('  <ItemDefinitionGroup Condition="' + $condition + '"><ClCompile><AdditionalIncludeDirectories>' + ($dependencyIncludeRoots -join ';') + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile></ItemDefinitionGroup>')
+        }
         foreach ($dependencyName in $dependencyGraph.ResolvedComponents) {
             $compile = $dependencyName -cin $dependencyGraph.RequirementComponents
             $system = $mode -eq 'Dynamic' -and $dependencyName -cin $dependencyGraph.SystemLibraryComponents
@@ -652,15 +658,15 @@ function AddGeneratedMetadata([string]$RelativePath, [string]$Content) {
 }
 $exportTemplate = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Templates/Export.h.in'))
 $componentExportTemplate = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Templates/ComponentExport.h.in'))
-AddGeneratedMetadata 'Includes/UniversalDevKit/Export.h' $exportTemplate
+AddGeneratedMetadata 'Includes/Core/UniversalDevKit/Export.h' $exportTemplate
 foreach ($name in $componentNames) {
-    AddGeneratedMetadata "Includes/UniversalDevKit/$name/Export.h" ($componentExportTemplate.Replace('@COMPONENT@', $name.ToUpperInvariant()))
+    AddGeneratedMetadata "Includes/$name/UniversalDevKit/$name/Export.h" ($componentExportTemplate.Replace('@COMPONENT@', $name.ToUpperInvariant()))
 }
 $versionPath = Join-Path $repositoryPath 'Version.json'
 if (Test-Path -LiteralPath $versionPath) {
     $version = Get-Content -LiteralPath $versionPath -Raw -Encoding UTF8 | ConvertFrom-Json
     if ($version.version -notmatch '^\d+\.\d+\.\d+$' -or [string]$version.abiVersion -notmatch '^\d+$') { throw 'Invalid Version.json' }
-    AddGeneratedMetadata 'Includes/UniversalDevKit/Version.h' ("// Сгенерировано GenerateComponentProjects.ps1. Изменяйте Version.json.`n#pragma once`n`n#define UNIVERSALDEVKIT_VERSION `"$($version.version)`"`n#define UNIVERSALDEVKIT_ABI_VERSION $($version.abiVersion)")
+    AddGeneratedMetadata 'Includes/Core/UniversalDevKit/Version.h' ("// Сгенерировано GenerateComponentProjects.ps1. Изменяйте Version.json.`n#pragma once`n`n#define UNIVERSALDEVKIT_VERSION `"$($version.version)`"`n#define UNIVERSALDEVKIT_ABI_VERSION $($version.abiVersion)")
     $versionLines = @(
         '<?xml version="1.0" encoding="utf-8"?>'
         '<!-- Сгенерировано GenerateComponentProjects.ps1. Изменяйте Version.json. -->'

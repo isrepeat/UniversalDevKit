@@ -14,7 +14,7 @@
   ],
   "msbuildGuid": "{DA000000-0000-4000-8000-000000000001}",
   "headers": [
-    "Includes/UniversalDevKit/A/Value.h"
+    "Includes/A/UniversalDevKit/A/Value.h"
   ],
   "sources": [
     "Sources/A/Value.cpp"

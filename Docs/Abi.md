@@ -15,7 +15,7 @@
 
 При обновлении UDK требуется пересборка consumer. Замена DLL/SO без пересборки пока не гарантируется. Несовместимые изменения публичного API требуют повышения minor-версии. Patch-выпуск сохраняет публичный API; это не обещание совместимости произвольных toolchains и CRT.
 
-Version.json — единственный источник версии выпуска и поколения ABI. CMake читает его непосредственно, генератор создаёт Includes/UniversalDevKit/Version.h для C++ и Projects/MsBuild/UniversalDevKit.Version.props для MSBuild. Будущие NuGet/AAR должны читать тот же файл; упаковка пока не реализована.
+Version.json — единственный источник версии выпуска и поколения ABI. CMake читает его непосредственно, генератор создаёт Includes/Core/UniversalDevKit/Version.h для C++ и Projects/MsBuild/UniversalDevKit.Version.props для MSBuild. Будущие NuGet/AAR должны читать тот же файл; упаковка пока не реализована.
 
 После изменения Version.json запускается GenerateComponentProjects; режим -Check обнаруживает устаревшие метаданные. CMake отслеживает изменение Version.json для повторной конфигурации. Version.h хранится в Git для использования заголовков без запуска генератора у consumer.
 

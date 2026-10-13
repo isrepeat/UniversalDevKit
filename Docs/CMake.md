@@ -63,7 +63,7 @@ endif()
 cmake --preset windows-x64 -DUniversalDevKit_COMPONENTS=Diagnostic -DUniversalDevKit_BUILD_STATIC=OFF
 ```
 
-Helpers.Static всё равно создаётся, поскольку JSON требует его для Diagnostic.Dynamic. BUILD_STATIC=OFF запрещает статические варианты корней, но не обязательных зависимостей. При отключении обоих вариантов остаётся Headers; им можно пользоваться для шаблонного кода. Targets, не вошедшие в расчёт, не создаются.
+Helpers.Static всё равно создаётся, поскольку JSON требует его для Diagnostic.Dynamic. BUILD_STATIC=OFF запрещает статические варианты корней, но не обязательных зависимостей. Для шаблонного кода используйте UniversalDevKit::Helpers.Headers или другой компонентный Headers-target: он предоставляет свой include-корень и публичные зависимости. UniversalDevKit::Headers предоставляет только общие Export.h и Version.h. При установке копируются заголовки выбранных бинарных компонентов и их зависимостей; компонентные Headers-targets экспортируются вместе с ними.
 
 При add_subdirectory настройки можно задать заранее как обычные переменные при стандартной политике CMake родительского проекта. Выбор в меню Connect этих настроек не меняет.
 

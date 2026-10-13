@@ -1,6 +1,6 @@
 // Сгенерировано GenerateComponentProjects.ps1. API-макрос компонента; изменяйте шаблон.
 #pragma once
-#include "../Export.h"
+#include <UniversalDevKit/Export.h>
 
 #if defined(UNIVERSALDEVKIT_DIAGNOSTIC_DYNAMIC)
 #if defined(UNIVERSALDEVKIT_DIAGNOSTIC_EXPORTS)

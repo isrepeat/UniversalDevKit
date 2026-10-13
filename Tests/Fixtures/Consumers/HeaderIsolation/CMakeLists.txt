@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.22)
+project(HeaderIsolation LANGUAGES CXX)
+set(UniversalDevKit_BUILD_STATIC OFF CACHE BOOL "" FORCE)
+set(UniversalDevKit_BUILD_DYNAMIC OFF CACHE BOOL "" FORCE)
+set(UniversalDevKit_INSTALL OFF CACHE BOOL "" FORCE)
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../../../.." udk)
+add_executable(header_isolation Main.cpp)
+target_link_libraries(header_isolation PRIVATE UniversalDevKit::Helpers.Headers)

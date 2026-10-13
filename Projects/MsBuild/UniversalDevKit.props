@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- Подключается явно через Import: добавляет Includes и доступные метаданные версии.
+  <!-- Подключается явно через Import: добавляет общий Core и доступные метаданные версии.
        Сохраняет include-пути потребителя; не подключает исходники или библиотеки
        и не меняет стандарт C++, CRT или каталоги сборки. -->
   <Import Project="$(MSBuildThisFileDirectory)UniversalDevKit.Version.props"
@@ -14,9 +14,9 @@
 
   <ItemDefinitionGroup>
     <ClCompile>
-      <!-- Корень Includes позволяет писать #include <UniversalDevKit/Helpers/Math.h>.
+      <!-- Заголовки компонентов добавляются отдельно согласно графу зависимостей.
            Существующие include-пути проекта сохраняются через наследуемое значение. -->
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\Includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\Includes\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
 </Project>

@@ -10,7 +10,7 @@ Copy-Item -LiteralPath (Join-Path $fixture 'Main.cpp') -Destination (Join-Path $
 
 # Проверяем согласованность с единственным источником версии выпуска.
 $version = Get-Content -LiteralPath (Join-Path $Workspace.Library 'Version.json') -Raw | ConvertFrom-Json
-$versionHeader = [IO.File]::ReadAllText((Join-Path $Workspace.Library 'Includes/UniversalDevKit/Version.h'))
+$versionHeader = [IO.File]::ReadAllText((Join-Path $Workspace.Library 'Includes/Core/UniversalDevKit/Version.h'))
 [xml]$versionProps = [IO.File]::ReadAllText((Join-Path $Workspace.Library 'Projects/MsBuild/UniversalDevKit.Version.props'))
 if ($versionHeader -notmatch [regex]::Escape('"' + $version.version + '"') -or $versionProps.Project.PropertyGroup.UniversalDevKitVersion -ne $version.version -or $versionProps.Project.PropertyGroup.UniversalDevKitAbiVersion -ne [string]$version.abiVersion) {
     throw 'Generated version metadata is inconsistent.'

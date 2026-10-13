@@ -21,7 +21,6 @@ try {
         $workspace = New-TestWorkspace $repositoryPath $Mode $Revision
         Write-Host "Scenario: $name; workspace: $($workspace.Root)"
         # В каждом сценарии собственные consumer и копия библиотеки.
-        & (Join-Path $workspace.Library 'Scripts/PowerShell/Connect.Tests.ps1') | Out-Host
         & (Join-Path $testsPath "Integration/MsBuild/$name.Tests.ps1") $workspace $msbuild $SolutionInjectorPath
         Write-Host "PASS: $name ($Mode), Debug/Release x64."
         if ($CleanOnSuccess) { Remove-TestWorkspace $repositoryPath $workspace }

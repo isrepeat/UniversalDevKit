@@ -60,6 +60,14 @@ function AssertConfigurationFails([string]$Scenario, [string[]]$Arguments, [stri
 }
 
 $contractSource = Join-Path $repository 'Tests/Fixtures/Consumers/CmakeContract'
+# Проверяем заголовки без бинарников и доступность только своего компонента/Core.
+$headerBuild = Join-Path $run 'header-isolation'
+InvokeCMake @('-S', (Join-Path $repository 'Tests/Fixtures/Consumers/HeaderIsolation'), '-B', $headerBuild, '-G', $Generator, '-A', 'x64')
+InvokeCMake @('--build', $headerBuild, '--config', 'Release')
+& (Join-Path $headerBuild 'Release/header_isolation.exe')
+if ($LASTEXITCODE -ne 0) {
+    throw 'Header isolation consumer failed.'
+}
 AssertConfigurationFails 'Changed runtime in existing build tree' @('-S', $repository, '-B', $build, '-DUniversalDevKitRuntime=Static') 'separate build\s+directory'
 AssertConfigurationFails 'Invalid runtime choice' @('-S', $repository, '-B', (Join-Path $run 'invalid-runtime'), '-G', $Generator, '-A', 'x64', '-DUniversalDevKitRuntime=Unknown') 'UniversalDevKitRuntime must be'
 $contractArguments = @('-S', $contractSource, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Release')
@@ -76,6 +84,9 @@ $limitedInstall = Join-Path $run 'limited-install'
 InvokeCMake @('-S', $repository, '-B', $limitedBuild, '-G', $Generator, '-A', 'x64', '-DUniversalDevKit_COMPONENTS=Helpers', '-DUniversalDevKit_BUILD_DYNAMIC=OFF', "-DCMAKE_INSTALL_PREFIX=$limitedInstall")
 InvokeCMake @('--build', $limitedBuild, '--config', 'Release')
 InvokeCMake @('--install', $limitedBuild, '--config', 'Release')
+if (Test-Path -LiteralPath (Join-Path $limitedInstall 'include/UniversalDevKit/Diagnostic')) {
+    throw 'Limited package contains excluded Diagnostic headers.'
+}
 $limitedConsumer = Join-Path $run 'limited-consumer'
 InvokeCMake ($contractArguments + @('-B', $limitedConsumer, "-DCMAKE_PREFIX_PATH=$limitedInstall"))
 InvokeCMake @('--build', $limitedConsumer, '--config', 'Release')

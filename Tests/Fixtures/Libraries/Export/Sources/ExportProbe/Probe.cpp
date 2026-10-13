@@ -1,4 +1,4 @@
-#include "../../Includes/UniversalDevKit/ExportProbe/Probe.h"
+#include <UniversalDevKit/ExportProbe/Probe.h>
 
 // Внутренняя функция имеет внешнее связывание, но не входит в публичный экспорт.
 extern "C" UNIVERSALDEVKIT_API_LOCAL int UdkInternalProbe() {

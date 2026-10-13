@@ -49,7 +49,7 @@ add_library(UniversalDevKit::Headers ALIAS universaldevkit_headers)
 
 # До установки заголовки берутся из репозитория, после — из каталога пакета.
 target_include_directories(universaldevkit_headers INTERFACE
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Includes>"
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Includes/Core>"
     "$<INSTALL_INTERFACE:include>"
 )
 target_compile_features(universaldevkit_headers INTERFACE cxx_std_17)
@@ -68,7 +68,10 @@ install(TARGETS universaldevkit_headers ${exportedComponentTargets} EXPORT Unive
     LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
-install(DIRECTORY "Includes/" DESTINATION "include")
+install(DIRECTORY "Includes/Core/" DESTINATION "include")
+foreach(componentName IN LISTS availablePackageComponents)
+    install(DIRECTORY "Includes/${componentName}/" DESTINATION "include")
+endforeach()
 # Namespace + EXPORT_NAME дают, например, UniversalDevKit::Helpers.Static.
 install(EXPORT UniversalDevKitTargets
     NAMESPACE UniversalDevKit::

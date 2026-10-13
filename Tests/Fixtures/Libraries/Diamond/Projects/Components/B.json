@@ -9,7 +9,7 @@
   ],
   "msbuildGuid": "{DA000000-0000-4000-8000-000000000002}",
   "headers": [
-    "Includes/UniversalDevKit/B/Value.h"
+    "Includes/B/UniversalDevKit/B/Value.h"
   ],
   "sources": [
     "Sources/B/Value.cpp"

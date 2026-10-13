@@ -3,7 +3,7 @@
   "dependencies": [],
   "msbuildGuid": "{DA000000-0000-4000-8000-000000000004}",
   "headers": [
-    "Includes/UniversalDevKit/D/Value.h"
+    "Includes/D/UniversalDevKit/D/Value.h"
   ],
   "sources": [
     "Sources/D/Value.cpp"

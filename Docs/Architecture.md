@@ -14,7 +14,7 @@
 
 ## Один экземпляр кода
 
-Публичные заголовки находятся в Includes/UniversalDevKit/<компонент>, реализации и внутренние заголовки — в Sources/<компонент>. Публичный namespace — universaldevkit. Потребитель получает include-путь Includes и пишет, например, `<UniversalDevKit/Diagnostic/Logging.h>`.
+Публичные заголовки находятся в Includes/<компонент>/UniversalDevKit/<компонент>, реализации и внутренние заголовки — в Sources/<компонент>. Публичный namespace — universaldevkit. Потребитель получает include-путь Includes/<компонент> и пишет, например, `<UniversalDevKit/Diagnostic/Logging.h>`. Общие Export.h и Version.h находятся в Includes/Core/UniversalDevKit; UniversalDevKit::Headers предоставляет только Core. Targets UniversalDevKit::<компонент>.Headers предоставляют заголовки компонента и публичных зависимостей без компилируемой реализации. При установке выбранные корни объединяются в include/UniversalDevKit.
 
 Шаблоны реализуются в публичных заголовках. Обычные функции реализуются в .cpp и требуют компиляции или подключения библиотеки. Исходники не копируются в consumer, MSBuild и CMake используют одни физические файлы.
 
