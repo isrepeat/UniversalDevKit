@@ -13,6 +13,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{D832A37F-03A2-4EBD-9FF9-BC27D415378B}"
 	ProjectSection(SolutionItems) = preProject
 		Scripts\PowerShell\Connect.ps1 = Scripts\PowerShell\Connect.ps1
+		Scripts\PowerShell\AutoPrMerge.ps1 = Scripts\PowerShell\AutoPrMerge.ps1
 		Scripts\PowerShell\ConnectConsole.ps1 = Scripts\PowerShell\ConnectConsole.ps1
 		Scripts\PowerShell\FormatXmlAttributes.ps1 = Scripts\PowerShell\FormatXmlAttributes.ps1
 		Scripts\PowerShell\GenerateComponentProjects.ps1 = Scripts\PowerShell\GenerateComponentProjects.ps1
@@ -113,6 +114,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{0458F395-ECF0-44BA-9C83-38D6F7E56AF3}"
 	ProjectSection(SolutionItems) = preProject
 		Docs\Architecture.md = Docs\Architecture.md
+		Docs\AutoPrMerge.md = Docs\AutoPrMerge.md
 		Docs\BuildExtensions.md = Docs\BuildExtensions.md
 		Docs\CMake.md = Docs\CMake.md
 		Docs\Components.md = Docs\Components.md
@@ -129,6 +131,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Repository", "!Repository"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		AGENTS.md = AGENTS.md
+		AutoPrMerge.bat = AutoPrMerge.bat
 		CMakeLists.txt = CMakeLists.txt
 		CMakePresets.json = CMakePresets.json
 		Components.json = Components.json
@@ -191,6 +194,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatf
 		Scripts\Packages\CrossPlatform\Pack.Diagnostic.cmd = Scripts\Packages\CrossPlatform\Pack.Diagnostic.cmd
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MessagingModule", "MessagingModule", "{BC0651B9-7642-4436-BF89-5D8B8BD4F4A0}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\PowerShell\Modules\MessagingModule\MessagingModule.psm1 = Scripts\PowerShell\Modules\MessagingModule\MessagingModule.psm1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -218,6 +226,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{BC0651B9-7642-4436-BF89-5D8B8BD4F4A0} = {8B6A058C-7402-4392-8956-6B1489D9E118}
 		{DC091494-5AC6-46E6-BA6D-61441682BB62} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
 		{CA7AB659-38EB-4E98-99A7-95A777DCD074} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
 		{A7CE4335-D8E6-4E53-B810-7D932E87BA59} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
