@@ -3,8 +3,8 @@ param(
     [string]$Revision = 'HEAD',
     [string]$SolutionInjectorPath,
     [switch]$CleanOnSuccess,
-    [ValidateSet('Shared', 'Static', 'Dynamic', 'ModeSwitch', 'Disconnect', 'Diamond', 'Export')]
-    [string[]]$Scenario = @('Shared', 'Static', 'Dynamic', 'ModeSwitch', 'Disconnect', 'Diamond', 'Export')
+    [ValidateSet('Shared', 'Static', 'Dynamic', 'ModeSwitch', 'Disconnect', 'Diamond', 'Export', 'Runtime')]
+    [string[]]$Scenario = @('Shared', 'Static', 'Dynamic', 'ModeSwitch', 'Disconnect', 'Diamond', 'Export', 'Runtime')
 )
 
 $ErrorActionPreference = 'Stop'

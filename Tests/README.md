@@ -15,6 +15,8 @@
 
 ## Как пользоваться тестами
 
+Сценарий Runtime запускается через `RunTests.ps1 -Scenario Runtime`: Debug/Release с /MD и /MT, Dynamic Diagnostic с внутренней Static Helpers, запуск consumer, сохранение обоих CRT-вариантов и отказ при конфликте CRT. Для /MT параметр UniversalDevKitRuntime=Static передаётся всей сборке. Этот сценарий проверяет сборку из исходников; совместимость готового пакета по CRT и нескольким toolsets он не подтверждает.
+
 Команды ниже выполняются из корня UniversalDevKit. Нужны Git, Windows PowerShell 5.1 и Visual Studio с C++ tools/MSBuild. Открытие UniversalDevKit.Tests.sln удобно для просмотра файлов; команда Build этого решения не заменяет запуск тестов.
 
 Начните с быстрых проверок без сборки приложений:

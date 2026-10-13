@@ -27,6 +27,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4-1E80-4386-ACBA-A8B9D984FC44}"
 	ProjectSection(SolutionItems) = preProject
 		Projects\Cmake\ComponentDependencies.cmake = Projects\Cmake\ComponentDependencies.cmake
+		Projects\Cmake\BuildIdentity.txt.in = Projects\Cmake\BuildIdentity.txt.in
 		Projects\Cmake\ComponentRequirements.cmake = Projects\Cmake\ComponentRequirements.cmake
 		Projects\Cmake\UniversalDevKitConfig.cmake.in = Projects\Cmake\UniversalDevKitConfig.cmake.in
 	EndProjectSection

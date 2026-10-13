@@ -23,7 +23,9 @@
 msbuild UniversalDevKit.sln /m /p:Configuration=Release /p:Platform=x64
 ```
 
-Результаты собственных проектов направляются через BuildLayout.props в `!artifacts/Windows-x64/msbuild/<имя проекта>/<конфигурация>/bin/`, промежуточные файлы — в obj/. Публичный UniversalDevKit.props не меняет каталоги consumer.
+Результаты собственных проектов направляются через BuildLayout.props в `!artifacts/Windows-x64/msbuild/<toolset>/<версия компилятора>/<md или mt>/<компонент.вариант>/<конфигурация>/bin/`, промежуточные файлы — в obj/. Публичный UniversalDevKit.props не меняет каталоги consumer.
+
+UniversalDevKitRuntime выбирает CRT независимо от Static/Dynamic компонента: Dynamic по умолчанию означает /MD (Debug — /MDd), Static — /MT (Debug — /MTd). Для /MT передавайте общий параметр сборки `/p:UniversalDevKitRuntime=Static` и выбирайте такой же CRT в consumer. Проверка бинарных ссылок отклоняет несовпадение CRT и разные RuntimeLibrary у файлов одного приложения. Автоматическое переключение CRT библиотек по отдельным consumer пока не реализовано: при отсутствии общего параметра поддерживается /MD. Shared сохраняет CRT consumer. Разные toolset, версии компилятора и CRT получают отдельные каталоги; произвольные сочетания toolset не считаются проверенными.
 
 ## Подключить consumer
 

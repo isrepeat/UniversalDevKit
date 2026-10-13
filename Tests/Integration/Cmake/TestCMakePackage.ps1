@@ -60,6 +60,8 @@ function AssertConfigurationFails([string]$Scenario, [string[]]$Arguments, [stri
 }
 
 $contractSource = Join-Path $repository 'Tests/Fixtures/Consumers/CmakeContract'
+AssertConfigurationFails 'Changed runtime in existing build tree' @('-S', $repository, '-B', $build, '-DUniversalDevKitRuntime=Static') 'separate build\s+directory'
+AssertConfigurationFails 'Invalid runtime choice' @('-S', $repository, '-B', (Join-Path $run 'invalid-runtime'), '-G', $Generator, '-A', 'x64', '-DUniversalDevKitRuntime=Unknown') 'UniversalDevKitRuntime must be'
 $contractArguments = @('-S', $contractSource, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Release')
 
 # Проверяем прямой и транзитивный конфликт у установленного пакета.

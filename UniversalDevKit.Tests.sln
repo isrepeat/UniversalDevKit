@@ -246,6 +246,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{22F9
 		Tests\Integration\MsBuild\ModeSwitch.Tests.ps1 = Tests\Integration\MsBuild\ModeSwitch.Tests.ps1
 		Tests\Integration\MsBuild\Shared.Tests.ps1 = Tests\Integration\MsBuild\Shared.Tests.ps1
 		Tests\Integration\MsBuild\Static.Tests.ps1 = Tests\Integration\MsBuild\Static.Tests.ps1
+		Tests\Integration\MsBuild\Runtime.Tests.ps1 = Tests\Integration\MsBuild\Runtime.Tests.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{41619890-3A56-45F7-B0B8-45C4A554206B}"

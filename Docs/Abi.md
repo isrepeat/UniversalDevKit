@@ -10,6 +10,8 @@
 
 ## Политика 0.x
 
+Проверенный Windows-набор этого этапа: x64, Visual Studio 2026 toolset v145, VCToolsVersion 14.51.36231, Debug/Release. Основной CRT — /MDd и /MD. Отдельный Runtime-сценарий также проверяет /MTd и /MT при общем параметре MSBuild UniversalDevKitRuntime=Static. Проверка других toolsets, одновременно разных CRT у consumer одного solution и метаданные установленного бинарного пакета пока остаются открытыми.
+
 При обновлении UDK требуется пересборка consumer. Замена DLL/SO без пересборки пока не гарантируется. Несовместимые изменения публичного API требуют повышения minor-версии. Patch-выпуск сохраняет публичный API; это не обещание совместимости произвольных toolchains и CRT.
 
 Version.json — единственный источник версии выпуска и поколения ABI. CMake читает его непосредственно, генератор создаёт Includes/UniversalDevKit/Version.h для C++ и Projects/MsBuild/UniversalDevKit.Version.props для MSBuild. Будущие NuGet/AAR должны читать тот же файл; упаковка пока не реализована.

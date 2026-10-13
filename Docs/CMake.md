@@ -80,10 +80,12 @@ Helpers.Static всё равно создаётся, поскольку JSON т�
 После сборки выбранной конфигурации:
 
 ```powershell
-cmake --install '!artifacts/Windows-x64/cmake/UniversalDevKit' --config Release
+cmake --install "!artifacts/Windows-x64/cmake/msvc-$env:VCToolsVersion-md/UniversalDevKit" --config Release
 ```
 
 Preset задаёт prefix установки внутри этого дерева, в install/. Для другой цели используйте --prefix. Пакет содержит include/, библиотеки и конфигурацию в `<libdir>/cmake/UniversalDevKit/`; libdir выбирается GNUInstallDirs. На Windows DLL находятся в bin/.
+
+UniversalDevKitRuntime=Dynamic задаёт /MD (/MDd в Debug), Static — /MT (/MTd в Debug). Настройка применяется к targets UDK и не меняет глобальный CRT consumer. Явный CMAKE_MSVC_RUNTIME_LIBRARY должен соответствовать выбранному CRT. Для разных CRT и toolchains используйте разные build/install-каталоги: UDK сохраняет идентификатор компилятора, архитектуры и CRT и отклоняет изменение варианта в существующем build-каталоге. Preset windows-x64 использует дерево msvc-<VCToolsVersion>-md; запускайте его из Developer PowerShell с заданной VCToolsVersion. Проверка CRT уже установленного пакета остаётся следующим этапом.
 
 Debug-имена бинарников имеют суффикс d, поэтому Debug и Release можно устанавливать в один prefix без перезаписи библиотек. Обе конфигурации нужно предварительно собрать и установить; пакет не создаёт отсутствующую конфигурацию автоматически.
 

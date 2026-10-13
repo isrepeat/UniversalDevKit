@@ -10,14 +10,15 @@
       "name": "windows-x64",
       "displayName": "Windows x64",
       "generator": "Ninja Multi-Config",
-      "binaryDir": "${sourceDir}/!artifacts/Windows-x64/cmake/UniversalDevKit",
+      "binaryDir": "${sourceDir}/!artifacts/Windows-x64/cmake/msvc-$env{VCToolsVersion}-md/UniversalDevKit",
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Windows"
       },
       "cacheVariables": {
-        "CMAKE_INSTALL_PREFIX": "${sourceDir}/!artifacts/Windows-x64/cmake/UniversalDevKit/install"
+        "UniversalDevKitRuntime": "Dynamic",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/!artifacts/Windows-x64/cmake/msvc-$env{VCToolsVersion}-md/UniversalDevKit/install"
       }
     }
   ],

@@ -10,6 +10,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <ExceptionHandling>Sync</ExceptionHandling>
+      <RuntimeLibrary Condition="'$(TestRuntimeLibrary)' != ''">$(TestRuntimeLibrary)</RuntimeLibrary>
     </ClCompile>
     <Link><SubSystem>Console</SubSystem></Link>
   </ItemDefinitionGroup>
