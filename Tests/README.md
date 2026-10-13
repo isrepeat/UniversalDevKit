@@ -1,5 +1,11 @@
 # Проверки UniversalDevKit
 
+## Native NuGet
+
+`Tests/Integration/Packages/NuGet.Tests.ps1 -LicenseFile ./LICENSE` собирает локальный feed Helpers/Diagnostic, выполняет restore в отдельные consumer и проверяет MD/MT, Debug/Release, Static/Dynamic, точную зависимость Diagnostic → Helpers и отказы для неподдерживаемой платформы, режима и STL ABI. Артефакты и binlogs сохраняются под !artifacts/tests. Можно передать Feed для проверки уже выпущенных пакетов. Группа запускается отдельно от RunTests.cmd.
+
+`Tests/Integration/Packages/NuGet.Registry.Tests.ps1` проверяет тот же упаковщик с другим реестром: HeaderProbe → HeaderLeaf. Оба пакета формируются из header-only fixture и используются отдельным MSBuild-consumer в Debug/Release. Это проверяет отсутствие зависимости упаковщика от рабочих имён Helpers/Diagnostic.
+
 Каждый RunTests сохраняет полный вывод консоли в `!artifacts/tests/reports/<дата-время-id>/console.log` и таблицу `summary.csv`. Статусы: Passed — пройден, Failed — ошибка, NotRun — не достигнут после остановки, NotSelected — не выбран, Running — начат без зафиксированного завершения. Таблица обновляется во время запуска; при принудительном закрытии консоли текущий тест может остаться Running. Сценарий Diamond отражён одной строкой, подробности его вариантов находятся в console.log. Отчёты сохраняются и при CleanOnSuccess; отдельные MSBuild log/binlog остаются в каталогах сценариев без этого параметра.
 
 Общий RunTests сначала проверяет самостоятельность публичных заголовков: для каждого .h в include-корнях компонентов реестра и Core создаётся отдельный .cpp с единственным include. Компиляция проходит без PCH и unity build в Debug/Release x64, без линковки приложения. Отдельный запуск: `powershell.exe -NoProfile -File Tests/Infrastructure/TestPublicHeaders.ps1`. Нужен CMake из PATH либо Visual Studio 2026 с компонентом CMake tools. Результаты остаются в !artifacts/tests/PublicHeaders-<id>.

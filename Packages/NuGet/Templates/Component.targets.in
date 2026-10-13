@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сгенерировано Build.ps1. Источник: метаданные установленного выпуска. -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <UniversalDevKitRuntime Condition="'$(UniversalDevKitRuntime)' == ''">Dynamic</UniversalDevKitRuntime>
+    <__UniversalDevKit@COMPONENT@PackageRoot>$(MSBuildThisFileDirectory)..\..\</__UniversalDevKit@COMPONENT@PackageRoot>
+    <__UniversalDevKit@COMPONENT@PackageVersion>@VERSION@</__UniversalDevKit@COMPONENT@PackageVersion>
+    <UniversalDevKit@COMPONENT@Linkage Condition="'$(UniversalDevKit@COMPONENT@Linkage)' == ''">@DEFAULT_MODE@</UniversalDevKit@COMPONENT@Linkage>
+  </PropertyGroup>
+@VARIANTS@
+  <ItemGroup>
+    <__UniversalDevKitNuGetRoot Include="$(UniversalDevKitComponents)" />
+  </ItemGroup>
+  <Target Name="__UniversalDevKit@COMPONENT@ValidateNuGet" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(Platform)' != 'x64'" Text="UniversalDevKit.@COMPONENT@: only Windows x64 is packaged." />
+    <Error Condition="'$(Configuration)' != 'Debug' and '$(Configuration)' != 'Release'" Text="UniversalDevKit.@COMPONENT@: select Debug or Release." />
+    <Error Condition="'$(UniversalDevKitComponents)' == ''" Text="Set UniversalDevKitComponents to explicitly selected root components." />
+    <Error Condition="!$([System.String]::Copy(';@VALID_MODES@;').Contains(';$(UniversalDevKit@COMPONENT@Linkage);'))" Text="UniversalDevKit.@COMPONENT@: unsupported linkage." />
+    <Error Condition="@UNKNOWN_ROOT@" Text="Unknown packaged component: %(__UniversalDevKitNuGetRoot.Identity)." />
+    <Error Condition="'$(UniversalDevKitRuntime)' != 'Static' and '$(UniversalDevKitRuntime)' != 'Dynamic'" Text="UniversalDevKitRuntime must be Static (MT) or Dynamic (MD)." />
+    <Error Condition="'@HAS_BINARIES@' == 'true' and '$(PlatformToolset)' != '@TOOLSET@'" Text="UniversalDevKit.@COMPONENT@: package requires toolset @TOOLSET@." />
+    <Error Condition="'@HAS_BINARIES@' == 'true' and '$(VCToolsVersion)' != '@VCTOOLS@'" Text="UniversalDevKit.@COMPONENT@: package requires MSVC tools @VCTOOLS@." />
+    <Error Condition="'$(__UniversalDevKit@COMPONENT@PackageRoot)' == ''" Text="UniversalDevKit package import is missing." />
+@DEPENDENCY_CHECKS@
+  </Target>
+  <Target Name="__UniversalDevKit@COMPONENT@CopyNuGetRuntime" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Copy SourceFiles="@(__UniversalDevKit@COMPONENT@NuGetRuntime)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

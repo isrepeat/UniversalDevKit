@@ -1,0 +1,26 @@
+# Native NuGet для Windows
+
+Build.ps1 читает Components.json и выпускает пакет UniversalDevKit.<компонент> для каждого выбранного компонента и его транзитивных зависимостей. Без Components выбирается весь реестр. Версия берётся из Version.json, NuGet-зависимости требуют точную версию выпуска. Имена компонентов и связи не зашиты в упаковщик.
+
+```powershell
+./Packages/NuGet/Build.ps1 -LicenseFile ./LICENSE
+./Packages/NuGet/Build.ps1 -Components Diagnostic -LicenseFile ./LICENSE
+./Tests/Integration/Packages/NuGet.Tests.ps1 -LicenseFile ./LICENSE
+./Tests/Integration/Packages/NuGet.Registry.Tests.ps1
+```
+
+Поддерживаются Windows x64, текущий MSVC compiler/toolset, Debug/Release, MD/MT. Пакеты compiled содержат библиотеки Static/Dynamic согласно доступным вариантам; process-компоненты требуют Dynamic. Header-only компоненты подключаются в режиме Shared без компиляции исходников и искусственных бинарников. Пакеты не публикуются, локальный feed сохраняется под !artifacts/packages/nuget.
+
+LicenseFile обязателен, его текст включается как LICENSE.txt. CMake обнаруживается в Visual Studio либо задаётся параметром CMake. RepositoryPath позволяет тестировать другой реестр в изолированной копии. Повторная упаковка создаёт новый staging, чтобы исключить устаревшие файлы.
+
+## Подключение consumer
+
+Первый проверенный путь использует packages.config. NuGet в Visual Studio добавляет imports build/native/UniversalDevKit.<компонент>.props и .targets; restore восстанавливает файлы, но не создаёт imports в вручную написанном vcxproj. Все props импортируются до всех пакетных targets. Это обеспечивает доступность корней транзитивных пакетов независимо от порядка targets.
+
+Consumer явно задаёт корневые компоненты в UniversalDevKitComponents, например Diagnostic;Helpers. Пакеты, доставленные как зависимости, автоматически не становятся корнями. UniversalDevKit<компонент>Linkage выбирает вариант корня; по умолчанию Static, для process — Dynamic, для headerOnly — Shared. UniversalDevKitRuntime выбирает Dynamic (MD) или Static (MT), по умолчанию Dynamic. Consumer выбирает C++17 или более новый необходимый стандарт самостоятельно; его RuntimeLibrary пакет не меняет.
+
+Ссылки финального линкера, import-макросы, публичные include-пути, системные библиотеки и транзитивные DLL вычисляются Resolve-UdkLinkageGraph, используемым Connect. Пересекающиеся графы корней проверяются на конфликт вариантов. Например, Diagnostic требует private/static Helpers: отдельный корень Helpers.Dynamic конфликтует с ним, а Diagnostic.Dynamic без корня Helpers не линкует Helpers.Static в приложение.
+
+Метаданные установленного выпуска включаются в binaries/<runtime>/<configuration>/Release.json. Принудительно подключённый Abi.h проверяет фактический CRT, конфигурацию, iterator debug level и точную версию компилятора; targets проверяет VCToolsVersion/toolset и версии зависимостей. PackageReference и другие платформы пока не проверены.
+
+NuGet pack может выдавать NU5128 для группы native без managed lib/ref: native-библиотеки намеренно подключаются через targets.

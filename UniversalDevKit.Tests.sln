@@ -5,6 +5,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Repository", "!Repository", "{01643071-A00B-441F-B890-826B2408BC9D}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		LICENSE = LICENSE
 		AGENTS.md = AGENTS.md
 		CMakeLists.txt = CMakeLists.txt
 		CMakePresets.json = CMakePresets.json
@@ -379,11 +380,26 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PublicHeaders", "PublicHead
 		Tests\Integration\Cmake\PublicHeaders\CMakeLists.txt = Tests\Integration\Cmake\PublicHeaders\CMakeLists.txt
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{46309FCB-5690-43A9-A727-F7ED75AE0E96}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Consumers\NuGet\Main.cpp = Tests\Fixtures\Consumers\NuGet\Main.cpp
+		Tests\Fixtures\Consumers\NuGet\Consumer.vcxproj.in = Tests\Fixtures\Consumers\NuGet\Consumer.vcxproj.in
+		Tests\Fixtures\Consumers\NuGet\packages.config.in = Tests\Fixtures\Consumers\NuGet\packages.config.in
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{DB9A4DC7-79EC-45F0-810C-E698375CC27C}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Integration\Packages\NuGet.Tests.ps1 = Tests\Integration\Packages\NuGet.Tests.ps1
+		Tests\Integration\Packages\NuGet.Registry.Tests.ps1 = Tests\Integration\Packages\NuGet.Registry.Tests.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{46309FCB-5690-43A9-A727-F7ED75AE0E96} = {F7C9315C-200F-4296-901A-39A3D4A00C48}
+		{DB9A4DC7-79EC-45F0-810C-E698375CC27C} = {BA1D3CEC-565A-4105-B574-7B7D63F20A53}
 		{9AD8DC26-E566-46A9-BF27-E965ACBDACF5} = {41619890-3A56-45F7-B0B8-45C4A554206B}
 		{8DDA1F51-D758-44E8-8F6B-EEC71393E1A3} = {D24CA339-B1D6-4107-AB4C-BEC63541F901}
 		{A906BCD2-2361-4B2F-8CA0-85E792F16BF9} = {DD08FE8B-4418-425A-B2D5-CDBEE609C4AF}
