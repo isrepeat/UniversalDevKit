@@ -225,6 +225,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{9256B785-9B89-482B-888A-AD4A0573129B}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Infrastructure\BuildTools.ps1 = Tests\Infrastructure\BuildTools.ps1
+		Tests\Infrastructure\TestBuildExtensions.ps1 = Tests\Infrastructure\TestBuildExtensions.ps1
 		Tests\Infrastructure\TestComponentRegistry.ps1 = Tests\Infrastructure\TestComponentRegistry.ps1
 		Tests\Infrastructure\TestWorkspace.ps1 = Tests\Infrastructure\TestWorkspace.ps1
 	EndProjectSection
@@ -270,11 +271,52 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeaderIsolation", "HeaderIs
 		Tests\Fixtures\Consumers\HeaderIsolation\Main.cpp = Tests\Fixtures\Consumers\HeaderIsolation\Main.cpp
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Generated", "Generated", "{52BED2B5-4FBC-4A59-8FF7-332C3AC443A9}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Generated\Components.json = Tests\Fixtures\Libraries\Generated\Components.json
+		Tests\Fixtures\Libraries\Generated\Consumer.cpp = Tests\Fixtures\Libraries\Generated\Consumer.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Consumer", "Consumer", "{A60B6204-0778-4772-B4C5-30A508E27E1A}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Generated\Consumer\CMakeLists.txt = Tests\Fixtures\Libraries\Generated\Consumer\CMakeLists.txt
+		Tests\Fixtures\Libraries\Generated\Consumer\Shared.vcxproj.in = Tests\Fixtures\Libraries\Generated\Consumer\Shared.vcxproj.in
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{D9A6CD46-CC35-425F-B8EE-FBE42B2DB04B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{C8CB0376-FEE2-4641-B867-F45F3A963D73}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Generated\Projects\Components\GeneratedProbe.json = Tests\Fixtures\Libraries\Generated\Projects\Components\GeneratedProbe.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Generation", "Generation", "{68746193-4B66-41A9-A074-4112A317B885}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Generated\Projects\Generation\Generate.cmake = Tests\Fixtures\Libraries\Generated\Projects\Generation\Generate.cmake
+		Tests\Fixtures\Libraries\Generated\Projects\Generation\Input.txt = Tests\Fixtures\Libraries\Generated\Projects\Generation\Input.txt
+		Tests\Fixtures\Libraries\Generated\Projects\Generation\Probe.cmake = Tests\Fixtures\Libraries\Generated\Projects\Generation\Probe.cmake
+		Tests\Fixtures\Libraries\Generated\Projects\Generation\Probe.targets = Tests\Fixtures\Libraries\Generated\Projects\Generation\Probe.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{E977D1FC-1316-4E27-8B82-F8480BE6ECB6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GeneratedProbe", "GeneratedProbe", "{60B50FBB-AEA6-45F2-811D-7DCCA50798F8}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Generated\Sources\GeneratedProbe\Anchor.cpp = Tests\Fixtures\Libraries\Generated\Sources\GeneratedProbe\Anchor.cpp
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{52BED2B5-4FBC-4A59-8FF7-332C3AC443A9} = {DD08FE8B-4418-425A-B2D5-CDBEE609C4AF}
+		{A60B6204-0778-4772-B4C5-30A508E27E1A} = {52BED2B5-4FBC-4A59-8FF7-332C3AC443A9}
+		{D9A6CD46-CC35-425F-B8EE-FBE42B2DB04B} = {52BED2B5-4FBC-4A59-8FF7-332C3AC443A9}
+		{C8CB0376-FEE2-4641-B867-F45F3A963D73} = {D9A6CD46-CC35-425F-B8EE-FBE42B2DB04B}
+		{68746193-4B66-41A9-A074-4112A317B885} = {D9A6CD46-CC35-425F-B8EE-FBE42B2DB04B}
+		{E977D1FC-1316-4E27-8B82-F8480BE6ECB6} = {52BED2B5-4FBC-4A59-8FF7-332C3AC443A9}
+		{60B50FBB-AEA6-45F2-811D-7DCCA50798F8} = {E977D1FC-1316-4E27-8B82-F8480BE6ECB6}
 		{4B1389B8-69D3-4DA0-972F-A790EAE8AE64} = {F7C9315C-200F-4296-901A-39A3D4A00C48}
 		{64519B9E-018A-42CA-9F01-384DE3A209AB} = {75E9BBC5-6A5A-4C7F-BCB9-30ED29C2CF97}
 		{F7C9315C-200F-4296-901A-39A3D4A00C48} = {64519B9E-018A-42CA-9F01-384DE3A209AB}

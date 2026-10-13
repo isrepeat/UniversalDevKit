@@ -1,5 +1,7 @@
 # Проверки UniversalDevKit
 
+Необязательные сборочные расширения проверяются отдельно: `pwsh -NoProfile -File Tests/Infrastructure/TestBuildExtensions.ps1`. Fixture Generated создаёт публичный заголовок и реализацию, проверяет инкрементальную генерацию CMake/MSBuild, Shared и установленный CMake-пакет. Подробности — [сборочные расширения](../Docs/BuildExtensions.md).
+
 HeaderIsolation проверяет компонентный include-корень Helpers.Headers без сборки библиотек: Helpers и Core доступны, заголовки Diagnostic недоступны. Проверка входит в TestCMakePackage.ps1; ограниченный пакет также проверяется на отсутствие заголовков исключённого Diagnostic.
 
 Runtime-сценарий дополнительно проверяет параллельную сборку одного solution с двумя consumer: App1 использует /MD(d), App2 — /MT(d). Библиотеки собираются с настройками каждого consumer без общего UniversalDevKitRuntime; хеши доставленных DLL сверяются с соответствующими md/mt-артефактами. Смешанная сборка выполняется первой в новом окружении.

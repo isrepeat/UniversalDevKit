@@ -151,7 +151,7 @@ foreach ($includePath in $manifest.includes) {
     }
     # Не игнорируем будущие поля: для зависимостей и платформ потребуется расширение генератора.
     foreach ($field in $component.PSObject.Properties.Name) {
-        if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements')) {
+        if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions')) {
             throw "Unsupported field ${name}: $field"
         }
     }
@@ -237,6 +237,17 @@ foreach ($includePath in $manifest.includes) {
             }
         }
     }
+    if ($component.PSObject.Properties['buildExtensions']) {
+        if ($component.buildExtensions -isnot [pscustomobject]) { throw "${name}.buildExtensions must be an object." }
+        foreach ($extension in $component.buildExtensions.PSObject.Properties) {
+            if ($extension.Name -cnotin @('cmake', 'msbuildProps', 'msbuildTargets') -or $extension.Value -isnot [string]) {
+                throw "Invalid build extension: ${name}.$($extension.Name)"
+            }
+            ValidateFile $extension.Value 'Projects/'
+            $expectedExtension = @{ cmake = '.cmake'; msbuildProps = '.props'; msbuildTargets = '.targets' }[$extension.Name]
+            if ([IO.Path]::GetExtension($extension.Value) -cne $expectedExtension) { throw "Invalid build extension suffix: $($extension.Value)" }
+        }
+    }
     ValidateFilterSettings $component.filters $component
     $files = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
     $objects = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
@@ -249,7 +260,14 @@ foreach ($includePath in $manifest.includes) {
     $lines.Add('    <ItemsProjectGuid>{' + $guid.ToString().ToUpperInvariant() + '}</ItemsProjectGuid>')
     $lines.Add('  </PropertyGroup>')
     $lines.Add('  <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.props" Condition="''$(__IsUniversalDevKitPublicPropsImported)'' != ''true''" />')
-    $lines.Add('  <ItemDefinitionGroup><ClCompile><AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\Includes\' + $name + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile></ItemDefinitionGroup>')
+    if ($component.buildExtensions.msbuildProps) {
+        $lines.Add('  <Import Project="' + (EscapeXml ('$(MSBuildThisFileDirectory)..\..\..\' + $component.buildExtensions.msbuildProps.Replace('/', '\'))) + '" />')
+    }
+    $lines.Add('  <ItemDefinitionGroup>')
+    $lines.Add('    <ClCompile>')
+    $lines.Add('      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\Includes\' + $name + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>')
+    $lines.Add('    </ClCompile>')
+    $lines.Add('  </ItemDefinitionGroup>')
     $lines.Add('  <ItemGroup>')
     foreach ($path in $component.headers) {
         if ($path -isnot [string]) {
@@ -307,6 +325,9 @@ foreach ($includePath in $manifest.includes) {
     }
     $lines.Add((Get-UdkRequirementItemsXml $name $binaryComponentRegistry[$name].Requirements $true $true $true))
     $lines.Add('  <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.Requirements.targets" Condition="''$(__IsUniversalDevKitRequirementsImported)'' != ''true''" />')
+    if ($component.buildExtensions.msbuildTargets) {
+        $lines.Add('  <Import Project="' + (EscapeXml ('$(MSBuildThisFileDirectory)..\..\..\' + $component.buildExtensions.msbuildTargets.Replace('/', '\'))) + '" />')
+    }
     $lines.Add('</Project>')
     $relativePath = "Projects/MsBuild/$name/UniversalDevKit.$name.Shared.vcxitems"
     $targetPath = Join-Path $repositoryPath $relativePath

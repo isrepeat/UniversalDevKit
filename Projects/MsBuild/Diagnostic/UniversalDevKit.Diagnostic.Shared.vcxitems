@@ -6,7 +6,11 @@
     <ItemsProjectGuid>{28F717C7-A2EF-405E-96F1-538329030ACF}</ItemsProjectGuid>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.props" Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
-  <ItemDefinitionGroup><ClCompile><AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\Includes\Diagnostic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile></ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\Includes\Diagnostic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\Logging.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
