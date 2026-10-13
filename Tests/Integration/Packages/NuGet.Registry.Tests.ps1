@@ -24,11 +24,11 @@ $consumer = Join-Path $workspace.Root 'NuGetConsumer'
 [void][IO.Directory]::CreateDirectory($consumer)
 Copy-Item -LiteralPath (Join-Path $fixture 'Consumer.cpp') -Destination (Join-Path $consumer 'Main.cpp')
 $templates = Join-Path $repository 'Tests/Fixtures/Consumers/NuGet'
-$text = (Get-Content (Join-Path $templates 'Consumer.vcxproj.in') -Raw).Replace('Helpers', 'HeaderLeaf').Replace('Diagnostic', 'HeaderProbe').Replace('@VERSION@', $version)
+$text = (Get-Content (Join-Path $templates 'Consumer.vcxproj.in') -Raw).Replace('Helpers', 'HeaderLeaf').Replace('Diagnostic', 'HeaderProbe').Replace('{{VERSION}}', $version)
 $import = '  <Import Project="packages\UniversalDevKit.HeaderProbe.' + $version + '\build\native\UniversalDevKit.HeaderProbe.targets" />'
-$text = $text.Replace('@DIAGNOSTIC_IMPORT@', $import).Replace('@DIAGNOSTIC_PROPS@', $import.Replace('.targets', '.props')).Replace('@TEST_DEFINITIONS@', '').Replace('@ROOTS@', 'HeaderProbe')
+$text = $text.Replace('{{DIAGNOSTIC_IMPORT}}', $import).Replace('{{DIAGNOSTIC_PROPS}}', $import.Replace('.targets', '.props')).Replace('{{TEST_DEFINITIONS}}', '').Replace('{{ROOTS}}', 'HeaderProbe')
 [IO.File]::WriteAllText((Join-Path $consumer 'Consumer.vcxproj'), $text.TrimEnd([char[]]"`r`n"), [Text.UTF8Encoding]::new($false))
-$config = (Get-Content (Join-Path $templates 'packages.config.in') -Raw).Replace('Helpers', 'HeaderLeaf').Replace('Diagnostic', 'HeaderProbe').Replace('@VERSION@', $version)
+$config = (Get-Content (Join-Path $templates 'packages.config.in') -Raw).Replace('Helpers', 'HeaderLeaf').Replace('Diagnostic', 'HeaderProbe').Replace('{{VERSION}}', $version)
 [IO.File]::WriteAllText((Join-Path $consumer 'packages.config'), $config.TrimEnd([char[]]"`r`n"), [Text.UTF8Encoding]::new($false))
 & $NuGet restore (Join-Path $consumer 'packages.config') -Source $feed -PackagesDirectory (Join-Path $consumer 'packages') -NoCache -DirectDownload -NonInteractive | Out-Host
 if ($LASTEXITCODE -ne 0) { throw 'Registry package restore failed.' }

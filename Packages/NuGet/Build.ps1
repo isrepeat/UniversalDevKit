@@ -190,7 +190,7 @@ foreach ($component in $selected) {
 
         # Проверяем наличие imports всех зависимых пакетов и точное совпадение версии выпуска.
         foreach ($name in $graph.ResolvedComponents) {
-            $checks.Add('    <Error Condition="' + $condition + ' and ''$(__UniversalDevKit' + $name + 'PackageVersion)'' != ''@VERSION@''" Text="Restore/import UniversalDevKit.' + $name + ' of the exact release version." />')
+            $checks.Add('    <Error Condition="' + $condition + ' and ''$(__UniversalDevKit' + $name + 'PackageVersion)'' != ''{{VERSION}}''" Text="Restore/import UniversalDevKit.' + $name + ' of the exact release version." />')
         }
 
         # Два независимых корня могут требовать разные варианты одного транзитивного компонента.
@@ -213,16 +213,16 @@ foreach ($component in $selected) {
     $dependencies = (@($registry[$component].Dependencies | ForEach-Object { '<dependency id="UniversalDevKit.' + $_.Component + '" version="[' + $version + ']" />' }) -join '')
     $defaultMode = if ($registry[$component].Kind -eq 'headerOnly') { 'Shared' } elseif ($registry[$component].StateScope -eq 'process') { 'Dynamic' } else { 'Static' }
     $target = Get-Content (Join-Path $PSScriptRoot 'Templates/Component.targets.in') -Raw
-    $target = $target.Replace('@COMPONENT@', $component).Replace('@VARIANTS@', ($variants -join "`n")).Replace('@TOOLSET@', $toolset).Replace('@VCTOOLS@', $vcTools).Replace('@DEPENDENCY_CHECKS@', ($checks -join "`n")).Replace('@DEFAULT_MODE@', $defaultMode)
+    $target = $target.Replace('{{COMPONENT}}', $component).Replace('{{VARIANTS}}', ($variants -join "`n")).Replace('{{TOOLSET}}', $toolset).Replace('{{VCTOOLS}}', $vcTools).Replace('{{DEPENDENCY_CHECKS}}', ($checks -join "`n")).Replace('{{DEFAULT_MODE}}', $defaultMode)
     $validModes = (@($componentGraphs | ForEach-Object { $_.Substring($component.Length + 1) }) -join ';')
-    $target = $target.Replace('@VERSION@', $version).Replace('@VALID_MODES@', $validModes).Replace('@HAS_BINARIES@', $hasBinaries.ToString().ToLowerInvariant())
+    $target = $target.Replace('{{VERSION}}', $version).Replace('{{VALID_MODES}}', $validModes).Replace('{{HAS_BINARIES}}', $hasBinaries.ToString().ToLowerInvariant())
     $unknown = (@($selected | ForEach-Object { "'%(__UniversalDevKitNuGetRoot.Identity)' != '$_'" }) -join ' and ')
-    $target = $target.Replace('@UNKNOWN_ROOT@', $unknown)
+    $target = $target.Replace('{{UNKNOWN_ROOT}}', $unknown)
     WriteGenerated (Join-Path $payload "build/native/UniversalDevKit.$component.targets") $target
     $props = Get-Content (Join-Path $PSScriptRoot 'Templates/Component.props.in') -Raw
-    WriteGenerated (Join-Path $payload "build/native/UniversalDevKit.$component.props") ($props.Replace('@COMPONENT@', $component).Replace('@VERSION@', $version).Replace('@DEFAULT_MODE@', $defaultMode))
+    WriteGenerated (Join-Path $payload "build/native/UniversalDevKit.$component.props") ($props.Replace('{{COMPONENT}}', $component).Replace('{{VERSION}}', $version).Replace('{{DEFAULT_MODE}}', $defaultMode))
     $spec = Get-Content (Join-Path $PSScriptRoot 'Templates/Component.nuspec.in') -Raw
-    WriteGenerated (Join-Path $stage "$component.nuspec") ($spec.Replace('@COMPONENT@', $component).Replace('@VERSION@', $version).Replace('@DEPENDENCIES@', $dependencies))
+    WriteGenerated (Join-Path $stage "$component.nuspec") ($spec.Replace('{{COMPONENT}}', $component).Replace('{{VERSION}}', $version).Replace('{{DEPENDENCIES}}', $dependencies))
 
     # 9. Создаём локальный .nupkg; публикация в feed этим скриптом не выполняется.
     # Native DLL подключаются targets, поэтому предупреждения для managed lib/ref неприменимы.

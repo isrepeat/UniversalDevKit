@@ -17,10 +17,10 @@
     <UseDebugLibraries Condition="'$(Configuration)' != 'Debug'">false</UseDebugLibraries>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <Import Project="packages\UniversalDevKit.Helpers.@VERSION@\build\native\UniversalDevKit.Helpers.props" />
-@DIAGNOSTIC_PROPS@
+  <Import Project="packages\UniversalDevKit.Helpers.{{VERSION}}\build\native\UniversalDevKit.Helpers.props" />
+{{DIAGNOSTIC_PROPS}}
   <PropertyGroup>
-    <UniversalDevKitComponents>@ROOTS@</UniversalDevKitComponents>
+    <UniversalDevKitComponents>{{ROOTS}}</UniversalDevKitComponents>
     <OutDir>$(MSBuildProjectDirectory)\out\$(Configuration)\</OutDir>
     <IntDir>$(MSBuildProjectDirectory)\obj\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -28,7 +28,7 @@
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <PreprocessorDefinitions>@TEST_DEFINITIONS@;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>{{TEST_DEFINITIONS}};%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary Condition="'$(UniversalDevKitRuntime)' == 'Dynamic' and '$(Configuration)' == 'Debug'">MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeLibrary Condition="'$(UniversalDevKitRuntime)' == 'Dynamic' and '$(Configuration)' != 'Debug'">MultiThreadedDLL</RuntimeLibrary>
       <RuntimeLibrary Condition="'$(UniversalDevKitRuntime)' == 'Static' and '$(Configuration)' == 'Debug'">MultiThreadedDebug</RuntimeLibrary>
@@ -39,7 +39,7 @@
     <Link><SubSystem>Console</SubSystem></Link>
   </ItemDefinitionGroup>
   <ItemGroup><ClCompile Include="Main.cpp" /><None Include="packages.config" /></ItemGroup>
-  <Import Project="packages\UniversalDevKit.Helpers.@VERSION@\build\native\UniversalDevKit.Helpers.targets" />
-@DIAGNOSTIC_IMPORT@
+  <Import Project="packages\UniversalDevKit.Helpers.{{VERSION}}\build\native\UniversalDevKit.Helpers.targets" />
+{{DIAGNOSTIC_IMPORT}}
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

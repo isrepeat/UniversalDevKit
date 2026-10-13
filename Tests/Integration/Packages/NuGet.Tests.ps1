@@ -25,11 +25,11 @@ foreach ($runtime in @('Dynamic', 'Static')) {
         [void][IO.Directory]::CreateDirectory($consumer)
         Copy-Item -LiteralPath (Join-Path $fixture 'Main.cpp') -Destination $consumer
         foreach ($file in @('Consumer.vcxproj', 'packages.config')) {
-            $text = (Get-Content (Join-Path $fixture "$file.in") -Raw).Replace('@VERSION@', $version)
+            $text = (Get-Content (Join-Path $fixture "$file.in") -Raw).Replace('{{VERSION}}', $version)
             $import = if ($scenario -ne 'HelpersDynamic') { '  <Import Project="packages\UniversalDevKit.Diagnostic.' + $version + '\build\native\UniversalDevKit.Diagnostic.targets" />' } else { '' }
             $props = $import.Replace('.targets', '.props')
             $define = if ($scenario -eq 'HelpersDynamic') { 'UDK_TEST_HELPERS_ONLY' } else { '' }
-            $text = $text.Replace('@DIAGNOSTIC_IMPORT@', $import).Replace('@DIAGNOSTIC_PROPS@', $props).Replace('@TEST_DEFINITIONS@', $define).Replace('@ROOTS@', $roots)
+            $text = $text.Replace('{{DIAGNOSTIC_IMPORT}}', $import).Replace('{{DIAGNOSTIC_PROPS}}', $props).Replace('{{TEST_DEFINITIONS}}', $define).Replace('{{ROOTS}}', $roots)
             [IO.File]::WriteAllText((Join-Path $consumer $file), $text.TrimEnd([char[]]"`r`n"), [Text.UTF8Encoding]::new($false))
         }
         # Restore использует только локальный feed, без внешних источников и кеша.
