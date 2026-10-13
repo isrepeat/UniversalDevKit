@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сгенерировано NuGet.Tests.ps1. Версия из Version.json. -->
+<packages>
+  <package id="UniversalDevKit.Helpers" version="{{VERSION}}" targetFramework="native" />
+  <package id="UniversalDevKit.Diagnostic" version="{{VERSION}}" targetFramework="native" />
+</packages>

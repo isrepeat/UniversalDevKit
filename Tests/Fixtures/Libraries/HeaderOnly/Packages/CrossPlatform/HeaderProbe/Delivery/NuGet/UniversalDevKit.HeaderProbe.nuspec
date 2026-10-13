@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Package-specific NuGet manifest. -->
+<package>
+  <metadata>
+    <id>UniversalDevKit.HeaderProbe</id>
+    <version>{{VERSION}}</version>
+    <authors>UniversalDevKit</authors>
+    <description>UniversalDevKit HeaderProbe native Windows x64 library.</description>
+    <tags>native C++ Windows UniversalDevKit</tags>
+    <license type="file">LICENSE.txt</license>
+    <readme>README.md</readme>
+    <dependencies><group targetFramework="native">{{DEPENDENCIES}}</group></dependencies>
+  </metadata>
+  <files><file src="payload\**\*" target="" /></files>
+</package>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сгенерировано NuGet.Tests.ps1. Источник: неподключённый тестовый consumer. -->
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64"><Configuration>Debug</Configuration><Platform>x64</Platform></ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64"><Configuration>Release</Configuration><Platform>x64</Platform></ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{45092F49-7ECD-4DC9-A998-143B65A34D34}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset Condition="'$(PlatformToolset)' == ''">$(DefaultPlatformToolset)</PlatformToolset>
+    <UseDebugLibraries Condition="'$(Configuration)' == 'Debug'">true</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(Configuration)' != 'Debug'">false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <Import Project="packages\UniversalDevKit.Helpers.{{VERSION}}\build\native\UniversalDevKit.Helpers.props" />
+{{DIAGNOSTIC_PROPS}}
+  <PropertyGroup>
+    <UniversalDevKitComponents>{{ROOTS}}</UniversalDevKitComponents>
+    <OutDir>$(MSBuildProjectDirectory)\out\$(Configuration)\</OutDir>
+    <IntDir>$(MSBuildProjectDirectory)\obj\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <PreprocessorDefinitions>{{TEST_DEFINITIONS}};%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary Condition="'$(UniversalDevKitRuntime)' == 'Dynamic' and '$(Configuration)' == 'Debug'">MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(UniversalDevKitRuntime)' == 'Dynamic' and '$(Configuration)' != 'Debug'">MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(UniversalDevKitRuntime)' == 'Static' and '$(Configuration)' == 'Debug'">MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(UniversalDevKitRuntime)' == 'Static' and '$(Configuration)' != 'Debug'">MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(UdkTestWrongCrt)' == 'true'">MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions Condition="'$(UdkTestWrongAbi)' == 'true'">_ITERATOR_DEBUG_LEVEL=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link><SubSystem>Console</SubSystem></Link>
+  </ItemDefinitionGroup>
+  <ItemGroup><ClCompile Include="Main.cpp" /><None Include="packages.config" /></ItemGroup>
+  <Import Project="packages\UniversalDevKit.Helpers.{{VERSION}}\build\native\UniversalDevKit.Helpers.targets" />
+{{DIAGNOSTIC_IMPORT}}
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

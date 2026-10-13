@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Package-specific integration. Edit this file directly. -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <UniversalDevKitRuntime Condition="'$(UniversalDevKitRuntime)' == ''">Dynamic</UniversalDevKitRuntime>
+    <__UniversalDevKitHeaderLeafPackageRoot>$(MSBuildThisFileDirectory)..\..\</__UniversalDevKitHeaderLeafPackageRoot>
+    <__UniversalDevKitHeaderLeafPackageVersion>$(__UniversalDevKitHeaderLeafPackageVersion)</__UniversalDevKitHeaderLeafPackageVersion>
+    <UniversalDevKitHeaderLeafLinkage Condition="'$(UniversalDevKitHeaderLeafLinkage)' == ''">Shared</UniversalDevKitHeaderLeafLinkage>
+  </PropertyGroup>
+  <Import Project="Generated\Settings.targets" />
+  <ItemGroup>
+    <__UniversalDevKitNuGetRoot Include="$(UniversalDevKitComponents)" />
+  </ItemGroup>
+  <Target Name="__UniversalDevKitHeaderLeafValidateNuGet" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(Platform)' != 'x64'" Text="UniversalDevKit.HeaderLeaf: only Windows x64 is packaged." />
+    <Error Condition="'$(Configuration)' != 'Debug' and '$(Configuration)' != 'Release'" Text="UniversalDevKit.HeaderLeaf: select Debug or Release." />
+    <Error Condition="'$(UniversalDevKitComponents)' == ''" Text="Set UniversalDevKitComponents to explicitly selected root components." />
+    <Error Condition="!$([System.String]::Copy(';$(__UniversalDevKitHeaderLeafValidModes);').Contains(';$(UniversalDevKitHeaderLeafLinkage);'))" Text="UniversalDevKit.HeaderLeaf: unsupported linkage." />
+    <Error Condition="'$(UniversalDevKitRuntime)' != 'Static' and '$(UniversalDevKitRuntime)' != 'Dynamic'" Text="UniversalDevKitRuntime must be Static (MT) or Dynamic (MD)." />
+    <Error Condition="'$(__UniversalDevKitHeaderLeafHasBinaries)' == 'true' and '$(PlatformToolset)' != '$(__UniversalDevKitHeaderLeafExpectedToolset)'" Text="UniversalDevKit.HeaderLeaf: package requires toolset $(__UniversalDevKitHeaderLeafExpectedToolset)." />
+    <Error Condition="'$(__UniversalDevKitHeaderLeafHasBinaries)' == 'true' and '$(VCToolsVersion)' != '$(__UniversalDevKitHeaderLeafExpectedTools)'" Text="UniversalDevKit.HeaderLeaf: package requires MSVC tools $(__UniversalDevKitHeaderLeafExpectedTools)." />
+    <Error Condition="'$(__UniversalDevKitHeaderLeafPackageRoot)' == ''" Text="UniversalDevKit package import is missing." />
+
+  </Target>
+  <Target Name="__UniversalDevKitHeaderLeafCopyNuGetRuntime" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Copy SourceFiles="@(__UniversalDevKitHeaderLeafNuGetRuntime)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

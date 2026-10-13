@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "name": "Diagnostic",
+  "component": "Diagnostic",
+  "versionSource": "../../../Version.json",
+  "deliveries": {
+    "NuGet": "Delivery/NuGet/Delivery.json"
+  }
+}

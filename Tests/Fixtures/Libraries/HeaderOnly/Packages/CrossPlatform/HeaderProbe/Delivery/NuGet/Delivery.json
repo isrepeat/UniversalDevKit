@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "adapter": "component",
+  "id": "UniversalDevKit.HeaderProbe",
+  "supportedPlatforms": ["Windows"],
+  "nuspec": "UniversalDevKit.HeaderProbe.nuspec",
+  "integration": {
+    "props": "UniversalDevKit.HeaderProbe.props",
+    "targets": "UniversalDevKit.HeaderProbe.targets"
+  }
+}

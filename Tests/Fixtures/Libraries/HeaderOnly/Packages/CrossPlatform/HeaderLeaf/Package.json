@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "name": "HeaderLeaf",
+  "component": "HeaderLeaf",
+  "versionSource": "../../../Version.json",
+  "deliveries": {
+    "NuGet": "Delivery/NuGet/Delivery.json"
+  }
+}
