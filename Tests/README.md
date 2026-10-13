@@ -1,5 +1,7 @@
 # Проверки UniversalDevKit
 
+Контракт реестра и header-only компоненты: `pwsh -NoProfile -File Tests/Infrastructure/TestRegistryContract.ps1`. Общие JSON fixtures отклоняются CMake и PowerShell; корректная цепочка заголовков собирается через Shared MSBuild и установленный CMake-пакет без бинарников компонентов.
+
 `Tests/Integration/Cmake/TestBinaryCompatibility.ps1 -CMake <путь к cmake.exe>` отдельно проверяет метаданные выпуска, /MD и /MT в Static/Dynamic Debug/Release, несовместимые настройки target и защиту install-prefix. Параметры toolchain в отрицательных проверках синтетические; положительные сборки используют установленный MSVC.
 
 Необязательные сборочные расширения проверяются отдельно: `pwsh -NoProfile -File Tests/Infrastructure/TestBuildExtensions.ps1`. Fixture Generated создаёт публичный заголовок и реализацию, проверяет инкрементальную генерацию CMake/MSBuild, Shared и установленный CMake-пакет. Подробности — [сборочные расширения](../Docs/BuildExtensions.md).

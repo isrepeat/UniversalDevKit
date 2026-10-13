@@ -64,7 +64,20 @@ include("Projects/Cmake/ComponentDependencies.cmake")
 
 # Установка объединяет библиотеки и требования к ним в один набор экспорта.
 if(UniversalDevKit_INSTALL)
-include("Projects/Cmake/PackageMetadata.cmake")
+set(udkPackageHasBinaries FALSE)
+foreach(componentTarget IN LISTS exportedComponentTargets)
+    get_target_property(componentTargetType ${componentTarget} TYPE)
+    if(NOT componentTargetType STREQUAL "INTERFACE_LIBRARY")
+        set(udkPackageHasBinaries TRUE)
+    endif()
+endforeach()
+set(udkPackageArchitectureOptions)
+if(udkPackageHasBinaries)
+    include("Projects/Cmake/PackageMetadata.cmake")
+else()
+    # Пакет только заголовков не имеет CRT/toolset или архитектуры бинарников.
+    list(APPEND udkPackageArchitectureOptions ARCH_INDEPENDENT)
+endif()
 set_target_properties(universaldevkit_headers PROPERTIES EXPORT_NAME Headers)
 install(TARGETS universaldevkit_headers ${exportedComponentTargets} EXPORT UniversalDevKitTargets
     ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
@@ -89,6 +102,7 @@ configure_package_config_file(
 write_basic_package_version_file(
     "${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKitConfigVersion.cmake"
     COMPATIBILITY SameMinorVersion
+    ${udkPackageArchitectureOptions}
 )
 install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKitConfig.cmake"

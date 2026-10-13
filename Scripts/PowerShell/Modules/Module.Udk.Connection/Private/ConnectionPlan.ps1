@@ -16,6 +16,10 @@ function Resolve-UdkLinkageGraph {
         if ($ComponentRegistry[$Name].StateScope -eq 'process' -and $Mode -ne 'Dynamic') {
             throw "Component $Name has process state and requires Dynamic linkage."
         }
+        if ($ComponentRegistry[$Name].Kind -eq 'headerOnly') {
+            if (-not $Stack.Count -and $Mode -ne 'Shared') { throw "Header-only component $Name supports Shared only." }
+            $Mode = 'Shared'
+        }
         if ($resolvedModes.ContainsKey($Name)) {
             if ($resolvedModes[$Name] -cne $Mode) {
                 throw "Conflicting linkage for ${Name}: $($resolvedModes[$Name]) via $($origins[$Name]); $Mode via $(($Stack + $Name) -join ' -> ')."

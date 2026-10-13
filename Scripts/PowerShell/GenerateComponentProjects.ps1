@@ -9,7 +9,7 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Modules/Module.Udk.Connection/Private/Requirements.ps1')
 $repositoryPath = [IO.Path]::GetFullPath($RepositoryRoot)
 $manifest = Get-Content -LiteralPath (Join-Path $repositoryPath 'Components.json') -Raw -Encoding UTF8 | ConvertFrom-Json
-if ($manifest.schemaVersion -ne 1) {
+if ($manifest.schemaVersion -ne 1 -or ($manifest.schemaVersion -isnot [int] -and $manifest.schemaVersion -isnot [long])) {
     throw 'Unsupported Components.json schemaVersion.'
 }
 foreach ($field in $manifest.PSObject.Properties.Name) {
@@ -151,15 +151,21 @@ foreach ($includePath in $manifest.includes) {
     }
     # Не игнорируем будущие поля: для зависимостей и платформ потребуется расширение генератора.
     foreach ($field in $component.PSObject.Properties.Name) {
-        if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions')) {
+        if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'kind')) {
             throw "Unsupported field ${name}: $field"
         }
     }
     $guid = [Guid]::Empty
+    $kind = if ($component.PSObject.Properties['kind']) { $component.kind } else { 'compiled' }
+    if ($kind -cnotin @('compiled', 'headerOnly')) { throw "Invalid component kind: $name" }
+    if ($kind -eq 'headerOnly' -and ($component.sources.Count -or $component.platformSources -or $component.buildExtensions -or $component.stateScope -eq 'process')) {
+        throw "Header-only component cannot contain sources, build extensions or process state: $name"
+    }
     if ($component.PSObject.Properties['stateScope'] -and $component.stateScope -cnotin @('module', 'process')) {
         throw "Invalid stateScope for component: $name"
     }
-    if (-not [Guid]::TryParse([string]$component.msbuildGuid, [ref]$guid) -or -not $guids.Add($guid.ToString())) {
+    if ($component.msbuildGuid -isnot [string] -or $component.msbuildGuid -notmatch '^\{[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}\}$' -or
+        -not [Guid]::TryParse([string]$component.msbuildGuid, [ref]$guid) -or -not $guids.Add($guid.ToString())) {
         throw "Invalid or duplicate msbuildGuid: $name"
     }
     foreach ($field in @('headers', 'sources')) {
@@ -196,9 +202,10 @@ foreach ($includePath in $manifest.includes) {
     $componentGraph[$name] = $dependencies.ToArray()
     $binaryComponentRegistry[$name] = [pscustomobject]@{
         SharedGuid = $guid
+        Kind = $kind
         StateScope = $component.stateScope
         Requirements = Get-UdkRequirementDefinition $component
-        Dependencies = @($component.dependencies | ForEach-Object {
+        Dependencies = @($component.dependencies | Where-Object { $null -ne $_ } | ForEach-Object {
             [pscustomobject]@{ Component = $_.component; Visibility = $_.visibility; Linkage = $_.linkage }
         })
     }
@@ -361,6 +368,15 @@ function GetDependencyClosure([string]$Name, [string[]]$Stack) {
 $closures = @{}
 $componentNames = @($componentGraph.Keys | Sort-Object)
 foreach ($name in $componentNames) { $closures[$name] = @(GetDependencyClosure $name @()) }
+foreach ($name in $componentNames) {
+    if ($binaryComponentRegistry[$name].Kind -eq 'headerOnly') {
+        foreach ($dependency in $binaryComponentRegistry[$name].Dependencies) {
+            if ($dependency.Visibility -ne 'public' -or $dependency.Linkage -ne 'same' -or $binaryComponentRegistry[$dependency.Component].Kind -ne 'headerOnly') {
+                throw "Header-only dependencies must be public/same and headerOnly: $name"
+            }
+        }
+    }
+}
 
 $lines = [Collections.Generic.List[string]]::new()
 $lines.Add('<?xml version="1.0" encoding="utf-8"?>')
@@ -492,6 +508,7 @@ $libraryGuids = @{}
 $projectTemplate = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Templates/Component.vcxproj.in'))
 foreach ($name in $componentNames) {
     foreach ($mode in @('Static', 'Dynamic')) {
+        if ($binaryComponentRegistry[$name].Kind -eq 'headerOnly') { continue }
         if ($mode -eq 'Static' -and $binaryComponentRegistry[$name].StateScope -eq 'process') {
             continue
         }
@@ -553,6 +570,7 @@ foreach ($name in $componentNames) {
 # Бинарные связи формируются из того же графа; статические архивы не объединяем.
 . (Join-Path $PSScriptRoot 'Modules/Module.Udk.Connection/Private/ConnectionPlan.ps1')
 foreach ($name in $componentNames) {
+    if ($binaryComponentRegistry[$name].Kind -eq 'headerOnly') { continue }
     $lines = [Collections.Generic.List[string]]::new()
     $lines.Add('<?xml version="1.0" encoding="utf-8"?>')
     $lines.Add('<!-- Сгенерировано GenerateComponentProjects.ps1. Изменяйте реестр компонентов. -->')
@@ -582,6 +600,7 @@ foreach ($name in $componentNames) {
         }
         $lines.Add('  <ItemGroup Condition="' + $condition + '">')
         foreach ($dependencyName in @($graph.ResolvedComponents | Where-Object { $_ -ne $name })) {
+            if ($binaryComponentRegistry[$dependencyName].Kind -eq 'headerOnly') { continue }
             $dependencyMode = $graph.ResolvedModes[$dependencyName]
             $dependencyGuid = $libraryGuids["$dependencyName.$dependencyMode"]
             $link = if ($mode -eq 'Dynamic' -and $dependencyName -cin $dependencyGraph.LinkComponents) {
@@ -629,6 +648,7 @@ if (Test-Path -LiteralPath $solutionPath) {
     }
     foreach ($name in $componentNames) {
         foreach ($mode in @('Shared', 'Static', 'Dynamic')) {
+            if ($mode -ne 'Shared' -and $binaryComponentRegistry[$name].Kind -eq 'headerOnly') { continue }
             if ($mode -ne 'Dynamic' -and $binaryComponentRegistry[$name].StateScope -eq 'process') {
                 continue
             }

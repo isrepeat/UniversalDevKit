@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.22)
+project(HeaderOnlyConsumer LANGUAGES CXX)
+find_package(UniversalDevKit CONFIG REQUIRED COMPONENTS HeaderProbe)
+add_executable(HeaderOnlyConsumer ../Consumer.cpp)
+target_link_libraries(HeaderOnlyConsumer PRIVATE UniversalDevKit::HeaderProbe.Headers)

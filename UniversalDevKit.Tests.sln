@@ -226,6 +226,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 	ProjectSection(SolutionItems) = preProject
 		Tests\Infrastructure\BuildTools.ps1 = Tests\Infrastructure\BuildTools.ps1
 		Tests\Infrastructure\TestBuildExtensions.ps1 = Tests\Infrastructure\TestBuildExtensions.ps1
+		Tests\Infrastructure\TestRegistryContract.ps1 = Tests\Infrastructure\TestRegistryContract.ps1
 		Tests\Infrastructure\TestComponentRegistry.ps1 = Tests\Infrastructure\TestComponentRegistry.ps1
 		Tests\Infrastructure\TestWorkspace.ps1 = Tests\Infrastructure\TestWorkspace.ps1
 	EndProjectSection
@@ -312,11 +313,80 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BinaryCompatibility", "Bina
 		Tests\Fixtures\Consumers\BinaryCompatibility\Main.cpp = Tests\Fixtures\Consumers\BinaryCompatibility\Main.cpp
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeaderOnly", "HeaderOnly", "{A906BCD2-2361-4B2F-8CA0-85E792F16BF9}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\HeaderOnly\Components.json = Tests\Fixtures\Libraries\HeaderOnly\Components.json
+		Tests\Fixtures\Libraries\HeaderOnly\Consumer.cpp = Tests\Fixtures\Libraries\HeaderOnly\Consumer.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Consumer", "Consumer", "{6E1B973A-A6B8-4F80-B8A6-D82C5AAF16D5}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\HeaderOnly\Consumer\CMakeLists.txt = Tests\Fixtures\Libraries\HeaderOnly\Consumer\CMakeLists.txt
+		Tests\Fixtures\Libraries\HeaderOnly\Consumer\Shared.vcxproj.in = Tests\Fixtures\Libraries\HeaderOnly\Consumer\Shared.vcxproj.in
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Includes", "Includes", "{50470167-B1BE-4380-8544-3272E256F161}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeaderLeaf", "HeaderLeaf", "{D22DB6BB-CFEE-4504-A6E5-310F7655C584}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniversalDevKit", "UniversalDevKit", "{0A44F42D-A98B-4423-BE98-F3182B34D074}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeaderLeaf", "HeaderLeaf", "{06F2D670-7EEA-4CD8-8DB7-171A666DB628}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\HeaderOnly\Includes\HeaderLeaf\UniversalDevKit\HeaderLeaf\Value.h = Tests\Fixtures\Libraries\HeaderOnly\Includes\HeaderLeaf\UniversalDevKit\HeaderLeaf\Value.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeaderProbe", "HeaderProbe", "{5749869F-9B7A-4969-87CC-0C57008D857A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniversalDevKit", "UniversalDevKit", "{90B9B9E7-19FF-402B-8D41-C5EFEDC18016}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeaderProbe", "HeaderProbe", "{4EBB916A-5559-4CB5-8311-5BC5F57F59F2}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\HeaderOnly\Includes\HeaderProbe\UniversalDevKit\HeaderProbe\Value.h = Tests\Fixtures\Libraries\HeaderOnly\Includes\HeaderProbe\UniversalDevKit\HeaderProbe\Value.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{CF71A8DC-2400-45D5-B0FA-A649F0BF94AA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{C22AC0EC-FBA8-4B72-A13F-78D4DA8FCE3F}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\HeaderOnly\Projects\Components\HeaderLeaf.json = Tests\Fixtures\Libraries\HeaderOnly\Projects\Components\HeaderLeaf.json
+		Tests\Fixtures\Libraries\HeaderOnly\Projects\Components\HeaderProbe.json = Tests\Fixtures\Libraries\HeaderOnly\Projects\Components\HeaderProbe.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RegistryContract", "RegistryContract", "{A6739947-975D-4B19-977D-7B5E54D92CE5}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\RegistryContract\InvalidArray.json = Tests\Fixtures\RegistryContract\InvalidArray.json
+		Tests\Fixtures\RegistryContract\InvalidKind.json = Tests\Fixtures\RegistryContract\InvalidKind.json
+		Tests\Fixtures\RegistryContract\PrivateHeaderDependency.json = Tests\Fixtures\RegistryContract\PrivateHeaderDependency.json
+		Tests\Fixtures\RegistryContract\UnknownDependencyField.json = Tests\Fixtures\RegistryContract\UnknownDependencyField.json
+		Tests\Fixtures\RegistryContract\UnknownField.json = Tests\Fixtures\RegistryContract\UnknownField.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manifest", "Manifest", "{3EF64B4C-FA0D-4B5B-8BE7-E0A23196649A}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\RegistryContract\Manifest\StringVersion.json = Tests\Fixtures\RegistryContract\Manifest\StringVersion.json
+		Tests\Fixtures\RegistryContract\Manifest\UnknownField.json = Tests\Fixtures\RegistryContract\Manifest\UnknownField.json
+		Tests\Fixtures\RegistryContract\Manifest\UnsupportedVersion.json = Tests\Fixtures\RegistryContract\Manifest\UnsupportedVersion.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{A906BCD2-2361-4B2F-8CA0-85E792F16BF9} = {DD08FE8B-4418-425A-B2D5-CDBEE609C4AF}
+		{6E1B973A-A6B8-4F80-B8A6-D82C5AAF16D5} = {A906BCD2-2361-4B2F-8CA0-85E792F16BF9}
+		{50470167-B1BE-4380-8544-3272E256F161} = {A906BCD2-2361-4B2F-8CA0-85E792F16BF9}
+		{D22DB6BB-CFEE-4504-A6E5-310F7655C584} = {50470167-B1BE-4380-8544-3272E256F161}
+		{0A44F42D-A98B-4423-BE98-F3182B34D074} = {D22DB6BB-CFEE-4504-A6E5-310F7655C584}
+		{06F2D670-7EEA-4CD8-8DB7-171A666DB628} = {0A44F42D-A98B-4423-BE98-F3182B34D074}
+		{5749869F-9B7A-4969-87CC-0C57008D857A} = {50470167-B1BE-4380-8544-3272E256F161}
+		{90B9B9E7-19FF-402B-8D41-C5EFEDC18016} = {5749869F-9B7A-4969-87CC-0C57008D857A}
+		{4EBB916A-5559-4CB5-8311-5BC5F57F59F2} = {90B9B9E7-19FF-402B-8D41-C5EFEDC18016}
+		{CF71A8DC-2400-45D5-B0FA-A649F0BF94AA} = {A906BCD2-2361-4B2F-8CA0-85E792F16BF9}
+		{C22AC0EC-FBA8-4B72-A13F-78D4DA8FCE3F} = {CF71A8DC-2400-45D5-B0FA-A649F0BF94AA}
+		{A6739947-975D-4B19-977D-7B5E54D92CE5} = {64519B9E-018A-42CA-9F01-384DE3A209AB}
+		{3EF64B4C-FA0D-4B5B-8BE7-E0A23196649A} = {A6739947-975D-4B19-977D-7B5E54D92CE5}
 		{13003AE8-E41E-4227-8642-971A9AE004B2} = {F7C9315C-200F-4296-901A-39A3D4A00C48}
 		{52BED2B5-4FBC-4A59-8FF7-332C3AC443A9} = {DD08FE8B-4418-425A-B2D5-CDBEE609C4AF}
 		{A60B6204-0778-4772-B4C5-30A508E27E1A} = {52BED2B5-4FBC-4A59-8FF7-332C3AC443A9}

@@ -34,9 +34,10 @@ function Get-UdkComponentRegistry {
         $componentRegistry[$component.name] = [pscustomobject]@{
             Name = $component.name
             Guid = $guid
+            Kind = if ($component.kind) { $component.kind } else { 'compiled' }
             StateScope = $component.stateScope
             Requirements = Get-UdkRequirementDefinition $component
-            Dependencies = @($component.dependencies | ForEach-Object {
+            Dependencies = @($component.dependencies | Where-Object { $null -ne $_ } | ForEach-Object {
                 [pscustomobject]@{
                     Component = $_.component
                     Visibility = $_.visibility

@@ -164,6 +164,7 @@ function SelectConsoleComponents {
             if ($showDependencies -and $activeName -and $ComponentRegistry.ContainsKey($activeName)) {
                 $dependencies = @(Module.Udk.Connection\Resolve-UdkComponents @($activeName) $ComponentRegistry | Where-Object { $_ -ne $activeName })
             }
+            if ($activeName -and $ComponentRegistry[$activeName].Kind -eq 'headerOnly') { $column = 0 }
             [Console]::Clear()
             Write-UdkConsoleText $Title Title
             Write-UdkConsoleText 'Up/Down: component | Left/Right: mode | Space: toggle | Enter on Apply: confirm | Backspace: back | Esc: cancel' Hint
@@ -228,6 +229,7 @@ function SelectConsoleComponents {
                 }
                 Write-UdkConsoleText $displayName.PadRight(24) $nameRole -NoNewline
                 for ($modeIndex = 0; $modeIndex -lt $modes.Count; $modeIndex++) {
+                    if ($ComponentRegistry[$name].Kind -eq 'headerOnly' -and $modes[$modeIndex] -ne 'Shared') { continue }
                     $focused = $index -eq $selected -and $modeIndex -eq $column
                     $check = if ($marked[$name] -eq $modes[$modeIndex]) {
                         'x'

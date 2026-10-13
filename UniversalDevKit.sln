@@ -33,6 +33,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4
 		Projects\Cmake\PackageCompatibility.cmake.in = Projects\Cmake\PackageCompatibility.cmake.in
 		Projects\Cmake\PackageAbi.h.in = Projects\Cmake\PackageAbi.h.in
 		Projects\Cmake\ComponentRequirements.cmake = Projects\Cmake\ComponentRequirements.cmake
+		Projects\Cmake\RegistryContract.cmake = Projects\Cmake\RegistryContract.cmake
 		Projects\Cmake\UniversalDevKitConfig.cmake.in = Projects\Cmake\UniversalDevKitConfig.cmake.in
 	EndProjectSection
 EndProject
@@ -112,6 +113,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{0458F395-E
 		Docs\BuildExtensions.md = Docs\BuildExtensions.md
 		Docs\CMake.md = Docs\CMake.md
 		Docs\Components.md = Docs\Components.md
+		Docs\RegistryContract.md = Docs\RegistryContract.md
 		Docs\Connect.md = Docs\Connect.md
 		Docs\MSBuild.md = Docs\MSBuild.md
 		Docs\Requirements.md = Docs\Requirements.md
