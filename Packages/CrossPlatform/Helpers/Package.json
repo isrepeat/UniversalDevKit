@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "name": "Helpers",
+  "component": "Helpers",
+  "versionSource": "../../../Version.json",
+  "deliveries": {
+    "NuGet": "Delivery/NuGet/Delivery.json"
+  }
+}

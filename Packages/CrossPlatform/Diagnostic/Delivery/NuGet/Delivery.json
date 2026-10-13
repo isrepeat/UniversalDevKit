@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "adapter": "component",
+  "id": "UniversalDevKit.Diagnostic",
+  "supportedPlatforms": ["Windows"],
+  "nuspec": "UniversalDevKit.Diagnostic.nuspec",
+  "integration": {
+    "props": "UniversalDevKit.Diagnostic.props",
+    "targets": "UniversalDevKit.Diagnostic.targets"
+  }
+}

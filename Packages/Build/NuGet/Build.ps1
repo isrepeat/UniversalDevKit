@@ -5,12 +5,18 @@ param(
     [string]$OutputDirectory,
     [string[]]$Components,
     [string]$Generator = 'Visual Studio 18 2026',
-    [string]$RepositoryPath = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
+    [string]$RepositoryPath = (Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)))
 )
 
 $ErrorActionPreference = 'Stop'
 
-# 1. Находим инструменты и отдельный каталог выпуска; версию читаем из общего источника.
+# Align console and native pipeline encodings in Windows PowerShell 5.1.
+$utf8Encoding = [Text.UTF8Encoding]::new($false)
+[Console]::InputEncoding = $utf8Encoding
+[Console]::OutputEncoding = $utf8Encoding
+$OutputEncoding = $utf8Encoding
+
+# 1. Locate tools and the release directory; read the shared version.
 $repository = (Resolve-Path -LiteralPath $RepositoryPath).Path
 if (-not $CMake) {
     $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
@@ -23,7 +29,7 @@ $output = [IO.Path]::GetFullPath($OutputDirectory)
 [void][IO.Directory]::CreateDirectory($output)
 $version = (Get-Content (Join-Path $repository 'Version.json') -Raw | ConvertFrom-Json).version
 
-# 2. Проверяем реестр и добавляем зависимости выбранных компонентов в состав выпуска.
+# 2. Validate the registry and expand selected component dependencies.
 $connection = Join-Path $repository 'Scripts/PowerShell/Modules/Module.Udk.Connection/Private'
 . (Join-Path $connection 'Requirements.ps1')
 . (Join-Path $connection 'ComponentRegistry.ps1')
@@ -33,28 +39,69 @@ if (-not $Components) { $Components = @($registry.Keys | Sort-Object) }
 $selected = @(Resolve-UdkComponents $Components $registry)
 $hasBinaries = @($selected | Where-Object { $registry[$_].Kind -ne 'headerOnly' }).Count -gt 0
 
-# 3. Для каждого допустимого режима заранее получаем линковку, публичные требования и DLL.
-# Один расчёт используется Connect и пакетами; имена поступают из реестра.
+# Package definitions explicitly reference components through the component adapter.
+$packages = @{}
+$packageIds = @{}
+foreach ($definitionFile in Get-ChildItem -LiteralPath (Join-Path $repository 'Packages') -Filter Package.json -File -Recurse) {
+    $definition = Get-Content -LiteralPath $definitionFile.FullName -Raw | ConvertFrom-Json
+    if ($definition.schemaVersion -ne 1 -or -not $definition.name -or -not $definition.versionSource) { throw "Invalid package definition: $($definitionFile.FullName)" }
+    foreach ($field in $definition.PSObject.Properties.Name) {
+        if ($field -notin @('schemaVersion', 'name', 'component', 'versionSource', 'deliveries')) { throw "Unknown package field: $field" }
+    }
+    if (-not $definition.deliveries.NuGet) { continue }
+    $delivery = Get-Content -LiteralPath (Join-Path $definitionFile.DirectoryName $definition.deliveries.NuGet) -Raw | ConvertFrom-Json
+    # This adapter builds Windows components; other products use other adapters.
+    if ($delivery.adapter -ne 'component' -or 'Windows' -notin $delivery.supportedPlatforms) { continue }
+    if ($delivery.schemaVersion -ne 1 -or -not $definition.component -or $delivery.id -notmatch '^[A-Za-z0-9_.-]+$') { throw "Unsupported NuGet delivery: $($definitionFile.FullName)" }
+    foreach ($field in $delivery.PSObject.Properties.Name) {
+        if ($field -notin @('schemaVersion', 'adapter', 'id', 'supportedPlatforms', 'integration', 'nuspec')) { throw "Unknown delivery field: $field" }
+    }
+    $packageVersion = (Get-Content -LiteralPath (Join-Path $definitionFile.DirectoryName $definition.versionSource) -Raw | ConvertFrom-Json).version
+    if ($packageVersion -ne $version) { throw "Component package must use the UDK release version: $($definition.name)" }
+    if ($packages.ContainsKey($definition.component) -or $packageIds.ContainsKey($delivery.id)) { throw "Duplicate component package or package ID: $($definition.name)" }
+    if (-not $delivery.integration.targets) { throw "Package requires its own targets: $($definition.name)" }
+    $deliveryDirectory = Split-Path -Parent (Join-Path $definitionFile.DirectoryName $definition.deliveries.NuGet)
+    $integration = @{}
+    if (-not $delivery.nuspec) { throw "Package requires its own nuspec: $($definition.name)" }
+    $nuspecPath = [IO.Path]::GetFullPath((Join-Path $deliveryDirectory $delivery.nuspec))
+    $packagePrefix = $definitionFile.DirectoryName.TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar
+    if (-not $nuspecPath.StartsWith($packagePrefix, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path -LiteralPath $nuspecPath -PathType Leaf)) { throw "Invalid package nuspec: $nuspecPath" }
+    foreach ($kind in @('props', 'targets')) {
+        if (-not $delivery.integration.$kind) { continue }
+        $integrationPath = [IO.Path]::GetFullPath((Join-Path $deliveryDirectory $delivery.integration.$kind))
+        $packagePrefix = $definitionFile.DirectoryName.TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar
+        if (-not $integrationPath.StartsWith($packagePrefix, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path -LiteralPath $integrationPath -PathType Leaf)) { throw "Invalid package integration file: $integrationPath" }
+        $integration[$kind] = $integrationPath
+    }
+    $packages[$definition.component] = [pscustomobject]@{ Name = $definition.name; Id = $delivery.id; Directory = $definitionFile.DirectoryName; Integration = $integration; Nuspec = $nuspecPath }
+    $packageIds[$delivery.id] = $true
+}
+foreach ($name in $selected) {
+    if (-not $packages.ContainsKey($name)) { throw "No NuGet package definition for component: $name" }
+}
+
+# 3. Calculate linker inputs, public requirements and DLLs for every supported mode.
+# Connect and packaging use the same graph resolver and registry names.
 $graphs = @{}
 foreach ($name in $selected) {
     $modes = if ($registry[$name].Kind -eq 'headerOnly') { @('Shared') } elseif ($registry[$name].StateScope -eq 'process') { @('Dynamic') } else { @('Static', 'Dynamic') }
     foreach ($mode in $modes) { $graphs["$name.$mode"] = Resolve-UdkLinkageGraph @($name) @{ $name = $mode } $registry }
 }
 
-# Возвращаем выражения MSBuild: пути вычисляются у consumer после restore, а не на машине выпуска.
+# Return MSBuild expressions evaluated after restore on the consumer machine.
 function PackageRoot([string]$Name) { return '$(__UniversalDevKit' + $Name + 'PackageRoot)' }
 function RootCondition([string]$Name, [string]$Mode) {
-    # Зависимость доставляется NuGet, но становится корнем только при явном выборе consumer.
+    # Restored dependencies become roots only when explicitly selected by the consumer.
     return "`$([System.String]::Copy(';`$(UniversalDevKitComponents);').Contains(';$Name;')) and '`$(UniversalDevKit${Name}Linkage)' == '$Mode'"
 }
 function GetEntry($Record, [string]$Name, [string]$Mode) {
-    # Имена файлов берём из фактической сборки, включая Debug-суффиксы.
+    # Use actual artifact names, including Debug suffixes.
     $entries = @($Record.Metadata.components | Where-Object { $_.name -ceq $Name -and $_.variant -ceq $Mode })
     if ($entries.Count -ne 1) { throw "Missing packaged variant: $Name.$Mode" }
     return $entries[0]
 }
 function GetDll($Record, [string]$Name) {
-    # В Windows импортная .lib и DLL имеют общий stem; неоднозначное соответствие отклоняем.
+    # Match Windows import libraries to DLLs by stem; reject ambiguous matches.
     $entry = GetEntry $Record $Name 'Dynamic'
     $stem = [IO.Path]::GetFileNameWithoutExtension($entry.linkFile)
     $files = @($Record.Metadata.runtimeFiles | Where-Object { [IO.Path]::GetFileNameWithoutExtension($_) -ceq $stem })
@@ -63,7 +110,7 @@ function GetDll($Record, [string]$Name) {
 }
 
 function WriteGenerated([string]$Path, [string]$Content) {
-    # Записываем только генерируемые артефакты staging: UTF-8 без BOM и конечных CR/LF.
+    # Write staging artifacts as UTF-8 without BOM or final CR/LF.
     [void][IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($Path))
     [IO.File]::WriteAllText($Path, $Content.TrimEnd([char[]]"`r`n"), [Text.UTF8Encoding]::new($false))
 }
@@ -72,7 +119,7 @@ function RunCMake([string[]]$Arguments) {
     if ($LASTEXITCODE -ne 0) { throw 'CMake packaging build failed.' }
 }
 
-# 4. Собираем MD/MT в отдельных prefix; Debug/Release одного CRT устанавливаем вместе.
+# 4. Build MD/MT in separate prefixes; install Debug/Release together for each CRT.
 $records = @()
 foreach ($runtime in @('Dynamic', 'Static')) {
     $build = Join-Path $output "build-$runtime"
@@ -84,7 +131,7 @@ foreach ($runtime in @('Dynamic', 'Static')) {
         $metadata = if ($hasBinaries) {
             Get-Content (Join-Path $install "lib/cmake/UniversalDevKit/UniversalDevKit.Build-$configuration.json") -Raw | ConvertFrom-Json
         } else {
-            # Выпуск только заголовков не содержит бинарного манифеста или ограничений CRT/ABI.
+            # Header-only releases have no binary manifest or CRT/ABI restrictions.
             [pscustomobject]@{ schemaVersion = 1; platform = 'Windows'; architecture = 'x64'; compilerId = 'MSVC'; runtime = $runtime; version = $version; toolset = ''; compilerVersion = ''; components = @(); runtimeFiles = @() }
         }
         if ($metadata.schemaVersion -ne 1 -or $metadata.platform -ne 'Windows' -or $metadata.architecture -ne 'x64' -or
@@ -93,7 +140,7 @@ foreach ($runtime in @('Dynamic', 'Static')) {
     }
 }
 
-# 5. Проверяем единство compiler/toolset; версия tools не обязана совпадать с версией cl.exe.
+# 5. Verify compiler/toolset consistency; tools and cl.exe versions may differ.
 $toolset = $records[0].Metadata.toolset
 $compiler = $records[0].Metadata.compilerVersion
 $cache = Get-Content (Join-Path $output 'build-Dynamic/CMakeCache.txt') -Raw
@@ -103,16 +150,17 @@ foreach ($record in $records) {
     if ($record.Metadata.toolset -ne $toolset -or $record.Metadata.compilerVersion -ne $compiler) { throw 'Cannot combine compilers in one NuGet release.' }
 }
 
-# 6. Для каждого компонента создаём собственный пакет; чужие бинарники остаются в зависимых пакетах.
+# 6. Create one component package; dependency binaries remain in their own packages.
 foreach ($component in $selected) {
-    # Новый staging не переносит устаревшие файлы из предыдущего выпуска.
+    $package = $packages[$component]
+    # Use fresh staging to avoid carrying stale files into a new release.
     $stage = Join-Path $output ('staging/' + $component + '-' + [Guid]::NewGuid().ToString('N'))
     $payload = Join-Path $stage 'payload'
     [void][IO.Directory]::CreateDirectory((Join-Path $payload 'include'))
     Copy-Item -LiteralPath $license -Destination (Join-Path $payload 'LICENSE.txt')
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'README.md') -Destination (Join-Path $payload 'README.md')
 
-    # Общие API-заголовки и заголовки компонента сохраняют публичные include-пути.
+    # Preserve public include paths for common and component headers.
     foreach ($headerRoot in @('Includes/Core', "Includes/$component")) {
         $sourceRoot = Join-Path $repository $headerRoot
         foreach ($header in Get-ChildItem -LiteralPath $sourceRoot -File -Recurse) {
@@ -131,13 +179,13 @@ foreach ($component in $selected) {
         [void][IO.Directory]::CreateDirectory($destination)
         if ($hasBinaries) { Copy-Item -LiteralPath (Join-Path $record.Install "lib/cmake/UniversalDevKit/UniversalDevKit.Build-$configuration.json") -Destination (Join-Path $destination 'Release.json') }
 
-        # Кладём в пакет только собственные библиотеки и DLL этой конфигурации.
+        # Copy only this component's libraries and DLLs for the current configuration.
         foreach ($entry in @($record.Metadata.components | Where-Object { $_.name -ceq $component })) {
             Copy-Item -LiteralPath (Join-Path $record.Install $entry.linkFile) -Destination $destination
             if ($entry.variant -eq 'Dynamic') { Copy-Item -LiteralPath (Join-Path $record.Install (GetDll $record $component)) -Destination $destination }
         }
 
-        # Генерируем настройки consumer отдельно для каждого режима и CRT/конфигурации.
+        # Generate consumer settings for each mode and CRT/configuration.
         foreach ($key in $componentGraphs) {
             $mode = $key.Substring($component.Length + 1)
             $graph = $graphs[$key]
@@ -145,7 +193,7 @@ foreach ($component in $selected) {
             $root = '$(__UniversalDevKit' + $component + 'PackageRoot)'
             $guard = "binaries\$runtime\$configuration\Abi.h"
             if ($hasBinaries) {
-                # Принудительный include проверяет фактические настройки каждой единицы компиляции.
+                # Forced includes validate the actual settings of each compilation unit.
                 Copy-Item -LiteralPath (Join-Path $record.Install "lib/cmake/UniversalDevKit/UniversalDevKit.Abi-$configuration.h") -Destination (Join-Path $destination 'Abi.h')
                 $compilerParts = $compiler -split '\.'
                 $fullCompiler = $compilerParts[0] + $compilerParts[1] + $compilerParts[2]
@@ -156,14 +204,14 @@ foreach ($component in $selected) {
             $includes = (@($graph.RequirementComponents | ForEach-Object { (PackageRoot $_) + 'include' }) -join ';') + ';'
             $link = ''
 
-            # Static раскрывает зависимости финальному линкеру; private Static внутри DLL туда не попадает.
+            # Expose static dependency closure to the linker; private static code inside DLLs stays internal.
             foreach ($name in $graph.LinkComponents) {
                 if ($registry[$name].Kind -eq 'headerOnly') { continue }
                 $entry = GetEntry $record $name $graph.ResolvedModes[$name]
                 $link += (PackageRoot $name) + "binaries\$runtime\$configuration\" + (Split-Path $entry.linkFile -Leaf) + ';'
             }
 
-            # Системные библиотеки добавляются для требующих их статических реализаций.
+            # Add required system libraries for static implementations.
             foreach ($name in $graph.SystemLibraryComponents) {
                 foreach ($library in $registry[$name].Requirements.Libraries['Windows']) {
                     $link += $library + $(if ($library.EndsWith('.lib')) { ';' } else { '.lib;' })
@@ -172,7 +220,7 @@ foreach ($component in $selected) {
             $forced = if ($hasBinaries) { "$root$guard;" } else { '' }
             $variants.Add("  <ItemDefinitionGroup Condition=`"$condition`"><ClCompile><AdditionalIncludeDirectories>$includes%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories><ForcedIncludeFiles>$forced%(ForcedIncludeFiles)</ForcedIncludeFiles><PreprocessorDefinitions>$definitions%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile><Link><AdditionalDependencies>$link%(AdditionalDependencies)</AdditionalDependencies></Link></ItemDefinitionGroup>")
 
-            # Runtime-набор включает и внутренние транзитивные DLL, не только прямые ссылки consumer.
+            # Include private transitive DLLs in the runtime set.
             foreach ($name in $graph.RuntimeComponents) {
                 $dllName = Split-Path (GetDll $record $name) -Leaf
                 $path = (PackageRoot $name) + "binaries\$runtime\$configuration\$dllName"
@@ -181,19 +229,19 @@ foreach ($component in $selected) {
         }
     }
 
-    # 7. Формируем проверки restore/версий и конфликтов между графами выбранных корней.
+    # 7. Generate restore/version checks and conflicts between selected root graphs.
     $checks = [Collections.Generic.List[string]]::new()
     foreach ($key in $componentGraphs) {
         $mode = $key.Substring($component.Length + 1)
         $graph = $graphs[$key]
         $condition = RootCondition $component $mode
 
-        # Проверяем наличие imports всех зависимых пакетов и точное совпадение версии выпуска.
+        # Require imports and exact release versions for all dependency packages.
         foreach ($name in $graph.ResolvedComponents) {
             $checks.Add('    <Error Condition="' + $condition + ' and ''$(__UniversalDevKit' + $name + 'PackageVersion)'' != ''{{VERSION}}''" Text="Restore/import UniversalDevKit.' + $name + ' of the exact release version." />')
         }
 
-        # Два независимых корня могут требовать разные варианты одного транзитивного компонента.
+        # Independent roots may require conflicting variants of a transitive component.
         foreach ($otherKey in @($graphs.Keys | Sort-Object)) {
             $separator = $otherKey.LastIndexOf('.')
             $other = $otherKey.Substring(0, $separator)
@@ -209,24 +257,59 @@ foreach ($component in $selected) {
         }
     }
 
-    # 8. Заполняем общие шаблоны; NuGet-зависимости доставляют файлы, граф определяет их использование.
-    $dependencies = (@($registry[$component].Dependencies | ForEach-Object { '<dependency id="UniversalDevKit.' + $_.Component + '" version="[' + $version + ']" />' }) -join '')
-    $defaultMode = if ($registry[$component].Kind -eq 'headerOnly') { 'Shared' } elseif ($registry[$component].StateScope -eq 'process') { 'Dynamic' } else { 'Static' }
-    $target = Get-Content (Join-Path $PSScriptRoot 'Templates/Component.targets.in') -Raw
-    $target = $target.Replace('{{COMPONENT}}', $component).Replace('{{VARIANTS}}', ($variants -join "`n")).Replace('{{TOOLSET}}', $toolset).Replace('{{VCTOOLS}}', $vcTools).Replace('{{DEPENDENCY_CHECKS}}', ($checks -join "`n")).Replace('{{DEFAULT_MODE}}', $defaultMode)
+    # 8. Generate calculated settings; package-owned props/targets define integration behavior.
+    $dependencies = (@($registry[$component].Dependencies | ForEach-Object { '<dependency id="' + $packages[$_.Component].Id + '" version="[' + $version + ']" />' }) -join '')
     $validModes = (@($componentGraphs | ForEach-Object { $_.Substring($component.Length + 1) }) -join ';')
-    $target = $target.Replace('{{VERSION}}', $version).Replace('{{VALID_MODES}}', $validModes).Replace('{{HAS_BINARIES}}', $hasBinaries.ToString().ToLowerInvariant())
     $unknown = (@($selected | ForEach-Object { "'%(__UniversalDevKitNuGetRoot.Identity)' != '$_'" }) -join ' and ')
-    $target = $target.Replace('{{UNKNOWN_ROOT}}', $unknown)
-    WriteGenerated (Join-Path $payload "build/native/UniversalDevKit.$component.targets") $target
-    $props = Get-Content (Join-Path $PSScriptRoot 'Templates/Component.props.in') -Raw
-    WriteGenerated (Join-Path $payload "build/native/UniversalDevKit.$component.props") ($props.Replace('{{COMPONENT}}', $component).Replace('{{VERSION}}', $version).Replace('{{DEFAULT_MODE}}', $defaultMode))
-    $spec = Get-Content (Join-Path $PSScriptRoot 'Templates/Component.nuspec.in') -Raw
-    WriteGenerated (Join-Path $stage "$component.nuspec") ($spec.Replace('{{COMPONENT}}', $component).Replace('{{VERSION}}', $version).Replace('{{DEPENDENCIES}}', $dependencies))
+    $settings = [Collections.Generic.List[string]]::new()
+    $settings.Add('<?xml version="1.0" encoding="utf-8"?>')
+    $settings.Add('<!-- Generated by Build.ps1. Edit the registry and build settings. -->')
+    $settings.Add('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003"><PropertyGroup>')
+    foreach ($pair in @(
+        @{ Key = 'PackageVersion'; Value = $version },
+        @{ Key = 'ValidModes'; Value = $validModes },
+        @{ Key = 'HasBinaries'; Value = $hasBinaries.ToString().ToLowerInvariant() },
+        @{ Key = 'ExpectedToolset'; Value = $toolset },
+        @{ Key = 'ExpectedTools'; Value = $vcTools }
+    )) {
+        $key = '__UniversalDevKit' + $component + $pair.Key
+        $settings.Add("  <$key>$($pair.Value)</$key>")
+    }
+    $settings.Add('</PropertyGroup></Project>')
+    WriteGenerated (Join-Path $payload 'build/native/Generated/Settings.props') ($settings -join "`n")
+    $target = @(
+        '<?xml version="1.0" encoding="utf-8"?>',
+        '<!-- Generated by Build.ps1. Edit the registry and build settings. -->',
+        '<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">',
+        ($variants -join "`n"),
+        '  <ItemGroup><__UniversalDevKitNuGetRoot Include="$(UniversalDevKitComponents)" /></ItemGroup>',
+        ('  <Target Name="__UniversalDevKit' + $component + 'ValidatePackageGraph" BeforeTargets="PrepareForBuild">'),
+        ('    <Error Condition="' + $unknown + '" Text="Unknown packaged component: %(__UniversalDevKitNuGetRoot.Identity)." />'),
+        (($checks -join "`n").Replace('{{VERSION}}', $version)),
+        '  </Target>',
+        '</Project>'
+    ) -join "`n"
+    WriteGenerated (Join-Path $payload 'build/native/Generated/Settings.targets') $target
+    # Preserve relative paths of auxiliary integration imports and resources.
+    $integrationDirectory = Split-Path -Parent $package.Integration['targets']
+    foreach ($file in Get-ChildItem -LiteralPath $integrationDirectory -File -Recurse) {
+        $relative = $file.FullName.Substring($integrationDirectory.Length + 1)
+        if ($file.Extension -notin @('.props', '.targets') -and $relative -notmatch '[\\/]') { continue }
+        if ($relative -match '^Generated[\\/]') { throw 'Generated is reserved for calculated package settings.' }
+        $destination = Join-Path $payload "build/native/$relative"
+        [void][IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($destination))
+        Copy-Item -LiteralPath $file.FullName -Destination $destination -Force
+    }
+    # Copy package integration files verbatim.
+    foreach ($kind in $package.Integration.Keys) {
+        Copy-Item -LiteralPath $package.Integration[$kind] -Destination (Join-Path $payload "build/native/$($package.Id).$kind") -Force
+    }
+    $spec = Get-Content -LiteralPath $package.Nuspec -Raw
+    WriteGenerated (Join-Path $stage "$component.nuspec") ($spec.Replace('{{COMPONENT}}', $component).Replace('{{PACKAGE_ID}}', $package.Id).Replace('{{VERSION}}', $version).Replace('{{DEPENDENCIES}}', $dependencies))
 
-    # 9. Создаём локальный .nupkg; публикация в feed этим скриптом не выполняется.
-    # Native DLL подключаются targets, поэтому предупреждения для managed lib/ref неприменимы.
-    & $NuGet pack (Join-Path $stage "$component.nuspec") -BasePath $stage -OutputDirectory $output -NonInteractive -Properties 'NoWarn=NU5100;NU5128' | Out-Host
+    # 9. Create local nupkg files without publishing them.
+    # Native DLLs use targets; managed lib/ref analysis does not apply.
+    & $NuGet pack (Join-Path $stage "$component.nuspec") -BasePath $stage -OutputDirectory $output -NonInteractive -ForceEnglishOutput -Properties 'NoWarn=NU5100;NU5128' | Out-Host
     if ($LASTEXITCODE -ne 0) { throw "NuGet pack failed for $component" }
 }
 Write-Host "NuGet feed: $output"

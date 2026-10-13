@@ -121,7 +121,7 @@
 
 ## NuGet и Android-пакеты
 
-- [x] Добавить Windows native NuGet Helpers/Diagnostic в Packages/NuGet без копирования исходников в отдельную реализацию; другие адаптеры ещё не реализованы.
+- [x] Добавить Windows native NuGet Helpers/Diagnostic в Packages/CrossPlatform с общим Packages/Build/NuGet без копирования исходников в отдельную реализацию; другие адаптеры ещё не реализованы.
 - [x] Для Windows x64 native NuGet Helpers/Diagnostic реализовать выбор MD/MT и Debug/Release, линковку, import-макросы, доставку DLL и точную зависимость версий через пакетные targets.
 - [x] Читать NuGet-компоненты и зависимости из реестра, переиспользовать расчёт графа Connect и поддержать header-only пакеты без привязки к именам компонентов.
 - [ ] Проверить NuGet на полной матрице сложных графов и других архитектурах. PackageReference ещё не проверен.

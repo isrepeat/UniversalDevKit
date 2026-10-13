@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "adapter": "component",
+  "id": "UniversalDevKit.HeaderLeaf",
+  "supportedPlatforms": ["Windows"],
+  "nuspec": "UniversalDevKit.HeaderLeaf.nuspec",
+  "integration": {
+    "props": "UniversalDevKit.HeaderLeaf.props",
+    "targets": "UniversalDevKit.HeaderLeaf.targets"
+  }
+}

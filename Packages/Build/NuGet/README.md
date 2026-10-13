@@ -1,12 +1,18 @@
 # Native NuGet для Windows
 
-Шаблоны NuGet используют плейсхолдеры вида `{{COMPONENT}}`; их заменяет Build.ps1. Выражения MSBuild `$(Property)` и `%(Metadata)` сохраняются для consumer. Штатные CMake-шаблоны используют собственный синтаксис `@VARIABLE@` и этим адаптером не изменяются.
+Собственные nuspec, props и targets находятся непосредственно в Delivery/NuGet каждого пакета. Nuspec может использовать плейсхолдеры версии и зависимостей `{{VERSION}}` и `{{DEPENDENCIES}}`; props/targets копируются без подстановок. Выражения MSBuild `$(Property)` и `%(Metadata)` вычисляются у consumer. Штатные CMake-шаблоны не изменяются.
 
 Build.ps1 читает Components.json и выпускает пакет UniversalDevKit.<компонент> для каждого выбранного компонента и его транзитивных зависимостей. Без Components выбирается весь реестр. Версия берётся из Version.json, NuGet-зависимости требуют точную версию выпуска. Имена компонентов и связи не зашиты в упаковщик.
 
+Для каждого выбранного компонента требуется описание Packages/<категория>/<пакет>/Package.json. Поле component связывает адаптер с реестром UDK; deliveries.NuGet указывает Delivery/NuGet/Delivery.json с package ID и supportedPlatforms. Идентификатор пакета может отличаться от имени компонента. Текущий адаптер component упаковывает один компонент в пакет; составные и инструментальные адаптеры пока не реализованы.
+
+В Delivery.json поле nuspec задаёт собственный манифест, а integration — targets и необязательный props относительно Delivery/NuGet. В них можно добавлять индивидуальные файлы, targets, проверки и imports. Вспомогательные props/targets рядом с основным targets и ресурсы в подкаталогах копируются с сохранением структуры; Delivery.json и nuspec в build/native не копируются.
+
+Build.ps1 создаёт build/native/Generated/Settings.props с версией и параметрами совместимости и Settings.targets с рассчитанными ссылками, требованиями и проверками графа. Собственные props/targets явно импортируют эти файлы; пути к зависимым пакетам должны быть объявлены до вычисления Settings.targets. Generated — зарезервированный каталог, исходные файлы туда не помещаются. Общих шаблонов nuspec/props/targets нет.
+
 ```powershell
-./Packages/NuGet/Build.ps1 -LicenseFile ./LICENSE
-./Packages/NuGet/Build.ps1 -Components Diagnostic -LicenseFile ./LICENSE
+./Packages/Build/NuGet/Build.ps1 -LicenseFile ./LICENSE
+./Packages/Build/NuGet/Build.ps1 -Components Diagnostic -LicenseFile ./LICENSE
 ./Tests/Integration/Packages/NuGet.Tests.ps1 -LicenseFile ./LICENSE
 ./Tests/Integration/Packages/NuGet.Registry.Tests.ps1
 ```

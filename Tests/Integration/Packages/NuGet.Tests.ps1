@@ -6,13 +6,19 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+
+# Согласуем кодировку консоли и native pipeline в Windows PowerShell 5.1.
+$utf8Encoding = [Text.UTF8Encoding]::new($false)
+[Console]::InputEncoding = $utf8Encoding
+[Console]::OutputEncoding = $utf8Encoding
+$OutputEncoding = $utf8Encoding
 $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
 . (Join-Path $repository 'Tests/Infrastructure/BuildTools.ps1')
 $msbuild = Get-TestMSBuild
 $run = Join-Path $repository ('!artifacts/tests/nuget-' + [Guid]::NewGuid().ToString('N'))
 if (-not $Feed) {
     $Feed = Join-Path $run 'feed'
-    & (Join-Path $repository 'Packages/NuGet/Build.ps1') -LicenseFile $LicenseFile -CMake $CMake -NuGet $NuGet -OutputDirectory $Feed
+    & (Join-Path $repository 'Packages/Build/NuGet/Build.ps1') -LicenseFile $LicenseFile -CMake $CMake -NuGet $NuGet -OutputDirectory $Feed
 }
 $version = (Get-Content (Join-Path $repository 'Version.json') -Raw | ConvertFrom-Json).version
 $fixture = Join-Path $repository 'Tests/Fixtures/Consumers/NuGet'
@@ -33,7 +39,7 @@ foreach ($runtime in @('Dynamic', 'Static')) {
             [IO.File]::WriteAllText((Join-Path $consumer $file), $text.TrimEnd([char[]]"`r`n"), [Text.UTF8Encoding]::new($false))
         }
         # Restore использует только локальный feed, без внешних источников и кеша.
-        & $NuGet restore (Join-Path $consumer 'packages.config') -PackagesDirectory (Join-Path $consumer 'packages') -Source $Feed -NoCache -DirectDownload -NonInteractive | Out-Host
+        & $NuGet restore (Join-Path $consumer 'packages.config') -PackagesDirectory (Join-Path $consumer 'packages') -Source $Feed -NoCache -DirectDownload -NonInteractive -ForceEnglishOutput | Out-Host
         if ($LASTEXITCODE -ne 0) { throw 'NuGet restore failed.' }
         foreach ($configuration in @('Debug', 'Release')) {
             $project = Join-Path $consumer 'Consumer.vcxproj'
@@ -67,6 +73,6 @@ foreach ($runtime in @('Dynamic', 'Static')) {
     }
 }
 # Проверяем разрешение точной зависимости из одного корневого пакета.
-& $NuGet install UniversalDevKit.Diagnostic -Version $version -Source $Feed -OutputDirectory (Join-Path $run 'dependency-restore') -NoCache -DirectDownload -NonInteractive | Out-Host
+& $NuGet install UniversalDevKit.Diagnostic -Version $version -Source $Feed -OutputDirectory (Join-Path $run 'dependency-restore') -NoCache -DirectDownload -NonInteractive -ForceEnglishOutput | Out-Host
 if ($LASTEXITCODE -ne 0 -or -not (Test-Path (Join-Path $run "dependency-restore/UniversalDevKit.Helpers.$version"))) { throw 'Diagnostic did not restore its Helpers dependency.' }
 Write-Host "PASS: NuGet Windows x64 MD/MT Static/Dynamic Debug/Release. Workspace: $run"

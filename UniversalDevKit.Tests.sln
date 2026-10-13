@@ -258,6 +258,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{41619890-3A56-45F7-B0B8-45C4A554206B}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Scripts\RunDiamond.cmd = Tests\Scripts\RunDiamond.cmd
+		Tests\Scripts\RunNuGet.cmd = Tests\Scripts\RunNuGet.cmd
+		Tests\Scripts\RunNuGetRegistry.cmd = Tests\Scripts\RunNuGetRegistry.cmd
 		Tests\Scripts\RunDisconnect.cmd = Tests\Scripts\RunDisconnect.cmd
 		Tests\Scripts\RunDynamic.cmd = Tests\Scripts\RunDynamic.cmd
 		Tests\Scripts\RunExport.cmd = Tests\Scripts\RunExport.cmd
@@ -393,11 +395,53 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{DB
 		Tests\Integration\Packages\NuGet.Registry.Tests.ps1 = Tests\Integration\Packages\NuGet.Registry.Tests.ps1
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{7F3A4850-55AB-4C55-8A0B-2DD391F42A9C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatform", "{1D57D574-1773-42CE-9A52-8B4606B4F1FA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeaderLeaf", "HeaderLeaf", "{DD33C371-C6F4-4D78-8FDB-B3457EA7CB47}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Package.json = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Package.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{72570ABD-698D-4DAD-9CE9-22F19668792C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{A1B8E546-8F8A-40D2-8A79-F389C331224D}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\Delivery.json = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\Delivery.json
+		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\UniversalDevKit.HeaderLeaf.props = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\UniversalDevKit.HeaderLeaf.props
+		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\UniversalDevKit.HeaderLeaf.targets = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\UniversalDevKit.HeaderLeaf.targets
+		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\UniversalDevKit.HeaderLeaf.nuspec = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\UniversalDevKit.HeaderLeaf.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeaderProbe", "HeaderProbe", "{9E5A29D2-CE9E-432E-A2E2-D2D7A88D432B}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Package.json = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Package.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{9249E186-6D34-40B0-B2E8-79E47D612725}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{614147ED-0137-49F4-BF9E-DCBC375EAF12}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\Delivery.json = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\Delivery.json
+		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\UniversalDevKit.HeaderProbe.props = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\UniversalDevKit.HeaderProbe.props
+		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\UniversalDevKit.HeaderProbe.targets = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\UniversalDevKit.HeaderProbe.targets
+		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\UniversalDevKit.HeaderProbe.nuspec = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\UniversalDevKit.HeaderProbe.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{7F3A4850-55AB-4C55-8A0B-2DD391F42A9C} = {A906BCD2-2361-4B2F-8CA0-85E792F16BF9}
+		{1D57D574-1773-42CE-9A52-8B4606B4F1FA} = {7F3A4850-55AB-4C55-8A0B-2DD391F42A9C}
+		{DD33C371-C6F4-4D78-8FDB-B3457EA7CB47} = {1D57D574-1773-42CE-9A52-8B4606B4F1FA}
+		{72570ABD-698D-4DAD-9CE9-22F19668792C} = {DD33C371-C6F4-4D78-8FDB-B3457EA7CB47}
+		{A1B8E546-8F8A-40D2-8A79-F389C331224D} = {72570ABD-698D-4DAD-9CE9-22F19668792C}
+		{9E5A29D2-CE9E-432E-A2E2-D2D7A88D432B} = {1D57D574-1773-42CE-9A52-8B4606B4F1FA}
+		{9249E186-6D34-40B0-B2E8-79E47D612725} = {9E5A29D2-CE9E-432E-A2E2-D2D7A88D432B}
+		{614147ED-0137-49F4-BF9E-DCBC375EAF12} = {9249E186-6D34-40B0-B2E8-79E47D612725}
 		{46309FCB-5690-43A9-A727-F7ED75AE0E96} = {F7C9315C-200F-4296-901A-39A3D4A00C48}
 		{DB9A4DC7-79EC-45F0-810C-E698375CC27C} = {BA1D3CEC-565A-4105-B574-7B7D63F20A53}
 		{9AD8DC26-E566-46A9-BF27-E965ACBDACF5} = {41619890-3A56-45F7-B0B8-45C4A554206B}

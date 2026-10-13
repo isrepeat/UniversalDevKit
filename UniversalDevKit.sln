@@ -26,13 +26,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{13
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4-1E80-4386-ACBA-A8B9D984FC44}"
 	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\ComponentDependencies.cmake = Projects\Cmake\ComponentDependencies.cmake
 		Projects\Cmake\BuildIdentity.txt.in = Projects\Cmake\BuildIdentity.txt.in
-		Projects\Cmake\PackageMetadata.cmake = Projects\Cmake\PackageMetadata.cmake
-		Projects\Cmake\InstallPackageGuard.cmake.in = Projects\Cmake\InstallPackageGuard.cmake.in
-		Projects\Cmake\PackageCompatibility.cmake.in = Projects\Cmake\PackageCompatibility.cmake.in
-		Projects\Cmake\PackageAbi.h.in = Projects\Cmake\PackageAbi.h.in
+		Projects\Cmake\ComponentDependencies.cmake = Projects\Cmake\ComponentDependencies.cmake
 		Projects\Cmake\ComponentRequirements.cmake = Projects\Cmake\ComponentRequirements.cmake
+		Projects\Cmake\InstallPackageGuard.cmake.in = Projects\Cmake\InstallPackageGuard.cmake.in
+		Projects\Cmake\PackageAbi.h.in = Projects\Cmake\PackageAbi.h.in
+		Projects\Cmake\PackageCompatibility.cmake.in = Projects\Cmake\PackageCompatibility.cmake.in
+		Projects\Cmake\PackageMetadata.cmake = Projects\Cmake\PackageMetadata.cmake
 		Projects\Cmake\RegistryContract.cmake = Projects\Cmake\RegistryContract.cmake
 		Projects\Cmake\UniversalDevKitConfig.cmake.in = Projects\Cmake\UniversalDevKitConfig.cmake.in
 	EndProjectSection
@@ -116,9 +116,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{0458F395-E
 		Docs\BuildExtensions.md = Docs\BuildExtensions.md
 		Docs\CMake.md = Docs\CMake.md
 		Docs\Components.md = Docs\Components.md
-		Docs\RegistryContract.md = Docs\RegistryContract.md
 		Docs\Connect.md = Docs\Connect.md
 		Docs\MSBuild.md = Docs\MSBuild.md
+		Docs\RegistryContract.md = Docs\RegistryContract.md
 		Docs\Requirements.md = Docs\Requirements.md
 		Docs\StateScope.md = Docs\StateScope.md
 		Docs\Tools.md = Docs\Tools.md
@@ -128,13 +128,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Repository", "!Repository", "{01643071-A00B-441F-B890-826B2408BC9D}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		LICENSE = LICENSE
 		AGENTS.md = AGENTS.md
 		CMakeLists.txt = CMakeLists.txt
 		CMakePresets.json = CMakePresets.json
 		Components.json = Components.json
+		LICENSE = LICENSE
 		README.md = README.md
 		TODO.md = TODO.md
+		Version.json = Version.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{A2BAABAE-02D4-4685-9081-F599C5AF7D30}"
@@ -144,15 +145,50 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{BE41E66B-A170-480D-9D80-1C69E83390BA}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\NuGet\Build.ps1 = Packages\NuGet\Build.ps1
-		Packages\NuGet\README.md = Packages\NuGet\README.md
+		Packages\Build\NuGet\Build.ps1 = Packages\Build\NuGet\Build.ps1
+		Packages\Build\NuGet\README.md = Packages\Build\NuGet\README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{6EA06008-A8F3-4695-9DFC-29082CF2CC42}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatform", "{907E880C-10F6-4C85-9DF8-5C73F54646DB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{072E1208-58D6-471D-B494-5D5670688291}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\NuGet\Templates\Component.nuspec.in = Packages\NuGet\Templates\Component.nuspec.in
-		Packages\NuGet\Templates\Component.props.in = Packages\NuGet\Templates\Component.props.in
-		Packages\NuGet\Templates\Component.targets.in = Packages\NuGet\Templates\Component.targets.in
+		Packages\CrossPlatform\Diagnostic\Package.json = Packages\CrossPlatform\Diagnostic\Package.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{3F409C4A-6700-4061-AA77-627289E619E9}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\Delivery.json
+		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.props = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.props
+		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.targets = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.targets
+		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.nuspec = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\Helpers\Package.json = Packages\CrossPlatform\Helpers\Package.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{521E2788-845C-4B8F-B742-DB0FDF5271D3}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\Helpers\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\Helpers\Delivery\NuGet\Delivery.json
+		Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.props = Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.props
+		Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.targets = Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.targets
+		Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.nuspec = Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{DC091494-5AC6-46E6-BA6D-61441682BB62}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatform", "{CA7AB659-38EB-4E98-99A7-95A777DCD074}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Packages\CrossPlatform\Pack.Helpers.cmd = Scripts\Packages\CrossPlatform\Pack.Helpers.cmd
+		Scripts\Packages\CrossPlatform\Pack.Diagnostic.cmd = Scripts\Packages\CrossPlatform\Pack.Diagnostic.cmd
 	EndProjectSection
 EndProject
 Global
@@ -182,8 +218,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{BE41E66B-A170-480D-9D80-1C69E83390BA} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
-		{6EA06008-A8F3-4695-9DFC-29082CF2CC42} = {BE41E66B-A170-480D-9D80-1C69E83390BA}
+		{DC091494-5AC6-46E6-BA6D-61441682BB62} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
+		{CA7AB659-38EB-4E98-99A7-95A777DCD074} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
 		{A7CE4335-D8E6-4E53-B810-7D932E87BA59} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
 		{D832A37F-03A2-4EBD-9FF9-BC27D415378B} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
 		{C6B94069-54C2-4B96-880D-4C058A605C56} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}
@@ -203,6 +239,15 @@ Global
 		{7DAB2C47-91F8-4085-8786-94437B89820E} = {D9146E66-5EB7-4919-B6CC-F36544D8ACE4}
 		{CB7EEAB5-39FB-49B2-95A1-72774A80F5B8} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
 		{A2BAABAE-02D4-4685-9081-F599C5AF7D30} = {D832A37F-03A2-4EBD-9FF9-BC27D415378B}
+		{BE41E66B-A170-480D-9D80-1C69E83390BA} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
+		{907E880C-10F6-4C85-9DF8-5C73F54646DB} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
+		{072E1208-58D6-471D-B494-5D5670688291} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7} = {072E1208-58D6-471D-B494-5D5670688291}
+		{3F409C4A-6700-4061-AA77-627289E619E9} = {6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7}
+		{BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD} = {BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54}
+		{521E2788-845C-4B8F-B742-DB0FDF5271D3} = {AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD}
+		{8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7A3009E-A79E-4542-AC95-DD9B9C113922}

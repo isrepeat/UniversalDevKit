@@ -1,6 +1,12 @@
 param([string]$CMake, [string]$NuGet = 'nuget.exe')
 
 $ErrorActionPreference = 'Stop'
+
+# Согласуем кодировку консоли и native pipeline в Windows PowerShell 5.1.
+$utf8Encoding = [Text.UTF8Encoding]::new($false)
+[Console]::InputEncoding = $utf8Encoding
+[Console]::OutputEncoding = $utf8Encoding
+$OutputEncoding = $utf8Encoding
 $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
 . (Join-Path $repository 'Tests/Infrastructure/TestWorkspace.ps1')
 . (Join-Path $repository 'Tests/Infrastructure/BuildTools.ps1')
@@ -14,7 +20,7 @@ Copy-Item -LiteralPath $workspace.Library -Destination $shortLibrary -Recurse
 $workspace.Library = $shortLibrary
 $feed = Join-Path $workspace.Library '!artifacts/nuget-registry'
 # Другой реестр и header-only цепочка обнаруживают привязку к рабочим компонентам.
-& (Join-Path $repository 'Packages/NuGet/Build.ps1') -RepositoryPath $workspace.Library -Components HeaderProbe -CMake $CMake -NuGet $NuGet -LicenseFile (Join-Path $repository 'LICENSE') -OutputDirectory $feed
+& (Join-Path $repository 'Packages/Build/NuGet/Build.ps1') -RepositoryPath $workspace.Library -Components HeaderProbe -CMake $CMake -NuGet $NuGet -LicenseFile (Join-Path $repository 'LICENSE') -OutputDirectory $feed
 $version = (Get-Content (Join-Path $workspace.Library 'Version.json') -Raw | ConvertFrom-Json).version
 foreach ($name in @('HeaderProbe', 'HeaderLeaf')) {
     if (-not (Test-Path (Join-Path $feed "UniversalDevKit.$name.$version.nupkg"))) { throw "Missing registry package: $name" }
@@ -30,7 +36,7 @@ $text = $text.Replace('{{DIAGNOSTIC_IMPORT}}', $import).Replace('{{DIAGNOSTIC_PR
 [IO.File]::WriteAllText((Join-Path $consumer 'Consumer.vcxproj'), $text.TrimEnd([char[]]"`r`n"), [Text.UTF8Encoding]::new($false))
 $config = (Get-Content (Join-Path $templates 'packages.config.in') -Raw).Replace('Helpers', 'HeaderLeaf').Replace('Diagnostic', 'HeaderProbe').Replace('{{VERSION}}', $version)
 [IO.File]::WriteAllText((Join-Path $consumer 'packages.config'), $config.TrimEnd([char[]]"`r`n"), [Text.UTF8Encoding]::new($false))
-& $NuGet restore (Join-Path $consumer 'packages.config') -Source $feed -PackagesDirectory (Join-Path $consumer 'packages') -NoCache -DirectDownload -NonInteractive | Out-Host
+& $NuGet restore (Join-Path $consumer 'packages.config') -Source $feed -PackagesDirectory (Join-Path $consumer 'packages') -NoCache -DirectDownload -NonInteractive -ForceEnglishOutput | Out-Host
 if ($LASTEXITCODE -ne 0) { throw 'Registry package restore failed.' }
 $msbuild = Get-TestMSBuild
 foreach ($configuration in @('Debug', 'Release')) {

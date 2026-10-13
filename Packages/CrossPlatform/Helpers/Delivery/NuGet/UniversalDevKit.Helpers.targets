@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Package-specific integration. Edit this file directly. -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <UniversalDevKitRuntime Condition="'$(UniversalDevKitRuntime)' == ''">Dynamic</UniversalDevKitRuntime>
+    <__UniversalDevKitHelpersPackageRoot>$(MSBuildThisFileDirectory)..\..\</__UniversalDevKitHelpersPackageRoot>
+    <__UniversalDevKitHelpersPackageVersion>$(__UniversalDevKitHelpersPackageVersion)</__UniversalDevKitHelpersPackageVersion>
+    <UniversalDevKitHelpersLinkage Condition="'$(UniversalDevKitHelpersLinkage)' == ''">Static</UniversalDevKitHelpersLinkage>
+  </PropertyGroup>
+  <Import Project="Generated\Settings.targets" />
+  <ItemGroup>
+    <__UniversalDevKitNuGetRoot Include="$(UniversalDevKitComponents)" />
+  </ItemGroup>
+  <Target Name="__UniversalDevKitHelpersValidateNuGet" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(Platform)' != 'x64'" Text="UniversalDevKit.Helpers: only Windows x64 is packaged." />
+    <Error Condition="'$(Configuration)' != 'Debug' and '$(Configuration)' != 'Release'" Text="UniversalDevKit.Helpers: select Debug or Release." />
+    <Error Condition="'$(UniversalDevKitComponents)' == ''" Text="Set UniversalDevKitComponents to explicitly selected root components." />
+    <Error Condition="!$([System.String]::Copy(';$(__UniversalDevKitHelpersValidModes);').Contains(';$(UniversalDevKitHelpersLinkage);'))" Text="UniversalDevKit.Helpers: unsupported linkage." />
+    <Error Condition="'$(UniversalDevKitRuntime)' != 'Static' and '$(UniversalDevKitRuntime)' != 'Dynamic'" Text="UniversalDevKitRuntime must be Static (MT) or Dynamic (MD)." />
+    <Error Condition="'$(__UniversalDevKitHelpersHasBinaries)' == 'true' and '$(PlatformToolset)' != '$(__UniversalDevKitHelpersExpectedToolset)'" Text="UniversalDevKit.Helpers: package requires toolset $(__UniversalDevKitHelpersExpectedToolset)." />
+    <Error Condition="'$(__UniversalDevKitHelpersHasBinaries)' == 'true' and '$(VCToolsVersion)' != '$(__UniversalDevKitHelpersExpectedTools)'" Text="UniversalDevKit.Helpers: package requires MSVC tools $(__UniversalDevKitHelpersExpectedTools)." />
+    <Error Condition="'$(__UniversalDevKitHelpersPackageRoot)' == ''" Text="UniversalDevKit package import is missing." />
+
+  </Target>
+  <Target Name="__UniversalDevKitHelpersCopyNuGetRuntime" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Copy SourceFiles="@(__UniversalDevKitHelpersNuGetRuntime)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

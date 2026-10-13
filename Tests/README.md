@@ -2,6 +2,8 @@
 
 ## Native NuGet
 
+Для двойного клика используйте Tests/Scripts/RunNuGet.cmd и RunNuGetRegistry.cmd. Обёртки работают независимо от текущего каталога, используют Windows PowerShell 5.1, сохраняют код завершения и делают паузу. RunNuGet.cmd передаёт MIT LICENSE из корня репозитория; остальные параметры, например -Feed, передаются в тестовый скрипт.
+
 `Tests/Integration/Packages/NuGet.Tests.ps1 -LicenseFile ./LICENSE` собирает локальный feed Helpers/Diagnostic, выполняет restore в отдельные consumer и проверяет MD/MT, Debug/Release, Static/Dynamic, точную зависимость Diagnostic → Helpers и отказы для неподдерживаемой платформы, режима и STL ABI. Артефакты и binlogs сохраняются под !artifacts/tests. Можно передать Feed для проверки уже выпущенных пакетов. Группа запускается отдельно от RunTests.cmd.
 
 `Tests/Integration/Packages/NuGet.Registry.Tests.ps1` проверяет тот же упаковщик с другим реестром: HeaderProbe → HeaderLeaf. Оба пакета формируются из header-only fixture и используются отдельным MSBuild-consumer в Debug/Release. Это проверяет отсутствие зависимости упаковщика от рабочих имён Helpers/Diagnostic.
