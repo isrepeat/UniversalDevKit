@@ -13,6 +13,8 @@
 
 Для просмотра и редактирования тестов откройте `UniversalDevKit.Tests.sln` в корне репозитория. Solution повторяет дерево Tests; fixture-проекты представлены как Solution Items. Build этого решения не запускает сценарии: используйте `Tests/Scripts/RunTests.cmd` или отдельные команды ниже. Основное решение UniversalDevKit.sln содержит только ссылки на инструкцию, запуск и тестовое решение.
 
+TestCMakePackage.ps1 дополнительно запускает LoggingStatic/LoggingDynamic в Debug/Release: контракт буфера и CR/LF, одновременные вызовы четырёх потоков, ошибки вывода с исключениями и без, восстановление после ошибки. Используется один экземпляр Diagnostic с /MD. Выгрузка плагинов и независимые /MT runtime этим сценарием не проверяются.
+
 ## Как пользоваться тестами
 
 Сценарий Runtime запускается через `RunTests.ps1 -Scenario Runtime`: Debug/Release с /MD и /MT, Dynamic Diagnostic с внутренней Static Helpers, запуск consumer, сохранение обоих CRT-вариантов и отказ при конфликте CRT. Для /MT параметр UniversalDevKitRuntime=Static передаётся всей сборке. Этот сценарий проверяет сборку из исходников; совместимость готового пакета по CRT и нескольким toolsets он не подтверждает.
