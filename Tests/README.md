@@ -1,5 +1,9 @@
 # Проверки UniversalDevKit
 
+Общий локальный запуск: `Tests/Scripts/RunAllTests.cmd` (Windows), `RunAllTests.cmd -Group Android` или `-Group All`. Android требует параметров `-AndroidNdk`, `-Gradle`, `-JavaHome`, `-AndroidSdk`; CMake определяется автоматически либо задаётся через `-CMake`. Для Android native нужен Ninja в PATH. Нужен PowerShell 7 (pwsh), а группа Connect запускается через Windows PowerShell 5.1. Каждый сценарий выполняется отдельным процессом; ошибки не останавливают остальные проверки. Логи и summary.csv сохраняются под !artifacts/tests/all-*. Отсутствующие инструменты означают Failed и итоговый код 1. Android-группа пока проверяет доставку заглушек, а не запуск UDK на устройстве.
+
+Список без запуска: `RunAllTests.cmd -Group All -ListOnly`. Выбор отдельных проверок: `RunAllTests.cmd -Test ScriptEncoding` или в PowerShell `./Tests/Scripts/PowerShell/RunAllTests.ps1 -Test ScriptEncoding,ComponentGeneration`. Прямой PS1-запуск не делает паузу. CI для этой команды пока не настраивался.
+
 Минимальные заглушки доставки NuGet и Android Maven/AAR запускаются через `Tests/Scripts/RunPackageDeliveryTests.cmd` или `Tests/Integration/Packages/PackageDelivery.Tests.ps1`. По умолчанию проверяются managed DLL, build tool и шаблон. NativeWindows, WinRt, AndroidNative и AndroidMaven выбираются через Family; Android требует явных путей инструментов. Матрица, команды и границы покрытия описаны в [проверках доставки](Integration/Packages/README.md). Запуск не публикует пакеты в пользовательские feeds.
 
 ## Native NuGet

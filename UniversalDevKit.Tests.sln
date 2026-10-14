@@ -271,6 +271,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{4161
 		Tests\Scripts\RunStatic.cmd = Tests\Scripts\RunStatic.cmd
 		Tests\Scripts\RunSubmodule.cmd = Tests\Scripts\RunSubmodule.cmd
 		Tests\Scripts\RunTests.cmd = Tests\Scripts\RunTests.cmd
+		Tests\Scripts\RunAllTests.cmd = Tests\Scripts\RunAllTests.cmd
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeaderIsolation", "HeaderIsolation", "{4B1389B8-69D3-4DA0-972F-A790EAE8AE64}"
@@ -378,6 +379,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{9AD8DC26-E566-46A9-BF27-E965ACBDACF5}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Scripts\PowerShell\RunTests.ps1 = Tests\Scripts\PowerShell\RunTests.ps1
+		Tests\Scripts\PowerShell\RunAllTests.ps1 = Tests\Scripts\PowerShell\RunAllTests.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PublicHeaders", "PublicHeaders", "{8DDA1F51-D758-44E8-8F6B-EEC71393E1A3}"
