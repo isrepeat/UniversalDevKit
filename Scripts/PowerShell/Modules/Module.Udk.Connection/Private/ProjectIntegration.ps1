@@ -107,7 +107,9 @@ function Invoke-UdkConnectionPlanCore {
             }
         }
     }
-    $owned = @($root.SelectNodes('*[@Label="UniversalDevKit"]'))
+    $cleanupImport = $root.SelectSingleNode('*[local-name()="Import" and contains(@Project, "UniversalDevKit.Runtime.targets")]')
+    $cleanupPath = if ($cleanupImport) { $cleanupImport.GetAttribute('Project') } else { $null }
+    $owned = @($root.SelectNodes('*[@Label="UniversalDevKit" or @Label="UniversalDevKitRuntimeCleanup"]'))
     $owned += @($root.SelectNodes('*[local-name()="ImportGroup" and @Label="Shared" and @Condition="' + $sharedReferencesCondition + '"]'))
     # Remove integration blocks only; preserve adjacent project settings.
     foreach ($node in $owned) {
@@ -116,6 +118,15 @@ function Invoke-UdkConnectionPlanCore {
         if ($previous -and $previous.NodeType -eq [Xml.XmlNodeType]::Whitespace) {
             [void]$root.RemoveChild($previous)
         }
+    }
+    if ($Disconnect -and $cleanupPath) {
+        # После Disconnect оставляем только очистку: без ссылок, макросов и исходников.
+        $cleanup = $document.CreateElement('Import', $namespace)
+        $cleanup.SetAttribute('Label', 'UniversalDevKitRuntimeCleanup')
+        $cleanup.SetAttribute('Project', $cleanupPath)
+        $cleanup.SetAttribute('Condition', "Exists('$cleanupPath')")
+        [void]$root.AppendChild($document.CreateWhitespace($newline + '  '))
+        [void]$root.AppendChild($cleanup)
     }
     if (-not $Disconnect) {
         $relativePath = GetRelativePath $projectDirectory $integrationPath
