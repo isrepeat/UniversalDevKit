@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "WindowsMsvcX64V1",
+  "compatibilityPolicy": "ExactCompilerV1",
+  "platforms": ["Windows"],
+  "architectures": ["x64"],
+  "compilerIds": ["MSVC"],
+  "compilerVersions": ["19.51.36260.0"],
+  "toolsets": ["v145"],
+  "runtimes": ["Dynamic", "Static"],
+  "configurations": ["Debug", "Release"],
+  "variants": ["Static", "Dynamic"],
+  "standardLibrary": "MSVC STL",
+  "iteratorDebugLevel": {
+    "Debug": 2,
+    "Release": 0
+  }
+}

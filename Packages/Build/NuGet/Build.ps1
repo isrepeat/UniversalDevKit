@@ -127,7 +127,7 @@ $records = @()
 foreach ($runtime in @('Dynamic', 'Static')) {
     $build = Join-Path $output "build-$runtime"
     $install = Join-Path $output "install-$runtime"
-    RunCMake @('-S', $repository, '-B', $build, '-G', $Generator, '-A', 'x64', "-DUniversalDevKitRuntime=$runtime", "-DCMAKE_INSTALL_PREFIX=$install", ('-DUniversalDevKit_COMPONENTS=' + ($selected -join ';')))
+    RunCMake @('-S', $repository, '-B', $build, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug;Release', '-DUniversalDevKit_ENFORCE_RELEASE_POLICY=ON', "-DUniversalDevKitRuntime=$runtime", "-DCMAKE_INSTALL_PREFIX=$install", ('-DUniversalDevKit_COMPONENTS=' + ($selected -join ';')))
     foreach ($configuration in @('Debug', 'Release')) {
         RunCMake @('--build', $build, '--config', $configuration)
         RunCMake @('--install', $build, '--config', $configuration)
