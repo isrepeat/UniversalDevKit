@@ -34,6 +34,7 @@ $cases = @(
     @{ Name = 'BuildExtensions'; Group = 'Windows'; Path = 'Tests/Infrastructure/TestBuildExtensions.ps1'; Args = @('-CMake', $CMake) }
     @{ Name = 'ConnectAndPublicHeaders'; Group = 'Windows'; Path = 'Tests/Scripts/PowerShell/RunTests.ps1'; Args = @(); Engine = 'powershell.exe' }
     @{ Name = 'CMakePackage'; Group = 'Windows'; Path = 'Tests/Integration/Cmake/TestCMakePackage.ps1'; Args = @('-CMake', $CMake) }
+    @{ Name = 'DiamondMatrix'; Group = 'Windows'; Path = 'Tests/Integration/Cmake/Diamond.Tests.ps1'; Args = @('-CMake', $CMake); Engine = 'powershell.exe' }
     @{ Name = 'BinaryCompatibility'; Group = 'Windows'; Path = 'Tests/Integration/Cmake/TestBinaryCompatibility.ps1'; Args = @('-CMake', $CMake) }
     @{ Name = 'NativeNuGet'; Group = 'Windows'; Path = 'Tests/Integration/Packages/NuGet.Tests.ps1'; Args = @('-LicenseFile', (Join-Path $repository 'LICENSE'), '-CMake', $CMake) }
     @{ Name = 'NuGetRegistry'; Group = 'Windows'; Path = 'Tests/Integration/Packages/NuGet.Registry.Tests.ps1'; Args = @('-CMake', $CMake) }

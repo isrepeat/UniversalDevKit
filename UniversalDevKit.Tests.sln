@@ -71,6 +71,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diamond", "Diamond", "{21AB
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Consumer", "Consumer", "{B0B49F19-9E6E-40C4-9C21-D446E1F66843}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Libraries\Diamond\Consumer\CMakeLists.txt = Tests\Fixtures\Libraries\Diamond\Consumer\CMakeLists.txt
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App1", "App1", "{A13FFF49-C164-4245-AAA1-DDFE4E643FD3}"
 	ProjectSection(SolutionItems) = preProject
@@ -241,6 +244,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{D24CA339-B1D6-4107-AB4C-BEC63541F901}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Integration\Cmake\RequirementValidation.cmake = Tests\Integration\Cmake\RequirementValidation.cmake
+		Tests\Integration\Cmake\Diamond.Tests.ps1 = Tests\Integration\Cmake\Diamond.Tests.ps1
 		Tests\Integration\Cmake\TestCMakePackage.ps1 = Tests\Integration\Cmake\TestCMakePackage.ps1
 		Tests\Integration\Cmake\TestBinaryCompatibility.ps1 = Tests\Integration\Cmake\TestBinaryCompatibility.ps1
 	EndProjectSection
@@ -261,6 +265,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{41619890-3A56-45F7-B0B8-45C4A554206B}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Scripts\RunDiamond.cmd = Tests\Scripts\RunDiamond.cmd
+		Tests\Scripts\RunDiamondMatrixTests.cmd = Tests\Scripts\RunDiamondMatrixTests.cmd
 		Tests\Scripts\RunNuGet.cmd = Tests\Scripts\RunNuGet.cmd
 		Tests\Scripts\RunPackageDeliveryTests.cmd = Tests\Scripts\RunPackageDeliveryTests.cmd
 		Tests\Scripts\RunWinRtPackageTests.cmd = Tests\Scripts\RunWinRtPackageTests.cmd
