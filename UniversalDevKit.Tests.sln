@@ -263,6 +263,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{4161
 		Tests\Scripts\RunDiamond.cmd = Tests\Scripts\RunDiamond.cmd
 		Tests\Scripts\RunNuGet.cmd = Tests\Scripts\RunNuGet.cmd
 		Tests\Scripts\RunPackageDeliveryTests.cmd = Tests\Scripts\RunPackageDeliveryTests.cmd
+		Tests\Scripts\RunWinRtPackageTests.cmd = Tests\Scripts\RunWinRtPackageTests.cmd
 		Tests\Scripts\RunNuGetRegistry.cmd = Tests\Scripts\RunNuGetRegistry.cmd
 		Tests\Scripts\RunDisconnect.cmd = Tests\Scripts\RunDisconnect.cmd
 		Tests\Scripts\RunDynamic.cmd = Tests\Scripts\RunDynamic.cmd
@@ -585,12 +586,29 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WinRt", "WinRt", "{B7320DF1
 		Tests\Fixtures\Packages\WinRt\Probe.cpp = Tests\Fixtures\Packages\WinRt\Probe.cpp
 		Tests\Fixtures\Packages\WinRt\Probe.h = Tests\Fixtures\Packages\WinRt\Probe.h
 		Tests\Fixtures\Packages\WinRt\Probe.nuspec = Tests\Fixtures\Packages\WinRt\Probe.nuspec
+		Tests\Fixtures\Packages\WinRt\Probe.idl = Tests\Fixtures\Packages\WinRt\Probe.idl
+		Tests\Fixtures\Packages\WinRt\Probe.def = Tests\Fixtures\Packages\WinRt\Probe.def
+		Tests\Fixtures\Packages\WinRt\WindowsSdk.cmake = Tests\Fixtures\Packages\WinRt\WindowsSdk.cmake
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WinRtConsumer", "WinRtConsumer", "{4155A140-9CCD-4590-8B08-F16D0A382068}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Fixtures\Packages\WinRtConsumer\CMakeLists.txt = Tests\Fixtures\Packages\WinRtConsumer\CMakeLists.txt
 		Tests\Fixtures\Packages\WinRtConsumer\Main.cpp = Tests\Fixtures\Packages\WinRtConsumer\Main.cpp
+		Tests\Fixtures\Packages\WinRtConsumer\app.manifest = Tests\Fixtures\Packages\WinRtConsumer\app.manifest
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CsWinRtConsumer", "CsWinRtConsumer", "{80ABBA8A-16E3-4D51-868B-0076D5C1B0DF}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\CsWinRtConsumer\app.manifest = Tests\Fixtures\Packages\CsWinRtConsumer\app.manifest
+		Tests\Fixtures\Packages\CsWinRtConsumer\Consumer.csproj = Tests\Fixtures\Packages\CsWinRtConsumer\Consumer.csproj
+		Tests\Fixtures\Packages\CsWinRtConsumer\NuGet.Config.in = Tests\Fixtures\Packages\CsWinRtConsumer\NuGet.Config.in
+		Tests\Fixtures\Packages\CsWinRtConsumer\Program.cs = Tests\Fixtures\Packages\CsWinRtConsumer\Program.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "buildTransitive", "buildTransitive", "{D0043D1E-6618-42F9-913D-4DF91C637F5C}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\WinRt\buildTransitive\UniversalDevKit.TestPackages.WinRtComponent.targets = Tests\Fixtures\Packages\WinRt\buildTransitive\UniversalDevKit.TestPackages.WinRtComponent.targets
 	EndProjectSection
 EndProject
 Global
@@ -598,6 +616,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{80ABBA8A-16E3-4D51-868B-0076D5C1B0DF} = {D60BF9A4-CC98-477F-A03C-1D99DB348798}
+		{D0043D1E-6618-42F9-913D-4DF91C637F5C} = {B7320DF1-F3AF-448B-9A0E-3483E544EE37}
 		{D60BF9A4-CC98-477F-A03C-1D99DB348798} = {64519B9E-018A-42CA-9F01-384DE3A209AB}
 		{C1306F9D-8006-4128-91DB-DC59198AA434} = {D60BF9A4-CC98-477F-A03C-1D99DB348798}
 		{AF839771-C410-4C9C-A2A4-A866F03F58C8} = {C1306F9D-8006-4128-91DB-DC59198AA434}

@@ -1,0 +1,10 @@
+namespace UniversalDevKit.TestPackages {
+    [uuid(61804DDD-F43C-4990-87B1-C99415254E79), version(1.0)]
+    interface IProbe : IInspectable {
+        HRESULT GetValue([out, retval] INT32* value);
+    }
+    [version(1.0), activatable(1.0)]
+    runtimeclass Probe {
+        [default] interface IProbe;
+    }
+}

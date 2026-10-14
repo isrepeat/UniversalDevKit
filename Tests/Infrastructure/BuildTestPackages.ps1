@@ -13,6 +13,10 @@ $env:VSLANG = '1033'
 $OutputEncoding = [Text.UTF8Encoding]::new($false)
 
 $ErrorActionPreference = 'Stop'
+if (-not $CMake -and 'WinRt' -in $Family) {
+    $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+    $CMake = @(& $vswhere -latest -products '*' -find 'Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe')[0]
+}
 $repository = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $fixtures = Join-Path $repository 'Tests/Fixtures/Packages'
 $output = [IO.Path]::GetFullPath($OutputDirectory)

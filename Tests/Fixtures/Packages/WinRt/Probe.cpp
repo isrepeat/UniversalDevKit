@@ -19,6 +19,12 @@ namespace {
 
     class Factory final : public Microsoft::WRL::ActivationFactory<> {
     public:
+        HRESULT STDMETHODCALLTYPE GetTrustLevel(TrustLevel* trustLevel) override {
+            if (!trustLevel) { return E_POINTER; }
+            *trustLevel = BaseTrust;
+            return S_OK;
+        }
+
         HRESULT STDMETHODCALLTYPE ActivateInstance(IInspectable** instance) override {
             if (!instance) { return E_POINTER; }
             const auto probe = Microsoft::WRL::Make<Probe>();
@@ -35,4 +41,9 @@ extern "C" __declspec(dllexport) HRESULT __stdcall DllGetActivationFactory(HSTRI
     }
     const auto factory = Microsoft::WRL::Make<Factory>();
     return factory ? factory.CopyTo(activationFactory) : E_OUTOFMEMORY;
+}
+
+STDAPI DllCanUnloadNow() {
+    // Тестовый компонент остаётся загруженным до завершения процесса.
+    return S_FALSE;
 }

@@ -17,6 +17,10 @@ $env:VSLANG = '1033'
 $OutputEncoding = [Text.UTF8Encoding]::new($false)
 
 $ErrorActionPreference = 'Stop'
+if (-not $CMake -and 'WinRt' -in $Family) {
+    $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+    $CMake = @(& $vswhere -latest -products '*' -find 'Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe')[0]
+}
 $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
 $fixtures = Join-Path $repository 'Tests/Fixtures/Packages'
 $run = Join-Path $repository ('!artifacts/tests/delivery-' + [Guid]::NewGuid().ToString('N').Substring(0, 12))
@@ -30,6 +34,40 @@ function InvokeChecked([string]$Tool, [string[]]$Arguments) {
 function CopyFixture([string]$Name, [string]$Destination) {
     [void][IO.Directory]::CreateDirectory($Destination)
     Copy-Item -Path (Join-Path $fixtures "$Name/*") -Destination $Destination -Recurse
+}
+function TestActivationDeployment([string]$SourceDirectory, [string]$Executable, [string]$Name, [string]$ExpectedOutput) {
+    foreach ($hasComponent in @($true, $false)) {
+        $destination = Join-Path $run ("runtime-" + $Name + '-' + $hasComponent)
+        [void][IO.Directory]::CreateDirectory($destination)
+        foreach ($file in (Get-ChildItem -LiteralPath $SourceDirectory -File)) {
+            if (-not $hasComponent -and $file.Name -eq 'UdkWinRtProbe.dll') { continue }
+            Copy-Item -LiteralPath $file.FullName -Destination $destination
+        }
+        $start = [Diagnostics.ProcessStartInfo]::new()
+        $start.FileName = Join-Path $destination $Executable
+        $start.WorkingDirectory = $destination
+        $start.UseShellExecute = $false
+        $start.RedirectStandardOutput = $true
+        $start.RedirectStandardError = $true
+        $start.EnvironmentVariables['PATH'] = [Environment]::SystemDirectory
+        $process = [Diagnostics.Process]::Start($start)
+        try {
+            $stdout = $process.StandardOutput.ReadToEndAsync()
+            $stderr = $process.StandardError.ReadToEndAsync()
+            if (-not $process.WaitForExit(30000)) { $process.Kill(); throw "Activation test timeout: $Name" }
+            $text = $stdout.Result + $stderr.Result
+            [IO.File]::WriteAllText((Join-Path $destination 'activation.log'), $text, [Text.UTF8Encoding]::new($false))
+            if ($hasComponent) {
+                if ($process.ExitCode -ne 0 -or -not $text.Contains($ExpectedOutput)) { throw "Activation failed: $Name; $text" }
+                Write-Host $text.TrimEnd()
+            }
+            else {
+                if ($process.ExitCode -ne 2) { throw "Missing component must fail activation: $Name; $text" }
+                Write-Host "Missing DLL activation rejected: $Name"
+            }
+        }
+        finally { $process.Dispose() }
+    }
 }
 # Сохраняем окружение для диагностики; test-feed не затрагивает пользовательские feeds.
 $oldJava = $env:JAVA_HOME
@@ -65,13 +103,28 @@ try {
     if ('WinRt' -in $Family) {
         InvokeChecked $NuGet @('install', 'UniversalDevKit.TestPackages.WinRtComponent', '-Version', '1.0.0', '-Source', $feed, '-OutputDirectory', $cache, '-NoCache', '-DirectDownload', '-NonInteractive', '-ForceEnglishOutput')
         $package = Join-Path $cache 'UniversalDevKit.TestPackages.WinRtComponent.1.0.0'
+        if (-not (Test-Path -LiteralPath (Join-Path $package 'winmd/UniversalDevKit.TestPackages.winmd'))) { throw 'Package WinMD is missing.' }
         $consumer = Join-Path $run 'winrt-consumer'
         CopyFixture 'WinRtConsumer' $consumer
         InvokeChecked $CMake @('-S', $consumer, '-B', (Join-Path $consumer 'build'), '-G', 'Visual Studio 18 2026', '-A', 'x64', "-DUDK_PACKAGE_ROOT=$package")
         InvokeChecked $CMake @('--build', (Join-Path $consumer 'build'), '--config', 'Release')
-        InvokeChecked (Join-Path $consumer 'build/Release/consumer.exe') @()
+        TestActivationDeployment (Join-Path $consumer 'build/Release') 'consumer.exe' 'NativeDesktop' 'Native Desktop WinRT activation passed'
         InvokeChecked (Join-Path $package 'tools/win-x64/UdkHostProbe.exe') @()
-        $results += [pscustomobject]@{ Family = 'WinRt+HostTool'; Status = 'Passed' }
+        $results += [pscustomobject]@{ Family = 'NativeDesktopWinRt+HostTool'; Status = 'Passed' }
+        $csConsumer = Join-Path $run 'cswinrt-consumer'
+        CopyFixture 'CsWinRtConsumer' $csConsumer
+        # Конфигурация восстановления генерируется только во временном окружении.
+        $config = [IO.File]::ReadAllText((Join-Path $csConsumer 'NuGet.Config.in')).Replace('{{FEED}}', [Security.SecurityElement]::Escape($feed))
+        [IO.File]::WriteAllText((Join-Path $csConsumer 'NuGet.Config'), $config, [Text.UTF8Encoding]::new($false))
+        $csCache = Join-Path $run 'cswinrt-cache'
+        $csProject = Join-Path $csConsumer 'Consumer.csproj'
+        InvokeChecked 'dotnet' @('restore', $csProject, '--configfile', (Join-Path $csConsumer 'NuGet.Config'), '--packages', $csCache, '--no-cache')
+        InvokeChecked 'dotnet' @('build', $csProject, '--no-restore', '-c', 'Release')
+        if (-not @(Get-ChildItem (Join-Path $csConsumer 'obj/Projection') -Filter '*.cs' -Recurse).Count) { throw 'CsWinRT projection was not generated from package WinMD.' }
+        $restoredCsPackage = Join-Path $csCache 'universaldevkit.testpackages.winrtcomponent/1.0.0'
+        if (-not (Test-Path -LiteralPath (Join-Path $restoredCsPackage 'winmd/UniversalDevKit.TestPackages.winmd'))) { throw 'C# restore did not deliver WinMD.' }
+        TestActivationDeployment (Join-Path $csConsumer 'bin/Release/net8.0-windows10.0.19041.0/win-x64') 'Consumer.exe' 'CsWinRt' 'C# CsWinRT activation passed'
+        $results += [pscustomobject]@{ Family = 'CsWinRtPackageReference'; Status = 'Passed' }
     }
     if ('AndroidNative' -in $Family) {
         InvokeChecked $NuGet @('install', 'UniversalDevKit.TestPackages.AndroidNativeLibrary', '-Version', '1.0.0', '-Source', $feed, '-OutputDirectory', $cache, '-NoCache', '-DirectDownload', '-NonInteractive', '-ForceEnglishOutput')

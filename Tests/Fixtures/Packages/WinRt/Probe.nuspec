@@ -5,5 +5,9 @@
     <authors>UniversalDevKit</authors><description>WinRT ABI and Windows host tool fixture.</description>
     <license type="file">LICENSE.txt</license>
   </metadata>
-  <files><file src="payload\**\*" target="" /><file src="LICENSE.txt" target="" /></files>
+  <files>
+    <file src="payload\**\*" target="" />
+    <file src="buildTransitive\*.targets" target="buildTransitive" />
+    <file src="LICENSE.txt" target="" />
+  </files>
 </package>

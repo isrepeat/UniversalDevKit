@@ -1,5 +1,7 @@
 # Проверки UniversalDevKit
 
+WinRT-пакет проверяется через RunWinRtPackageTests.cmd: native Desktop и C# CsWinRT consumer восстанавливают WinMD/DLL из NuGet, генерируют проекции и выполняют штатную активацию через манифест EXE. Изолированные запуски без DLL должны завершаться отказом; системная регистрация не изменяется. Подробности — [проверки пакетов](Integration/Packages/README.md).
+
 Общий локальный запуск: `Tests/Scripts/RunAllTests.cmd` (Windows), `RunAllTests.cmd -Group Android` или `-Group All`. Android требует параметров `-AndroidNdk`, `-Gradle`, `-JavaHome`, `-AndroidSdk`; CMake определяется автоматически либо задаётся через `-CMake`. Для Android native нужен Ninja в PATH. Нужен PowerShell 7 (pwsh), а группа Connect запускается через Windows PowerShell 5.1. Каждый сценарий выполняется отдельным процессом; ошибки не останавливают остальные проверки. Логи и summary.csv сохраняются под !artifacts/tests/all-*. Отсутствующие инструменты означают Failed и итоговый код 1. Android-группа пока проверяет доставку заглушек, а не запуск UDK на устройстве.
 
 Список без запуска: `RunAllTests.cmd -Group All -ListOnly`. Выбор отдельных проверок: `RunAllTests.cmd -Test ScriptEncoding` или в PowerShell `./Tests/Scripts/PowerShell/RunAllTests.ps1 -Test ScriptEncoding,ComponentGeneration`. Прямой PS1-запуск не делает паузу. CI для этой команды пока не настраивался.
