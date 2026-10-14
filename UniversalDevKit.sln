@@ -89,6 +89,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{BB41
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionPlan.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionPlan.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionState.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionState.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ProjectIntegration.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ProjectIntegration.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionTransaction.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionTransaction.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\Requirements.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\Requirements.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\SolutionIntegration.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\SolutionIntegration.ps1
 	EndProjectSection

@@ -226,6 +226,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{9256B785-9B89-482B-888A-AD4A0573129B}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Infrastructure\BuildTools.ps1 = Tests\Infrastructure\BuildTools.ps1
+		Tests\Infrastructure\TestConnectionTransaction.ps1 = Tests\Infrastructure\TestConnectionTransaction.ps1
 		Tests\Infrastructure\TestScriptEncoding.ps1 = Tests\Infrastructure\TestScriptEncoding.ps1
 		Tests\Infrastructure\BuildTestPackages.ps1 = Tests\Infrastructure\BuildTestPackages.ps1
 		Tests\Infrastructure\TestPublicHeaders.ps1 = Tests\Infrastructure\TestPublicHeaders.ps1

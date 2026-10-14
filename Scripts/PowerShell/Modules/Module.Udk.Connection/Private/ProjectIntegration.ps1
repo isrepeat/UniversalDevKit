@@ -5,6 +5,27 @@ function Invoke-UdkConnectionPlan {
         [scriptblock]$WriteStatus = { param($Text, $Role) Write-Information $Text -InformationAction Continue },
         [scriptblock]$ResolveTool = { param($RepositoryPath, $LocalPath) & (Join-Path $RepositoryPath 'Scripts/PowerShell/GetSolutionInjector.ps1') -LocalPath $LocalPath }
     )
+    if ($Preview) {
+        return Invoke-UdkConnectionPlanCore -Plan $Plan -Preview -WriteStatus $WriteStatus -ResolveTool $ResolveTool
+    }
+    # Проверяем формат consumer до сохранения снимков и изменения solution.
+    $projectFile = (Resolve-Path -LiteralPath $Plan.Request.ProjectPath -ErrorAction Stop).Path
+    if ([IO.Path]::GetExtension($projectFile) -ne '.vcxproj') { throw 'Expected .vcxproj file.' }
+    $document = [Xml.XmlDocument]::new()
+    $document.LoadXml([IO.File]::ReadAllText($projectFile))
+    if ($document.DocumentElement.LocalName -ne 'Project' -or $document.DocumentElement.NamespaceURI -ne 'http://schemas.microsoft.com/developer/msbuild/2003') { throw 'Unsupported project XML format.' }
+    Invoke-UdkConnectionTransaction -ProjectPath $projectFile -SolutionPath $Plan.Request.SolutionPath -Action {
+        Invoke-UdkConnectionPlanCore -Plan $Plan -WriteStatus $WriteStatus -ResolveTool $ResolveTool
+    }
+}
+
+function Invoke-UdkConnectionPlanCore {
+    param(
+        $Plan,
+        [switch]$Preview,
+        [scriptblock]$WriteStatus = { param($Text, $Role) Write-Information $Text -InformationAction Continue },
+        [scriptblock]$ResolveTool = { param($RepositoryPath, $LocalPath) & (Join-Path $RepositoryPath 'Scripts/PowerShell/GetSolutionInjector.ps1') -LocalPath $LocalPath }
+    )
 
     $ErrorActionPreference = 'Stop'
     $Request = $Plan.Request
