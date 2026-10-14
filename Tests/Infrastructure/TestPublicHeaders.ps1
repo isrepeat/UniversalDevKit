@@ -1,5 +1,11 @@
 param([string]$RepositoryPath = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)), [string]$CMake = 'cmake')
 
+$env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
+$env:VSLANG = '1033'
+[Console]::InputEncoding = [Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
+$OutputEncoding = [Text.UTF8Encoding]::new($false)
+
 $ErrorActionPreference = 'Stop'
 if (-not (Get-Command $CMake -ErrorAction SilentlyContinue)) {
     $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'

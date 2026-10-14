@@ -1,5 +1,7 @@
 # Проверки UniversalDevKit
 
+Минимальные заглушки доставки NuGet и Android Maven/AAR запускаются через `Tests/Scripts/RunPackageDeliveryTests.cmd` или `Tests/Integration/Packages/PackageDelivery.Tests.ps1`. По умолчанию проверяются managed DLL, build tool и шаблон. NativeWindows, WinRt, AndroidNative и AndroidMaven выбираются через Family; Android требует явных путей инструментов. Матрица, команды и границы покрытия описаны в [проверках доставки](Integration/Packages/README.md). Запуск не публикует пакеты в пользовательские feeds.
+
 ## Native NuGet
 
 Для двойного клика используйте Tests/Scripts/RunNuGet.cmd и RunNuGetRegistry.cmd. Обёртки работают независимо от текущего каталога, используют Windows PowerShell 5.1, сохраняют код завершения и делают паузу. RunNuGet.cmd передаёт MIT LICENSE из корня репозитория; остальные параметры, например -Feed, передаются в тестовый скрипт.

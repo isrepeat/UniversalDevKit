@@ -226,6 +226,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{9256B785-9B89-482B-888A-AD4A0573129B}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Infrastructure\BuildTools.ps1 = Tests\Infrastructure\BuildTools.ps1
+		Tests\Infrastructure\TestScriptEncoding.ps1 = Tests\Infrastructure\TestScriptEncoding.ps1
+		Tests\Infrastructure\BuildTestPackages.ps1 = Tests\Infrastructure\BuildTestPackages.ps1
 		Tests\Infrastructure\TestPublicHeaders.ps1 = Tests\Infrastructure\TestPublicHeaders.ps1
 		Tests\Infrastructure\TestBuildExtensions.ps1 = Tests\Infrastructure\TestBuildExtensions.ps1
 		Tests\Infrastructure\TestRegistryContract.ps1 = Tests\Infrastructure\TestRegistryContract.ps1
@@ -259,6 +261,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{4161
 	ProjectSection(SolutionItems) = preProject
 		Tests\Scripts\RunDiamond.cmd = Tests\Scripts\RunDiamond.cmd
 		Tests\Scripts\RunNuGet.cmd = Tests\Scripts\RunNuGet.cmd
+		Tests\Scripts\RunPackageDeliveryTests.cmd = Tests\Scripts\RunPackageDeliveryTests.cmd
 		Tests\Scripts\RunNuGetRegistry.cmd = Tests\Scripts\RunNuGetRegistry.cmd
 		Tests\Scripts\RunDisconnect.cmd = Tests\Scripts\RunDisconnect.cmd
 		Tests\Scripts\RunDynamic.cmd = Tests\Scripts\RunDynamic.cmd
@@ -392,6 +395,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{DB9A4DC7-79EC-45F0-810C-E698375CC27C}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Integration\Packages\NuGet.Tests.ps1 = Tests\Integration\Packages\NuGet.Tests.ps1
+		Tests\Integration\Packages\PackageDelivery.Tests.ps1 = Tests\Integration\Packages\PackageDelivery.Tests.ps1
+		Tests\Integration\Packages\README.md = Tests\Integration\Packages\README.md
 		Tests\Integration\Packages\NuGet.Registry.Tests.ps1 = Tests\Integration\Packages\NuGet.Registry.Tests.ps1
 	EndProjectSection
 EndProject
@@ -429,11 +434,205 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{614147ED
 		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\UniversalDevKit.HeaderProbe.nuspec = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\UniversalDevKit.HeaderProbe.nuspec
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{D60BF9A4-CC98-477F-A03C-1D99DB348798}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidMaven", "AndroidMaven", "{C1306F9D-8006-4128-91DB-DC59198AA434}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\AndroidMaven\build.gradle.kts = Tests\Fixtures\Packages\AndroidMaven\build.gradle.kts
+		Tests\Fixtures\Packages\AndroidMaven\gradle.properties = Tests\Fixtures\Packages\AndroidMaven\gradle.properties
+		Tests\Fixtures\Packages\AndroidMaven\settings.gradle.kts = Tests\Fixtures\Packages\AndroidMaven\settings.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "appkit", "appkit", "{AF839771-C410-4C9C-A2A4-A866F03F58C8}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\AndroidMaven\appkit\build.gradle.kts = Tests\Fixtures\Packages\AndroidMaven\appkit\build.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C6A2547A-5510-4976-8BEE-EFA8A24165AA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "main", "main", "{E70ADC4F-8990-4E2F-BBCD-3B828BC2D339}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\AndroidMaven\appkit\src\main\AndroidManifest.xml = Tests\Fixtures\Packages\AndroidMaven\appkit\src\main\AndroidManifest.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "java", "java", "{18CBE2E0-6BFE-4EF0-A4C6-1EBB26F70573}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "org", "org", "{517C4AF5-5290-43B1-81D9-5788EE9E3121}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "universaldevkit", "universaldevkit", "{82778BA7-D836-4744-BF49-92797E4D6526}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "testpackages", "testpackages", "{9CEDC8CF-A01C-46E7-8D16-519387EF3331}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "appkit", "appkit", "{F2CF5954-442C-4212-BFF1-AACEA2DD3CFA}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\AndroidMaven\appkit\src\main\java\org\universaldevkit\testpackages\appkit\AppKit.kt = Tests\Fixtures\Packages\AndroidMaven\appkit\src\main\java\org\universaldevkit\testpackages\appkit\AppKit.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "consumer", "consumer", "{D2563561-5E52-4F2A-8AB2-4E3B1207A75C}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\AndroidMaven\consumer\build.gradle.kts = Tests\Fixtures\Packages\AndroidMaven\consumer\build.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{83B62448-B474-4DD8-B27D-CD387810165B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "main", "main", "{AB6163B8-3A75-4FE4-B19F-662793521F59}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\AndroidMaven\consumer\src\main\AndroidManifest.xml = Tests\Fixtures\Packages\AndroidMaven\consumer\src\main\AndroidManifest.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "java", "java", "{BE6F6C21-225D-459C-922A-EE64FC6EA21E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "org", "org", "{102C6FDF-D6C3-4D33-91CD-7BDE7488A749}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "universaldevkit", "universaldevkit", "{16B1D834-CEAB-48C9-AA01-172C48E65FC7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "testpackages", "testpackages", "{1990F54F-31F1-4EB7-BFC2-5410F2B806F5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "consumer", "consumer", "{D5E94CA2-3C53-4A9A-A29B-01AFD314E561}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\AndroidMaven\consumer\src\main\java\org\universaldevkit\testpackages\consumer\MainActivity.kt = Tests\Fixtures\Packages\AndroidMaven\consumer\src\main\java\org\universaldevkit\testpackages\consumer\MainActivity.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{B3892CA4-2CAF-41FA-B9D6-41770BFDCCD1}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\AndroidMaven\core\build.gradle.kts = Tests\Fixtures\Packages\AndroidMaven\core\build.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A5C541D4-2590-4925-B5DA-D1F73256649C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "main", "main", "{F02F1224-8C05-4AB3-9B21-1FF8960FEA06}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\AndroidMaven\core\src\main\AndroidManifest.xml = Tests\Fixtures\Packages\AndroidMaven\core\src\main\AndroidManifest.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "java", "java", "{995C4DAD-E9AE-4651-B040-FB54CDCFB160}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "org", "org", "{41B742F6-7B36-408E-AD8E-B35978F9C834}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "universaldevkit", "universaldevkit", "{E7941450-A10B-4478-8E2D-B200CA18BC0F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "testpackages", "testpackages", "{AB63E8B8-2F46-458D-8F4C-011FFFA0915E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{578C2144-1332-490F-88AC-8D3A9146964F}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\AndroidMaven\core\src\main\java\org\universaldevkit\testpackages\core\Core.kt = Tests\Fixtures\Packages\AndroidMaven\core\src\main\java\org\universaldevkit\testpackages\core\Core.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidNative", "AndroidNative", "{F007D4A3-7793-4BC3-8170-C5A4D128B04A}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\AndroidNative\CMakeLists.txt = Tests\Fixtures\Packages\AndroidNative\CMakeLists.txt
+		Tests\Fixtures\Packages\AndroidNative\Probe.cpp = Tests\Fixtures\Packages\AndroidNative\Probe.cpp
+		Tests\Fixtures\Packages\AndroidNative\Probe.h = Tests\Fixtures\Packages\AndroidNative\Probe.h
+		Tests\Fixtures\Packages\AndroidNative\Probe.nuspec = Tests\Fixtures\Packages\AndroidNative\Probe.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidNativeConsumer", "AndroidNativeConsumer", "{A4FD6493-C6EA-41F8-91FA-2B281F049902}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\AndroidNativeConsumer\CMakeLists.txt = Tests\Fixtures\Packages\AndroidNativeConsumer\CMakeLists.txt
+		Tests\Fixtures\Packages\AndroidNativeConsumer\Main.cpp = Tests\Fixtures\Packages\AndroidNativeConsumer\Main.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildTools", "BuildTools", "{C15C7F57-FAFD-47E7-B223-B0E8A15A663A}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\BuildTools\Probe.nuspec = Tests\Fixtures\Packages\BuildTools\Probe.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "buildTransitive", "buildTransitive", "{40D2DBD7-8DAD-4671-92CE-C5C842147DA6}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\BuildTools\buildTransitive\UniversalDevKit.TestPackages.BuildTools.targets = Tests\Fixtures\Packages\BuildTools\buildTransitive\UniversalDevKit.TestPackages.BuildTools.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{98E71E1B-A8F5-4AB7-947C-693B4045C940}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\BuildTools\tools\Generate.ps1 = Tests\Fixtures\Packages\BuildTools\tools\Generate.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Consumer", "Consumer", "{D95FA116-C9C3-4CAF-B7AB-49D99B860AB9}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\Consumer\Consumer.csproj = Tests\Fixtures\Packages\Consumer\Consumer.csproj
+		Tests\Fixtures\Packages\Consumer\Program.cs = Tests\Fixtures\Packages\Consumer\Program.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Managed", "Managed", "{6DB83AF6-E5B3-4B96-9CC4-2398E9CA7024}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\Managed\Probe.cs = Tests\Fixtures\Packages\Managed\Probe.cs
+		Tests\Fixtures\Packages\Managed\Probe.csproj = Tests\Fixtures\Packages\Managed\Probe.csproj
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{9AF72E56-8014-4EEA-86FB-200F64C91E0E}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\Templates\Probe.nuspec = Tests\Fixtures\Packages\Templates\Probe.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "template", "template", "{7C5B6F00-FD06-413E-8909-68BA7D8A5D27}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\Templates\template\Program.cs = Tests\Fixtures\Packages\Templates\template\Program.cs
+		Tests\Fixtures\Packages\Templates\template\Template.csproj = Tests\Fixtures\Packages\Templates\template\Template.csproj
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{1A434A8F-D113-492E-B83D-9F94ABE407F9}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\Templates\tools\NewProject.ps1 = Tests\Fixtures\Packages\Templates\tools\NewProject.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WinRt", "WinRt", "{B7320DF1-F3AF-448B-9A0E-3483E544EE37}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\WinRt\CMakeLists.txt = Tests\Fixtures\Packages\WinRt\CMakeLists.txt
+		Tests\Fixtures\Packages\WinRt\Host.cpp = Tests\Fixtures\Packages\WinRt\Host.cpp
+		Tests\Fixtures\Packages\WinRt\Probe.cpp = Tests\Fixtures\Packages\WinRt\Probe.cpp
+		Tests\Fixtures\Packages\WinRt\Probe.h = Tests\Fixtures\Packages\WinRt\Probe.h
+		Tests\Fixtures\Packages\WinRt\Probe.nuspec = Tests\Fixtures\Packages\WinRt\Probe.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WinRtConsumer", "WinRtConsumer", "{4155A140-9CCD-4590-8B08-F16D0A382068}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\WinRtConsumer\CMakeLists.txt = Tests\Fixtures\Packages\WinRtConsumer\CMakeLists.txt
+		Tests\Fixtures\Packages\WinRtConsumer\Main.cpp = Tests\Fixtures\Packages\WinRtConsumer\Main.cpp
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{D60BF9A4-CC98-477F-A03C-1D99DB348798} = {64519B9E-018A-42CA-9F01-384DE3A209AB}
+		{C1306F9D-8006-4128-91DB-DC59198AA434} = {D60BF9A4-CC98-477F-A03C-1D99DB348798}
+		{AF839771-C410-4C9C-A2A4-A866F03F58C8} = {C1306F9D-8006-4128-91DB-DC59198AA434}
+		{C6A2547A-5510-4976-8BEE-EFA8A24165AA} = {AF839771-C410-4C9C-A2A4-A866F03F58C8}
+		{E70ADC4F-8990-4E2F-BBCD-3B828BC2D339} = {C6A2547A-5510-4976-8BEE-EFA8A24165AA}
+		{18CBE2E0-6BFE-4EF0-A4C6-1EBB26F70573} = {E70ADC4F-8990-4E2F-BBCD-3B828BC2D339}
+		{517C4AF5-5290-43B1-81D9-5788EE9E3121} = {18CBE2E0-6BFE-4EF0-A4C6-1EBB26F70573}
+		{82778BA7-D836-4744-BF49-92797E4D6526} = {517C4AF5-5290-43B1-81D9-5788EE9E3121}
+		{9CEDC8CF-A01C-46E7-8D16-519387EF3331} = {82778BA7-D836-4744-BF49-92797E4D6526}
+		{F2CF5954-442C-4212-BFF1-AACEA2DD3CFA} = {9CEDC8CF-A01C-46E7-8D16-519387EF3331}
+		{D2563561-5E52-4F2A-8AB2-4E3B1207A75C} = {C1306F9D-8006-4128-91DB-DC59198AA434}
+		{83B62448-B474-4DD8-B27D-CD387810165B} = {D2563561-5E52-4F2A-8AB2-4E3B1207A75C}
+		{AB6163B8-3A75-4FE4-B19F-662793521F59} = {83B62448-B474-4DD8-B27D-CD387810165B}
+		{BE6F6C21-225D-459C-922A-EE64FC6EA21E} = {AB6163B8-3A75-4FE4-B19F-662793521F59}
+		{102C6FDF-D6C3-4D33-91CD-7BDE7488A749} = {BE6F6C21-225D-459C-922A-EE64FC6EA21E}
+		{16B1D834-CEAB-48C9-AA01-172C48E65FC7} = {102C6FDF-D6C3-4D33-91CD-7BDE7488A749}
+		{1990F54F-31F1-4EB7-BFC2-5410F2B806F5} = {16B1D834-CEAB-48C9-AA01-172C48E65FC7}
+		{D5E94CA2-3C53-4A9A-A29B-01AFD314E561} = {1990F54F-31F1-4EB7-BFC2-5410F2B806F5}
+		{B3892CA4-2CAF-41FA-B9D6-41770BFDCCD1} = {C1306F9D-8006-4128-91DB-DC59198AA434}
+		{A5C541D4-2590-4925-B5DA-D1F73256649C} = {B3892CA4-2CAF-41FA-B9D6-41770BFDCCD1}
+		{F02F1224-8C05-4AB3-9B21-1FF8960FEA06} = {A5C541D4-2590-4925-B5DA-D1F73256649C}
+		{995C4DAD-E9AE-4651-B040-FB54CDCFB160} = {F02F1224-8C05-4AB3-9B21-1FF8960FEA06}
+		{41B742F6-7B36-408E-AD8E-B35978F9C834} = {995C4DAD-E9AE-4651-B040-FB54CDCFB160}
+		{E7941450-A10B-4478-8E2D-B200CA18BC0F} = {41B742F6-7B36-408E-AD8E-B35978F9C834}
+		{AB63E8B8-2F46-458D-8F4C-011FFFA0915E} = {E7941450-A10B-4478-8E2D-B200CA18BC0F}
+		{578C2144-1332-490F-88AC-8D3A9146964F} = {AB63E8B8-2F46-458D-8F4C-011FFFA0915E}
+		{F007D4A3-7793-4BC3-8170-C5A4D128B04A} = {D60BF9A4-CC98-477F-A03C-1D99DB348798}
+		{A4FD6493-C6EA-41F8-91FA-2B281F049902} = {D60BF9A4-CC98-477F-A03C-1D99DB348798}
+		{C15C7F57-FAFD-47E7-B223-B0E8A15A663A} = {D60BF9A4-CC98-477F-A03C-1D99DB348798}
+		{40D2DBD7-8DAD-4671-92CE-C5C842147DA6} = {C15C7F57-FAFD-47E7-B223-B0E8A15A663A}
+		{98E71E1B-A8F5-4AB7-947C-693B4045C940} = {C15C7F57-FAFD-47E7-B223-B0E8A15A663A}
+		{D95FA116-C9C3-4CAF-B7AB-49D99B860AB9} = {D60BF9A4-CC98-477F-A03C-1D99DB348798}
+		{6DB83AF6-E5B3-4B96-9CC4-2398E9CA7024} = {D60BF9A4-CC98-477F-A03C-1D99DB348798}
+		{9AF72E56-8014-4EEA-86FB-200F64C91E0E} = {D60BF9A4-CC98-477F-A03C-1D99DB348798}
+		{7C5B6F00-FD06-413E-8909-68BA7D8A5D27} = {9AF72E56-8014-4EEA-86FB-200F64C91E0E}
+		{1A434A8F-D113-492E-B83D-9F94ABE407F9} = {9AF72E56-8014-4EEA-86FB-200F64C91E0E}
+		{B7320DF1-F3AF-448B-9A0E-3483E544EE37} = {D60BF9A4-CC98-477F-A03C-1D99DB348798}
+		{4155A140-9CCD-4590-8B08-F16D0A382068} = {D60BF9A4-CC98-477F-A03C-1D99DB348798}
 		{7F3A4850-55AB-4C55-8A0B-2DD391F42A9C} = {A906BCD2-2361-4B2F-8CA0-85E792F16BF9}
 		{1D57D574-1773-42CE-9A52-8B4606B4F1FA} = {7F3A4850-55AB-4C55-8A0B-2DD391F42A9C}
 		{DD33C371-C6F4-4D78-8FDB-B3457EA7CB47} = {1D57D574-1773-42CE-9A52-8B4606B4F1FA}

@@ -8,6 +8,9 @@ param(
     [string]$RepositoryPath = (Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)))
 )
 
+$env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
+$env:VSLANG = '1033'
+
 $ErrorActionPreference = 'Stop'
 
 # Align console and native pipeline encodings in Windows PowerShell 5.1.

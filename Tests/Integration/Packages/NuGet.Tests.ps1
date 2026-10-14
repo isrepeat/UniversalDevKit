@@ -5,6 +5,9 @@ param(
     [string]$Feed
 )
 
+$env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
+$env:VSLANG = '1033'
+
 $ErrorActionPreference = 'Stop'
 
 # Согласуем кодировку консоли и native pipeline в Windows PowerShell 5.1.

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>UniversalDevKit.TestPackages.ProjectTemplates</id><version>1.0.0</version>
+    <authors>UniversalDevKit</authors><description>Project template delivery fixture.</description>
+    <license type="file">LICENSE.txt</license>
+  </metadata>
+  <files>
+    <file src="template\*" target="template" />
+    <file src="tools\*" target="tools" />
+    <file src="LICENSE.txt" target="" />
+  </files>
+</package>

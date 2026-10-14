@@ -1,5 +1,11 @@
 param([string]$RepositoryPath = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)))
 
+$env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
+$env:VSLANG = '1033'
+[Console]::InputEncoding = [Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
+$OutputEncoding = [Text.UTF8Encoding]::new($false)
+
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'FormatXmlAttributes.ps1')
 . (Join-Path $PSScriptRoot 'Modules/Module.Udk.Connection/Private/ConnectionPlan.ps1')

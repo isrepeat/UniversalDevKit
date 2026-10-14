@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>UniversalDevKit.TestPackages.AndroidNativeLibrary</id><version>1.0.0</version>
+    <authors>UniversalDevKit</authors><description>Android C++ package delivery fixture.</description>
+    <license type="file">LICENSE.txt</license>
+  </metadata>
+  <files><file src="payload\**\*" target="native" /><file src="LICENSE.txt" target="" /></files>
+</package>
