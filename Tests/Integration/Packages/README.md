@@ -1,5 +1,14 @@
 # Проверки доставки пакетов
 
+## Реальные компоненты UDK
+
+- [Windows native NuGet](../../../Packages/Build/NuGet/README.md): NuGet.Tests.ps1, NuGet.Registry.Tests.ps1 и NuGet.PackageReference.Tests.ps1.
+- [Android AAR/Prefab](../../../Packages/Build/Android/README.md#проверка): [AndroidPrefab.Tests.ps1](AndroidPrefab.Tests.ps1), независимый [APK-потребитель](../../Fixtures/Consumers/AndroidPrefab), Static/Dynamic Helpers/Diagnostic, состав SO и отрицательные проверки совместимости.
+
+Для Android `RunAndroidPrefabTests.cmd -SkipDevice` проверяет сборку без устройства. Запуск instrumentation выполняется без SkipDevice с выбранным Serial; только UDK_RESULT=PASS подтверждает вызов API на Android. Существующие отчёты BuildPassed-DeviceNotRun подтверждают сборку APK, но не runtime.
+
+## Заглушки способов доставки
+
 Эти пакеты — изолированные fixtures инфраструктуры, не новая реализация UDK. Версия 1.0.0 фиксирована; каждый тест создаёт собственный feed и cache под !artifacts. Они не публикуются в пользовательские feeds.
 
 | Семейство | Покрываемые существующие пакеты | Проверка |
@@ -29,7 +38,7 @@ Android запускается явно, без молчаливого проп�
 
 Для AndroidNative нужен Ninja в PATH. AndroidMaven использует Gradle 8.11.1, JDK 17 или 21, AGP 8.9.1, Kotlin 2.1.20, compileSdk 36/minSdk 23 и Build Tools 36.0.0. Первый запуск загружает Gradle-зависимости из Google/Maven Central. Параметр GradleCache позволяет повторно использовать кеш инструментов; по умолчанию создаётся отдельный кеш запуска. Координаты наших fixtures фиксированы; consumer получает AppKit из временного Maven feed, без project reference на Core.
 
-Android-проверки подтверждают упаковку и сборку, но не запуск на устройстве. APK можно установить отдельно; MainActivity проверяет AppKit и транзитивный Core и пишет UdkPackagePackageDelivery: PASS. Prefab/JNI отсутствуют: существующие CoreSdk/AppKit содержат Kotlin, а Android-native сценарий отражает доставку через NuGet.
+Эти Android-заглушки подтверждают упаковку и сборку, но не запуск на устройстве. APK можно установить отдельно; MainActivity проверяет AppKit и транзитивный Core и пишет UdkPackagePackageDelivery: PASS. В заглушках Prefab/JNI отсутствуют: CoreSdk/AppKit содержат Kotlin, а AndroidNative отражает доставку через NuGet. Реальные AAR/Prefab UDK проверяются отдельным AndroidPrefab.Tests.ps1, описанным выше.
 
 WinRt проверяет Windows x64 Release: IDL компилируется midlrt в WinMD и включается в NuGet вместе с DLL. Native Desktop восстанавливает пакет только из локального feed, генерирует C++/WinRT-проекцию SDK-инструментом и активирует класс через манифест EXE. C# consumer использует PackageReference и CsWinRT 2.2.0, генерирует проекцию из WinMD пакета и также выполняет штатную активацию. Системная регистрация и прямой вызов DllGetActivationFactory не используются.
 

@@ -11,7 +11,7 @@
 
 UniversalDevKit (UDK) — расширяемый набор C++-библиотек, из которого приложение подключает нужные компоненты. Поддерживаются MSBuild и CMake. Минимальный стандарт языка — C++17.
 
-Сейчас проверена сборка Windows x64 в Debug/Release. Поддержка Linux/Android и выпуск NuGet/AAR развиваются отдельно.
+Проверена сборка Windows x64 в Debug/Release и подключение [native NuGet](Packages/Build/NuGet/README.md). Для Android реализованы реальные [AAR/Prefab Helpers/Diagnostic](Packages/Build/Android/README.md): NDK-сборка и сборка APK проверены, запуск на устройстве ещё не подтверждён. Linux остаётся отдельным этапом.
 
 ## Подключение к приложению
 
@@ -27,6 +27,8 @@ target_link_libraries(MyApplication PRIVATE UniversalDevKit::ComponentA.Static)
 ComponentA — условное имя: замените его именем нужного компонента. Для динамической библиотеки выберите ComponentA.Dynamic и обеспечьте её доступность при запуске.
 
 Установленный CMake-пакет можно подключить через find_package вместо add_subdirectory. Команды и примеры — в [руководстве CMake](Docs/CMake.md).
+
+**Android / Gradle / C++:** используйте [AAR из Maven с Prefab](Packages/Build/Android/README.md#подключение). Пакеты содержат заголовки и готовые библиотеки; исходный checkout UDK потребителю не нужен. Продуктовый Java/Kotlin API пока не предоставляется.
 
 ## Какой способ подключения выбрать
 

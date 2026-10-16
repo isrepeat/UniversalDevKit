@@ -13,6 +13,9 @@
 - [Connect](Connect.md) — выбор компонентов, вариантов и отключение.
 - [MSBuild](MSBuild.md) — сборка и подключение к Visual Studio.
 - [CMake](CMake.md) — сборка, установка и подключение пакета.
+- [Native NuGet](../Packages/Build/NuGet/README.md) — Windows packages.config и native PackageReference.
+- [Android AAR/Prefab](../Packages/Build/Android/README.md) — NDK-профиль, Maven-поставка C++-компонентов, подключение и проверки APK.
+- [Проверки пакетов](../Tests/Integration/Packages/README.md) — реальные компоненты и отдельные заглушки способов доставки.
 
 ## Архитектура и компоненты
 

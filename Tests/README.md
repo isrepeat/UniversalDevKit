@@ -1,8 +1,10 @@
 # Проверки UniversalDevKit
 
+Реальные Android AAR/Prefab Helpers/Diagnostic: [архитектура и запуск](../Packages/Build/Android/README.md). AndroidPrefabBuild в общем runner проверяет сборку APK без устройства. Отдельный RunAndroidPrefabTests.cmd принимает -Serial для instrumentation либо явный -SkipDevice для сборки; BuildPassed-DeviceNotRun не является подтверждением запуска на Android.
+
 WinRT-пакет проверяется через RunWinRtPackageTests.cmd: native Desktop и C# CsWinRT consumer восстанавливают WinMD/DLL из NuGet, генерируют проекции и выполняют штатную активацию через манифест EXE. Изолированные запуски без DLL должны завершаться отказом; системная регистрация не изменяется. Подробности — [проверки пакетов](Integration/Packages/README.md).
 
-Общий локальный запуск: `Tests/Scripts/RunAllTests.cmd` (Windows), `RunAllTests.cmd -Group Android` или `-Group All`. Android требует параметров `-AndroidNdk`, `-Gradle`, `-JavaHome`, `-AndroidSdk`; CMake определяется автоматически либо задаётся через `-CMake`. Для Android native нужен Ninja в PATH. Нужен PowerShell 7 (pwsh), а группа Connect запускается через Windows PowerShell 5.1. Каждый сценарий выполняется отдельным процессом; ошибки не останавливают остальные проверки. Логи и summary.csv сохраняются под !artifacts/tests/all-*. Отсутствующие инструменты означают Failed и итоговый код 1. Android-группа пока проверяет доставку заглушек, а не запуск UDK на устройстве.
+Общий локальный запуск: `Tests/Scripts/RunAllTests.cmd` (Windows), `RunAllTests.cmd -Group Android` или `-Group All`. Android требует параметров `-AndroidNdk`, `-Gradle`, `-JavaHome`, `-AndroidSdk`; CMake определяется автоматически либо задаётся через `-CMake`. Для Android native нужен Ninja в PATH. Нужен PowerShell 7 (pwsh), а группа Connect запускается через Windows PowerShell 5.1. Каждый сценарий выполняется отдельным процессом; ошибки не останавливают остальные проверки. Логи и summary.csv сохраняются под !artifacts/tests/all-*. Отсутствующие инструменты означают Failed и итоговый код 1. Android-группа включает заглушки доставки и сборку реального AAR/Prefab consumer; запуск instrumentation выполняется отдельно.
 
 Список без запуска: `RunAllTests.cmd -Group All -ListOnly`. Выбор отдельных проверок: `RunAllTests.cmd -Test ScriptEncoding` или в PowerShell `./Tests/Scripts/PowerShell/RunAllTests.ps1 -Test ScriptEncoding,ComponentGeneration`. Прямой PS1-запуск не делает паузу. CI для этой команды пока не настраивался.
 
@@ -122,7 +124,7 @@ RunTests.ps1 выводит PASS для каждого успешно завер
 
 Ожидаемые отказы, например конфликт вариантов в Diamond или несовместимая архитектура CMake-пакета, являются частью проверки. Сам сценарий проходит только если отказ произошёл ожидаемым способом.
 
-Текущие Windows-проверки не подтверждают Linux/Android, потребление NuGet/AAR, полный интерактивный Connect, обновление существующего submodule, очистку устаревших DLL, Check/Repair ручных изменений и восстановление файлов при частичном сбое.
+Windows-проверки включают native NuGet и PackageReference, но не подтверждают Linux/Android runtime. Android AAR/APK проверяются отдельным AndroidPrefab.Tests.ps1. Полный интерактивный Connect, обновление существующего submodule и Check/Repair остаются отдельными задачами; rollback и очистка доставленных DLL проверяются TestConnectionTransaction.ps1 и TestRuntimeCleanup.ps1.
 
 ## Устройство окружений и дополнительные параметры
 
@@ -176,4 +178,4 @@ Fixtures содержит готовые неподключённые `.sln/.vcx
 
 Новый способ подключения добавляется сценарием, а не копией solution. Новый тип приложения, например host с плагинами, получает отдельный шаблон Fixtures. Тестовые компоненты и JSON графа размещаются в Fixtures/Libraries и устанавливаются только во временную копию библиотеки. Итоговые подключённые решения в Git не сохраняются.
 
-Окружение сохраняется по умолчанию и всегда при ошибке. `-CleanOnSuccess` удаляет только успешно проверенный каталог сценария. Рабочий UDK и внешние consumer не изменяются. ModeSwitch проверяет Shared → Static → Dynamic → Shared; Disconnect удаляет оба компонента и проверяет независимую сборку App2. Проверки интерактивных клавиш, обновления submodule и очистки старых DLL пока не реализованы; PASS их не подтверждает.
+Окружение сохраняется по умолчанию и всегда при ошибке. `-CleanOnSuccess` удаляет только успешно проверенный каталог сценария. Рабочий UDK и внешние consumer не изменяются. ModeSwitch проверяет Shared → Static → Dynamic → Shared; Disconnect удаляет оба компонента и проверяет независимую сборку App2. Полный интерактивный прогон и обновление submodule требуют отдельных проверок; очистка доставленных DLL проверяется отдельно через TestRuntimeCleanup.ps1.

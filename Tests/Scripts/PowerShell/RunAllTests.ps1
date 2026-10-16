@@ -43,6 +43,7 @@ $cases = @(
     @{ Name = 'PackageDelivery'; Group = 'Windows'; Path = 'Tests/Integration/Packages/PackageDelivery.Tests.ps1'; Args = @() }
     @{ Name = 'WinRtDelivery'; Group = 'Windows'; Path = 'Tests/Integration/Packages/PackageDelivery.Tests.ps1'; Args = @('-Family', 'WinRt', '-CMake', $CMake) }
     @{ Name = 'AndroidNativeDelivery'; Group = 'Android'; Path = 'Tests/Integration/Packages/PackageDelivery.Tests.ps1'; Args = @('-Family', 'AndroidNative', '-CMake', $CMake, '-AndroidNdk', $AndroidNdk) }
+    @{ Name = 'AndroidPrefabBuild'; Group = 'Android'; Path = 'Tests/Integration/Packages/AndroidPrefab.Tests.ps1'; Args = @('-CMake', $CMake, '-AndroidNdk', $AndroidNdk, '-AndroidSdk', $AndroidSdk, '-JavaHome', $JavaHome, '-Gradle', $Gradle, '-SkipDevice'); Engine = 'powershell.exe' }
     @{ Name = 'AndroidMavenDelivery'; Group = 'Android'; Path = 'Tests/Integration/Packages/PackageDelivery.Tests.ps1'; Args = @('-Family', 'AndroidMaven', '-Gradle', $Gradle, '-JavaHome', $JavaHome, '-AndroidSdk', $AndroidSdk) }
 )
 if ($GradleCache) { $cases[-1].Args += @('-GradleCache', $GradleCache) }

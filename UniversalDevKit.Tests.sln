@@ -270,6 +270,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{4161
 		Tests\Scripts\RunPackageDeliveryTests.cmd = Tests\Scripts\RunPackageDeliveryTests.cmd
 		Tests\Scripts\RunWinRtPackageTests.cmd = Tests\Scripts\RunWinRtPackageTests.cmd
 		Tests\Scripts\RunNuGetRegistry.cmd = Tests\Scripts\RunNuGetRegistry.cmd
+		Tests\Scripts\RunAndroidPrefabTests.cmd = Tests\Scripts\RunAndroidPrefabTests.cmd
 		Tests\Scripts\RunNuGetPackageReferenceTests.cmd = Tests\Scripts\RunNuGetPackageReferenceTests.cmd
 		Tests\Scripts\RunDisconnect.cmd = Tests\Scripts\RunDisconnect.cmd
 		Tests\Scripts\RunDynamic.cmd = Tests\Scripts\RunDynamic.cmd
@@ -411,6 +412,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{DB
 		Tests\Integration\Packages\PackageDelivery.Tests.ps1 = Tests\Integration\Packages\PackageDelivery.Tests.ps1
 		Tests\Integration\Packages\README.md = Tests\Integration\Packages\README.md
 		Tests\Integration\Packages\NuGet.Registry.Tests.ps1 = Tests\Integration\Packages\NuGet.Registry.Tests.ps1
+		Tests\Integration\Packages\AndroidPrefab.Tests.ps1 = Tests\Integration\Packages\AndroidPrefab.Tests.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{7F3A4850-55AB-4C55-8A0B-2DD391F42A9C}"
@@ -620,11 +622,56 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "buildTransitive", "buildTra
 		Tests\Fixtures\Packages\WinRt\buildTransitive\UniversalDevKit.TestPackages.WinRtComponent.targets = Tests\Fixtures\Packages\WinRt\buildTransitive\UniversalDevKit.TestPackages.WinRtComponent.targets
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidPrefab", "AndroidPrefab", "{A63D24B8-5B7A-45B8-9C11-000000000200}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Consumers\AndroidPrefab\build.gradle.kts = Tests\Fixtures\Consumers\AndroidPrefab\build.gradle.kts
+		Tests\Fixtures\Consumers\AndroidPrefab\settings.gradle.kts = Tests\Fixtures\Consumers\AndroidPrefab\settings.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "app", "app", "{A63D24B8-5B7A-45B8-9C11-000000000201}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Consumers\AndroidPrefab\app\build.gradle.kts = Tests\Fixtures\Consumers\AndroidPrefab\app\build.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A63D24B8-5B7A-45B8-9C11-000000000202}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "main", "main", "{A63D24B8-5B7A-45B8-9C11-000000000203}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Consumers\AndroidPrefab\app\src\main\AndroidManifest.xml = Tests\Fixtures\Consumers\AndroidPrefab\app\src\main\AndroidManifest.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cpp", "cpp", "{A63D24B8-5B7A-45B8-9C11-000000000204}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Consumers\AndroidPrefab\app\src\main\cpp\CMakeLists.txt = Tests\Fixtures\Consumers\AndroidPrefab\app\src\main\cpp\CMakeLists.txt
+		Tests\Fixtures\Consumers\AndroidPrefab\app\src\main\cpp\Main.cpp = Tests\Fixtures\Consumers\AndroidPrefab\app\src\main\cpp\Main.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "java", "java", "{A63D24B8-5B7A-45B8-9C11-000000000205}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "org", "org", "{A63D24B8-5B7A-45B8-9C11-000000000206}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "universaldevkit", "universaldevkit", "{A63D24B8-5B7A-45B8-9C11-000000000207}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "packageconsumer", "packageconsumer", "{A63D24B8-5B7A-45B8-9C11-000000000208}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Consumers\AndroidPrefab\app\src\main\java\org\universaldevkit\packageconsumer\NativeBridge.java = Tests\Fixtures\Consumers\AndroidPrefab\app\src\main\java\org\universaldevkit\packageconsumer\NativeBridge.java
+		Tests\Fixtures\Consumers\AndroidPrefab\app\src\main\java\org\universaldevkit\packageconsumer\PackageInstrumentation.java = Tests\Fixtures\Consumers\AndroidPrefab\app\src\main\java\org\universaldevkit\packageconsumer\PackageInstrumentation.java
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{A63D24B8-5B7A-45B8-9C11-000000000200} = {F7C9315C-200F-4296-901A-39A3D4A00C48}
+		{A63D24B8-5B7A-45B8-9C11-000000000201} = {A63D24B8-5B7A-45B8-9C11-000000000200}
+		{A63D24B8-5B7A-45B8-9C11-000000000202} = {A63D24B8-5B7A-45B8-9C11-000000000201}
+		{A63D24B8-5B7A-45B8-9C11-000000000203} = {A63D24B8-5B7A-45B8-9C11-000000000202}
+		{A63D24B8-5B7A-45B8-9C11-000000000204} = {A63D24B8-5B7A-45B8-9C11-000000000203}
+		{A63D24B8-5B7A-45B8-9C11-000000000205} = {A63D24B8-5B7A-45B8-9C11-000000000203}
+		{A63D24B8-5B7A-45B8-9C11-000000000206} = {A63D24B8-5B7A-45B8-9C11-000000000205}
+		{A63D24B8-5B7A-45B8-9C11-000000000207} = {A63D24B8-5B7A-45B8-9C11-000000000206}
+		{A63D24B8-5B7A-45B8-9C11-000000000208} = {A63D24B8-5B7A-45B8-9C11-000000000207}
 		{80ABBA8A-16E3-4D51-868B-0076D5C1B0DF} = {D60BF9A4-CC98-477F-A03C-1D99DB348798}
 		{D0043D1E-6618-42F9-913D-4DF91C637F5C} = {B7320DF1-F3AF-448B-9A0E-3483E544EE37}
 		{D60BF9A4-CC98-477F-A03C-1D99DB348798} = {64519B9E-018A-42CA-9F01-384DE3A209AB}
