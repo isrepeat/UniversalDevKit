@@ -270,6 +270,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{4161
 		Tests\Scripts\RunPackageDeliveryTests.cmd = Tests\Scripts\RunPackageDeliveryTests.cmd
 		Tests\Scripts\RunWinRtPackageTests.cmd = Tests\Scripts\RunWinRtPackageTests.cmd
 		Tests\Scripts\RunNuGetRegistry.cmd = Tests\Scripts\RunNuGetRegistry.cmd
+		Tests\Scripts\RunNuGetPackageReferenceTests.cmd = Tests\Scripts\RunNuGetPackageReferenceTests.cmd
 		Tests\Scripts\RunDisconnect.cmd = Tests\Scripts\RunDisconnect.cmd
 		Tests\Scripts\RunDynamic.cmd = Tests\Scripts\RunDynamic.cmd
 		Tests\Scripts\RunExport.cmd = Tests\Scripts\RunExport.cmd
@@ -399,11 +400,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{46309FCB
 		Tests\Fixtures\Consumers\NuGet\Main.cpp = Tests\Fixtures\Consumers\NuGet\Main.cpp
 		Tests\Fixtures\Consumers\NuGet\Consumer.vcxproj.in = Tests\Fixtures\Consumers\NuGet\Consumer.vcxproj.in
 		Tests\Fixtures\Consumers\NuGet\packages.config.in = Tests\Fixtures\Consumers\NuGet\packages.config.in
+		Tests\Fixtures\Consumers\NuGet\PackageReference.Main.cpp = Tests\Fixtures\Consumers\NuGet\PackageReference.Main.cpp
+		Tests\Fixtures\Consumers\NuGet\PackageReference.vcxproj.in = Tests\Fixtures\Consumers\NuGet\PackageReference.vcxproj.in
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{DB9A4DC7-79EC-45F0-810C-E698375CC27C}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Integration\Packages\NuGet.Tests.ps1 = Tests\Integration\Packages\NuGet.Tests.ps1
+		Tests\Integration\Packages\NuGet.PackageReference.Tests.ps1 = Tests\Integration\Packages\NuGet.PackageReference.Tests.ps1
 		Tests\Integration\Packages\PackageDelivery.Tests.ps1 = Tests\Integration\Packages\PackageDelivery.Tests.ps1
 		Tests\Integration\Packages\README.md = Tests\Integration\Packages\README.md
 		Tests\Integration\Packages\NuGet.Registry.Tests.ps1 = Tests\Integration\Packages\NuGet.Registry.Tests.ps1

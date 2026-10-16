@@ -2,7 +2,8 @@ param(
     [ValidateSet('Checkout', 'Installed', 'NuGet')][string[]]$Delivery = @('Checkout', 'Installed', 'NuGet'),
     [ValidateSet('Static', 'Dynamic', 'PrivateAllStatic', 'PrivateDynamic', 'PrivateStatic', 'PublicStaticDynamic')][string[]]$Variant = @('Static', 'Dynamic', 'PrivateAllStatic', 'PrivateDynamic', 'PrivateStatic', 'PublicStaticDynamic'),
     [string]$CMake,
-    [string]$NuGet = 'nuget.exe'
+    [string]$NuGet = 'nuget.exe',
+    [switch]$PackageReference
 )
 $env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
 $env:VSLANG = '1033'
@@ -10,6 +11,7 @@ $env:VSLANG = '1033'
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
 $OutputEncoding = [Text.UTF8Encoding]::new($false)
 $ErrorActionPreference = 'Stop'
+if ($PackageReference -and 'NuGet' -notin $Delivery) { throw 'PackageReference requires NuGet in Delivery.' }
 $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
 . (Join-Path $repository 'Tests/Infrastructure/BuildTools.ps1')
 $msbuild = Get-TestMSBuild
@@ -97,6 +99,7 @@ try {
         $consumer = Join-Path $case 'consumer'
         Copy-Item -LiteralPath (Join-Path $fixture 'Consumer') -Destination $consumer -Recurse
         foreach ($deliveryName in $Delivery) {
+            if ($PackageReference) { continue }
             if ($deliveryName -eq 'NuGet') { continue }
             $build = Join-Path $case $deliveryName
             $args = @('-S', $consumer, '-B', $build, '-G', 'Visual Studio 18 2026', '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug;Release', "-DDIAMOND_MODE=$mode", "-DDIAMOND_PRIVATE_STATIC=$private")
@@ -151,8 +154,10 @@ try {
                     $appRoot = Join-Path $case "ng-$runtime-$app"
                     [void][IO.Directory]::CreateDirectory($appRoot)
                     Copy-Item (Join-Path $consumer "$app/Main.cpp") (Join-Path $appRoot 'Main.cpp')
-                    & $NuGet install "UniversalDevKit.$component" -Version $version -Source $feed -OutputDirectory (Join-Path $appRoot 'packages') -NoHttpCache -DirectDownload -NonInteractive -ForceEnglishOutput | Out-Host
-                    if ($LASTEXITCODE -ne 0) { throw 'Diamond NuGet restore failed.' }
+                    if (-not $PackageReference) {
+                        & $NuGet install "UniversalDevKit.$component" -Version $version -Source $feed -OutputDirectory (Join-Path $appRoot 'packages') -NoHttpCache -DirectDownload -NonInteractive -ForceEnglishOutput | Out-Host
+                        if ($LASTEXITCODE -ne 0) { throw 'Diamond NuGet restore failed.' }
+                    }
                     # packages.config требует явных импортов props/targets восстановленных зависимостей.
                     $dependencies = if ($component -eq 'A') { @('B','C','D') } else { @('D') }
                     $props = @($dependencies | ForEach-Object { '  <Import Project="packages\UniversalDevKit.' + $_ + '.' + $version + '\build\native\UniversalDevKit.' + $_ + '.props" />' }) -join "`r`n"
@@ -162,6 +167,9 @@ try {
                     $definitions = "DIAMOND_TEST_BOUNDARIES=1;DIAMOND_TEST_HEADER_ISOLATION=1;DIAMOND_TEST_PUBLIC_B=$publicB" + $(if ($mode -eq 'Dynamic') { ';DIAMOND_TEST_DYNAMIC=1' } else { '' })
                     if ($caseName -eq 'PublicStaticDynamic') { $definitions += ';DIAMOND_TEST_PUBLIC_STATIC=1' }
                     $text = $text.Replace('{{TEST_DEFINITIONS}}', $definitions)
+                    if ($PackageReference) {
+                        $text = [IO.File]::ReadAllText((Join-Path $repository 'Tests/Fixtures/Consumers/NuGet/PackageReference.vcxproj.in')).Replace('{{VERSION}}', $version).Replace('{{COMPONENT}}', $component).Replace('{{RUNTIME}}', $runtime).Replace('{{LINKAGE}}', $mode).Replace('{{DEFINITIONS}}', $definitions)
+                    }
                     $project = Join-Path $appRoot "$app.vcxproj"
                     [IO.File]::WriteAllText($project, $text, [Text.UTF8Encoding]::new($false))
                     if ($app -eq 'App1') {
@@ -169,8 +177,26 @@ try {
                         $conflictText = $text.Replace('<UniversalDevKitComponents>A</UniversalDevKitComponents>', '<UniversalDevKitComponents>A;C</UniversalDevKitComponents>')
                         [IO.File]::WriteAllText($conflictProject, $conflictText, [Text.UTF8Encoding]::new($false))
                     }
+                    $restoreArguments = @()
+                    if ($PackageReference) {
+                        $cache = Join-Path $appRoot 'cache'
+                        $configPath = Join-Path $appRoot 'NuGet.Config'
+                        $configText = '<configuration><packageSources><clear/><add key="local" value="' + [Security.SecurityElement]::Escape($feed) + '"/></packageSources></configuration>'
+                        [IO.File]::WriteAllText($configPath, $configText, [Text.UTF8Encoding]::new($false))
+                        $restoreArguments = @("/p:RestorePackagesPath=$cache", "/p:RestoreConfigFile=$configPath", '/p:NuGetAudit=false')
+                        $restoreProjects = @($project)
+                        if ($app -eq 'App1') { $restoreProjects += $conflictProject }
+                        foreach ($restoreProject in $restoreProjects) {
+                            InvokeChecked $msbuild (@($restoreProject, '/nologo', '/v:minimal', '/t:Restore', '/p:Configuration=Debug', '/p:Platform=x64', '/p:RestoreNoCache=true') + $restoreArguments) (Join-Path $appRoot ((Split-Path $restoreProject -Leaf) + '-restore.log'))
+                        }
+                        $assets = Get-Content -LiteralPath (Join-Path $appRoot 'obj/project.assets.json') -Raw | ConvertFrom-Json
+                        foreach ($dependency in (@($component) + $dependencies)) {
+                            if (-not $assets.libraries.PSObject.Properties["UniversalDevKit.$dependency/$version"]) { throw "Missing transitive PackageReference dependency: $dependency" }
+                        }
+                    }
                     foreach ($configuration in @('Debug','Release')) {
                         $buildArgs = @($project, '/m','/nologo','/v:minimal','/t:Rebuild','/p:Platform=x64',"/p:Configuration=$configuration","/p:UniversalDevKitRuntime=$runtime","/p:UniversalDevKit${component}Linkage=$mode")
+                        $buildArgs += $restoreArguments
                         InvokeChecked $msbuild $buildArgs (Join-Path $case "NuGet-$runtime-$app-$configuration.log")
                         $expected = if ($mode -eq 'Static') { @() } elseif ($caseName -in @('PrivateStatic', 'PublicStaticDynamic')) { if ($app -eq 'App1') { @('A','C') } else { @('C') } } elseif ($app -eq 'App1') { @('A','B','C','D') } else { @('C','D') }
                         $bin = Join-Path $appRoot "out/$configuration"
@@ -187,7 +213,7 @@ try {
                     }
                 }
             }
-            $results += [pscustomobject]@{ Delivery='NuGet'; Variant=$caseName; Status='Passed' }
+            $results += [pscustomobject]@{ Delivery=$(if ($PackageReference) { 'NuGetPackageReference' } else { 'NuGet' }); Variant=$caseName; Status='Passed' }
         }
     }
 }

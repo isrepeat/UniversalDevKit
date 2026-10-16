@@ -10,6 +10,10 @@ WinRT-пакет проверяется через RunWinRtPackageTests.cmd: nat
 
 ## Native NuGet
 
+Native PackageReference проверяется отдельно через `Tests/Scripts/RunNuGetPackageReferenceTests.cmd`: Helpers/Diagnostic, Static/Dynamic, MD/MT, Debug/Release, локальный feed и отдельный restore cache для каждого consumer, private requirements, точный набор DLL и чистый запуск. Требуется поддерживающий MSBuild с EnableNativePackageReferenceSupport; проверено на MSBuild 18.11. Подробности подключения — [NuGet](../Packages/Build/NuGet/README.md#native-packagereference).
+
+Diamond с автоматическими транзитивными импортами запускается через `RunDiamondMatrixTests.cmd -Delivery NuGet -PackageReference`. Проверяются все шесть вариантов, оба consumer, CRT/конфигурации, доставка DLL и отказ при конфликте. В общем runner: `RunAllTests.cmd -Test NativePackageReference` или `-Test DiamondPackageReference`.
+
 Полная Windows x64 матрица Diamond для CMake и native NuGet: `Tests/Scripts/RunDiamondMatrixTests.cmd`. Общий runner включает её как `DiamondMatrix`; выбор отдельно: `RunAllTests.cmd -Test DiamondMatrix`. Прямой запуск без паузы: `Tests/Integration/Cmake/Diamond.Tests.ps1`. Для сокращённого запуска доступны `-Delivery Checkout`, `Installed` или `NuGet` и `-Variant Static`, `Dynamic`, `PrivateAllStatic`, `PrivateDynamic`, `PrivateStatic` или `PublicStaticDynamic`. CMake из Visual Studio определяется автоматически; доступны параметры `-CMake` и `-NuGet`.
 
 Используется существующая библиотека `Fixtures/Libraries/Diamond`: A → B/C → D, App1 → A и App2 → C. Изменения реестра, генерация проектов, сборки и восстановление выполняются только в отдельной копии под `!artifacts/dm-*`.
@@ -23,7 +27,7 @@ WinRT-пакет проверяется через RunWinRtPackageTests.cmd: nat
 | PrivateStatic | private Static | private Dynamic | private Static | A,C / C |
 | PublicStaticDynamic | public Static | private Dynamic | private Static | A,C / C |
 
-Каждый вариант проходит Debug/Release: CMake через add_subdirectory из checkout, затем через find_package из перенесённой установки, затем NuGet с отдельным восстановлением пакетов для каждого consumer. NuGet дополнительно проходит оба CRT /MD и /MT, используя packages.config-стиль с явными импортами восстановленных props/targets. Библиотеки пакуются штатным Build.ps1, зависимости берутся из реестра. Native PackageReference здесь не проверяется.
+Каждый вариант проходит Debug/Release: CMake через add_subdirectory из checkout, затем через find_package из перенесённой установки, затем NuGet с отдельным восстановлением пакетов для каждого consumer. NuGet дополнительно проходит оба CRT /MD и /MT; по умолчанию используется packages.config-стиль с явными импортами, а параметр -PackageReference выбирает автоматические импорты native PackageReference. Библиотеки пакуются штатным Build.ps1, зависимости берутся из реестра.
 
 Проверяются результаты функций, public import-макросы и вызов B из App1, отсутствие private import-макросов, точный транзитивный набор DLL без дубликатов и запуск обоих EXE из чистых каталогов с ограниченным PATH. Checkout/NuGet проверяют также изоляцию include-путей. Установленный CMake-пакет имеет общий include-каталог: доступность private-заголовка сама по себе не означает передачу private compile/link requirements. Для каждого варианта противоположный вариант C должен вызвать отказ CMake при генерации или NuGet/MSBuild перед компиляцией. App2 отдельно пересобирается; файлы consumer независимы. Логи команд и summary.csv сохраняются в каталоге запуска.
 
