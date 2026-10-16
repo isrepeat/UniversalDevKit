@@ -1,4 +1,7 @@
 @echo off
+chcp 65001 >nul
+set "DOTNET_CLI_UI_LANGUAGE=en-US"
+set "VSLANG=1033"
 setlocal
 where pwsh.exe >nul 2>nul
 if errorlevel 1 (

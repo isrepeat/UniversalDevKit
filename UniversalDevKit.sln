@@ -89,6 +89,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{BB41
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionPlan.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionPlan.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionState.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionState.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ProjectIntegration.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ProjectIntegration.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionTransaction.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionTransaction.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\Requirements.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\Requirements.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\SolutionIntegration.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\SolutionIntegration.ps1
 	EndProjectSection
@@ -199,6 +200,37 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MessagingModule", "Messagin
 		Scripts\PowerShell\Modules\MessagingModule\MessagingModule.psm1 = Scripts\PowerShell\Modules\MessagingModule\MessagingModule.psm1
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000100}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Build\Android\Build.ps1 = Packages\Build\Android\Build.ps1
+		Packages\Build\Android\Consumer.cmake = Packages\Build\Android\Consumer.cmake
+		Packages\Build\Android\README.md = Packages\Build\Android\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000101}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\Diagnostic\Delivery\Android\Delivery.json = Packages\CrossPlatform\Diagnostic\Delivery\Android\Delivery.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000102}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\Helpers\Delivery\Android\Delivery.json = Packages\CrossPlatform\Helpers\Delivery\Android\Delivery.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000300}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Android\Toolchain.json = Scripts\Android\Toolchain.json
+		Scripts\Android\ResolveToolchain.ps1 = Scripts\Android\ResolveToolchain.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{A63D24B8-5B7A-45B8-9C11-000000000301}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Android\Gradle\gradlew = Scripts\Android\Gradle\gradlew
+		Scripts\Android\Gradle\gradlew.bat = Scripts\Android\Gradle\gradlew.bat
+		Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.jar = Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.jar
+		Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.properties = Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.properties
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -226,6 +258,11 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{A63D24B8-5B7A-45B8-9C11-000000000300} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
+		{A63D24B8-5B7A-45B8-9C11-000000000301} = {A63D24B8-5B7A-45B8-9C11-000000000300}
+		{A63D24B8-5B7A-45B8-9C11-000000000100} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
+		{A63D24B8-5B7A-45B8-9C11-000000000101} = {6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7}
+		{A63D24B8-5B7A-45B8-9C11-000000000102} = {AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD}
 		{BC0651B9-7642-4436-BF89-5D8B8BD4F4A0} = {8B6A058C-7402-4392-8956-6B1489D9E118}
 		{DC091494-5AC6-46E6-BA6D-61441682BB62} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
 		{CA7AB659-38EB-4E98-99A7-95A777DCD074} = {DC091494-5AC6-46E6-BA6D-61441682BB62}

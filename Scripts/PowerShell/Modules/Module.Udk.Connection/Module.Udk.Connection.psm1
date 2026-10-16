@@ -7,6 +7,7 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Private/ConnectionPlan.ps1')
 . (Join-Path $PSScriptRoot 'Private/SolutionIntegration.ps1')
 . (Join-Path $PSScriptRoot 'Private/ProjectIntegration.ps1')
+. (Join-Path $PSScriptRoot 'Private/ConnectionTransaction.ps1')
 
 Export-ModuleMember -Function @(
     'Get-UdkComponentRegistry'
@@ -14,4 +15,5 @@ Export-ModuleMember -Function @(
     'Get-UdkConnectionState'
     'New-UdkConnectionPlan'
     'Invoke-UdkConnectionPlan'
+    'Restore-UdkConnectionTransaction'
 )

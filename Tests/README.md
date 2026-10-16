@@ -1,6 +1,37 @@
 # Проверки UniversalDevKit
 
+Реальные Android AAR/Prefab Helpers/Diagnostic: [архитектура и запуск](../Packages/Build/Android/README.md). AndroidPrefabBuild в общем runner проверяет сборку APK без устройства. Отдельный RunAndroidPrefabTests.cmd принимает -Serial для instrumentation либо явный -SkipDevice для сборки; BuildPassed-DeviceNotRun не является подтверждением запуска на Android.
+
+WinRT-пакет проверяется через RunWinRtPackageTests.cmd: native Desktop и C# CsWinRT consumer восстанавливают WinMD/DLL из NuGet, генерируют проекции и выполняют штатную активацию через манифест EXE. Изолированные запуски без DLL должны завершаться отказом; системная регистрация не изменяется. Подробности — [проверки пакетов](Integration/Packages/README.md).
+
+Общий локальный запуск: `Tests/Scripts/RunAllTests.cmd` (Windows), `RunAllTests.cmd -Group Android` или `-Group All`. Android требует параметров `-AndroidNdk`, `-Gradle`, `-JavaHome`, `-AndroidSdk`; CMake определяется автоматически либо задаётся через `-CMake`. Для Android native нужен Ninja в PATH. Нужен PowerShell 7 (pwsh), а группа Connect запускается через Windows PowerShell 5.1. Каждый сценарий выполняется отдельным процессом; ошибки не останавливают остальные проверки. Логи и summary.csv сохраняются под !artifacts/tests/all-*. Отсутствующие инструменты означают Failed и итоговый код 1. Android-группа включает заглушки доставки и сборку реального AAR/Prefab consumer; запуск instrumentation выполняется отдельно.
+
+Список без запуска: `RunAllTests.cmd -Group All -ListOnly`. Выбор отдельных проверок: `RunAllTests.cmd -Test ScriptEncoding` или в PowerShell `./Tests/Scripts/PowerShell/RunAllTests.ps1 -Test ScriptEncoding,ComponentGeneration`. Прямой PS1-запуск не делает паузу. CI для этой команды пока не настраивался.
+
+Минимальные заглушки доставки NuGet и Android Maven/AAR запускаются через `Tests/Scripts/RunPackageDeliveryTests.cmd` или `Tests/Integration/Packages/PackageDelivery.Tests.ps1`. По умолчанию проверяются managed DLL, build tool и шаблон. NativeWindows, WinRt, AndroidNative и AndroidMaven выбираются через Family; Android требует явных путей инструментов. Матрица, команды и границы покрытия описаны в [проверках доставки](Integration/Packages/README.md). Запуск не публикует пакеты в пользовательские feeds.
+
 ## Native NuGet
+
+Native PackageReference проверяется отдельно через `Tests/Scripts/RunNuGetPackageReferenceTests.cmd`: Helpers/Diagnostic, Static/Dynamic, MD/MT, Debug/Release, локальный feed и отдельный restore cache для каждого consumer, private requirements, точный набор DLL и чистый запуск. Требуется поддерживающий MSBuild с EnableNativePackageReferenceSupport; проверено на MSBuild 18.11. Подробности подключения — [NuGet](../Packages/Build/NuGet/README.md#native-packagereference).
+
+Diamond с автоматическими транзитивными импортами запускается через `RunDiamondMatrixTests.cmd -Delivery NuGet -PackageReference`. Проверяются все шесть вариантов, оба consumer, CRT/конфигурации, доставка DLL и отказ при конфликте. В общем runner: `RunAllTests.cmd -Test NativePackageReference` или `-Test DiamondPackageReference`.
+
+Полная Windows x64 матрица Diamond для CMake и native NuGet: `Tests/Scripts/RunDiamondMatrixTests.cmd`. Общий runner включает её как `DiamondMatrix`; выбор отдельно: `RunAllTests.cmd -Test DiamondMatrix`. Прямой запуск без паузы: `Tests/Integration/Cmake/Diamond.Tests.ps1`. Для сокращённого запуска доступны `-Delivery Checkout`, `Installed` или `NuGet` и `-Variant Static`, `Dynamic`, `PrivateAllStatic`, `PrivateDynamic`, `PrivateStatic` или `PublicStaticDynamic`. CMake из Visual Studio определяется автоматически; доступны параметры `-CMake` и `-NuGet`.
+
+Используется существующая библиотека `Fixtures/Libraries/Diamond`: A → B/C → D, App1 → A и App2 → C. Изменения реестра, генерация проектов, сборки и восстановление выполняются только в отдельной копии под `!artifacts/dm-*`.
+
+| Вариант | A → B | A → C | B/C → D | DLL App1 / App2 |
+| --- | --- | --- | --- | --- |
+| Static | public Static | private Static | private Static | нет / нет |
+| Dynamic | public Dynamic | private Dynamic | private Dynamic | A,B,C,D / C,D |
+| PrivateAllStatic | private Static | private Static | private Static | нет / нет |
+| PrivateDynamic | private Dynamic | private Dynamic | private Dynamic | A,B,C,D / C,D |
+| PrivateStatic | private Static | private Dynamic | private Static | A,C / C |
+| PublicStaticDynamic | public Static | private Dynamic | private Static | A,C / C |
+
+Каждый вариант проходит Debug/Release: CMake через add_subdirectory из checkout, затем через find_package из перенесённой установки, затем NuGet с отдельным восстановлением пакетов для каждого consumer. NuGet дополнительно проходит оба CRT /MD и /MT; по умолчанию используется packages.config-стиль с явными импортами, а параметр -PackageReference выбирает автоматические импорты native PackageReference. Библиотеки пакуются штатным Build.ps1, зависимости берутся из реестра.
+
+Проверяются результаты функций, public import-макросы и вызов B из App1, отсутствие private import-макросов, точный транзитивный набор DLL без дубликатов и запуск обоих EXE из чистых каталогов с ограниченным PATH. Checkout/NuGet проверяют также изоляцию include-путей. Установленный CMake-пакет имеет общий include-каталог: доступность private-заголовка сама по себе не означает передачу private compile/link requirements. Для каждого варианта противоположный вариант C должен вызвать отказ CMake при генерации или NuGet/MSBuild перед компиляцией. App2 отдельно пересобирается; файлы consumer независимы. Логи команд и summary.csv сохраняются в каталоге запуска.
 
 Для двойного клика используйте Tests/Scripts/RunNuGet.cmd и RunNuGetRegistry.cmd. Обёртки работают независимо от текущего каталога, используют Windows PowerShell 5.1, сохраняют код завершения и делают паузу. RunNuGet.cmd передаёт MIT LICENSE из корня репозитория; остальные параметры, например -Feed, передаются в тестовый скрипт.
 
@@ -93,7 +124,7 @@ RunTests.ps1 выводит PASS для каждого успешно завер
 
 Ожидаемые отказы, например конфликт вариантов в Diamond или несовместимая архитектура CMake-пакета, являются частью проверки. Сам сценарий проходит только если отказ произошёл ожидаемым способом.
 
-Текущие Windows-проверки не подтверждают Linux/Android, потребление NuGet/AAR, полный интерактивный Connect, обновление существующего submodule, очистку устаревших DLL, Check/Repair ручных изменений и восстановление файлов при частичном сбое.
+Windows-проверки включают native NuGet и PackageReference, но не подтверждают Linux/Android runtime. Android AAR/APK проверяются отдельным AndroidPrefab.Tests.ps1. Полный интерактивный Connect, обновление существующего submodule и Check/Repair остаются отдельными задачами; rollback и очистка доставленных DLL проверяются TestConnectionTransaction.ps1 и TestRuntimeCleanup.ps1.
 
 ## Устройство окружений и дополнительные параметры
 
@@ -147,4 +178,4 @@ Fixtures содержит готовые неподключённые `.sln/.vcx
 
 Новый способ подключения добавляется сценарием, а не копией solution. Новый тип приложения, например host с плагинами, получает отдельный шаблон Fixtures. Тестовые компоненты и JSON графа размещаются в Fixtures/Libraries и устанавливаются только во временную копию библиотеки. Итоговые подключённые решения в Git не сохраняются.
 
-Окружение сохраняется по умолчанию и всегда при ошибке. `-CleanOnSuccess` удаляет только успешно проверенный каталог сценария. Рабочий UDK и внешние consumer не изменяются. ModeSwitch проверяет Shared → Static → Dynamic → Shared; Disconnect удаляет оба компонента и проверяет независимую сборку App2. Проверки интерактивных клавиш, обновления submodule и очистки старых DLL пока не реализованы; PASS их не подтверждает.
+Окружение сохраняется по умолчанию и всегда при ошибке. `-CleanOnSuccess` удаляет только успешно проверенный каталог сценария. Рабочий UDK и внешние consumer не изменяются. ModeSwitch проверяет Shared → Static → Dynamic → Shared; Disconnect удаляет оба компонента и проверяет независимую сборку App2. Полный интерактивный прогон и обновление submodule требуют отдельных проверок; очистка доставленных DLL проверяется отдельно через TestRuntimeCleanup.ps1.

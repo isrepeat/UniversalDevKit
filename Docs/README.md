@@ -13,6 +13,9 @@
 - [Connect](Connect.md) — выбор компонентов, вариантов и отключение.
 - [MSBuild](MSBuild.md) — сборка и подключение к Visual Studio.
 - [CMake](CMake.md) — сборка, установка и подключение пакета.
+- [Native NuGet](../Packages/Build/NuGet/README.md) — Windows packages.config и native PackageReference.
+- [Android AAR/Prefab](../Packages/Build/Android/README.md) — NDK-профиль, Maven-поставка C++-компонентов, подключение и проверки APK.
+- [Проверки пакетов](../Tests/Integration/Packages/README.md) — реальные компоненты и отдельные заглушки способов доставки.
 
 ## Архитектура и компоненты
 
@@ -26,5 +29,7 @@
 ## Совместимость и инструменты
 
 - [Экспорт и ABI](Abi.md) — публичные символы, версии и совместимость.
+- [Поддерживаемый бинарный выпуск](BinaryReleasePolicy.md) — матрица Windows, проверка параметров выпуска и экспериментальные сборки.
 - [Инструменты](Tools.md) — PowerShell-модули и SolutionInjector.
+- [AutoPrMerge](AutoPrMerge.md) — публикация ветки, создание и слияние PR, пересоздание рабочей ветки.
 - [Проверки и ограничения](Validation.md) — проверка сборки и действующие ограничения.

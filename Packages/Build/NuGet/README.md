@@ -29,6 +29,32 @@ Consumer явно задаёт корневые компоненты в Universa
 
 Ссылки финального линкера, import-макросы, публичные include-пути, системные библиотеки и транзитивные DLL вычисляются Resolve-UdkLinkageGraph, используемым Connect. Пересекающиеся графы корней проверяются на конфликт вариантов. Например, Diagnostic требует private/static Helpers: отдельный корень Helpers.Dynamic конфликтует с ним, а Diagnostic.Dynamic без корня Helpers не линкует Helpers.Static в приложение.
 
-Метаданные установленного выпуска включаются в binaries/<runtime>/<configuration>/Release.json. Принудительно подключённый Abi.h проверяет фактический CRT, конфигурацию, iterator debug level и точную версию компилятора; targets проверяет VCToolsVersion/toolset и версии зависимостей. PackageReference и другие платформы пока не проверены.
+Метаданные установленного выпуска включаются в binaries/<runtime>/<configuration>/Release.json. Принудительно подключённый Abi.h проверяет фактический CRT, конфигурацию, iterator debug level и точную версию компилятора; targets проверяет VCToolsVersion/toolset и версии зависимостей. Другие платформы пока не проверены.
+
+## Native PackageReference
+
+Для native vcxproj с поддерживающим MSBuild включите экспериментальную возможность EnableNativePackageReferenceSupport. Проверено на Visual Studio 2026/MSBuild 18.11; на старых версиях используйте packages.config. Статус и ограничения возможности описаны в [документации команды Microsoft C++](https://devblogs.microsoft.com/cppblog/nuget-packagereference-for-c-projects-in-visual-studio/).
+
+В Globals до импорта Microsoft.Cpp.Default.props задайте:
+
+```xml
+<PropertyGroup Label="Globals">
+  <EnableNativePackageReferenceSupport>true</EnableNativePackageReferenceSupport>
+  <UniversalDevKitComponents>Diagnostic</UniversalDevKitComponents>
+  <UniversalDevKitRuntime>Dynamic</UniversalDevKitRuntime>
+  <UniversalDevKitDiagnosticLinkage>Dynamic</UniversalDevKitDiagnosticLinkage>
+</PropertyGroup>
+<ItemGroup>
+  <PackageReference Include="UniversalDevKit.Diagnostic" Version="[0.1.0]" />
+</ItemGroup>
+```
+
+Замените версию на нужный выпуск. Восстановление: MSBuild Consumer.vcxproj /t:Restore /p:Configuration=Debug /p:Platform=x64. После него сборка выполняется обычным MSBuild. NuGet.Config определяет feed; ручные imports пакетов и packages.config не нужны. RuntimeLibrary самого consumer должен соответствовать выбранному UniversalDevKitRuntime, как и при старом способе подключения.
+
+Упаковщик создаёт buildTransitive/native/<package ID>.props/.targets, импортирующие штатную интеграцию из build/native. Поэтому восстановленные зависимости автоматически объявляют свои корни и версии до вычисления графа, но не становятся корнями UniversalDevKitComponents и не передают private include-пути/import-макросы. Линковка, ABI-проверки и копирование runtime используют ту же реализацию, что и packages.config.
+
+Проверка реальных Helpers/Diagnostic: Tests/Scripts/RunNuGetPackageReferenceTests.cmd либо NuGet.PackageReference.Tests.ps1. Каждый consumer восстанавливается в собственный кеш из локального feed; проверяются project.assets.json, точные версии зависимостей, Static/Dynamic, MD/MT, Debug/Release, приватные требования, DLL и чистый запуск. Ошибочный CRT и неподдерживаемый вариант должны отклоняться. Параметр -Feed позволяет проверить уже собранные пакеты.
+
+Полная матрица Diamond с двумя consumer и конфликтами: Tests/Integration/Cmake/Diamond.Tests.ps1 -Delivery NuGet -PackageReference. Все шесть графов используют один корневой PackageReference на приложение; транзитивные зависимости и DLL приходят из пакетов автоматически. Общий runner содержит NativePackageReference и DiamondPackageReference.
 
 NuGet pack может выдавать NU5128 для группы native без managed lib/ref: native-библиотеки намеренно подключаются через targets.

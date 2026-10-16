@@ -1,0 +1,4 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <application android:label="UDK package test" android:allowBackup="false"/>
+  <instrumentation android:name="org.universaldevkit.packageconsumer.PackageInstrumentation" android:targetPackage="org.universaldevkit.packageconsumer"/>
+</manifest>

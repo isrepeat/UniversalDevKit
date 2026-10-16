@@ -1,4 +1,7 @@
 @echo off
+chcp 65001 >nul
+set "DOTNET_CLI_UI_LANGUAGE=en-US"
+set "VSLANG=1033"
 setlocal
 where pwsh.exe >nul 2>nul
 if errorlevel 1 (
@@ -13,5 +16,6 @@ if "%scriptExitCode%"=="0" (
 ) else (
     echo Failed with exit code %scriptExitCode%.
 )
-pause
+echo Press any key to continue...
+pause >nul
 exit /b %scriptExitCode%

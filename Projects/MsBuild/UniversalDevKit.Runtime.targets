@@ -77,19 +77,23 @@
   <!-- Получаем фактические TargetPath всех транзитивных DLL после успешной сборки. -->
   <Target Name="__UniversalDevKitCopyDynamicLibraries"
           AfterTargets="Build"
-          Condition="'$(DesignTimeBuild)' != 'true' and '@(__UniversalDevKitRuntimeProject)' != ''">
+          Condition="'$(DesignTimeBuild)' != 'true' and ('@(__UniversalDevKitRuntimeProject)' != '' or Exists('$(OutDir).UniversalDevKitRuntime'))">
     <ItemGroup>
       <__UniversalDevKitRuntimeFile Remove="@(__UniversalDevKitRuntimeFile)" />
     </ItemGroup>
     <MSBuild Projects="@(__UniversalDevKitRuntimeProject)"
+             Condition="'@(__UniversalDevKitRuntimeProject)' != ''"
              Targets="GetTargetPath"
              Properties="$(__UniversalDevKitRuntimeBuildProperties)"
              BuildInParallel="true">
       <Output TaskParameter="TargetOutputs"
               ItemName="__UniversalDevKitRuntimeFile" />
     </MSBuild>
-    <Copy SourceFiles="@(__UniversalDevKitRuntimeFile)"
-          DestinationFolder="$(OutDir)"
-          SkipUnchangedFiles="true" />
+    <PropertyGroup>
+      <__UniversalDevKitRuntimeSources>$(IntDir)UniversalDevKit.RuntimeSources.txt</__UniversalDevKitRuntimeSources>
+    </PropertyGroup>
+    <MakeDir Directories="$(IntDir)" />
+    <WriteLinesToFile File="$(__UniversalDevKitRuntimeSources)" Lines="@(__UniversalDevKitRuntimeFile)" Overwrite="true" Encoding="UTF-8" />
+    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)..\..\Scripts\PowerShell\SyncRuntimeLibraries.ps1&quot; -OutputDirectory &quot;$(OutDir).&quot; -Owner &quot;$(MSBuildProjectFullPath)|$(Configuration)|$(Platform)&quot; -SourceList &quot;$(__UniversalDevKitRuntimeSources)&quot;" />
   </Target>
 </Project>

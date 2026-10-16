@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <PackageId>UniversalDevKit.TestPackages.ManagedLibrary</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>UniversalDevKit</Authors>
+    <Description>Managed package delivery fixture.</Description>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+  </PropertyGroup>
+  <ItemGroup><None Include="LICENSE.txt" Pack="true" PackagePath="" /></ItemGroup>
+</Project>

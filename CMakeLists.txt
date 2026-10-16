@@ -30,14 +30,8 @@ endif()
 # Один build-каталог закреплён за компилятором, архитектурой и CRT.
 set(udkBuildIdentity "${CMAKE_SYSTEM_NAME}|${CMAKE_SYSTEM_PROCESSOR}|${CMAKE_SIZEOF_VOID_P}|${CMAKE_CXX_COMPILER}|${CMAKE_CXX_COMPILER_VERSION}|${CMAKE_VS_PLATFORM_TOOLSET}|${UniversalDevKitRuntime}")
 set(udkBuildIdentityPath "${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKitBuildIdentity.txt")
-if(EXISTS "${udkBuildIdentityPath}")
-    file(READ "${udkBuildIdentityPath}" previousUdkBuildIdentity)
-    # configure_file может завершать результат переводом строки; он не часть идентификатора.
-    string(REGEX REPLACE "[\r\n]+$" "" previousUdkBuildIdentity "${previousUdkBuildIdentity}")
-    if(NOT previousUdkBuildIdentity STREQUAL udkBuildIdentity)
-        message(FATAL_ERROR "UniversalDevKit compiler/architecture/runtime changed: use a separate build directory")
-    endif()
-endif()
+include("Projects/Cmake/BuildIdentity.cmake")
+udkValidateBuildIdentity("${udkBuildIdentityPath}" "${udkBuildIdentity}")
 configure_file("Projects/Cmake/BuildIdentity.txt.in" "${udkBuildIdentityPath}" @ONLY)
 
 set(UniversalDevKit_COMPONENTS "ALL" CACHE STRING "Components to build; ALL or a semicolon-separated list")

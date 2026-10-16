@@ -3,6 +3,12 @@ param(
     [switch]$Check
 )
 
+$env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
+$env:VSLANG = '1033'
+[Console]::InputEncoding = [Text.UTF8Encoding]::new($false)
+[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
+$OutputEncoding = [Text.UTF8Encoding]::new($false)
+
 $ErrorActionPreference = 'Stop'
 $repositoryPath = [IO.Path]::GetFullPath($RepositoryRoot)
 $prefix = $repositoryPath.TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar

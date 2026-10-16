@@ -5,6 +5,27 @@ function Invoke-UdkConnectionPlan {
         [scriptblock]$WriteStatus = { param($Text, $Role) Write-Information $Text -InformationAction Continue },
         [scriptblock]$ResolveTool = { param($RepositoryPath, $LocalPath) & (Join-Path $RepositoryPath 'Scripts/PowerShell/GetSolutionInjector.ps1') -LocalPath $LocalPath }
     )
+    if ($Preview) {
+        return Invoke-UdkConnectionPlanCore -Plan $Plan -Preview -WriteStatus $WriteStatus -ResolveTool $ResolveTool
+    }
+    # Проверяем формат consumer до сохранения снимков и изменения solution.
+    $projectFile = (Resolve-Path -LiteralPath $Plan.Request.ProjectPath -ErrorAction Stop).Path
+    if ([IO.Path]::GetExtension($projectFile) -ne '.vcxproj') { throw 'Expected .vcxproj file.' }
+    $document = [Xml.XmlDocument]::new()
+    $document.LoadXml([IO.File]::ReadAllText($projectFile))
+    if ($document.DocumentElement.LocalName -ne 'Project' -or $document.DocumentElement.NamespaceURI -ne 'http://schemas.microsoft.com/developer/msbuild/2003') { throw 'Unsupported project XML format.' }
+    Invoke-UdkConnectionTransaction -ProjectPath $projectFile -SolutionPath $Plan.Request.SolutionPath -Action {
+        Invoke-UdkConnectionPlanCore -Plan $Plan -WriteStatus $WriteStatus -ResolveTool $ResolveTool
+    }
+}
+
+function Invoke-UdkConnectionPlanCore {
+    param(
+        $Plan,
+        [switch]$Preview,
+        [scriptblock]$WriteStatus = { param($Text, $Role) Write-Information $Text -InformationAction Continue },
+        [scriptblock]$ResolveTool = { param($RepositoryPath, $LocalPath) & (Join-Path $RepositoryPath 'Scripts/PowerShell/GetSolutionInjector.ps1') -LocalPath $LocalPath }
+    )
 
     $ErrorActionPreference = 'Stop'
     $Request = $Plan.Request
@@ -86,7 +107,9 @@ function Invoke-UdkConnectionPlan {
             }
         }
     }
-    $owned = @($root.SelectNodes('*[@Label="UniversalDevKit"]'))
+    $cleanupImport = $root.SelectSingleNode('*[local-name()="Import" and contains(@Project, "UniversalDevKit.Runtime.targets")]')
+    $cleanupPath = if ($cleanupImport) { $cleanupImport.GetAttribute('Project') } else { $null }
+    $owned = @($root.SelectNodes('*[@Label="UniversalDevKit" or @Label="UniversalDevKitRuntimeCleanup"]'))
     $owned += @($root.SelectNodes('*[local-name()="ImportGroup" and @Label="Shared" and @Condition="' + $sharedReferencesCondition + '"]'))
     # Remove integration blocks only; preserve adjacent project settings.
     foreach ($node in $owned) {
@@ -95,6 +118,15 @@ function Invoke-UdkConnectionPlan {
         if ($previous -and $previous.NodeType -eq [Xml.XmlNodeType]::Whitespace) {
             [void]$root.RemoveChild($previous)
         }
+    }
+    if ($Disconnect -and $cleanupPath) {
+        # После Disconnect оставляем только очистку: без ссылок, макросов и исходников.
+        $cleanup = $document.CreateElement('Import', $namespace)
+        $cleanup.SetAttribute('Label', 'UniversalDevKitRuntimeCleanup')
+        $cleanup.SetAttribute('Project', $cleanupPath)
+        $cleanup.SetAttribute('Condition', "Exists('$cleanupPath')")
+        [void]$root.AppendChild($document.CreateWhitespace($newline + '  '))
+        [void]$root.AppendChild($cleanup)
     }
     if (-not $Disconnect) {
         $relativePath = GetRelativePath $projectDirectory $integrationPath

@@ -7,6 +7,9 @@ param(
     [switch]$ReplaceRemoteHead
 )
 
+$env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
+$env:VSLANG = '1033'
+
 $utf8Encoding = [System.Text.UTF8Encoding]::new($false)
 [Console]::InputEncoding = $utf8Encoding
 [Console]::OutputEncoding = $utf8Encoding

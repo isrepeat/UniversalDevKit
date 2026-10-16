@@ -1,5 +1,18 @@
 # Connect: компоненты, варианты и зависимости
 
+## Восстановление при ошибке
+
+До изменения consumer и solution Connect сохраняет байтовые снимки в `<consumer.vcxproj>.UniversalDevKit.transaction`. При ошибке подключения или очистки solution оба файла восстанавливаются с исходной кодировкой и окончаниями строк. После успеха или завершённого отката снимки удаляются. Preview снимков не создаёт.
+
+При неудачном откате снимки остаются на диске, сообщение перечисляет проблемные файлы. После аварийного завершения процесса повторный запуск обнаруживает незавершённую операцию и отказывается перезаписывать снимок. Закройте процессы, блокирующие файлы, и восстановите их с теми же путями:
+
+```powershell
+Import-Module ./Scripts/PowerShell/Modules/Module.Udk.Connection/Module.Udk.Connection.psm1
+Restore-UdkConnectionTransaction -ProjectPath C:/Consumer/App.vcxproj -SolutionPath C:/Consumer/App.sln
+```
+
+Для ProjectOnly SolutionPath не передаётся. До восстановления проверяются пути и SHA-256 снимков. Каталог без manifest.json означает прерывание подготовки снимков до изменения consumer; его следует проверить вручную. Backup-файлы SolutionInjector и кеш инструмента не откатываются.
+
 **Навигация:** [Главная](../README.md) → [Документация](README.md) → Connect
 
 ## Содержание

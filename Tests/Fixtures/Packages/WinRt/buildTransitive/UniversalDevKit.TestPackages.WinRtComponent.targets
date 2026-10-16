@@ -1,0 +1,9 @@
+<Project>
+  <ItemGroup>
+    <CsWinRTInputs Include="$(MSBuildThisFileDirectory)../winmd/UniversalDevKit.TestPackages.winmd" />
+    <Content Include="$(MSBuildThisFileDirectory)../runtimes/win-x64/native/UdkWinRtProbe.dll">
+      <Link>UdkWinRtProbe.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

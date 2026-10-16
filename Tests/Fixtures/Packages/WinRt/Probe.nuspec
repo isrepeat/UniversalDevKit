@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>UniversalDevKit.TestPackages.WinRtComponent</id><version>1.0.0</version>
+    <authors>UniversalDevKit</authors><description>WinRT ABI and Windows host tool fixture.</description>
+    <license type="file">LICENSE.txt</license>
+  </metadata>
+  <files>
+    <file src="payload\**\*" target="" />
+    <file src="buildTransitive\*.targets" target="buildTransitive" />
+    <file src="LICENSE.txt" target="" />
+  </files>
+</package>
