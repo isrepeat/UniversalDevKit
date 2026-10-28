@@ -60,9 +60,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Config.h">
       <__UniversalDevKitFilter>StdExt</__UniversalDevKitFilter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Extensions\detail\LegacySupport.h">
-      <__UniversalDevKitFilter>StdExt\Extensions\detail</__UniversalDevKitFilter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Extensions\fstreamEx.h">
       <__UniversalDevKitFilter>StdExt\Extensions</__UniversalDevKitFilter>
     </ClInclude>
@@ -92,6 +89,18 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\FormatSpecializations.h">
       <__UniversalDevKitFilter>StdExt</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Regex\Regex.h">
+      <__UniversalDevKitFilter>Regex</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Stream\StreamHelpers.h">
+      <__UniversalDevKitFilter>Stream</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Stream\StreamLineReader.h">
+      <__UniversalDevKitFilter>Stream</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Stream\StreamLineViewer.h">
+      <__UniversalDevKitFilter>Stream</__UniversalDevKitFilter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

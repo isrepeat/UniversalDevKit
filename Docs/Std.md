@@ -4,7 +4,7 @@
 
 Публичные include начинаются с UniversalDevKit/Helpers/StdExt/. Каждый заголовок расширения подключает Config.h, который автоматически предоставляет alias stdEx. Отдельный заголовок алиасов не требуется. STD_EXT_NS удалён: namespace фиксирован. SafeObject и SAFE_RESULT сохранены; SafeConditionResult находится в том же namespace extensions. Для ENABLE_NULLPTR_LOGGING потребитель предоставляет LOG_DEBUG_D.
 
-Для fstreamEx перенесены только необходимые Stream/Regex-функции в Extensions/detail/LegacySupport.h. Это внутренняя поддержка первоначального переноса, а не отдельный публичный компонент. Подключения common.h и Meta адаптированы к UDK, добавлены недостающие прямые include, комментарии переведены на английский.
+fstreamEx использует общие Helpers/Stream/StreamHelpers.h и Helpers/Regex/Regex.h через относительные include. Временный LegacySupport.h удалён. Подключения common.h и Meta адаптированы к UDK, добавлены недостающие прямые include, комментарии переведены на английский.
 
 ## Отложенные исправления
 

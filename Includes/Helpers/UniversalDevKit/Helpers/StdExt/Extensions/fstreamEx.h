@@ -1,7 +1,7 @@
 #pragma once
+#include "../../Stream/StreamHelpers.h"
+#include "../../Regex/Regex.h"
 #include "../Config.h"
-
-#include "detail/LegacySupport.h"
 
 #include <unordered_map>
 #include <algorithm>
@@ -37,8 +37,8 @@ namespace universaldevkit::helpers::stdext::extensions {
         };
 
         Data ReadData() {
-            universaldevkit::helpers::stdext::extensions::detail::stream::ThrowIfStreamNotOpened(*this, "ReadData");
-            universaldevkit::helpers::stdext::extensions::detail::stream::ThrowIfStreamFailed(*this, "ReadData");
+            universaldevkit::helpers::stream::ThrowIfStreamNotOpened(*this, "ReadData");
+            universaldevkit::helpers::stream::ThrowIfStreamFailed(*this, "ReadData");
 
             auto& ifstreamRef = static_cast<std::ifstream&>(*this);
 
@@ -65,7 +65,7 @@ namespace universaldevkit::helpers::stdext::extensions {
 
             std::vector<uint8_t> buffer(maxLength);
             this->read(reinterpret_cast<char*>(buffer.data()), static_cast<std::streamsize>(maxLength));
-            universaldevkit::helpers::stdext::extensions::detail::stream::ThrowIfStreamFailed(*this, "DetectUTFByteOrderMark");
+            universaldevkit::helpers::stream::ThrowIfStreamFailed(*this, "DetectUTFByteOrderMark");
 
             auto readBytes = this->gcount();
 
@@ -99,7 +99,7 @@ namespace universaldevkit::helpers::stdext::extensions {
 
             const auto& bom = KnownUTFByteOrderMarks.at(*bomType);
             this->seekg(static_cast<std::streamoff>(bom.size()), std::ios::beg); // Skip the UTF BOM.
-            universaldevkit::helpers::stdext::extensions::detail::stream::ThrowIfStreamFailed(*this, "SkipUTFByteOrderMark");
+            universaldevkit::helpers::stream::ThrowIfStreamFailed(*this, "SkipUTFByteOrderMark");
         }
 
         std::optional<int> DetectCodePageInFirstLineOfStream() {
@@ -108,7 +108,7 @@ namespace universaldevkit::helpers::stdext::extensions {
 
             std::string firstLine;
             if (std::getline(*this, firstLine)) {
-                auto matches = universaldevkit::helpers::stdext::extensions::detail::regex::GetRegexMatches<char, std::string>(
+                auto matches = universaldevkit::helpers::regex::GetRegexMatches<char, std::string>(
                     firstLine, std::regex("CodePage\\s*=\\s*(\\d+)")
                 );
                 if (!matches.empty()) {
@@ -130,7 +130,7 @@ namespace universaldevkit::helpers::stdext::extensions {
         void WriteUTFByteOrderMark(UTFByteOrderMark bomType = UTFByteOrderMark::UTF8) {
             const auto& bom = ifstream::KnownUTFByteOrderMarks.at(bomType);
             this->write(reinterpret_cast<const char*>(bom.data()), static_cast<std::streamsize>(bom.size()));
-            universaldevkit::helpers::stdext::extensions::detail::stream::ThrowIfStreamFailed(*this, "WriteUTF8ByteOrderMark");
+            universaldevkit::helpers::stream::ThrowIfStreamFailed(*this, "WriteUTF8ByteOrderMark");
         }
     };
 }

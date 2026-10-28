@@ -19,7 +19,7 @@
 
 ## Архитектура и компоненты
 
-- [Helpers](Helpers.md) — единый header-only компонент с разделами Meta, Math, Patterns и StdExt, отличие от HeleprsTest.
+- [Helpers](Helpers.md) — единый header-only компонент с разделами Meta, Math, Patterns, StdExt, Stream и Regex, отличие от HeleprsTest.
 - [Std](Std.md) — расширения StdExt, автоматический alias stdEx и отложенные исправления.
 
 - [Архитектура](Architecture.md) — организация кода и пути сборки.

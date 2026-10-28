@@ -19,7 +19,6 @@
     "Includes/Helpers/UniversalDevKit/Helpers/Meta/Utilities/ValueExtractor.h",
     "Includes/Helpers/UniversalDevKit/Helpers/Patterns/Singleton.h",
     "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Config.h",
-    "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Extensions/detail/LegacySupport.h",
     "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Extensions/fstreamEx.h",
     "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Extensions/memoryEx.h",
     "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Extensions/optional_ref.h",
@@ -29,7 +28,11 @@
     "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Extensions/rangesEx/ranges_drop_last.h",
     "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Extensions/rangesEx/ranges_flatten_tree.h",
     "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Extensions/rangesEx/ranges_to.h",
-    "Includes/Helpers/UniversalDevKit/Helpers/StdExt/FormatSpecializations.h"
+    "Includes/Helpers/UniversalDevKit/Helpers/StdExt/FormatSpecializations.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Regex/Regex.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Stream/StreamHelpers.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Stream/StreamLineReader.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Stream/StreamLineViewer.h"
   ],
   "sources": [],
   "filters": {

@@ -15,7 +15,6 @@
 #include <UniversalDevKit/Helpers/Meta/Utilities/ValueExtractor.h>
 #include <UniversalDevKit/Helpers/Patterns/Singleton.h>
 #include <UniversalDevKit/Helpers/StdExt/Config.h>
-#include <UniversalDevKit/Helpers/StdExt/Extensions/detail/LegacySupport.h>
 #include <UniversalDevKit/Helpers/StdExt/Extensions/fstreamEx.h>
 #include <UniversalDevKit/Helpers/StdExt/Extensions/memoryEx.h>
 #include <UniversalDevKit/Helpers/StdExt/Extensions/optional_ref.h>
@@ -26,5 +25,9 @@
 #include <UniversalDevKit/Helpers/StdExt/Extensions/rangesEx/ranges_flatten_tree.h>
 #include <UniversalDevKit/Helpers/StdExt/Extensions/rangesEx/ranges_to.h>
 #include <UniversalDevKit/Helpers/StdExt/FormatSpecializations.h>
+#include <UniversalDevKit/Helpers/Regex/Regex.h>
+#include <UniversalDevKit/Helpers/Stream/StreamHelpers.h>
+#include <UniversalDevKit/Helpers/Stream/StreamLineReader.h>
+#include <UniversalDevKit/Helpers/Stream/StreamLineViewer.h>
 
 int main() { return 0; }

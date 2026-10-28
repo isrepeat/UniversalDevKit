@@ -6,10 +6,11 @@
     <Filter Include="Meta" />
     <Filter Include="Meta\Utilities" />
     <Filter Include="Patterns" />
+    <Filter Include="Regex" />
     <Filter Include="StdExt" />
     <Filter Include="StdExt\Extensions" />
-    <Filter Include="StdExt\Extensions\detail" />
     <Filter Include="StdExt\Extensions\rangesEx" />
+    <Filter Include="Stream" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Differentiation.h">
@@ -57,11 +58,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Patterns\Singleton.h">
       <Filter>Patterns</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Regex\Regex.h">
+      <Filter>Regex</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Config.h">
       <Filter>StdExt</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Extensions\detail\LegacySupport.h">
-      <Filter>StdExt\Extensions\detail</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Extensions\fstreamEx.h">
       <Filter>StdExt\Extensions</Filter>
@@ -92,6 +93,15 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\FormatSpecializations.h">
       <Filter>StdExt</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Stream\StreamHelpers.h">
+      <Filter>Stream</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Stream\StreamLineReader.h">
+      <Filter>Stream</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Stream\StreamLineViewer.h">
+      <Filter>Stream</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
