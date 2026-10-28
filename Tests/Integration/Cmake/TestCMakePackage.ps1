@@ -55,6 +55,18 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Installed Meta package consumer failed.'
 }
 
+# Проверяем исправления Math через независимого потребителя установленного пакета.
+$mathConsumer = Join-Path $run 'math-consumer'
+InvokeCMake @('-S', (Join-Path $repository 'Tests/Fixtures/Consumers/MathPackage'), '-B', $mathConsumer, '-G', $Generator, '-A', 'x64', "-DCMAKE_PREFIX_PATH=$relocated")
+foreach ($configuration in @('Debug', 'Release')) {
+    InvokeCMake @('--build', $mathConsumer, '--config', $configuration)
+    & $ctest --test-dir $mathConsumer -C $configuration --output-on-failure
+    if ($LASTEXITCODE -ne 0) { throw "Installed Math package consumer failed: $configuration" }
+}
+if (Test-Path (Join-Path $relocated 'include/UniversalDevKit/Math/Differentation.h')) {
+    throw 'Installed Math package contains the obsolete Differentation.h header.'
+}
+
 # Reject unknown required components during configuration.
 & $CMake -S (Join-Path $repository 'Tests/Fixtures/Consumers/CmakePackage') -B (Join-Path $run 'invalid') -G $Generator -A x64 "-DCMAKE_PREFIX_PATH=$relocated" -DUDK_TEST_COMPONENT=Unknown
 if ($LASTEXITCODE -eq 0) {

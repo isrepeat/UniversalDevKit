@@ -79,7 +79,10 @@ try {
                 $archive = [IO.Compression.ZipFile]::OpenRead($aarPath)
                 try {
                     if (@($archive.Entries | Where-Object { $_.FullName -match '/libs/|\.(a|so)$' }).Count) { throw 'Header-only AAR contains binaries.' }
-                    if (-not @($archive.Entries | Where-Object { $_.FullName -match '/include/UniversalDevKit/Meta/Concepts.h$' }).Count) { throw 'Header-only AAR is missing public headers.' }
+                    foreach ($header in $registry.headers) {
+                        $publicPath = '/include/' + ($header -replace ('^Includes/' + $component + '/'), '')
+                        if (-not @($archive.Entries | Where-Object { $_.FullName.EndsWith($publicPath) }).Count) { throw "Header-only AAR is missing public header: $header" }
+                    }
                 } finally { $archive.Dispose() }
             }
             $consumer = Join-Path $run $name

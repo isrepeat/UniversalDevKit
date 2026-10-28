@@ -25,6 +25,7 @@ namespace universaldevkit {
 		} // namespace details
 
 
+		// Хранит значение и явно накапливаемый градиент; производные автоматически не вычисляет.
 		template <typename T>
 		struct DifferentialVar;
 
@@ -106,7 +107,7 @@ namespace universaldevkit {
 		// ░ Tests
 		// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 		//
-		namespace DifferentationTests {
+		namespace DifferentiationTests {
 			consteval void TestMeta() {
 			}
 
@@ -114,7 +115,7 @@ namespace universaldevkit {
 				TestMeta();
 			}
 
-			constexpr int __differentation_tests_anchor = (TestAll(), 0);
+			constexpr int __differentiation_tests_anchor = (TestAll(), 0);
 		}
 #endif // HELPERS_ENABLE_COMPILETIME_TESTS
 	}

@@ -1,15 +1,20 @@
-# Math: первоначальный перенос
+# Math
 
-Header-only компонент C++20 перенесён из UtilityHelpersLib/Helpers/Helpers.Shared/Helpers/Math без исправления алгоритмов и поведения. Публичные include начинаются с UniversalDevKit/Math/, основной namespace — universaldevkit::math. Math публично зависит от Meta, предоставляющего __requires_expr.
+Header-only компонент C++20 из UtilityHelpersLib/Helpers/Helpers.Shared/Helpers/Math. Публичные include начинаются с UniversalDevKit/Math/, основной namespace — universaldevkit::math. Math публично зависит от Meta, предоставляющего __requires_expr.
 
-Сохранены исходные файлы Differentation.h, Function1D.h, Rect.h, Size.h и Tensor.h, включая старое написание Differentation, числовые типы алиасов и встроенные compile-time тесты. Сохранены вспомогательные details и исходные комментарии-разделители. Исправления и упорядочение внутренней архитектуры относятся к следующему отдельному изменению.
+Первоначальный перенос без исправления алгоритмов сохранён отдельным коммитом 9fd59e2. Текущие исправления:
 
-Адаптация переноса ограничена удалением Helpers/common.h, заменой Meta include, HELPERS_NS/H::Math на namespace UDK и снятием платформенного _HAS_CXX20 wrapper: минимальный стандарт UDK уже C++20, а _HAS_CXX20 является внутренним макросом MSVC STL. Алиасы Rect/Size размещены в namespace компонента math. Исходная UtilityHelpersLib не меняется.
+- Differentation.h переименован в Differentiation.h без совместимой обёртки.
+- Многомерная индексация Tensor возвращает T& для изменяемого объекта и const T& для const-объекта. Присваивание и составные операции через tensor[i][j] изменяют хранилище.
+- Vec2f/Vec3f/Vec4f и Mat1x1f/Mat2x2f/Mat3x3f/Mat4x4f используют float. Для double добавлены соответствующие алиасы с суффиксом d. Это изменение типа и размера объектов: существующий код, которому нужен double, должен перейти на d-алиасы или Tensor<double, ...>.
+- В Rect/Size параметр шаблона оператора преобразования переименован в TTarget, устраняя ошибку Clang. Преобразование доступно и для const-объектов.
 
-CMake предоставляет UniversalDevKit::Math.Headers; NuGet — UniversalDevKit.Math с linkage Shared; Android — universaldevkit-math-shared-release и udk_math_shared::Math. Реестр и проекты Shared/HeaderCheck создаются штатным генератором. Helpers/Math.h не изменён.
+Function1D — нешаблонный header-only класс с std::function, std::any и таблицами явно заданных производных/первообразных. Пользователь сам передаёт эти функции; класс не выводит их автоматически. Нешаблонный класс может оставаться header-only, поскольку его методы определены внутри класса и являются inline.
 
-Tests/Fixtures/Consumers/MathPackage — независимый smoke consumer установленного CMake-пакета. Проверки исходного поведения не являются подтверждением исправления известных недостатков.
+DifferentialVar хранит value и grad. AccumulateGrad прибавляет явно переданный градиент, ResetGrad обнуляет только градиент, Reset обнуляет оба поля. Это контейнер данных, а не граф вычислений или механизм автоматического дифференцирования. Скалярная специализация по-прежнему принимает арифметические типы, тензорная — Tensor; контракт типов в этом исправлении не сужается.
 
-Первичная проверка: MSVC HeaderCheck и установленный CMake consumer прошли. Android Clang отклоняет Rect.h и Size.h из-за повторного имени T у шаблона класса и шаблона оператора преобразования. Эта исходная ошибка намеренно сохранена для следующего коммита; наличие Android delivery ещё не подтверждает пригодность всех заголовков Math для Android.
+CMake: UniversalDevKit::Math.Headers. NuGet: UniversalDevKit.Math с linkage Shared. Android: universaldevkit-math-shared-release и udk_math_shared::Math. Реестр и проекты Shared/HeaderCheck создаются штатным генератором. Helpers/Math.h не изменён.
 
-Следующим отдельным изменением нужно рассмотреть: возврат ссылок при многомерной индексации Tensor, Vec/Mat-алиасы с суффиксом f и типом double, написание Differentiation, контракт rank-0 и границ Tensor, а также требования к скалярным типам DifferentialVar. Исходный DifferentialVar хранит и накапливает градиент; автоматический вывод производных не реализован.
+Tests/Fixtures/Consumers/MathPackage проверяет ссылочные типы и изменение данных Tensor в constexpr/runtime, типы алиасов, преобразования const Rect/Size, накопление/сброс градиента и вызов явно заданных функций. AndroidPrefab.Tests.ps1 -Components Math -SkipDevice собирает отдельный JNI/APK consumer из AAR; без устройства это не подтверждает runtime.
+
+Контракт rank-0 и проверка границ Tensor остаются отдельными задачами. Исходные вспомогательные details и встроенные compile-time тесты пока сохранены.

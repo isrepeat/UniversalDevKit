@@ -22,6 +22,7 @@ namespace universaldevkit {
 		// ░ Function1D
 		// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 		//
+		// Нешаблонный header-only контейнер callable-объектов с явно заданными производными и первообразными.
 		class Function1D {
 		public:
 			using MetaData_t = std::any;

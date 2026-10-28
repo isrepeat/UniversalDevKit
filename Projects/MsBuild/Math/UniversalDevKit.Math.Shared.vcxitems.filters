@@ -4,7 +4,7 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Math\UniversalDevKit\Math\Differentation.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Math\UniversalDevKit\Math\Differentiation.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Math\UniversalDevKit\Math\Function1D.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Math\UniversalDevKit\Math\Rect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Math\UniversalDevKit\Math\Size.h" />

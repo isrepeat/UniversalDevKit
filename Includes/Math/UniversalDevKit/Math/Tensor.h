@@ -117,14 +117,14 @@ namespace universaldevkit {
 				}
 
 				// Ещё не на последнем уровне → вернуть следующий прокси
-				constexpr auto operator[](std::size_t i) const {
+				constexpr decltype(auto) operator[](std::size_t i) const {
 					// шаг по текущему измерению (row-major)
 					const std::size_t stride = Tensor::kStrides[Level];
 					const std::size_t next = this->offsetFlat + i * stride;
 
 					if constexpr (Level + 1 == Tensor::kRank) {
 						// последний уровень → вернуть ссылку на элемент
-						return const_cast<elem_t&>(this->basePtr[next]);
+						return (this->basePtr[next]);
 					}
 					else {
 						// промежуточный уровень
@@ -198,17 +198,26 @@ namespace universaldevkit {
 		template <typename T, std::size_t N>
 		using Vec = Tensor<T, N>;
 
-		using Vec2f = Tensor<double, 2>;
-		using Vec3f = Tensor<double, 3>;
-		using Vec4f = Tensor<double, 4>;
+		using Vec2f = Tensor<float, 2>;
+		using Vec3f = Tensor<float, 3>;
+		using Vec4f = Tensor<float, 4>;
+
+		using Vec2d = Tensor<double, 2>;
+		using Vec3d = Tensor<double, 3>;
+		using Vec4d = Tensor<double, 4>;
 
 		template <typename T, std::size_t R, std::size_t C>
 		using Mat = Tensor<T, R, C>;
 
-		using Mat1x1f = Tensor<double, 1, 1>;
-		using Mat2x2f = Tensor<double, 2, 2>;
-		using Mat3x3f = Tensor<double, 3, 3>;
-		using Mat4x4f = Tensor<double, 4, 4>;
+		using Mat1x1f = Tensor<float, 1, 1>;
+		using Mat2x2f = Tensor<float, 2, 2>;
+		using Mat3x3f = Tensor<float, 3, 3>;
+		using Mat4x4f = Tensor<float, 4, 4>;
+
+		using Mat1x1d = Tensor<double, 1, 1>;
+		using Mat2x2d = Tensor<double, 2, 2>;
+		using Mat3x3d = Tensor<double, 3, 3>;
+		using Mat4x4d = Tensor<double, 4, 4>;
 
 
 		//

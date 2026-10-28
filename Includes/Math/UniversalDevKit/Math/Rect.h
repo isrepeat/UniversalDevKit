@@ -23,13 +23,13 @@ namespace universaldevkit::math {
 					, bottom{ bottom } {
 				}
 
-				template <typename T>
-				explicit operator Rect<T>() {
-					return Rect<T>{
-						static_cast<T>(this->left),
-							static_cast<T>(this->top),
-							static_cast<T>(this->right),
-							static_cast<T>(this->bottom)
+				template <typename TTarget>
+				explicit operator Rect<TTarget>() const {
+					return Rect<TTarget>{
+						static_cast<TTarget>(this->left),
+							static_cast<TTarget>(this->top),
+							static_cast<TTarget>(this->right),
+							static_cast<TTarget>(this->bottom)
 					};
 				}
 			};

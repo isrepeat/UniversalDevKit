@@ -12,7 +12,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Math\UniversalDevKit\Math\Differentation.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Math\UniversalDevKit\Math\Differentiation.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Math\UniversalDevKit\Math\Function1D.h">

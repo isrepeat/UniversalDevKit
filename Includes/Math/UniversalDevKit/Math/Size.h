@@ -24,11 +24,11 @@ namespace universaldevkit::math {
 					return !(*this == other);
 				}
 
-				template <typename T>
-				explicit operator Size<T>() {
-					return Size<T>{
-						static_cast<T>(this->width),
-							static_cast<T>(this->height)
+				template <typename TTarget>
+				explicit operator Size<TTarget>() const {
+					return Size<TTarget>{
+						static_cast<TTarget>(this->width),
+							static_cast<TTarget>(this->height)
 					};
 				}
 			};
