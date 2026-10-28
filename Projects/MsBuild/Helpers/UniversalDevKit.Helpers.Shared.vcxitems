@@ -54,6 +54,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Meta\Utilities\ValueExtractor.h">
       <__UniversalDevKitFilter>Meta\Utilities</__UniversalDevKitFilter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Patterns\Singleton.h">
+      <__UniversalDevKitFilter>Patterns</__UniversalDevKitFilter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <__UniversalDevKitCompileRequirement Include="Helpers">

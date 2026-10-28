@@ -13,5 +13,6 @@
 #include <UniversalDevKit/Helpers/Meta/Utilities/PointerGetter.h>
 #include <UniversalDevKit/Helpers/Meta/Utilities/TypeErasedDeleter.h>
 #include <UniversalDevKit/Helpers/Meta/Utilities/ValueExtractor.h>
+#include <UniversalDevKit/Helpers/Patterns/Singleton.h>
 
 int main() { return 0; }

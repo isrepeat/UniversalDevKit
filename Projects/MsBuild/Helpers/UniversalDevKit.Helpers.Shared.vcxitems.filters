@@ -5,6 +5,7 @@
     <Filter Include="Math" />
     <Filter Include="Meta" />
     <Filter Include="Meta\Utilities" />
+    <Filter Include="Patterns" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Differentiation.h">
@@ -48,6 +49,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Meta\Utilities\ValueExtractor.h">
       <Filter>Meta\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Patterns\Singleton.h">
+      <Filter>Patterns</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

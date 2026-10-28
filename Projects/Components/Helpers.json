@@ -16,7 +16,8 @@
     "Includes/Helpers/UniversalDevKit/Helpers/Meta/TypeTraits.h",
     "Includes/Helpers/UniversalDevKit/Helpers/Meta/Utilities/PointerGetter.h",
     "Includes/Helpers/UniversalDevKit/Helpers/Meta/Utilities/TypeErasedDeleter.h",
-    "Includes/Helpers/UniversalDevKit/Helpers/Meta/Utilities/ValueExtractor.h"
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/Utilities/ValueExtractor.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Patterns/Singleton.h"
   ],
   "sources": [],
   "filters": {
