@@ -46,6 +46,15 @@ foreach ($configuration in @('Debug', 'Release')) {
     }
 }
 
+# Header-only Meta должен оставаться доступным после установки без бинарного target.
+$metaConsumer = Join-Path $run 'meta-consumer'
+InvokeCMake @('-S', (Join-Path $repository 'Tests/Fixtures/Consumers/MetaPackage'), '-B', $metaConsumer, '-G', $Generator, '-A', 'x64', "-DCMAKE_PREFIX_PATH=$relocated")
+InvokeCMake @('--build', $metaConsumer, '--config', 'Release')
+& $ctest --test-dir $metaConsumer -C Release --output-on-failure
+if ($LASTEXITCODE -ne 0) {
+    throw 'Installed Meta package consumer failed.'
+}
+
 # Reject unknown required components during configuration.
 & $CMake -S (Join-Path $repository 'Tests/Fixtures/Consumers/CmakePackage') -B (Join-Path $run 'invalid') -G $Generator -A x64 "-DCMAKE_PREFIX_PATH=$relocated" -DUDK_TEST_COMPONENT=Unknown
 if ($LASTEXITCODE -eq 0) {

@@ -13,7 +13,7 @@
   <Import Project="UniversalDevKit.props"
           Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
   <ItemGroup>
-    <__UniversalDevKitAvailableComponent Include="Diagnostic;Helpers" />
+    <__UniversalDevKitAvailableComponent Include="Diagnostic;Helpers;Meta" />
     <__UniversalDevKitComponent Include="$(UniversalDevKitComponents)" />
   </ItemGroup>
   <PropertyGroup>
@@ -21,12 +21,17 @@
     <__HasUniversalDevKitDiagnostic Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;'))">true</__HasUniversalDevKitDiagnostic>
     <__HasUniversalDevKitHelpers>false</__HasUniversalDevKitHelpers>
     <__HasUniversalDevKitHelpers Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;'))">true</__HasUniversalDevKitHelpers>
+    <__HasUniversalDevKitMeta>false</__HasUniversalDevKitMeta>
+    <__HasUniversalDevKitMeta Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Meta;'))">true</__HasUniversalDevKitMeta>
   </PropertyGroup>
   <Import Project="Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems"
           Condition="'$(__HasUniversalDevKitDiagnostic)' == 'true'"
           Label="Shared" />
   <Import Project="Helpers\UniversalDevKit.Helpers.Shared.vcxitems"
           Condition="'$(__HasUniversalDevKitHelpers)' == 'true'"
+          Label="Shared" />
+  <Import Project="Meta\UniversalDevKit.Meta.Shared.vcxitems"
+          Condition="'$(__HasUniversalDevKitMeta)' == 'true'"
           Label="Shared" />
   <Import Project="UniversalDevKit.Runtime.targets" />
   <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;'))">
@@ -43,13 +48,20 @@
   </ItemGroup>
   <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;'))">
   </ItemGroup>
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Meta;'))">
+    <__UniversalDevKitCompileRequirement Include="Meta">
+      <MinimumStandard>17</MinimumStandard>
+    </__UniversalDevKitCompileRequirement>
+  </ItemGroup>
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Meta;'))">
+  </ItemGroup>
   <Import Project="UniversalDevKit.Requirements.targets"
           Condition="'$(__IsUniversalDevKitRequirementsImported)' != 'true'" />
   <Target Name="__UniversalDevKitValidateComponents"
           BeforeTargets="PrepareForBuild">
     <Error Condition="'$(UniversalDevKitComponents)' == ''"
            Text="UniversalDevKitComponents must be specified." />
-    <Error Condition="'%(__UniversalDevKitComponent.Identity)' != 'Diagnostic' and '%(__UniversalDevKitComponent.Identity)' != 'Helpers'"
+    <Error Condition="'%(__UniversalDevKitComponent.Identity)' != 'Diagnostic' and '%(__UniversalDevKitComponent.Identity)' != 'Helpers' and '%(__UniversalDevKitComponent.Identity)' != 'Meta'"
            Text="Unsupported UniversalDevKit component: %(__UniversalDevKitComponent.Identity)" />
   </Target>
 </Project>

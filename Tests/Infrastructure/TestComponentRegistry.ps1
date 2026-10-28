@@ -20,6 +20,19 @@ foreach ($mode in @('Shared', 'Static', 'Dynamic')) {
     }
 }
 $shared = @($updates | Where-Object RelativePath -like '*Example.Shared.vcxitems')
+$solutionText = $solution[0].Content
+foreach ($folder in @('Projects', 'MsBuild', 'Example', 'Service')) {
+    if ($solutionText -notmatch ('Project\("\{2150E333-8FDC-42A3-9474-1A3956D46DE8\}"\) = "' + $folder + '"')) {
+        throw "Missing generated solution folder: $folder"
+    }
+}
+$exampleFolder = [regex]::Match($solutionText, '= "Example", "Example", "(\{[^}]+\})"').Groups[1].Value
+foreach ($mode in @('Shared', 'Static', 'Dynamic')) {
+    $projectGuid = [regex]::Match($solutionText, ('= "UniversalDevKit.Example.' + $mode + '", "[^"]+", "(\{[^}]+\})"')).Groups[1].Value
+    if (-not $projectGuid -or $solutionText -notmatch ([regex]::Escape($projectGuid) + '\s*=\s*' + [regex]::Escape($exampleFolder))) {
+        throw "Incorrect solution nesting: Example.$mode"
+    }
+}
 if ($shared.Count -ne 1 -or -not $shared[0].Content.Contains('UniversalDevKitTargetOS')) {
     throw 'Missing platform selection'
 }

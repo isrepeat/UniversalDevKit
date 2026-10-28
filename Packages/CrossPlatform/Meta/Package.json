@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "name": "Meta",
+  "component": "Meta",
+  "versionSource": "../../../Version.json",
+  "deliveries": {
+    "NuGet": "Delivery/NuGet/Delivery.json"
+  }
+}

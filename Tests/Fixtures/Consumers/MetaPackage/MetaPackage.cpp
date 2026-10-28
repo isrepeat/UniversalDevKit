@@ -1,0 +1,44 @@
+#include <UniversalDevKit/Meta/Diagnostics.h>
+#include <UniversalDevKit/Meta/Pointer.h>
+#include <UniversalDevKit/Meta/Tags.h>
+#include <UniversalDevKit/Meta/TypeErasedDeleter.h>
+#include <UniversalDevKit/Meta/TypeTraits.h>
+#include <UniversalDevKit/Meta/Value.h>
+
+#include <memory>
+#include <type_traits>
+#include <vector>
+
+namespace {
+    struct DestructionProbe {
+        explicit DestructionProbe(bool& wasDestroyed) noexcept
+            : wasDestroyed(wasDestroyed) {
+        }
+
+        ~DestructionProbe() {
+            wasDestroyed = true;
+        }
+
+        bool& wasDestroyed;
+    };
+
+    static_assert(std::is_same_v<universaldevkit::meta::ExtractUnderlyingType_t<std::vector<int>>, int>);
+    static_assert(!universaldevkit::meta::dependent_false_v<int>);
+    static_assert(std::is_empty_v<universaldevkit::meta::nothing>);
+}
+
+int main() {
+    int value = 42;
+    int* pointer = &value;
+    const int& extracted = universaldevkit::meta::ValueExtractor::From(pointer);
+    if (&extracted != &value || universaldevkit::meta::PointerGetter::Get(value) != pointer) {
+        return 1;
+    }
+
+    bool wasDestroyed = false;
+    std::unique_ptr<void, universaldevkit::meta::TypeErasedDeleter> probe(
+        new DestructionProbe(wasDestroyed),
+        universaldevkit::meta::TypeErasedDeleter::Make<DestructionProbe>());
+    probe.reset();
+    return wasDestroyed ? 0 : 1;
+}

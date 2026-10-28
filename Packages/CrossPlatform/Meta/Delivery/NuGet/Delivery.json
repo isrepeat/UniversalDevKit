@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "adapter": "component",
+  "id": "UniversalDevKit.Meta",
+  "supportedPlatforms": ["Windows"],
+  "nuspec": "UniversalDevKit.Meta.nuspec",
+  "integration": {
+    "props": "UniversalDevKit.Meta.props",
+    "targets": "UniversalDevKit.Meta.targets"
+  }
+}

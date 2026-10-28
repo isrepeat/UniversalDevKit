@@ -641,6 +641,31 @@ foreach ($name in $componentNames) {
     }
 }
 
+# Проверочные приложения дают header-only компонентам контекст MSVC и IntelliSense.
+foreach ($name in $componentNames) {
+    if ($binaryComponentRegistry[$name].Kind -ne 'headerOnly') { continue }
+    $hasher = [Security.Cryptography.SHA256]::Create()
+    try { $hash = $hasher.ComputeHash([Text.Encoding]::UTF8.GetBytes($binaryComponentRegistry[$name].SharedGuid.ToString('D') + ':HeaderCheck')) }
+    finally { $hasher.Dispose() }
+    $guid = ([Guid]::new([byte[]]$hash[0..15])).ToString().ToUpperInvariant()
+    $libraryGuids["$name.HeaderCheck"] = '{' + $guid + '}'
+    $standard = $binaryComponentRegistry[$name].Requirements.CxxStandard
+    $language = if ($standard -eq 23) { 'stdcpplatest' } else { 'stdcpp' + $standard }
+    $content = $projectTemplate.Replace('@COMPONENT@', $name).Replace('@GUID@', $guid).Replace('@CONFIGURATION_TYPE@', 'Application').Replace('@DYNAMIC_DEFINITIONS@', '').Replace('stdcpp17', $language)
+    $content = $content.Replace('  <Import Project="UniversalDevKit.' + $name + '.Dependencies.props" />', '  <ItemGroup><ClCompile Include="HeaderCheck.cpp" /></ItemGroup>')
+    $source = '// Сгенерировано GenerateComponentProjects.ps1. Источник: реестр компонента.' + "`n"
+    $definition = Get-Content -LiteralPath (Join-Path $repositoryPath "Projects/Components/$name.json") -Raw | ConvertFrom-Json
+    foreach ($header in $definition.headers) {
+        $source += '#include <' + ($header -replace ('^Includes/' + $name + '/'), '') + '>' + "`n"
+    }
+    $source += "`nint main() { return 0; }"
+    foreach ($item in @(@{ Path = "Projects/MsBuild/$name/UniversalDevKit.$name.HeaderCheck.vcxproj"; Content = $content.TrimEnd([char[]]"`r`n") }, @{ Path = "Projects/MsBuild/$name/HeaderCheck.cpp"; Content = $source })) {
+        $path = Join-Path $repositoryPath $item.Path
+        $original = if (Test-Path -LiteralPath $path) { [IO.File]::ReadAllText($path) } else { $null }
+        if ($original -cne $item.Content) { $updates.Add([pscustomobject]@{ Path = $path; RelativePath = $item.Path; Content = $item.Content; Original = $original }) }
+    }
+}
+
 # Allow inspection of the generation plan without writing files.
 # Add new components to the solution while preserving its tree and manual settings.
 $solutionPath = Join-Path $repositoryPath 'UniversalDevKit.sln'
@@ -652,9 +677,50 @@ if (Test-Path -LiteralPath $solutionPath) {
     } else {
         "`n"
     }
+    # Папки определяются по родителю; существующие GUID и посторонние ветки сохраняются.
+    function SetSolutionParent([string]$Child, [string]$Parent) {
+        if ($script:solutionContent -match ([regex]::Escape($Child) + '\s*=\s*' + [regex]::Escape($Parent))) { return }
+        $pattern = '(?m)^\s*' + [regex]::Escape($Child) + '\s*=\s*\{[^}]+\}\r?$'
+        $script:solutionContent = [regex]::Replace($script:solutionContent, $pattern, '')
+        if ($script:solutionContent -notmatch 'GlobalSection\(NestedProjects\)') {
+            $script:solutionContent = $script:solutionContent.Replace('EndGlobal', "`tGlobalSection(NestedProjects) = preSolution${solutionNewline}`tEndGlobalSection${solutionNewline}EndGlobal")
+        }
+        $script:solutionContent = [regex]::Replace($script:solutionContent, '(GlobalSection\(NestedProjects\) = preSolution\r?\n)', ('$1' + "`t`t$Child = $Parent$solutionNewline"), 1)
+    }
+    function EnsureSolutionFolder([string]$Name, [string]$Parent, [string]$Identity) {
+        $matches = [regex]::Matches($script:solutionContent, 'Project\("\{2150E333-8FDC-42A3-9474-1A3956D46DE8\}"\) = "' + [regex]::Escape($Name) + '", "[^"]+", "(\{[^}]+\})"')
+        foreach ($match in $matches) {
+            $guid = $match.Groups[1].Value
+            if (-not $Parent -or $script:solutionContent -match ([regex]::Escape($guid) + '\s*=\s*' + [regex]::Escape($Parent))) { return $guid }
+        }
+        $hasher = [Security.Cryptography.SHA256]::Create()
+        try { $hash = $hasher.ComputeHash([Text.Encoding]::UTF8.GetBytes('UDK.SolutionFolder:' + $Identity)) }
+        finally { $hasher.Dispose() }
+        $guid = '{' + ([Guid]::new([byte[]]$hash[0..15])).ToString().ToUpperInvariant() + '}'
+        $entry = 'Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "' + $Name + '", "' + $Name + '", "' + $guid + '"' + $solutionNewline + 'EndProject' + $solutionNewline
+        $script:solutionContent = [regex]::Replace($script:solutionContent, '(?m)^Global\r?$', { param($match) $entry + $match.Value }, 1)
+        if ($Parent) { SetSolutionParent $guid $Parent }
+        return $guid
+    }
+    $projectsFolder = EnsureSolutionFolder 'Projects' '' 'Projects'
+    $msbuildFolder = EnsureSolutionFolder 'MsBuild' $projectsFolder 'Projects/MsBuild'
     foreach ($name in $componentNames) {
-        foreach ($mode in @('Shared', 'Static', 'Dynamic')) {
-            if ($mode -ne 'Shared' -and $binaryComponentRegistry[$name].Kind -eq 'headerOnly') { continue }
+        $componentFolder = EnsureSolutionFolder $name $msbuildFolder "Projects/MsBuild/$name"
+        foreach ($mode in @('Shared', 'Static', 'Dynamic', 'HeaderCheck')) {
+            if ($mode -eq 'Shared') {
+                if ($binaryComponentRegistry[$name].StateScope -eq 'process') { continue }
+                $guid = '{' + $binaryComponentRegistry[$name].SharedGuid.ToString().ToUpperInvariant() + '}'
+            } else {
+                if (-not $libraryGuids.ContainsKey("$name.$mode")) { continue }
+                $guid = $libraryGuids["$name.$mode"]
+            }
+            SetSolutionParent $guid $componentFolder
+        }
+    }
+    foreach ($name in $componentNames) {
+        foreach ($mode in @('Shared', 'Static', 'Dynamic', 'HeaderCheck')) {
+            if ($mode -eq 'HeaderCheck' -and $binaryComponentRegistry[$name].Kind -ne 'headerOnly') { continue }
+            if ($mode -in @('Static', 'Dynamic') -and $binaryComponentRegistry[$name].Kind -eq 'headerOnly') { continue }
             if ($mode -ne 'Dynamic' -and $binaryComponentRegistry[$name].StateScope -eq 'process') {
                 continue
             }
@@ -664,6 +730,15 @@ if (Test-Path -LiteralPath $solutionPath) {
                 'vcxproj'
             }
             $projectPath = "Projects\MsBuild\$name\UniversalDevKit.$name.$mode.$extension"
+            if ($mode -eq 'HeaderCheck') {
+                $sharedEntry = "Projects\MsBuild\$name\UniversalDevKit.$name.Shared.vcxitems*" + $libraryGuids["$name.HeaderCheck"].ToLowerInvariant() + '*SharedItemsImports = 4'
+                if ($solutionContent -notmatch 'GlobalSection\(SharedMSBuildProjectFiles\)') {
+                    $solutionContent = $solutionContent.Replace('EndGlobal', "`tGlobalSection(SharedMSBuildProjectFiles) = preSolution${solutionNewline}`tEndGlobalSection${solutionNewline}EndGlobal")
+                }
+                if (-not $solutionContent.Contains($sharedEntry)) {
+                    $solutionContent = $solutionContent.Replace('GlobalSection(SharedMSBuildProjectFiles) = preSolution' + $solutionNewline, 'GlobalSection(SharedMSBuildProjectFiles) = preSolution' + $solutionNewline + "`t`t" + $sharedEntry + $solutionNewline)
+                }
+            }
             if ($solutionContent.Contains('"' + $projectPath + '"')) {
                 continue
             }
@@ -673,7 +748,7 @@ if (Test-Path -LiteralPath $solutionPath) {
                 $libraryGuids["$name.$mode"]
             }
             $projectType = if ($mode -eq 'Shared') {
-                '{D954291E-2A0B-460D-934E-DC6B0785DB48}'
+                '{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}'
             } else {
                 '{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}'
             }

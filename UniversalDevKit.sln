@@ -231,12 +231,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{A63D24
 		Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.properties = Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.properties
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Meta.Shared", "Projects\MsBuild\Meta\UniversalDevKit.Meta.Shared.vcxitems", "{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meta", "Meta", "{50CDBD24-894E-0FD6-7C08-442980AADBB7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Meta.HeaderCheck", "Projects\MsBuild\Meta\UniversalDevKit.Meta.HeaderCheck.vcxproj", "{E21B97A1-D847-2938-4E29-760523C97389}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E21B97A1-D847-2938-4E29-760523C97389}.Debug|x64.ActiveCfg = Debug|x64
+		{E21B97A1-D847-2938-4E29-760523C97389}.Debug|x64.Build.0 = Debug|x64
+		{E21B97A1-D847-2938-4E29-760523C97389}.Release|x64.ActiveCfg = Release|x64
+		{E21B97A1-D847-2938-4E29-760523C97389}.Release|x64.Build.0 = Release|x64
 		{A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Debug|x64.ActiveCfg = Debug|x64
 		{A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Debug|x64.Build.0 = Debug|x64
 		{A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Release|x64.ActiveCfg = Release|x64
@@ -258,6 +268,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{E21B97A1-D847-2938-4E29-760523C97389} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
+		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
+		{50CDBD24-894E-0FD6-7C08-442980AADBB7} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{A63D24B8-5B7A-45B8-9C11-000000000300} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
 		{A63D24B8-5B7A-45B8-9C11-000000000301} = {A63D24B8-5B7A-45B8-9C11-000000000300}
 		{A63D24B8-5B7A-45B8-9C11-000000000100} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
@@ -299,6 +312,8 @@ Global
 		SolutionGuid = {D7A3009E-A79E-4542-AC95-DD9B9C113922}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Projects\MsBuild\Meta\UniversalDevKit.Meta.Shared.vcxitems*{e21b97a1-d847-2938-4e29-760523c97389}*SharedItemsImports = 4
+		Projects\MsBuild\Meta\UniversalDevKit.Meta.Shared.vcxitems*{c1e8c40d-b9b5-4c0d-9f7e-1b793d3c13ae}*SharedItemsImports = 9
 		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{28f717c7-a2ef-405e-96f1-538329030acf}*SharedItemsImports = 9
 		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{56ed54d2-4f7a-4cd2-91ba-3d710d8f9c24}*SharedItemsImports = 4
 		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{88573491-8330-4d25-a3c2-faab1d69e589}*SharedItemsImports = 4

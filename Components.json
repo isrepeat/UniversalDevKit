@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "includes": [
+    "Projects/Components/Meta.json",
     "Projects/Components/Helpers.json",
     "Projects/Components/Diagnostic.json"
   ]

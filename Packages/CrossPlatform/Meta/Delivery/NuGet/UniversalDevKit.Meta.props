@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Package-specific integration. Edit this file directly. -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="Generated\Settings.props" />
+  <PropertyGroup>
+    <__UniversalDevKitMetaPackageRoot>$(MSBuildThisFileDirectory)..\..\</__UniversalDevKitMetaPackageRoot>
+    <UniversalDevKitMetaLinkage Condition="'$(UniversalDevKitMetaLinkage)' == ''">Shared</UniversalDevKitMetaLinkage>
+  </PropertyGroup>
+</Project>
