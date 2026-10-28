@@ -5,11 +5,13 @@
   "headers": [
     "Includes/Meta/UniversalDevKit/Meta/Concepts.h",
     "Includes/Meta/UniversalDevKit/Meta/Diagnostics.h",
-    "Includes/Meta/UniversalDevKit/Meta/Pointer.h",
+    "Includes/Meta/UniversalDevKit/Meta/FunctionTraits.h",
+    "Includes/Meta/UniversalDevKit/Meta/Logic.h",
     "Includes/Meta/UniversalDevKit/Meta/Tags.h",
-    "Includes/Meta/UniversalDevKit/Meta/TypeErasedDeleter.h",
     "Includes/Meta/UniversalDevKit/Meta/TypeTraits.h",
-    "Includes/Meta/UniversalDevKit/Meta/Value.h"
+    "Includes/Meta/UniversalDevKit/Meta/Utilities/PointerGetter.h",
+    "Includes/Meta/UniversalDevKit/Meta/Utilities/TypeErasedDeleter.h",
+    "Includes/Meta/UniversalDevKit/Meta/Utilities/ValueExtractor.h"
   ],
   "sources": [],
   "filters": {

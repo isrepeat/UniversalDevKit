@@ -1,10 +1,10 @@
 #pragma once
 #include <UniversalDevKit/Meta/Concepts.h>
 
-namespace universaldevkit::meta {
+namespace universaldevkit::meta::utilities {
     class ValueExtractor {
     public:
-        // Значение должно быть разыменовываемым до объекта; null не является допустимым входом.
+        // Dereferencing must eventually reach an object; null pointers are not valid input.
         template<typename T>
         static decltype(auto) From(const T& value) {
             if constexpr (concepts::Dereferenceable<T>) {

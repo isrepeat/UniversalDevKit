@@ -18,20 +18,26 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\Diagnostics.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\Pointer.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\FunctionTraits.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\Logic.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\Tags.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\TypeErasedDeleter.h">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\TypeTraits.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\Value.h">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\Utilities\PointerGetter.h">
+      <__UniversalDevKitFilter>Utilities</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\Utilities\TypeErasedDeleter.h">
+      <__UniversalDevKitFilter>Utilities</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\Utilities\ValueExtractor.h">
+      <__UniversalDevKitFilter>Utilities</__UniversalDevKitFilter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

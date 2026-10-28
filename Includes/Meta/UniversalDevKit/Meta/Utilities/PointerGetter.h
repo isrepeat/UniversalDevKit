@@ -1,8 +1,7 @@
 #pragma once
-
 #include <memory>
 
-namespace universaldevkit::meta {
+namespace universaldevkit::meta::utilities {
     class PointerGetter {
     public:
         template<typename T>

@@ -1,12 +1,12 @@
+#include <UniversalDevKit/Meta/Utilities/TypeErasedDeleter.h>
+#include <UniversalDevKit/Meta/Utilities/ValueExtractor.h>
+#include <UniversalDevKit/Meta/Utilities/PointerGetter.h>
 #include <UniversalDevKit/Meta/Diagnostics.h>
-#include <UniversalDevKit/Meta/Pointer.h>
-#include <UniversalDevKit/Meta/Tags.h>
-#include <UniversalDevKit/Meta/TypeErasedDeleter.h>
 #include <UniversalDevKit/Meta/TypeTraits.h>
-#include <UniversalDevKit/Meta/Value.h>
+#include <UniversalDevKit/Meta/Tags.h>
 
-#include <memory>
 #include <type_traits>
+#include <memory>
 #include <vector>
 
 namespace {
@@ -28,6 +28,7 @@ namespace {
     };
 
     static_assert(std::is_same_v<universaldevkit::meta::ExtractUnderlyingType_t<std::vector<int>>, int>);
+    static_assert(std::is_same_v<universaldevkit::meta::ExtractUnderlyingType_t<int>, int>);
     static_assert(!universaldevkit::meta::dependent_false_v<int>);
     static_assert(std::is_empty_v<universaldevkit::meta::nothing>);
 }
@@ -35,25 +36,25 @@ namespace {
 int main() {
     int value = 42;
     int* pointer = &value;
-    const int& extracted = universaldevkit::meta::ValueExtractor::From(pointer);
-    if (&extracted != &value || universaldevkit::meta::PointerGetter::Get(value) != pointer) {
+    const int& extracted = universaldevkit::meta::utilities::ValueExtractor::From(pointer);
+    if (&extracted != &value || universaldevkit::meta::utilities::PointerGetter::Get(value) != pointer) {
         return 1;
     }
 
     // Проверяем конечный объект, цепочку указателей и умный указатель.
-    static_assert(std::is_same_v<decltype(universaldevkit::meta::ValueExtractor::From(value)), const int&>);
-    static_assert(std::is_same_v<decltype(universaldevkit::meta::ValueExtractor::From(pointer)), const int&>);
+    static_assert(std::is_same_v<decltype(universaldevkit::meta::utilities::ValueExtractor::From(value)), const int&>);
+    static_assert(std::is_same_v<decltype(universaldevkit::meta::utilities::ValueExtractor::From(pointer)), const int&>);
     int** nestedPointer = &pointer;
     auto ownedValue = std::make_unique<int>(42);
-    if (&universaldevkit::meta::ValueExtractor::From(nestedPointer) != &value ||
-        &universaldevkit::meta::ValueExtractor::From(ownedValue) != ownedValue.get()) {
+    if (&universaldevkit::meta::utilities::ValueExtractor::From(nestedPointer) != &value ||
+        &universaldevkit::meta::utilities::ValueExtractor::From(ownedValue) != ownedValue.get()) {
         return 1;
     }
 
     bool wasDestroyed = false;
-    std::unique_ptr<void, universaldevkit::meta::TypeErasedDeleter> probe(
+    std::unique_ptr<void, universaldevkit::meta::utilities::TypeErasedDeleter> probe(
         new DestructionProbe(wasDestroyed),
-        universaldevkit::meta::TypeErasedDeleter::Make<DestructionProbe>());
+        universaldevkit::meta::utilities::TypeErasedDeleter::Make<DestructionProbe>());
     probe.reset();
     return wasDestroyed ? 0 : 1;
 }

@@ -7,3 +7,11 @@ target_link_libraries(meta_package PRIVATE UniversalDevKit::Meta.Headers)
 
 enable_testing()
 add_test(NAME MetaPackage COMMAND meta_package)
+
+add_executable(meta_function_traits FunctionTraitsContract.cpp)
+target_link_libraries(meta_function_traits PRIVATE UniversalDevKit::Meta.Headers)
+add_test(NAME MetaFunctionTraits COMMAND meta_function_traits)
+
+add_executable(meta_command_line CommandLineMigration.cpp)
+target_link_libraries(meta_command_line PRIVATE UniversalDevKit::Meta.Headers)
+add_test(NAME MetaCommandLineMigration COMMAND meta_command_line)

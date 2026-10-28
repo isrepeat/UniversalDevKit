@@ -1,6 +1,6 @@
 #pragma once
 
-namespace universaldevkit::meta {
+namespace universaldevkit::meta::utilities {
     struct TypeErasedDeleter {
         using Function = void(*)(void*);
 
