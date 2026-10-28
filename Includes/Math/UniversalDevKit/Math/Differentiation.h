@@ -25,7 +25,7 @@ namespace universaldevkit {
 		} // namespace details
 
 
-		// Хранит значение и явно накапливаемый градиент; производные автоматически не вычисляет.
+		// Store a value and an explicitly accumulated gradient; derivatives are not computed automatically.
 		template <typename T>
 		struct DifferentialVar;
 
@@ -62,7 +62,7 @@ namespace universaldevkit {
 		//
 		template <typename T>
 		__requires_expr(
-			// По умолчанию разрешим любой арифметический тип как скаляр.
+			// Allow any arithmetic type as a scalar by default.
 			std::is_arithmetic_v<std::remove_cvref_t<T>>
 		) struct DifferentialVar<T> {
 			using value_type = std::remove_cvref_t<T>;

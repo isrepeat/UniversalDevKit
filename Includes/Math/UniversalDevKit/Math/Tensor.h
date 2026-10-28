@@ -22,17 +22,17 @@ namespace universaldevkit {
 			static constexpr std::size_t kSize = (1 * ... * Dims);
 
 		private:
-			// Extents: размеры по осям.
+			// Extents: size along each axis.
 			static consteval std::array<std::size_t, kRank> MakeExtents() {
 				return { Dims... };
 			}
 
-			// Strides: шаги по осям (row-major).
+			// Strides: row-major offsets along each axis.
 			static consteval std::array<std::size_t, kRank> MakeStrides() {
 				std::array<std::size_t, kRank> strides{};
 
 				if constexpr (kRank == 0) {
-					// Ранг 0: пустые extents/strides; размер = 1, данных 1 элемент.
+					// Rank 0: empty extents/strides, total size 1, and one stored element.
 					return strides;
 				}
 				else {
@@ -68,7 +68,7 @@ namespace universaldevkit {
 				} {
 			}
 
-			// Смещение по массиву индексов: offset = Σ idx[d] * stride[d]
+			// Offset from an index array: offset = sum(idx[d] * stride[d]).
 			static constexpr std::size_t IndexToOffset(
 				const std::array<std::size_t, kRank>& indicesArray
 			) {
@@ -79,7 +79,7 @@ namespace universaldevkit {
 				return offset;
 			}
 
-			// Удобный вариадик-оверлоад: IndexToOffset(i,j,k,...)
+			// Convenience variadic overload: IndexToOffset(i,j,k,...).
 			template <typename... TIdx>
 			static constexpr std::size_t IndexToOffset(TIdx... idx) {
 				static_assert(sizeof...(idx) == kRank, "rank mismatch");
@@ -102,7 +102,7 @@ namespace universaldevkit {
 			}
 
 
-			// Прокси для промежуточных уровней индексации.
+			// Proxy for intermediate indexing levels.
 			template <bool IsConst, std::size_t Level>
 			class IndexProxy {
 			public:
@@ -116,18 +116,18 @@ namespace universaldevkit {
 					, offsetFlat{ offsetFlat } {
 				}
 
-				// Ещё не на последнем уровне → вернуть следующий прокси
+				// Return the next proxy until the final level is reached.
 				constexpr decltype(auto) operator[](std::size_t i) const {
-					// шаг по текущему измерению (row-major)
+					// Stride along the current axis (row-major).
 					const std::size_t stride = Tensor::kStrides[Level];
 					const std::size_t next = this->offsetFlat + i * stride;
 
 					if constexpr (Level + 1 == Tensor::kRank) {
-						// последний уровень → вернуть ссылку на элемент
+						// Final level: return a reference to the element.
 						return (this->basePtr[next]);
 					}
 					else {
-						// промежуточный уровень
+						// Intermediate level.
 						using next_proxy = IndexProxy<IsConst, Level + 1>;
 						return next_proxy{ this->basePtr, next };
 					}
@@ -139,7 +139,7 @@ namespace universaldevkit {
 			}; // class IndexProxy
 
 
-			// rank == 1: возвращаем ссылки на элементы
+			// rank == 1: return element references.
 			template <std::size_t Rank = Tensor::kRank>
 			__requires_expr(
 				Rank == 1
@@ -156,7 +156,7 @@ namespace universaldevkit {
 				return this->dataArray[off];
 			}
 
-			// rank != 1: возвращаем прокси-объект
+			// rank != 1: return an indexing proxy.
 			template <std::size_t Rank = Tensor::kRank>
 			__requires_expr(
 				Rank != 1
@@ -225,7 +225,7 @@ namespace universaldevkit {
 		// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 		//
 		namespace details {
-			// ---------- вспомогательные мета-типы над пакетами размеров ----------
+			// ---------- Helper metatypes for dimension packs ----------
 			template <std::size_t... Dims>
 			struct dims_pack {};
 
@@ -271,7 +271,7 @@ namespace universaldevkit {
 			};
 
 
-			// --- мета-константы: первый и последний элемент пакета ---
+			// --- Metaconstants: first and last dimension in a pack ---
 			template <typename P>
 			struct pack_size;
 
@@ -304,7 +304,7 @@ namespace universaldevkit {
 			};
 
 
-			// --- concept: размеры совместимы для «последняя × первая» ---
+			// --- Concept: compatible last-left and first-right dimensions ---
 			template <typename LP, typename RP>
 			concept ContractibleDimsPacks =
 				(pack_size<LP>::value >= 1) &&
@@ -313,16 +313,16 @@ namespace universaldevkit {
 
 
 			// --------------------------------------------------------------------
-			//  Контракция «последняя ось lhs × первая ось rhs».
-			//  Для матриц это Mat<R,C>*Mat<C,K> -> Mat<R,K>.
-			//  Для общих тензоров: Tensor<T, L0..L{m-2},L{m-1}> * Tensor<T, R0..R{n-1}>
-			//  при L{m-1} == R0  ⇒  Tensor<T, L0..L{m-2}, R1..R{n-1}>
+			// Contract the last axis of lhs with the first axis of rhs.
+			// For matrices: Mat<R,C>*Mat<C,K> -> Mat<R,K>.
+			// For general tensors: Tensor<T, L0..L{m-2},L{m-1}> * Tensor<T, R0..R{n-1}>
+			// If L{m-1} == R0, the result is Tensor<T, L0..L{m-2}, R1..R{n-1}>.
 			// --------------------------------------------------------------------
 			template <
 				typename T,
 				std::size_t... L,
 				std::size_t... R,
-				// Тип результата: L без последней  +  R без первой
+				// Result dimensions: L without its last axis, followed by R without its first axis.
 				typename TOut = typename tensor_from_pack<
 				T,
 				typename pack_concat<
@@ -337,8 +337,8 @@ namespace universaldevkit {
 			) {
 				static_assert(sizeof...(L) >= 1 && sizeof...(R) >= 1, "rank must be >= 1 on both sides");
 
-				// Длины «свёрнутых» осей (последняя слева и первая справа) должны совпадать.
-				// Берём их из compile-time массивов с размерами пакетов.
+				// The contracted axes (last on the left, first on the right) must have equal sizes.
+				// Read their sizes from compile-time arrays of dimension packs.
 				constexpr std::array<std::size_t, sizeof...(L)> LExt{ L... };
 				constexpr std::array<std::size_t, sizeof...(R)> RExt{ R... };
 				constexpr std::size_t Kleft = LExt[sizeof...(L) - 1];
@@ -348,7 +348,7 @@ namespace universaldevkit {
 				TOut out{};
 				out.Fill(static_cast<T>(0));
 
-				// Вспом. функция: раскодировать линейный индекс -> многомерный индекс результата.
+				// Decode a linear index into the multidimensional result index.
 				const auto unflatten = [](
 					std::size_t linear
 					) {
@@ -361,32 +361,32 @@ namespace universaldevkit {
 						return idx;
 					};
 
-				// Главный цикл по всем позициям результата
+				// Iterate over all result positions.
 				for (std::size_t lin = 0; lin < TOut::kSize; ++lin) {
 					const auto idxOut = unflatten(lin);
 
-					// Суммирование по контрактуемой оси k
+					// Sum over the contracted axis k.
 					T acc = static_cast<T>(0);
 
 					for (std::size_t k = 0; k < Kleft; ++k) {
 						// idxL: [ i0, i1, ..., i_{m-2}, k ]
 						std::array<std::size_t, sizeof...(L)> idxL{};
 						{
-							// m = ранг lhs, n = ранг rhs
+							// m = lhs rank, n = rhs rank.
 							constexpr std::size_t m = sizeof...(L);
 							constexpr std::size_t n = sizeof...(R);
 							static_assert(m >= 1 && n >= 1);
 
-							// сколько координат lhs переносим из начала idxOut
+							// Number of lhs coordinates copied from the start of idxOut.
 							constexpr std::size_t leftChunk = (m > 0 ? m - 1 : 0);
 
-							// первые (m-1) координат берём из начала idxOut
+							// Copy the first m-1 coordinates from the start of idxOut.
 							for (std::size_t i = 0; i < leftChunk; ++i) {
 								idxL[i] = idxOut[i];
 							}
 
-							// последняя — k (позиция m-1)
-							idxL[leftChunk] = k; // т.к. idxL.size() == m
+							// The last coordinate is k, at position m-1.
+							idxL[leftChunk] = k; // idxL.size() == m.
 						}
 
 						// idxR: [ k, j1, j2, ..., j_{n-1} ]
@@ -394,18 +394,18 @@ namespace universaldevkit {
 						{
 							idxR[0] = k;
 
-							// остальное берём из конца idxOut
-							// в idxOut сначала идут (m-1) координат lhs, затем (n-1) координат rhs
+							// Copy the remaining coordinates from the end of idxOut.
+							// idxOut contains m-1 lhs coordinates followed by n-1 rhs coordinates.
 							constexpr std::size_t m = sizeof...(L);
 							constexpr std::size_t n = sizeof...(R);
 							static_assert(m >= 1 && n >= 1);
 
-							constexpr std::size_t base = m - 1;     // где в idxOut начинаются координаты rhs
-							constexpr std::size_t rhsCount = n - 1; // сколько координат rhs кладём
+							constexpr std::size_t base = m - 1;     // Starting position of rhs coordinates in idxOut.
+							constexpr std::size_t rhsCount = n - 1; // Number of rhs coordinates to copy.
 							constexpr std::size_t outCount = (m - 1) + (n - 1);
 							static_assert(outCount == TOut::kRank);
 
-							// идём параллельно по j и позиции в idxOut
+							// Advance j and the position in idxOut together.
 							for (std::size_t j = 1, pos = base; j < n; ++j, ++pos) {
 								idxR[j] = idxOut[pos];
 							}
@@ -433,7 +433,7 @@ namespace universaldevkit {
 		//
 		template <typename T, std::size_t... L, std::size_t... R>
 		__requires_expr(
-			(sizeof...(L) != 1 || sizeof...(R) != 1) && // Исключаем "вектор × вектор", чтобы не конкурировать с dot-версией.
+			(sizeof...(L) != 1 || sizeof...(R) != 1) && // Exclude vector * vector to avoid competing with the dot-product overload.
 			details::ContractibleDimsPacks<details::dims_pack<L...>, details::dims_pack<R...>>
 		) constexpr auto operator*(
 			const Tensor<T, L...>& lhs,
@@ -555,13 +555,13 @@ namespace universaldevkit {
 		//
 		namespace TensorTests {
 			namespace concepts {
-				// Проверка наличия оператора перемнжения тензоров
+				// Check availability of tensor multiplication.
 				template <typename A, typename B>
 				concept Multipliable = requires (A a, B b) {
 					a* b;
 				};
 
-				// Проверка наличия element-wise операторов для одинаковых размеров
+				// Check availability of elementwise operators for matching dimensions.
 				template <typename A, typename B>
 				concept Addable = requires (A a, B b) {
 					a + b;
@@ -570,7 +570,7 @@ namespace universaldevkit {
 					a -= b;
 				};
 
-				// Проверка наличия скалярного умножения (оба порядка) и *=
+				// Check scalar multiplication in both orders and operator*=.
 				template <typename A, typename S>
 				concept ScalarMultipliable = requires (A a, S s) {
 					a* s;
@@ -651,14 +651,14 @@ namespace universaldevkit {
 				using M2x3 = Mat<int, 2, 3>;
 				using M3x2 = Mat<int, 3, 2>;
 
-				// Доступность/недоступность операторов
+				// Check which operators are available.
 				static_assert(concepts::Addable<M2x3, M2x3>);
 				static_assert(!concepts::Addable<M2x3, M3x2>);
 
 				static_assert(concepts::ScalarMultipliable<M2x3, int>);
 				static_assert(concepts::ScalarMultipliable<M2x3, double>);
 
-				// 1) Возврат ссылки для rank==1 (non-const и const)
+				// 1) Reference return types for rank 1, both mutable and const.
 				static_assert(
 					std::is_lvalue_reference_v<decltype(std::declval<Vec3f&>()[0])>,
 					"operator[] on rank-1 must return T&"
@@ -672,7 +672,7 @@ namespace universaldevkit {
 					"const Vec: operator[] element must be const"
 					);
 
-				// Данные для проверки
+				// Test data.
 				constexpr T a{
 					1, 2, 3,
 					4, 5, 6
@@ -682,7 +682,7 @@ namespace universaldevkit {
 					3, 2, 1
 				};
 
-				// Ожидаемые результаты
+				// Expected results.
 				constexpr T sum_exp{
 					7, 7, 7,
 					7, 7, 7
@@ -705,7 +705,7 @@ namespace universaldevkit {
 					static_assert(diff == diff_exp);
 				}
 
-				// +=, -= (мутация в constexpr-контексте допустима, т.к. операторы constexpr)
+				// += and -= can mutate in a constexpr context because the operators are constexpr.
 				{
 					constexpr auto check_plus_assign = [=]() {
 						auto x = a;
@@ -733,19 +733,19 @@ namespace universaldevkit {
 					//		0.5
 					//	};
 
-					//	a[1] += b[1]; // должно компилироваться и менять a[1]
+					// a[1] += b[1]; // Must compile and modify a[1].
 					//	return a[1] == 2.5;
 					//	};
 					//static_assert(add_assign_ok(), "a[i] += b[i] must work for rank-1 tensor.");
 				}
 
-				// Скалярное умножение (оба порядка) и *=
+				// Scalar multiplication in both orders and operator*=.
 				{
 					// tensor * scalar
 					constexpr auto p1 = a * 3;
 					static_assert(p1 == mul3_exp);
 
-					// scalar * tensor (зеркальный)
+					// scalar * tensor (reversed operands)
 					constexpr auto p2 = 3 * a;
 					static_assert(p2 == mul3_exp);
 
@@ -757,7 +757,7 @@ namespace universaldevkit {
 						};
 					static_assert(check_mul_assign());
 
-					// Скаляр, конвертируемый к T (double -> int)
+					// A scalar convertible to T (double -> int).
 					constexpr auto p3 = a * 3.0;
 					static_assert(p3 == mul3_exp);
 				}

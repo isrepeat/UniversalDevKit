@@ -46,7 +46,7 @@ foreach ($configuration in @('Debug', 'Release')) {
     }
 }
 
-# Header-only Meta должен оставаться доступным после установки без бинарного target.
+# Header-only Meta must remain usable after installation without a binary target.
 $metaConsumer = Join-Path $run 'meta-consumer'
 InvokeCMake @('-S', (Join-Path $repository 'Tests/Fixtures/Consumers/MetaPackage'), '-B', $metaConsumer, '-G', $Generator, '-A', 'x64', "-DCMAKE_PREFIX_PATH=$relocated")
 InvokeCMake @('--build', $metaConsumer, '--config', 'Release')
@@ -55,7 +55,7 @@ if ($LASTEXITCODE -ne 0) {
     throw 'Installed Meta package consumer failed.'
 }
 
-# Проверяем исправления Math через независимого потребителя установленного пакета.
+# Verify Math fixes through an independent consumer of the installed package.
 $mathConsumer = Join-Path $run 'math-consumer'
 InvokeCMake @('-S', (Join-Path $repository 'Tests/Fixtures/Consumers/MathPackage'), '-B', $mathConsumer, '-G', $Generator, '-A', 'x64', "-DCMAKE_PREFIX_PATH=$relocated")
 foreach ($configuration in @('Debug', 'Release')) {

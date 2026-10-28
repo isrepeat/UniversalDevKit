@@ -641,7 +641,7 @@ foreach ($name in $componentNames) {
     }
 }
 
-# Проверочные приложения дают header-only компонентам контекст MSVC и IntelliSense.
+# Provide MSVC and IntelliSense contexts for header-only components.
 foreach ($name in $componentNames) {
     if ($binaryComponentRegistry[$name].Kind -ne 'headerOnly') { continue }
     $hasher = [Security.Cryptography.SHA256]::Create()
@@ -685,7 +685,7 @@ if (Test-Path -LiteralPath $solutionPath) {
     } else {
         "`n"
     }
-    # Папки определяются по родителю; существующие GUID и посторонние ветки сохраняются.
+    # Resolve folders by parent; preserve existing GUIDs and unrelated branches.
     function SetSolutionParent([string]$Child, [string]$Parent) {
         if ($script:solutionContent -match ([regex]::Escape($Child) + '\s*=\s*' + [regex]::Escape($Parent))) { return }
         $pattern = '(?m)^\s*' + [regex]::Escape($Child) + '\s*=\s*\{[^}]+\}\r?$'

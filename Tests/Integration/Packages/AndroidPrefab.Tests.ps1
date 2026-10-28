@@ -58,7 +58,7 @@ try {
     $Feed = (Resolve-Path -LiteralPath $Feed).Path
     $version = (Get-Content (Join-Path $repository 'Version.json') -Raw | ConvertFrom-Json).version
     $ndkVersion = ((Get-Content (Join-Path $AndroidNdk 'source.properties') | Where-Object { $_ -match '^Pkg.Revision\s*=' }) -split '=')[1].Trim()
-    # Gradle получает самостоятельный CMake/Ninja, не меняя установку SDK.
+    # Provide standalone CMake/Ninja to Gradle without modifying the SDK installation.
     $cmakeRoot = Join-Path $run 'cmake'
     Copy-Item -LiteralPath (Split-Path (Split-Path $CMake -Parent) -Parent) -Destination $cmakeRoot -Recurse
     Copy-Item -LiteralPath $Ninja -Destination (Join-Path $cmakeRoot 'bin/ninja.exe')

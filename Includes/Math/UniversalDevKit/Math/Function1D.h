@@ -22,7 +22,7 @@ namespace universaldevkit {
 		// ░ Function1D
 		// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 		//
-		// Нешаблонный header-only контейнер callable-объектов с явно заданными производными и первообразными.
+		// Non-template header-only container of callables with explicitly supplied derivatives and primitives.
 		class Function1D {
 		public:
 			using MetaData_t = std::any;
@@ -35,8 +35,8 @@ namespace universaldevkit {
 				Fn_t fn;
 
 				explicit Derivative(TDerivativeFn&& fn)
-					// Конвертируем любой callable в std::function.
-					// Здесь можно передать как rvalue-лямбду, так и std::function.
+					// Convert any callable to std::function.
+					// Accept either an rvalue lambda or a std::function.
 					: fn{ std::forward<TDerivativeFn>(fn) } {
 				}
 			};
@@ -66,7 +66,7 @@ namespace universaldevkit {
 				> {
 				};
 
-				// Trait который будет true если TFn это Derivative / Primitive.
+				// True when TFn is a Derivative or Primitive specialization.
 				template <typename TFn>
 				struct is_derivative_or_primitive_form : std::false_type {};
 
@@ -77,11 +77,11 @@ namespace universaldevkit {
 				struct is_derivative_or_primitive_form<Primitive<N, TFn>> : std::true_type {};
 			};
 
-			// std::decay_t<TFn> нужен, чтобы нормализовать тип:
-			// - убрать ссылки и cv-квалификаторы (если передадут lvalue-лямбду или const std::function&),
-			// - превратить массивы/функции в указатели.
-			// Это гарантирует, что шаблон Derivative/Primitive хранит "чистый" копируемый тип,
-			// а не ссылку на временный объект.
+			// Use std::decay_t<TFn> to normalize the type:
+			// - remove references and cv-qualifiers from lvalue lambdas or const std::function&,
+			// - convert arrays and functions to pointers.
+			// This ensures Derivative/Primitive stores a normalized copyable type,
+			// rather than a reference to a temporary object.
 
 			// f(x) -> f(x, meta)
 			template <typename TFn>
@@ -94,7 +94,7 @@ namespace universaldevkit {
 					};
 			}
 
-			// Нормализация callable -> Fn_t
+			// Normalize a callable to Fn_t.
 			template <typename TFn>
 			static Fn_t ToFn(TFn&& fn) {
 				using TFn_decayed_t = std::decay_t<TFn>;
@@ -147,7 +147,7 @@ namespace universaldevkit {
 				return Primitive<N, Fn_t>{ Function1D::MakeMetaWrapperFn(std::forward<TFn>(fn)) };
 			}
 
-			// Builder с requires: принимает только формы (Derivative<N> / Primitive<N>).
+			// Constrained builder: accept only Derivative<N> or Primitive<N> forms.
 			template <typename TSrcFn, typename... TFunctionForms>
 			__requires_expr(
 				traits::is_derivative_or_primitive_form<std::decay_t<TFunctionForms>>::value && ...
@@ -194,7 +194,7 @@ namespace universaldevkit {
 			}
 
 			//
-			// Вызов с мета данными
+			// Invocation with metadata
 			//
 			double Invoke(double x, MetaData_t& metaData) const {
 				return this->srcFunction(x, metaData);
@@ -223,7 +223,7 @@ namespace universaldevkit {
 			}
 
 			//
-			// Вызов без мета данных
+			// Invocation without metadata
 			//
 			double Invoke(double x) const {
 				MetaData_t metaData{};
