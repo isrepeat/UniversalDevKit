@@ -6,6 +6,10 @@
     <Filter Include="Meta" />
     <Filter Include="Meta\Utilities" />
     <Filter Include="Patterns" />
+    <Filter Include="Std" />
+    <Filter Include="Std\Extensions" />
+    <Filter Include="Std\Extensions\detail" />
+    <Filter Include="Std\Extensions\rangesEx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Differentiation.h">
@@ -52,6 +56,42 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Patterns\Singleton.h">
       <Filter>Patterns</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Std\Config.h">
+      <Filter>Std</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Std\Extensions\detail\LegacySupport.h">
+      <Filter>Std\Extensions\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Std\Extensions\fstreamEx.h">
+      <Filter>Std\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Std\Extensions\memoryEx.h">
+      <Filter>Std\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Std\Extensions\optional_ref.h">
+      <Filter>Std\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Std\Extensions\rangesEx.h">
+      <Filter>Std\Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Std\Extensions\rangesEx\ranges_concat.h">
+      <Filter>Std\Extensions\rangesEx</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Std\Extensions\rangesEx\ranges_drop_last.h">
+      <Filter>Std\Extensions\rangesEx</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Std\Extensions\rangesEx\ranges_flatten_tree.h">
+      <Filter>Std\Extensions\rangesEx</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Std\Extensions\rangesEx\ranges_to.h">
+      <Filter>Std\Extensions\rangesEx</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Std\Extensions\rangesEx\Tools.h">
+      <Filter>Std\Extensions\rangesEx</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Std\FormatSpecializations.h">
+      <Filter>Std</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

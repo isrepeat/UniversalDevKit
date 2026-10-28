@@ -11,7 +11,7 @@
 
 UniversalDevKit (UDK) — расширяемый набор C++-библиотек, из которого приложение подключает нужные компоненты. Поддерживаются MSBuild и CMake. Минимальный стандарт языка — C++20.
 
-Helpers — единый header-only компонент с папками Meta, Math и Patterns. Подключение CMake: UniversalDevKit::Helpers.Headers; namespace: universaldevkit::helpers::meta, universaldevkit::helpers::math и universaldevkit::helpers::patterns. Бывший compiled Helpers переименован в HeleprsTest и сохраняется для проверки Static/Dynamic, транзитивных зависимостей и доставки DLL. Независимые компоненты и пакеты Meta/Math удалены.
+Helpers — единый header-only компонент с папками Meta, Math, Patterns и Std. Подключение CMake: UniversalDevKit::Helpers.Headers; namespace: universaldevkit::helpers::meta, universaldevkit::helpers::math и universaldevkit::helpers::patterns. Std пока сохраняет старую структуру и API std::ex, см. [ограничения переноса](Docs/Std.md). Бывший compiled Helpers переименован в HeleprsTest и сохраняется для проверки Static/Dynamic, транзитивных зависимостей и доставки DLL. Независимые компоненты и пакеты Meta/Math удалены.
 
 Проверена сборка Windows x64 в Debug/Release и подключение [native NuGet](Packages/Build/NuGet/README.md). Для Android реализованы реальные [AAR/Prefab HeleprsTest/DiagnosticTest](Packages/Build/Android/README.md): NDK-сборка и сборка APK проверены, запуск на устройстве ещё не подтверждён. Linux остаётся отдельным этапом.
 
