@@ -23,7 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <__UniversalDevKitCompileRequirement Include="Diagnostic">
-      <MinimumStandard>17</MinimumStandard>
+      <MinimumStandard>20</MinimumStandard>
     </__UniversalDevKitCompileRequirement>
     <__UniversalDevKitThreadRequirement Include="Diagnostic" />
   </ItemGroup>

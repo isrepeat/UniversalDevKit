@@ -7,7 +7,7 @@
   <Target Name="__UniversalDevKitValidateRequirements" BeforeTargets="ClCompile" Condition="'$(DesignTimeBuild)' != 'true'">
     <PropertyGroup>
       <__UniversalDevKitRequiredStandards>@(__UniversalDevKitCompileRequirement-&gt;'%(MinimumStandard)', ';')</__UniversalDevKitRequiredStandards>
-      <__UniversalDevKitMinimumStandard>17</__UniversalDevKitMinimumStandard>
+      <__UniversalDevKitMinimumStandard>20</__UniversalDevKitMinimumStandard>
       <__UniversalDevKitMinimumStandard Condition="$([System.String]::Copy('$(__UniversalDevKitRequiredStandards)').Contains('20'))">20</__UniversalDevKitMinimumStandard>
       <__UniversalDevKitMinimumStandard Condition="$([System.String]::Copy('$(__UniversalDevKitRequiredStandards)').Contains('23'))">23</__UniversalDevKitMinimumStandard>
     </PropertyGroup>

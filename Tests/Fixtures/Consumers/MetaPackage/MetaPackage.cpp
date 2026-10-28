@@ -10,6 +10,11 @@
 #include <vector>
 
 namespace {
+    static_assert(__cplusplus >= 202002L
+#if defined(_MSVC_LANG)
+        || _MSVC_LANG >= 202002L
+#endif
+    );
     struct DestructionProbe {
         explicit DestructionProbe(bool& wasDestroyed) noexcept
             : wasDestroyed(wasDestroyed) {

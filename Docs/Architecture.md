@@ -24,7 +24,7 @@
 
 Shared — MSBuild Shared Project: .vcxitems добавляет файлы в импортирующий проект, сам библиотеку не собирает. Static и Dynamic компилируют те же файлы в отдельные библиотеки. DLL использует импортную .lib для линковки; наличие .lib не означает, что реализация включена в EXE.
 
-В CMake варианты представлены targets UniversalDevKit::<компонент>.Static и .Dynamic. UniversalDevKit::Headers передаёт корень заголовков и требование C++17 без компилируемой реализации. Это не заменяет библиотеку для вызовов Log или IsPowerOfTwo.
+В CMake варианты представлены targets UniversalDevKit::<компонент>.Static и .Dynamic. UniversalDevKit::Headers передаёт корень заголовков и требование C++20 без компилируемой реализации. Это не заменяет библиотеку для вызовов Log или IsPowerOfTwo.
 
 ## Реестр и зависимости
 

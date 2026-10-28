@@ -4,7 +4,7 @@
   <ItemDefinitionGroup Condition="'$(ConfigurationType)' == 'StaticLibrary'"><ClCompile><AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile></ItemDefinitionGroup>
   <ItemGroup Condition="'$(ConfigurationType)' == 'StaticLibrary'">
     <__UniversalDevKitCompileRequirement Include="Helpers">
-      <MinimumStandard>17</MinimumStandard>
+      <MinimumStandard>20</MinimumStandard>
     </__UniversalDevKitCompileRequirement>
   </ItemGroup>
   <ItemGroup Condition="'$(ConfigurationType)' == 'StaticLibrary'">
@@ -16,7 +16,7 @@
   <ItemDefinitionGroup Condition="'$(ConfigurationType)' == 'DynamicLibrary'"><ClCompile><AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile></ItemDefinitionGroup>
   <ItemGroup Condition="'$(ConfigurationType)' == 'DynamicLibrary'">
     <__UniversalDevKitCompileRequirement Include="Helpers">
-      <MinimumStandard>17</MinimumStandard>
+      <MinimumStandard>20</MinimumStandard>
     </__UniversalDevKitCompileRequirement>
   </ItemGroup>
   <ItemGroup Condition="'$(ConfigurationType)' == 'DynamicLibrary'">

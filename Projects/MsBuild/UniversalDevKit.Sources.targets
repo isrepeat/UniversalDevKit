@@ -36,21 +36,21 @@
   <Import Project="UniversalDevKit.Runtime.targets" />
   <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;'))">
     <__UniversalDevKitCompileRequirement Include="Diagnostic">
-      <MinimumStandard>17</MinimumStandard>
+      <MinimumStandard>20</MinimumStandard>
     </__UniversalDevKitCompileRequirement>
   </ItemGroup>
   <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;'))">
   </ItemGroup>
   <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;'))">
     <__UniversalDevKitCompileRequirement Include="Helpers">
-      <MinimumStandard>17</MinimumStandard>
+      <MinimumStandard>20</MinimumStandard>
     </__UniversalDevKitCompileRequirement>
   </ItemGroup>
   <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;'))">
   </ItemGroup>
   <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Meta;'))">
     <__UniversalDevKitCompileRequirement Include="Meta">
-      <MinimumStandard>17</MinimumStandard>
+      <MinimumStandard>20</MinimumStandard>
     </__UniversalDevKitCompileRequirement>
   </ItemGroup>
   <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Meta;'))">

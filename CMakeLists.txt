@@ -48,7 +48,7 @@ target_include_directories(universaldevkit_headers INTERFACE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Includes/Core>"
     "$<INSTALL_INTERFACE:include>"
 )
-target_compile_features(universaldevkit_headers INTERFACE cxx_std_17)
+target_compile_features(universaldevkit_headers INTERFACE cxx_std_20)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)

@@ -1,7 +1,7 @@
 {
   "name": "Diagnostic",
   "requirements": {
-    "cxxStandard": 17,
+    "cxxStandard": 20,
     "threads": true
   },
   "dependencies": [

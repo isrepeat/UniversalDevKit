@@ -1,7 +1,7 @@
 function Get-UdkRequirementDefinition {
     param($Component)
 
-    $standard = 17
+    $standard = 20
     $threads = $false
     if ($Component.PSObject.Properties['requirements']) {
         $settings = $Component.requirements
@@ -17,8 +17,8 @@ function Get-UdkRequirementDefinition {
             if ($settings.cxxStandard -isnot [int] -and $settings.cxxStandard -isnot [long]) {
                 throw 'cxxStandard must be an integer.'
             }
-            if ($settings.cxxStandard -notin @(17, 20, 23)) {
-                throw 'cxxStandard must be 17, 20 or 23.'
+            if ($settings.cxxStandard -notin @(20, 23)) {
+                throw 'cxxStandard must be 20 or 23.'
             }
             $standard = [int]$settings.cxxStandard
         }

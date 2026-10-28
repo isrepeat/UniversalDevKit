@@ -26,7 +26,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>
       <PreprocessorDefinitions>{{TEST_DEFINITIONS}};%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary Condition="'$(UniversalDevKitRuntime)' == 'Dynamic' and '$(Configuration)' == 'Debug'">MultiThreadedDebugDLL</RuntimeLibrary>

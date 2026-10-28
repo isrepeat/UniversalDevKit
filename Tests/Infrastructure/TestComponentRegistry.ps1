@@ -62,7 +62,9 @@ if (-not $staticProject.Contains('<LanguageStandard>stdcpp20</LanguageStandard>'
     throw 'New library project did not select the required standard'
 }
 . (Join-Path $repository 'Scripts/PowerShell/Modules/Module.Udk.Connection/Private/Requirements.ps1')
-foreach ($json in @('{"requirements":{"unknown":true}}', '{"requirements":{"cxxStandard":16}}', '{"requirements":{"threads":"true"}}')) {
+$defaults = Get-UdkRequirementDefinition ([pscustomobject]@{})
+if ($defaults.CxxStandard -ne 20) { throw 'Default language standard must be C++20' }
+foreach ($json in @('{"requirements":{"unknown":true}}', '{"requirements":{"cxxStandard":17}}', '{"requirements":{"cxxStandard":16}}', '{"requirements":{"threads":"true"}}')) {
     $rejected = $false
     try {
         Get-UdkRequirementDefinition ($json | ConvertFrom-Json) | Out-Null

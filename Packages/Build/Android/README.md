@@ -2,7 +2,7 @@
 
 **Навигация:** [Главная](../../../README.md) → [Пакеты](../../README.md) → Android AAR/Prefab. См. также [общие проверки](../../../Docs/Validation.md#проверить-android-aarprefab) и [отличие от тестовых заглушек](../../../Tests/Integration/Packages/README.md).
 
-Первый профиль: реальные Helpers/Diagnostic, точный NDK r27c 27.2.12479018, API 24+, arm64-v8a/x86_64, libc++ c++_shared, C++17. Проверка APK использует SDK/build-tools 36, JDK 21, Gradle 9.5 и AGP 9.3.2. Проверенный пакетный профиль — Release; Debug создаётся отдельно и требует отдельного прогона consumer.
+Первый профиль: реальные Helpers/Diagnostic, точный NDK r27c 27.2.12479018, API 24+, arm64-v8a/x86_64, libc++ c++_shared, C++20. Проверка APK использует SDK/build-tools 36, JDK 21, Gradle 9.5 и AGP 9.3.2. Проверенный пакетный профиль — Release; Debug создаётся отдельно и требует отдельного прогона consumer.
 
 ## Инструменты
 

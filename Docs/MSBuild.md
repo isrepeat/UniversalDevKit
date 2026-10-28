@@ -37,7 +37,7 @@ Scripts/Connect.cmd позволяет выбрать solution, проект и 
 
 Connect добавляет импорты выбранных Shared.vcxitems и транзитивных компонентов. MSBuild добавляет их ClCompile в проект consumer. Они компилируются с настройками consumer, с отключённым PCH и отдельными объектными путями в `$(IntDir)UniversalDevKit/`.
 
-Заголовки подключаются через UniversalDevKit.props. Стандарт C++17 или выше consumer задаёт сам. Shared References в solution нужны также для отображения связи в Visual Studio.
+Заголовки подключаются через UniversalDevKit.props. Стандарт C++20 или выше consumer задаёт сам. Shared References в solution нужны также для отображения связи в Visual Studio.
 
 ## Как собирается Static
 

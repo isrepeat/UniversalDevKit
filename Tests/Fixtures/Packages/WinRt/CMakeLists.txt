@@ -19,7 +19,7 @@ add_custom_command(OUTPUT "${probeMetadata}"
 )
 add_custom_target(ProbeMetadata ALL DEPENDS "${probeMetadata}")
 add_library(UdkWinRtProbe SHARED Probe.cpp Probe.def)
-target_compile_features(UdkWinRtProbe PRIVATE cxx_std_17)
+target_compile_features(UdkWinRtProbe PRIVATE cxx_std_20)
 target_link_libraries(UdkWinRtProbe PRIVATE runtimeobject)
 add_executable(UdkHostProbe Host.cpp)
 install(TARGETS UdkWinRtProbe RUNTIME DESTINATION runtimes/win-x64/native)

@@ -15,7 +15,7 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Modules/Module.Udk.Connection/Private/Requirements.ps1')
 $repositoryPath = [IO.Path]::GetFullPath($RepositoryRoot)
 $manifest = Get-Content -LiteralPath (Join-Path $repositoryPath 'Components.json') -Raw -Encoding UTF8 | ConvertFrom-Json
-if ($manifest.schemaVersion -ne 1 -or ($manifest.schemaVersion -isnot [int] -and $manifest.schemaVersion -isnot [long])) {
+if ($manifest.schemaVersion -ne 2 -or ($manifest.schemaVersion -isnot [int] -and $manifest.schemaVersion -isnot [long])) {
     throw 'Unsupported Components.json schemaVersion.'
 }
 foreach ($field in $manifest.PSObject.Properties.Name) {
@@ -554,7 +554,7 @@ foreach ($name in $componentNames) {
             $ownGraph = Resolve-UdkLinkageGraph @($name) @{ $name = $mode } $binaryComponentRegistry
             $dependencyRoots = @($binaryComponentRegistry[$name].Dependencies | ForEach-Object { $_.Component })
             $dependencyRequirements = Resolve-UdkLinkageGraph $dependencyRoots $ownGraph.ResolvedModes $binaryComponentRegistry
-            $minimumStandard = 17
+            $minimumStandard = 20
             foreach ($requiredName in @($name) + @($dependencyRequirements.RequirementComponents)) {
                 $minimumStandard = [Math]::Max($minimumStandard, $binaryComponentRegistry[$requiredName].Requirements.CxxStandard)
             }
@@ -563,7 +563,7 @@ foreach ($name in $componentNames) {
             } else {
                 'stdcpp' + $minimumStandard
             }
-            $content = $projectTemplate.Replace('<LanguageStandard>stdcpp17</LanguageStandard>', '<LanguageStandard>' + $languageStandard + '</LanguageStandard>').Replace('@COMPONENT@', $name).Replace('@GUID@', $libraryGuid.ToString().ToUpperInvariant()).Replace('@CONFIGURATION_TYPE@', $configurationType).Replace('@DYNAMIC_DEFINITIONS@', $definitions).TrimEnd([char[]]"`r`n")
+            $content = $projectTemplate.Replace('<LanguageStandard>stdcpp20</LanguageStandard>', '<LanguageStandard>' + $languageStandard + '</LanguageStandard>').Replace('@COMPONENT@', $name).Replace('@GUID@', $libraryGuid.ToString().ToUpperInvariant()).Replace('@CONFIGURATION_TYPE@', $configurationType).Replace('@DYNAMIC_DEFINITIONS@', $definitions).TrimEnd([char[]]"`r`n")
             $updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $null })
         }
         if (-not $guids.Add($libraryGuid.ToString())) {
@@ -651,9 +651,9 @@ foreach ($name in $componentNames) {
     $libraryGuids["$name.HeaderCheck"] = '{' + $guid + '}'
     $standard = $binaryComponentRegistry[$name].Requirements.CxxStandard
     $language = if ($standard -eq 23) { 'stdcpplatest' } else { 'stdcpp' + $standard }
-    $content = $projectTemplate.Replace('@COMPONENT@', $name).Replace('@GUID@', $guid).Replace('@CONFIGURATION_TYPE@', 'Application').Replace('@DYNAMIC_DEFINITIONS@', '').Replace('stdcpp17', $language)
+    $content = $projectTemplate.Replace('@COMPONENT@', $name).Replace('@GUID@', $guid).Replace('@CONFIGURATION_TYPE@', 'Application').Replace('@DYNAMIC_DEFINITIONS@', '').Replace('stdcpp20', $language)
     $content = $content.Replace('  <Import Project="UniversalDevKit.' + $name + '.Dependencies.props" />', '  <ItemGroup><ClCompile Include="HeaderCheck.cpp" /></ItemGroup>')
-    $source = '// Сгенерировано GenerateComponentProjects.ps1. Источник: реестр компонента.' + "`n"
+    $source = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Templates/HeaderCheck.cpp.in')).TrimEnd([char[]]"`r`n") + "`n"
     $definition = Get-Content -LiteralPath (Join-Path $repositoryPath "Projects/Components/$name.json") -Raw | ConvertFrom-Json
     foreach ($header in $definition.headers) {
         $source += '#include <' + ($header -replace ('^Includes/' + $name + '/'), '') + '>' + "`n"

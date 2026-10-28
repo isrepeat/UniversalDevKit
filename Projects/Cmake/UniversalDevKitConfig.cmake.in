@@ -15,7 +15,7 @@ include(CMakeFindDependencyMacro)
 # Загружает targets с путями к библиотекам, заголовкам и настройками.
 # Путь отсчитывается от установленного файла конфигурации.
 include("${CMAKE_CURRENT_LIST_DIR}/UniversalDevKitTargets.cmake")
-if(@udkPackageHasBinaries@ AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/UniversalDevKitCompatibility.cmake")
+if("@udkPackageHasBinaries@" AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/UniversalDevKitCompatibility.cmake")
     include("${CMAKE_CURRENT_LIST_DIR}/UniversalDevKitCompatibility.cmake")
 endif()
 

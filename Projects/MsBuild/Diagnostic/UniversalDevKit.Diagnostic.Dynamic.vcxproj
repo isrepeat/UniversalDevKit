@@ -20,7 +20,7 @@
   <Import Project="..\BuildLayout.props" />
   <ItemDefinitionGroup>
     <ClCompile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <PreprocessorDefinitions>UNIVERSALDEVKIT_DIAGNOSTIC_DYNAMIC;UNIVERSALDEVKIT_DIAGNOSTIC_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>

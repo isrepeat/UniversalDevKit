@@ -33,7 +33,7 @@
   </ItemGroup>
   <ItemGroup>
     <__UniversalDevKitCompileRequirement Include="Meta">
-      <MinimumStandard>17</MinimumStandard>
+      <MinimumStandard>20</MinimumStandard>
     </__UniversalDevKitCompileRequirement>
   </ItemGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.Requirements.targets" Condition="'$(__IsUniversalDevKitRequirementsImported)' != 'true'" />
