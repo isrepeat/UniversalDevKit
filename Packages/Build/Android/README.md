@@ -18,7 +18,9 @@ Scripts/Android/Toolchain.json закрепляет NDK и JDK. Общий Resol
 ./Packages/Build/Android/Build.ps1 -AndroidNdk <ndk> -CMake <cmake.exe> -Ninja <ninja.exe> -OutputDirectory <new-local-feed>
 ```
 
-Скрипт собирает штатный CMake UDK без копии реализации, читает реестр, существующий Resolve-UdkLinkageGraph и метаданные фактических бинарников. Определения адаптеров находятся в Packages/CrossPlatform/<компонент>/Delivery/Android/Delivery.json; Package.json связывает их с компонентами. Version.json остаётся источником версии. Новому compiled-компоненту нужны запись в реестре и адаптер. Header-only корни пока не поддерживаются; неописанные компоненты отклоняются.
+Скрипт собирает штатный CMake UDK без копии реализации, читает реестр, существующий Resolve-UdkLinkageGraph и метаданные фактических бинарников. Определения адаптеров находятся в Packages/CrossPlatform/<компонент>/Delivery/Android/Delivery.json; Package.json связывает их с компонентами. Version.json остаётся источником версии. Новому компоненту нужны запись в реестре и адаптер; неописанные компоненты отклоняются.
+
+Header-only компоненты выпускаются в единственном варианте Shared, например org.universaldevkit:universaldevkit-meta-shared-release:<version>. AAR содержит публичные заголовки корня и его header-only зависимостей, Prefab module.json и контракт UDK; libs, .a и .so отсутствуют. При выборе только header-only корней NDK-сборка не запускается. Подключение Meta: find_package(udk_meta_shared CONFIG REQUIRED), затем штатный Consumer.cmake и udk_android_link(MyNativeTarget udk_meta_shared::Meta). Контракт пока сохраняет общий профиль NDK/API/STL/configuration; отсутствие бинарников не отменяет эти проверки. Проверка независимого APK: RunAndroidPrefabTests.cmd -Components Meta -SkipDevice.
 
 Каталоги NDK-сборок изолированы по ABI в !artifacts/Android/cmake. Параметр BuildRoot разрешает повторно использовать свой каталог внутри !artifacts; CMake повторно конфигурирует и собирает изменённые исходники. Пакетный staging всегда новый. Существующий AAR по тому же адресу не перезаписывается: для повторной проверки используйте новый feed. Внешняя публикация не выполняется.
 

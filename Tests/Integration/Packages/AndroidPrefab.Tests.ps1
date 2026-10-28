@@ -8,7 +8,7 @@ param(
     [string]$Feed,
     [string]$Serial,
     [ValidateSet('arm64-v8a', 'x86_64')][string]$Abi = 'arm64-v8a',
-    [string[]]$Components = @('Helpers', 'Diagnostic'),
+    [string[]]$Components = @('Helpers', 'Diagnostic', 'Meta'),
     [ValidateSet('Static', 'Dynamic')][string[]]$Mode = @('Static', 'Dynamic'),
     [switch]$SkipDevice
 )
@@ -69,8 +69,19 @@ try {
         if ($Abi -notin $deviceAbi.Split(',')) { throw "Device does not support $Abi" }
     }
     foreach ($component in $Components) {
-        foreach ($linkage in $Mode) {
+        $registry = Get-Content (Join-Path $repository "Projects/Components/$component.json") -Raw | ConvertFrom-Json
+        $componentModes = if ($registry.kind -eq 'headerOnly') { @('Shared') } else { $Mode }
+        foreach ($linkage in $componentModes) {
             $name = "$component-$linkage"
+            if ($registry.kind -eq 'headerOnly') {
+                $aarPath = Join-Path $Feed "org/universaldevkit/universaldevkit-$($component.ToLowerInvariant())-shared-release/$version/universaldevkit-$($component.ToLowerInvariant())-shared-release-$version.aar"
+                Add-Type -AssemblyName System.IO.Compression.FileSystem
+                $archive = [IO.Compression.ZipFile]::OpenRead($aarPath)
+                try {
+                    if (@($archive.Entries | Where-Object { $_.FullName -match '/libs/|\.(a|so)$' }).Count) { throw 'Header-only AAR contains binaries.' }
+                    if (-not @($archive.Entries | Where-Object { $_.FullName -match '/include/UniversalDevKit/Meta/Concepts.h$' }).Count) { throw 'Header-only AAR is missing public headers.' }
+                } finally { $archive.Dispose() }
+            }
             $consumer = Join-Path $run $name
             Copy-Item -LiteralPath (Join-Path $repository 'Tests/Fixtures/Consumers/AndroidPrefab') -Destination $consumer -Recurse
             $properties = 'sdk.dir=' + $AndroidSdk.Replace('\', '/') + "`ncmake.dir=" + $cmakeRoot.Replace('\', '/')

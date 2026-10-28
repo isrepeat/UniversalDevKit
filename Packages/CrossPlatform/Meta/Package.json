@@ -4,6 +4,7 @@
   "component": "Meta",
   "versionSource": "../../../Version.json",
   "deliveries": {
-    "NuGet": "Delivery/NuGet/Delivery.json"
+    "NuGet": "Delivery/NuGet/Delivery.json",
+    "Android": "Delivery/Android/Delivery.json"
   }
 }

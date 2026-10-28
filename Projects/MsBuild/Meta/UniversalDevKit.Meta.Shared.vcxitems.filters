@@ -4,6 +4,7 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\Concepts.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\Diagnostics.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\Pointer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\Tags.h" />

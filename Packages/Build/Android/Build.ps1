@@ -74,9 +74,6 @@ foreach ($component in $Components) {
     if (-not $registry.ContainsKey($component) -or -not $deliveries.ContainsKey($component)) {
         throw "Missing Android component/adapter: $component"
     }
-    if ($registry[$component].Kind -eq 'headerOnly') {
-        throw 'This first Android adapter supports compiled roots only.'
-    }
 }
 
 # 4. Выбираем версию, каталог Maven-feed и изолированное дерево сборки.
@@ -117,7 +114,8 @@ function RunCMake([string[]]$Arguments) {
 # 5. Собираем и устанавливаем общие исходники отдельно для каждого ABI.
 # Метаданные установки содержат фактические имена библиотек, а не предполагаемые пути.
 $records = @{}
-foreach ($architecture in $Abi) {
+$compiledComponents = @($Components | Where-Object { $registry[$_].Kind -ne 'headerOnly' })
+foreach ($architecture in $(if ($compiledComponents.Count) { $Abi } else { @() })) {
     $build = Join-Path $work $architecture
     $prefix = Join-Path $build 'install'
 
@@ -138,7 +136,7 @@ foreach ($architecture in $Abi) {
         '-DANDROID_STL=c++_shared',
         "-DCMAKE_BUILD_TYPE=$Configuration",
         "-DCMAKE_INSTALL_PREFIX=$prefix",
-        "-DUniversalDevKit_COMPONENTS=$($Components -join ';')"
+        "-DUniversalDevKit_COMPONENTS=$($compiledComponents -join ';')"
     )
     RunCMake @('--build', $build, '--parallel', '4')
     RunCMake @('--install', $build)
@@ -163,10 +161,9 @@ foreach ($component in $Components) {
     if (-not $registry.ContainsKey($component)) {
         throw "Unknown component: $component"
     }
-    if ($registry[$component].Kind -eq 'headerOnly') {
-        throw 'This first Android adapter supports compiled components only.'
-    }
-    $modes = if ($registry[$component].StateScope -eq 'process') {
+    $modes = if ($registry[$component].Kind -eq 'headerOnly') {
+        @('Shared')
+    } elseif ($registry[$component].StateScope -eq 'process') {
         @('Dynamic')
     } else {
         @('Static', 'Dynamic')
@@ -187,7 +184,7 @@ foreach ($component in $Components) {
             version = $version
             dependencies = @()
         }
-        $linkSet = @(@($graph.LinkComponents) + @($graph.RuntimeComponents) | Sort-Object -Unique)
+        $linkSet = @(@($graph.LinkComponents) + @($graph.RuntimeComponents) | Where-Object { $registry[$_].Kind -ne 'headerOnly' } | Sort-Object -Unique)
         $rootModule = Join-Path $stage "prefab/modules/$component"
         $include = Join-Path $rootModule 'include'
         [void][IO.Directory]::CreateDirectory($include)
@@ -218,6 +215,11 @@ foreach ($component in $Components) {
         }
         WriteJson (Join-Path $include 'UniversalDevKit/Android/contract.json') $contract
         Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Consumer.cmake') -Destination (Join-Path $include 'UniversalDevKit/Android/Consumer.cmake')
+
+        # Заголовочный модуль Prefab не содержит libs или фиктивных бинарников.
+        WriteJson (Join-Path $rootModule 'module.json') @{
+            export_libraries = @()
+        }
 
         # 6.4. Описываем Prefab-модули и кладём бинарники всех выбранных ABI.
         # Внутренние модули участвуют в линковке/runtime без собственных include-путей.

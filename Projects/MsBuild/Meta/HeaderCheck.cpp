@@ -1,4 +1,5 @@
 // Сгенерировано GenerateComponentProjects.ps1. Источник: реестр компонента.
+#include <UniversalDevKit/Meta/Concepts.h>
 #include <UniversalDevKit/Meta/Diagnostics.h>
 #include <UniversalDevKit/Meta/Pointer.h>
 #include <UniversalDevKit/Meta/Tags.h>

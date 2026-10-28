@@ -1,7 +1,5 @@
 #pragma once
 
-#include <type_traits>
-
 namespace universaldevkit::meta {
     // Значение всегда ложно, но зависит от параметров шаблона.
     template<typename...>

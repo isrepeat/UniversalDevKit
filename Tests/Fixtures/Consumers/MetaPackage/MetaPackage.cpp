@@ -40,6 +40,16 @@ int main() {
         return 1;
     }
 
+    // Проверяем конечный объект, цепочку указателей и умный указатель.
+    static_assert(std::is_same_v<decltype(universaldevkit::meta::ValueExtractor::From(value)), const int&>);
+    static_assert(std::is_same_v<decltype(universaldevkit::meta::ValueExtractor::From(pointer)), const int&>);
+    int** nestedPointer = &pointer;
+    auto ownedValue = std::make_unique<int>(42);
+    if (&universaldevkit::meta::ValueExtractor::From(nestedPointer) != &value ||
+        &universaldevkit::meta::ValueExtractor::From(ownedValue) != ownedValue.get()) {
+        return 1;
+    }
+
     bool wasDestroyed = false;
     std::unique_ptr<void, universaldevkit::meta::TypeErasedDeleter> probe(
         new DestructionProbe(wasDestroyed),

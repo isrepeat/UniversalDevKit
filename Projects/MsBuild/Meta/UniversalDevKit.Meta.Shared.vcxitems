@@ -12,6 +12,9 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\Concepts.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Meta\UniversalDevKit\Meta\Diagnostics.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
