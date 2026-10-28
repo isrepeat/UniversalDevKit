@@ -7,3 +7,7 @@ target_link_libraries(std_package PRIVATE UniversalDevKit::Helpers.Headers)
 
 enable_testing()
 add_test(NAME StdPackage COMMAND std_package)
+
+add_executable(std_contract Contract.cpp)
+target_link_libraries(std_contract PRIVATE UniversalDevKit::Helpers.Headers)
+add_test(NAME StdContract COMMAND std_contract)

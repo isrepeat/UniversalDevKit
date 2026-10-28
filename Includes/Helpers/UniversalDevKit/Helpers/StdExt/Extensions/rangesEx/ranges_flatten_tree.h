@@ -5,80 +5,82 @@
 #include "Tools.h"
 
 #include <type_traits>
+#include <functional>
 #include <algorithm>
 #include <iterator>
 #include <optional>
 #include <utility>
+#include <memory>
 #include <ranges>
 #include <vector>
 
 namespace universaldevkit::helpers::stdext::extensions {
     namespace ranges {
         namespace views {
-            namespace details {
-                namespace concepts {
-                    template <typename TGetChildrenFn, typename TNode>
-                    concept children_fn_return_input_range = requires(TGetChildrenFn getChildrenFn, TNode node) {
-                        { getChildrenFn(node) } -> std::ranges::input_range;
-                    };
+            namespace concepts {
+                template <typename TGetChildrenFn, typename TNode>
+                concept children_fn_valid = std::copy_constructible<TNode> && requires(TGetChildrenFn& getChildrenFn, TNode& node) {
+                    { std::invoke(getChildrenFn, node) } -> std::ranges::input_range;
+                    requires std::same_as<std::ranges::range_value_t<std::invoke_result_t<TGetChildrenFn&, TNode&>>, TNode>;
+                    requires std::constructible_from<TNode, std::ranges::range_reference_t<std::invoke_result_t<TGetChildrenFn&, TNode&>>>;
+                };
 
-                    // TGetChildrenFn accepts a TNode and returns an input_range of child nodes.
-                    template <typename TGetChildrenFn, typename TNode>
-                    concept children_fn_valid = std::same_as<std::ranges::range_value_t<std::invoke_result_t<TGetChildrenFn, TNode>>, TNode> &&
-                                                children_fn_return_input_range<TGetChildrenFn, TNode>;
-                }
-            } // namespace details
+                template <typename TView, typename TGetChildrenFn>
+                concept tree_source = std::ranges::view<TView> && std::ranges::input_range<TView> &&
+                    children_fn_valid<TGetChildrenFn, std::ranges::range_value_t<TView>> &&
+                    std::constructible_from<std::ranges::range_value_t<TView>, std::ranges::range_reference_t<TView>>;
+            } // namespace concepts
 
             //
             // ░ flatten_tree
             // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
             //
+            // Finite, acyclic trees; copyable node values or handles.
+            // Only nullable nodes are skipped. Numeric zero and false remain valid nodes.
+            // The view owns its callback and must outlive its iterators.
+            //
             // ░ flatten_tree_view
             //
-            // Why does this class store a decayed callback type (TGetChildrenFn_decayed_t)?
-            // 1) Without normalization, perfect forwarding may deduce TGetChildrenFn as a reference,
-            //    such as const Lambda&. A pointer to that type would become an illegal pointer to a
-            //    reference. decay_t ensures that the view owns a value and the iterator stores a
-            //    regular pointer to that value.
-            // 2) Value storage provides a stable lifetime and avoids dangling references regardless
-            //    of whether the original callback was an lvalue, rvalue, or const object.
-            // 3) A canonical internal type reduces template instantiations and produces clearer
-            //    compiler diagnostics independent of the input cv/ref qualifiers.
-            // 4) remove_cvref_t would be enough for most lambdas and function objects, but decay_t
-            //    also converts functions to function pointers and arrays to element pointers.
             template <typename TView, typename TGetChildrenFn>
-            __requires_expr(std::ranges::view<TView>)
+            __requires_expr(concepts::tree_source<TView, TGetChildrenFn>)
             class flatten_tree_view : public std::ranges::view_interface<flatten_tree_view<TView, TGetChildrenFn>> {
             public:
                 using Node_t = std::ranges::range_value_t<TView>;
-                using TGetChildrenFn_decayed_t = std::decay_t<TGetChildrenFn>; // Normalize the callback type.
 
+            private:
+                static bool IsNull(const Node_t& node) {
+                    if constexpr (requires { { node == nullptr } -> std::convertible_to<bool>; }) {
+                        return node == nullptr;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+
+            public:
                 class iterator {
                 public:
-                    // Standard iterator type aliases.
                     using iterator_concept = std::input_iterator_tag;
                     using iterator_category = std::input_iterator_tag;
                     using difference_type = std::ptrdiff_t;
                     using value_type = Node_t;
-                    using reference = Node_t;
+                    using reference = const Node_t&;
 
-                public:
                     iterator() = default;
 
-                    explicit iterator(const TGetChildrenFn_decayed_t* getChildrenFnPtr, std::vector<Node_t>&& roots)
-                        : getChildrenFnPtr{getChildrenFnPtr}, stack{std::move(roots)} {
-                        // The stack initially contains roots in their original order.
-                        // Reverse them so LIFO traversal still visits roots from left to right.
+                    iterator(TGetChildrenFn* getChildrenFn, std::vector<Node_t> roots)
+                        : getChildrenFn{getChildrenFn}
+                        , stack{std::move(roots)} {
                         std::reverse(this->stack.begin(), this->stack.end());
                         this->advance_to_next();
                     }
 
                     reference operator*() const {
-                        return this->currentNode;
+                        return *this->currentNode;
                     }
 
                     const Node_t* operator->() const {
-                        return std::addressof(this->currentNode);
+                        return std::addressof(*this->currentNode);
                     }
 
                     iterator& operator++() {
@@ -87,84 +89,52 @@ namespace universaldevkit::helpers::stdext::extensions {
                     }
 
                     void operator++(int) {
-                        ++(*this);
+                        ++*this;
                     }
 
                     bool operator==(std::default_sentinel_t) const {
-                        return this->atEnd;
-                    }
-
-                    friend bool operator==(std::default_sentinel_t s, const iterator& it) {
-                        return it == s;
+                        return !this->currentNode;
                     }
 
                 private:
                     void advance_to_next() {
-                        // Implements a left-to-right pre-order tree traversal.
-                        // For example, given this tree:
-                        // Root
-                        //  ├─ A
-                        //  │  ├─ A1
-                        //  │  └─ A2
-                        //  └─ B
-                        //     └─ B1
-                        //
-                        // the traversal result is [Root, A, A1, A2, B, B1, B2].
-
                         if (this->stack.empty()) {
-                            this->atEnd = true;
+                            this->currentNode.reset();
                             return;
                         }
 
-                        this->currentNode = std::move(this->stack.back());
+                        // Emit the parent, then queue children for left-to-right preorder traversal.
+                        this->currentNode.emplace(std::move(this->stack.back()));
                         this->stack.pop_back();
-
-                        auto currentNodeChildrenView = (*this->getChildrenFnPtr)(this->currentNode);
-
-                        // Collect child nodes from left to right.
-                        std::vector<Node_t> currentNodeChildren;
-                        for (auto&& child : currentNodeChildrenView) {
-                            if (static_cast<bool>(child)) {
-                                currentNodeChildren.push_back(child);
+                        auto&& children = std::invoke(*this->getChildrenFn, *this->currentNode);
+                        std::vector<Node_t> pending;
+                        for (auto&& child : children) {
+                            if (!IsNull(child)) {
+                                pending.push_back(child);
                             }
                         }
-
-                        // Push them in reverse order (right to left), so LIFO extraction
-                        // visits them from left to right.
-                        //
-                        // For example, if stack = [B, A*, Root*] == [B], after this loop it
-                        // becomes [B, A*, Root*, A2, A1] == [B, A2, A1].
-                        // An asterisk marks an item that has already been visited and removed.
-                        for (auto it = currentNodeChildren.rbegin(); it != currentNodeChildren.rend(); ++it) {
-                            this->stack.push_back(std::move(*it));
+                        for (auto current = pending.rbegin(); current != pending.rend(); ++current) {
+                            this->stack.push_back(std::move(*current));
                         }
                     }
 
-                private:
-                    const TGetChildrenFn_decayed_t* getChildrenFnPtr{nullptr};
-                    std::vector<Node_t> stack; // LIFO stack used for left-to-right traversal.
-                    Node_t currentNode;
-                    bool atEnd = false;
-                }; // class iterator
+                    TGetChildrenFn* getChildrenFn{nullptr};
+                    std::vector<Node_t> stack;
+                    std::optional<Node_t> currentNode;
+                };
 
-                flatten_tree_view(TView rootsView, const TGetChildrenFn_decayed_t& getChildrenFn)
-                    : rootsView{std::move(rootsView)}, getChildrenFn{getChildrenFn} {
-                    static_assert(
-                        details::concepts::children_fn_valid<TGetChildrenFn_decayed_t, Node_t>,
-                        "TGetChildrenFn must return an input_range with range_value_t == Node_t"
-                    );
+                flatten_tree_view(TView rootsView, TGetChildrenFn getChildrenFn)
+                    : rootsView{std::move(rootsView)}
+                    , getChildrenFn{std::move(getChildrenFn)} {
                 }
 
                 auto begin() {
                     std::vector<Node_t> roots;
-
-                    // Collect root nodes from left to right.
-                    for (auto&& r : this->rootsView) {
-                        if (static_cast<bool>(r)) {
-                            roots.push_back(r);
+                    for (auto&& root : this->rootsView) {
+                        if (!IsNull(root)) {
+                            roots.push_back(root);
                         }
                     }
-
                     return iterator{std::addressof(this->getChildrenFn), std::move(roots)};
                 }
 
@@ -174,7 +144,7 @@ namespace universaldevkit::helpers::stdext::extensions {
 
             private:
                 TView rootsView;
-                TGetChildrenFn_decayed_t getChildrenFn;
+                TGetChildrenFn getChildrenFn;
             };
 
             //
@@ -182,22 +152,31 @@ namespace universaldevkit::helpers::stdext::extensions {
             //
             template <typename TGetChildrenFn>
             struct flatten_tree_closure {
-            public:
                 TGetChildrenFn getChildrenFn;
 
-            public:
                 template <typename TRange>
-                __requires_expr(std::ranges::viewable_range<TRange>)
+                __requires_expr(
+                    std::ranges::viewable_range<TRange> &&
+                    concepts::tree_source<ranges::tools::view_of_t<TRange>, TGetChildrenFn> &&
+                    std::copy_constructible<TGetChildrenFn>
+                )
                 friend auto operator|(TRange&& roots, const flatten_tree_closure& self) {
-                    using TView = ranges::tools::view_of_t<TRange>;
-                    using Node_t = std::ranges::range_value_t<TView>;
+                    return flatten_tree_view<ranges::tools::view_of_t<TRange>, TGetChildrenFn>{
+                        views::tools::as_view(std::forward<TRange>(roots)),
+                        self.getChildrenFn
+                    };
+                }
 
-                    static_assert(
-                        details::concepts::children_fn_valid<TGetChildrenFn, Node_t>,
-                        "TGetChildrenFn(node) must return an input_range with range_value_t == Node_t"
-                    );
-
-                    return flatten_tree_view<TView, TGetChildrenFn>{views::tools::as_view(std::forward<TRange>(roots)), self.getChildrenFn};
+                template <typename TRange>
+                __requires_expr(
+                    std::ranges::viewable_range<TRange> &&
+                    concepts::tree_source<ranges::tools::view_of_t<TRange>, TGetChildrenFn>
+                )
+                friend auto operator|(TRange&& roots, flatten_tree_closure&& self) {
+                    return flatten_tree_view<ranges::tools::view_of_t<TRange>, TGetChildrenFn>{
+                        views::tools::as_view(std::forward<TRange>(roots)),
+                        std::move(self.getChildrenFn)
+                    };
                 }
             };
 
@@ -205,26 +184,22 @@ namespace universaldevkit::helpers::stdext::extensions {
             // ░ flatten_tree_fn
             //
             struct flatten_tree_fn {
-            public:
                 template <typename TRange, typename TGetChildrenFn>
-                __requires_expr(std::ranges::viewable_range<TRange>)
+                __requires_expr(
+                    std::ranges::viewable_range<TRange> &&
+                    concepts::tree_source<ranges::tools::view_of_t<TRange>, std::decay_t<TGetChildrenFn>> &&
+                    std::constructible_from<std::decay_t<TGetChildrenFn>, TGetChildrenFn>
+                )
                 constexpr auto operator()(TRange&& roots, TGetChildrenFn&& getChildrenFn) const {
-                    using TView = ranges::tools::view_of_t<TRange>;
-                    using Node_t = std::ranges::range_value_t<TView>;
-
-                    static_assert(
-                        details::concepts::children_fn_valid<TGetChildrenFn, Node_t>,
-                        "get_children(node) must return an input_range with range_value_t == Node_t"
-                    );
-
-                    return flatten_tree_view<TView, TGetChildrenFn>{
-                        views::tools::as_view(std::forward<TRange>(roots)), std::forward<TGetChildrenFn>(getChildrenFn)
+                    return flatten_tree_view<ranges::tools::view_of_t<TRange>, std::decay_t<TGetChildrenFn>>{
+                        views::tools::as_view(std::forward<TRange>(roots)),
+                        std::forward<TGetChildrenFn>(getChildrenFn)
                     };
                 }
 
                 template <typename TGetChildrenFn>
                 constexpr auto operator()(TGetChildrenFn&& getChildrenFn) const {
-                    return flatten_tree_closure<TGetChildrenFn>{.getChildrenFn = std::forward<TGetChildrenFn>(getChildrenFn)};
+                    return flatten_tree_closure<std::decay_t<TGetChildrenFn>>{std::forward<TGetChildrenFn>(getChildrenFn)};
                 }
             };
 
@@ -233,16 +208,4 @@ namespace universaldevkit::helpers::stdext::extensions {
     } // namespace ranges
 
     namespace views = ranges::views;
-}
-
-//
-// ░ Export concepts
-// ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-//
-namespace universaldevkit::helpers {
-    namespace meta {
-        namespace concepts {
-            // ...
-        }
-    }
 }

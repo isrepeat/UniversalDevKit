@@ -6,6 +6,7 @@
 #include <functional>
 #include <optional>
 #include <utility>
+#include <memory>
 
 namespace universaldevkit::helpers::stdext::extensions {
     template <typename T>
@@ -14,24 +15,43 @@ namespace universaldevkit::helpers::stdext::extensions {
         using element_type = T;
 
     public:
-        constexpr optional_ref() noexcept : ptr{nullptr} {}
+        constexpr optional_ref() noexcept
+            : ptr{nullptr} {
+        }
 
-        constexpr optional_ref(std::nullopt_t) noexcept : ptr{nullptr} {}
-
-        constexpr optional_ref(T& ref) noexcept : ptr{std::addressof(ref)} {}
-
-        constexpr optional_ref(std::reference_wrapper<T> refw) noexcept : ptr{std::addressof(refw.get())} {}
+        constexpr optional_ref(std::nullopt_t) noexcept
+            : ptr{nullptr} {
+        }
 
         template <typename U>
         __requires_expr(std::is_convertible_v<U*, T*>)
-        constexpr optional_ref(optional_ref<U> other) noexcept : ptr{other.get()} {}
+        constexpr optional_ref(U& ref) noexcept
+            : ptr{std::addressof(ref)} {
+        }
+
+        // Reject temporaries even when T is const.
+        constexpr optional_ref(T&&) = delete;
+
+        constexpr optional_ref(std::reference_wrapper<T> refw) noexcept
+            : ptr{std::addressof(refw.get())} {
+        }
+
+        template <typename U>
+        __requires_expr(std::is_convertible_v<U*, T*>)
+        constexpr optional_ref(optional_ref<U> other) noexcept
+            : ptr{other.get()} {
+        }
 
         constexpr optional_ref& operator=(std::nullopt_t) noexcept {
             this->ptr = nullptr;
             return *this;
         }
 
-        constexpr optional_ref& operator=(T& ref) noexcept {
+        constexpr optional_ref& operator=(T&&) = delete;
+
+        template <typename U>
+        __requires_expr(std::is_convertible_v<U*, T*>)
+        constexpr optional_ref& operator=(U& ref) noexcept {
             this->ptr = std::addressof(ref);
             return *this;
         }
@@ -65,7 +85,9 @@ namespace universaldevkit::helpers::stdext::extensions {
             }
         }
 
-        constexpr T& value_or(T& default_ref) const {
+        template <typename U>
+        __requires_expr(std::is_convertible_v<U*, T*>)
+        constexpr T& value_or(U& default_ref) const {
             if (this->ptr != nullptr) {
                 return *(this->ptr);
             }

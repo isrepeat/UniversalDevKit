@@ -31,11 +31,12 @@ int main() {
     Require(reference == std::nullopt);
 
     auto unique = stdEx::make_unique_ex<int>(11);
-    Require(*unique.Try() == 11);
+    Require(unique && *unique == 11);
     auto shared = stdEx::make_shared_ex<int>(13);
     stdEx::weak_ptr<int> weak(shared);
-    Require(*weak.Try() == 13);
-    Require(SAFE_RESULT(*shared.Try() == 13));
+    auto locked = weak.lock();
+    Require(locked && *locked == 13);
+    Require(shared && *shared == 13);
 
     std::vector<int> first{1, 2};
     std::vector<int> second{3, 4};

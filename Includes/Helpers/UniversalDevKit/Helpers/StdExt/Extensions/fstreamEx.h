@@ -5,11 +5,14 @@
 
 #include <unordered_map>
 #include <algorithm>
+#include <stdexcept>
+#include <iterator>
 #include <optional>
 #include <cstdint>
 #include <fstream>
 #include <string>
 #include <vector>
+#include <array>
 
 namespace universaldevkit::helpers::stdext::extensions {
     enum class UTFByteOrderMark {
@@ -37,6 +40,9 @@ namespace universaldevkit::helpers::stdext::extensions {
         };
 
         Data ReadData() {
+            if (!this->is_open()) {
+                throw std::ios_base::failure("ReadData requires an open file");
+            }
             universaldevkit::helpers::stream::ThrowIfStreamNotOpened(*this, "ReadData");
             universaldevkit::helpers::stream::ThrowIfStreamFailed(*this, "ReadData");
 
@@ -57,27 +63,32 @@ namespace universaldevkit::helpers::stdext::extensions {
                 throw std::runtime_error("DetectUTFByteOrderMark must be called at the beginning of the stream");
             }
 
-            // Read up to N bytes, using the longest BOM signature.
-            size_t maxLength = 0;
-            for (const auto& [_, bom] : KnownUTFByteOrderMarks) {
-                maxLength = std::max(maxLength, bom.size());
+            // Probe through the buffer so a short file does not set failbit/eofbit
+            // or trigger the caller's exception mask. Restore the exact position.
+            std::array<char, 4> buffer{};
+            std::streamsize readBytes;
+            try {
+                readBytes = this->rdbuf()->sgetn(buffer.data(), buffer.size());
             }
-
-            std::vector<uint8_t> buffer(maxLength);
-            this->read(reinterpret_cast<char*>(buffer.data()), static_cast<std::streamsize>(maxLength));
+            catch (...) {
+                this->seekg(originalPos);
+                throw;
+            }
+            this->seekg(originalPos);
             universaldevkit::helpers::stream::ThrowIfStreamFailed(*this, "DetectUTFByteOrderMark");
 
-            auto readBytes = this->gcount();
-
-            this->seekg(originalPos);
-
-            // Check for any known BOM.
-            for (const auto& [bomType, bom] : KnownUTFByteOrderMarks) {
-                if (static_cast<size_t>(readBytes) < bom.size()) {
-                    continue; // Not enough bytes for this BOM.
-                }
-
-                if (std::equal(bom.begin(), bom.end(), buffer.begin())) {
+            // UTF-32 LE shares its first two bytes with UTF-16 LE.
+            constexpr std::array order{
+                UTFByteOrderMark::UTF32_BE,
+                UTFByteOrderMark::UTF32_LE,
+                UTFByteOrderMark::UTF8,
+                UTFByteOrderMark::UTF16_BE,
+                UTFByteOrderMark::UTF16_LE
+            };
+            for (auto bomType : order) {
+                const auto& bom = KnownUTFByteOrderMarks.at(bomType);
+                if (static_cast<std::size_t>(readBytes) >= bom.size() &&
+                    std::equal(bom.begin(), bom.end(), reinterpret_cast<const uint8_t*>(buffer.data()))) {
                     return bomType;
                 }
             }
@@ -103,23 +114,36 @@ namespace universaldevkit::helpers::stdext::extensions {
         }
 
         std::optional<int> DetectCodePageInFirstLineOfStream() {
-            auto prevFileStreamPointerPos = this->tellg();
-            this->seekg(0, std::ios::beg);
+            const auto originalPos = this->tellg();
 
+            // Start after the BOM and leave the stream state untouched on EOF.
             std::string firstLine;
-            if (std::getline(*this, firstLine)) {
-                auto matches = universaldevkit::helpers::regex::GetRegexMatches<char, std::string>(
-                    firstLine, std::regex("CodePage\\s*=\\s*(\\d+)")
-                );
-                if (!matches.empty()) {
-                    if (matches[0].capturedGroups.size() > 1) {
-                        // Do not recover file stream pointer pos.
-                        return std::stoi(matches[0].capturedGroups[1]);
+            auto* buffer = this->rdbuf();
+            using Traits = std::char_traits<char>;
+            try {
+                for (auto next = buffer->sbumpc(); !Traits::eq_int_type(next, Traits::eof()); next = buffer->sbumpc()) {
+                    const auto character = Traits::to_char_type(next);
+                    if (character == '\n') {
+                        break;
                     }
+                    firstLine.push_back(character);
+                }
+                auto matches = universaldevkit::helpers::regex::GetRegexMatches<char, std::string>(
+                    firstLine,
+                    std::regex("CodePage\\s*=\\s*(\\d+)")
+                );
+                if (!matches.empty() && matches[0].capturedGroups.size() > 1) {
+                    return std::stoi(matches[0].capturedGroups[1]);
                 }
             }
+            catch (...) {
+                this->seekg(originalPos);
+                throw;
+            }
 
-            this->seekg(prevFileStreamPointerPos, std::ios::beg);
+            this->seekg(originalPos);
+            universaldevkit::helpers::stream::ThrowIfStreamFailed(*this, "DetectCodePageInFirstLineOfStream");
+
             return std::nullopt;
         }
     };

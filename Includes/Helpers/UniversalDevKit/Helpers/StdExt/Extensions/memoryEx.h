@@ -1,71 +1,56 @@
 #pragma once
 #include "../Config.h"
 
-#include <string_view>
-#include <functional>
-#include <exception>
+#include <type_traits>
+#include <concepts>
 #include <typeinfo>
 #include <utility>
 #include <memory>
 
-#if defined(ENABLE_NULLPTR_LOGGING)
-// The consumer supplies LOG_DEBUG_D when ENABLE_NULLPTR_LOGGING is enabled.
-#define __LOG_NULLPTR_OBJECT(T) LOG_DEBUG_D("'{}' is nullptr", typeid(T).name())
-#else
-#define __LOG_NULLPTR_OBJECT(T)
-#endif
-
-// Extends class with "Try()" method which can be used inside SAFE_RESULT macro
-#define SafeObject(T) \
-    T* Try() { \
-        if (this == nullptr) { \
-            __LOG_NULLPTR_OBJECT(T); \
-            throw ::universaldevkit::helpers::stdext::extensions::bad_pointer(); \
-        } \
-        return this; \
-    }
-
 namespace universaldevkit::helpers::stdext::extensions {
-    struct bad_pointer : std::exception {
-        bad_pointer() : std::exception("bad pointer") {}
-    };
+    namespace concepts {
+        template <typename T, typename U>
+        concept dynamic_castable = !std::is_array_v<T> && !std::is_array_v<U> &&
+            requires(T* pointer) { dynamic_cast<U*>(pointer); };
+
+        template <typename T, typename U, typename TDeleter>
+        concept safe_unique_cast = !std::is_array_v<T> && !std::is_array_v<U> &&
+            std::same_as<TDeleter, std::default_delete<T>> &&
+            (std::same_as<T, U> || std::has_virtual_destructor_v<U> || std::is_final_v<U>) &&
+            dynamic_castable<T, U>;
+    } // namespace concepts
 
     //
     // unique_ptr
     //
-    template <typename T>
-    struct unique_ptr : public std::unique_ptr<T> {
-        using Base_t = std::unique_ptr<T>;
+    template <typename T, typename TDeleter = std::default_delete<T>>
+    struct unique_ptr : public std::unique_ptr<T, TDeleter> {
+        using Base_t = std::unique_ptr<T, TDeleter>;
         using Base_t::unique_ptr; // Special member constructors are not inherited; provide bridges below.
 
         //PP_FORWARD_CTOR(unique_ptr, std::unique_ptr<T>);
-        unique_ptr(Base_t&& other) noexcept : Base_t{std::move(other)} {}
-
-        unique_ptr<T>& Try() {
-            if (this == nullptr) {
-                throw ::universaldevkit::helpers::stdext::extensions::bad_pointer{};
-            }
-            if (this->get() == nullptr) {
-                throw ::universaldevkit::helpers::stdext::extensions::bad_pointer{};
-            }
-            return *this;
+        unique_ptr(Base_t&& other) noexcept
+            : Base_t{std::move(other)} {
         }
 
         // Check the type without changing ownership.
         template <typename U>
+        __requires_expr(concepts::dynamic_castable<T, U> && requires(typename Base_t::pointer pointer) { dynamic_cast<U*>(pointer); })
         bool Is() const {
             return dynamic_cast<U*>(this->get()) != nullptr;
         }
 
         // Return an observing view without changing ownership.
         template <typename U>
+        __requires_expr(concepts::dynamic_castable<T, U> && requires(typename Base_t::pointer pointer) { dynamic_cast<U*>(pointer); })
         U* AsView() const {
             return dynamic_cast<U*>(this->get());
         }
 
-        // Transfer ownership on a successful cast; otherwise return nullptr.
+        // Transfer default-deleter ownership only when deletion through U is safe.
         // Require an rvalue to make the ownership transfer explicit.
         template <typename U>
+        __requires_expr(concepts::safe_unique_cast<T, U, TDeleter>)
         unique_ptr<U> As() && {
             T* const rawPtr = this->get();
             if (U* const casted = dynamic_cast<U*>(rawPtr)) {
@@ -77,6 +62,7 @@ namespace universaldevkit::helpers::stdext::extensions {
 
         // Throw std::bad_cast if the cast fails.
         template <typename U>
+        __requires_expr(concepts::safe_unique_cast<T, U, TDeleter>)
         unique_ptr<U> Cast() && {
             T* const rawPtr = this->get();
             if (U* const casted = dynamic_cast<U*>(rawPtr)) {
@@ -102,29 +88,29 @@ namespace universaldevkit::helpers::stdext::extensions {
         using Base_t::shared_ptr;
 
         //PP_FORWARD_CTOR(shared_ptr, std::shared_ptr<T>);
-        shared_ptr(const Base_t& other) : Base_t{other} {}
+        shared_ptr(const Base_t& other)
+            : Base_t{other} {
+        }
 
-        shared_ptr(Base_t&& other) noexcept : Base_t{std::move(other)} {}
-
-        shared_ptr<T>& Try() {
-            if (this->get() == nullptr) {
-                throw ::universaldevkit::helpers::stdext::extensions::bad_pointer{};
-            }
-            return *this;
+        shared_ptr(Base_t&& other) noexcept
+            : Base_t{std::move(other)} {
         }
 
         template <typename U>
+        __requires_expr(concepts::dynamic_castable<T, U>)
         bool Is() const {
             return std::dynamic_pointer_cast<U>(*this) != nullptr;
         }
 
         template <typename U>
+        __requires_expr(concepts::dynamic_castable<T, U>)
         shared_ptr<U> As() const {
             auto casted = std::dynamic_pointer_cast<U>(*this);
             return casted;
         }
 
         template <typename U>
+        __requires_expr(concepts::dynamic_castable<T, U>)
         shared_ptr<U> Cast() const {
             auto casted = std::dynamic_pointer_cast<U>(*this);
             if (casted == nullptr) {
@@ -149,37 +135,18 @@ namespace universaldevkit::helpers::stdext::extensions {
         using Base_t::weak_ptr;
 
         //PP_FORWARD_CTOR(weak_ptr, std::weak_ptr<T>);
-        weak_ptr(const Base_t& other) : Base_t{other} {}
+        weak_ptr(const Base_t& other)
+            : Base_t{other} {
+        }
 
-        weak_ptr(Base_t&& other) noexcept : Base_t{std::move(other)} {}
+        weak_ptr(Base_t&& other) noexcept
+            : Base_t{std::move(other)} {
+        }
 
         // override to retrun extensible struct
         shared_ptr<T> lock() const {
             return std::weak_ptr<T>::lock();
         }
 
-        shared_ptr<T> Try() {
-            if (this == nullptr) {
-                throw ::universaldevkit::helpers::stdext::extensions::bad_pointer{};
-            }
-            auto sharedPtr = this->lock();
-            if (sharedPtr == nullptr) {
-                throw ::universaldevkit::helpers::stdext::extensions::bad_pointer{};
-            }
-            return sharedPtr;
-        }
     };
-}
-
-namespace universaldevkit::helpers::stdext::extensions {
-    inline bool SafeConditionResult(std::function<bool()> fnCondition) {
-        try {
-            return static_cast<bool>(fnCondition());
-        }
-        catch (...) {
-            return false;
-        }
-    }
-
-#define SAFE_RESULT(condition) ::universaldevkit::helpers::stdext::extensions::SafeConditionResult([&] { return condition; })
 }

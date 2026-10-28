@@ -8,7 +8,7 @@
 #pragma pop_macro("NOMINMAX")
 #endif
 
-#include <exception>
+#include <stdexcept>
 #include <fstream>
 #include <format>
 #include <string>
@@ -29,7 +29,7 @@ namespace universaldevkit::helpers::stream {
             const std::string prefix = context.empty() ? "" : std::format("[{}] ", context);
             const std::string message = std::format("{}Stream is not open or in bad state", prefix);
             detail::DebugBreakIfAttached();
-            throw std::exception(message.c_str());
+            throw std::runtime_error(message);
         }
     }
 
