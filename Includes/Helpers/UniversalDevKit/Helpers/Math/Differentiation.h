@@ -1,5 +1,6 @@
 #pragma once
-#include <UniversalDevKit/Helpers/Meta/Concepts.h>
+#include "../Meta/Concepts.h"
+
 #include "Tensor.h"
 
 #include <type_traits>

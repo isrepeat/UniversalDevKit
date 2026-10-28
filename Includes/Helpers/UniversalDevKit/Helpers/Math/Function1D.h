@@ -1,5 +1,5 @@
 #pragma once
-#include <UniversalDevKit/Helpers/Meta/Concepts.h>
+#include "../Meta/Concepts.h"
 
 #include <unordered_map>
 #include <type_traits>

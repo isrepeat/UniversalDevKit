@@ -1,14 +1,14 @@
-# Std: initial legacy import
+# StdExt: standard library extensions
 
-Раздел перенесён из UtilityHelpersLib с сохранением структуры Std/Extensions/rangesEx, имён файлов и старого API std::ex. Алгоритмы и владение объектами на этом этапе не перерабатываются. Это намеренное исключение из соглашения о namespace, отражающих папки UDK.
+Раздел перенесён из UtilityHelpersLib с сохранением вложенной структуры Extensions/rangesEx и имён файлов. Корневая папка переименована из Std в StdExt, публичный API находится в universaldevkit::helpers::stdext::extensions. Алгоритмы и владение объектами пока не перерабатывались.
 
-Публичные include начинаются с UniversalDevKit/Helpers/Std/. Config.h сохраняет настройку STD_EXT_NS, по умолчанию std::ex. SafeObject, SAFE_RESULT и SafeConditionResult сохранены; последняя функция находится в universaldevkit::helpers. Для ENABLE_NULLPTR_LOGGING потребитель предоставляет LOG_DEBUG_D: старый Logger в этот перенос не входит.
+Публичные include начинаются с UniversalDevKit/Helpers/StdExt/. Каждый заголовок расширения подключает Config.h, который автоматически предоставляет alias stdEx. Отдельный заголовок алиасов не требуется. STD_EXT_NS удалён: namespace фиксирован. SafeObject и SAFE_RESULT сохранены; SafeConditionResult находится в том же namespace extensions. Для ENABLE_NULLPTR_LOGGING потребитель предоставляет LOG_DEBUG_D.
 
 Для fstreamEx перенесены только необходимые Stream/Regex-функции в Extensions/detail/LegacySupport.h. Это внутренняя поддержка первоначального переноса, а не отдельный публичный компонент. Подключения common.h и Meta адаптированы к UDK, добавлены недостающие прямые include, комментарии переведены на английский.
 
 ## Отложенные исправления
 
-- std::ex и специализация std::formatter для std::filesystem::path требуют пересмотра с точки зрения ограничений стандартного namespace.
+- Специализация std::formatter для std::filesystem::path по-прежнему требует пересмотра с точки зрения ограничений стандартного namespace; собственные типы расширений больше не объявляются внутри std.
 - optional_ref<const T> допускает прямое создание из временного объекта; удалённые фабричные перегрузки не закрывают этот случай.
 - SafeObject и проверки this == nullptr не делают вызов через нулевой указатель безопасным.
 - unique_ptr As/Cast меняют тип удаления; пользовательские deleter не поддерживаются.

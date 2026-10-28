@@ -1,5 +1,5 @@
 #pragma once
-#include <UniversalDevKit/Helpers/Meta/Concepts.h>
+#include "../Concepts.h"
 
 namespace universaldevkit::helpers::meta::utilities {
     class ValueExtractor {

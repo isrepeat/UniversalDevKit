@@ -1,5 +1,5 @@
 #pragma once
-#include <UniversalDevKit/Helpers/Meta/Concepts.h>
+#include "Concepts.h"
 
 #include <type_traits>
 #include <concepts>

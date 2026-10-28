@@ -14,17 +14,17 @@
 #include <UniversalDevKit/Helpers/Meta/Utilities/TypeErasedDeleter.h>
 #include <UniversalDevKit/Helpers/Meta/Utilities/ValueExtractor.h>
 #include <UniversalDevKit/Helpers/Patterns/Singleton.h>
-#include <UniversalDevKit/Helpers/Std/Config.h>
-#include <UniversalDevKit/Helpers/Std/Extensions/detail/LegacySupport.h>
-#include <UniversalDevKit/Helpers/Std/Extensions/fstreamEx.h>
-#include <UniversalDevKit/Helpers/Std/Extensions/memoryEx.h>
-#include <UniversalDevKit/Helpers/Std/Extensions/optional_ref.h>
-#include <UniversalDevKit/Helpers/Std/Extensions/rangesEx.h>
-#include <UniversalDevKit/Helpers/Std/Extensions/rangesEx/Tools.h>
-#include <UniversalDevKit/Helpers/Std/Extensions/rangesEx/ranges_concat.h>
-#include <UniversalDevKit/Helpers/Std/Extensions/rangesEx/ranges_drop_last.h>
-#include <UniversalDevKit/Helpers/Std/Extensions/rangesEx/ranges_flatten_tree.h>
-#include <UniversalDevKit/Helpers/Std/Extensions/rangesEx/ranges_to.h>
-#include <UniversalDevKit/Helpers/Std/FormatSpecializations.h>
+#include <UniversalDevKit/Helpers/StdExt/Config.h>
+#include <UniversalDevKit/Helpers/StdExt/Extensions/detail/LegacySupport.h>
+#include <UniversalDevKit/Helpers/StdExt/Extensions/fstreamEx.h>
+#include <UniversalDevKit/Helpers/StdExt/Extensions/memoryEx.h>
+#include <UniversalDevKit/Helpers/StdExt/Extensions/optional_ref.h>
+#include <UniversalDevKit/Helpers/StdExt/Extensions/rangesEx.h>
+#include <UniversalDevKit/Helpers/StdExt/Extensions/rangesEx/Tools.h>
+#include <UniversalDevKit/Helpers/StdExt/Extensions/rangesEx/ranges_concat.h>
+#include <UniversalDevKit/Helpers/StdExt/Extensions/rangesEx/ranges_drop_last.h>
+#include <UniversalDevKit/Helpers/StdExt/Extensions/rangesEx/ranges_flatten_tree.h>
+#include <UniversalDevKit/Helpers/StdExt/Extensions/rangesEx/ranges_to.h>
+#include <UniversalDevKit/Helpers/StdExt/FormatSpecializations.h>
 
 int main() { return 0; }

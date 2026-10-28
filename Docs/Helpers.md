@@ -1,6 +1,6 @@
 # Helpers
 
-Helpers — header-only компонент C++20 с разделами Meta, Math, Patterns и Std. Исходники находятся в Includes/Helpers/UniversalDevKit/Helpers/. Meta, Math и Patterns используют namespace universaldevkit::helpers::meta, universaldevkit::helpers::math и universaldevkit::helpers::patterns. Std пока сохраняет старый API std::ex; ограничения первоначального переноса описаны в [Std.md](Std.md). Публичные пути начинаются с UniversalDevKit/Helpers/.
+Helpers — header-only компонент C++20 с разделами Meta, Math, Patterns и StdExt. Исходники находятся в Includes/Helpers/UniversalDevKit/Helpers/. Meta, Math и Patterns используют namespace universaldevkit::helpers::meta, universaldevkit::helpers::math и universaldevkit::helpers::patterns. StdExt использует namespace universaldevkit::helpers::stdext::extensions и автоматически предоставляет alias stdEx; ограничения первоначального переноса описаны в [Std.md](Std.md). Публичные пути начинаются с UniversalDevKit/Helpers/.
 
 CMake предоставляет только UniversalDevKit::Helpers.Headers. В MSBuild доступны Helpers.Shared и проверочное приложение Helpers.HeaderCheck; Static/Dynamic вариантов нет. NuGet UniversalDevKit.Helpers использует linkage Shared. Android AAR: org.universaldevkit:universaldevkit-helpers-shared-release:<version>, Prefab target udk_helpers_shared::Helpers. Собственной .lib/.dll/.a/.so у Helpers нет.
 
