@@ -122,8 +122,8 @@ function New-UdkConnectionPlan {
     if (-not $Disconnect) {
         $availableComponents = @($ComponentRegistry.Keys | Sort-Object)
         if (-not $Components) {
-            $Components = if ('Helpers' -cin $availableComponents) {
-                @('Helpers')
+            $Components = if ('HeleprsTest' -cin $availableComponents) {
+                @('HeleprsTest')
             } else {
                 @($availableComponents[0])
             }

@@ -1,12 +1,12 @@
-#include <UniversalDevKit/Meta/FunctionTraits.h>
-#include <UniversalDevKit/Meta/Concepts.h>
-#include <UniversalDevKit/Meta/Logic.h>
+#include <UniversalDevKit/Helpers/Meta/FunctionTraits.h>
+#include <UniversalDevKit/Helpers/Meta/Concepts.h>
+#include <UniversalDevKit/Helpers/Meta/Logic.h>
 
 #include <type_traits>
 #include <vector>
 #include <array>
 
-namespace meta = universaldevkit::meta;
+namespace meta = universaldevkit::helpers::meta;
 
 namespace {
     int FreeFunction(int value) noexcept { return value + 1; }

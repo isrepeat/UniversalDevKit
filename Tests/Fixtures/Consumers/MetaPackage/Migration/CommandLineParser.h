@@ -1,7 +1,7 @@
 // Перенесено из UtilityHelpersLib/Helpers/Helpers.Shared/Helpers/CommandLineParser.h.
 // Fixture реального потребителя: заменены namespace, includes и ограничения шаблона.
 #pragma once
-#include <UniversalDevKit/Meta/FunctionTraits.h>
+#include <UniversalDevKit/Helpers/Meta/FunctionTraits.h>
 
 #include <unordered_map>
 #include <string_view>
@@ -38,10 +38,10 @@ namespace universaldevkit::migration {
 	public:
 		template<typename TParsed>
 		requires (
-			universaldevkit::meta::concepts::has_static_function_with_signature<
+			universaldevkit::helpers::meta::concepts::has_static_function_with_signature<
 			decltype(&TParsed::Description), std::vector<FlagDesc>(*)()
 			>&&
-			universaldevkit::meta::concepts::has_static_function_with_signature<
+			universaldevkit::helpers::meta::concepts::has_static_function_with_signature<
 			decltype(&TParsed::MapParsedResults), void (*)(const CommandLineParserBase<TChar>&, TParsed&)
 			>
 		) static const TParsed ParseTo(
@@ -56,7 +56,7 @@ namespace universaldevkit::migration {
 			TParsed out{};
 			TParsed::MapParsedResults(cmdLineParser, out);
 
-			if constexpr (meta::concepts::has_method_with_signature<
+			if constexpr (universaldevkit::helpers::meta::concepts::has_method_with_signature<
 				decltype(&TParsed::Validate), void (TParsed::*)() const
 			>) {
 				out.Validate();

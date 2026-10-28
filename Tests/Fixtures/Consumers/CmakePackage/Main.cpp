@@ -1,6 +1,6 @@
-#include <UniversalDevKit/Diagnostic/Logging.h>
+#include <UniversalDevKit/DiagnosticTest/Logging.h>
 
 int main() {
-    universaldevkit::diagnostic::Log("Installed package works");
+    universaldevkit::diagnostictest::Log("Installed package works");
     return 0;
 }

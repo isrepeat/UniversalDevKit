@@ -1,6 +1,6 @@
 # Meta
 
-Header-only компонент C++20 без бинарников и платформенных зависимостей. Основной namespace — universaldevkit::meta; классы из папки Utilities находятся в universaldevkit::meta::utilities согласно иерархии каталогов. В Visual Studio исходники представлены Meta.Shared; Meta.HeaderCheck компилирует каждый зарегистрированный заголовок в общем проверочном приложении и предоставляет контекст IntelliSense.
+Раздел Meta единого header-only компонента Helpers C++20 без бинарников и платформенных зависимостей. Основной namespace — universaldevkit::helpers::meta; классы из папки Utilities находятся в universaldevkit::helpers::meta::utilities согласно иерархии каталогов. В Visual Studio исходники представлены Helpers.Shared; Helpers.HeaderCheck компилирует каждый зарегистрированный заголовок в общем проверочном приложении и предоставляет контекст IntelliSense.
 
 ## Структура
 
@@ -19,9 +19,9 @@ Header-only компонент C++20 без бинарников и платфо
 ## FunctionTraits
 
 ```cpp
-#include <UniversalDevKit/Meta/FunctionTraits.h>
+#include <UniversalDevKit/Helpers/Meta/FunctionTraits.h>
 
-using Traits = universaldevkit::meta::FunctionTraits<int(*)(double) noexcept>;
+using Traits = universaldevkit::helpers::meta::FunctionTraits<int(*)(double) noexcept>;
 static_assert(Traits::ArgumentCount == 1);
 static_assert(Traits::IsNoexcept);
 using Result = Traits::Ret;
@@ -36,7 +36,7 @@ Ret, Arguments и arg<I>::type сохраняют типы сигнатуры. a
 
 ```cpp
 auto identity = [](auto value) { return value; };
-using Traits = universaldevkit::meta::FunctionTraitsWithSignature<
+using Traits = universaldevkit::helpers::meta::FunctionTraitsWithSignature<
     decltype(identity), int(int) const>;
 ```
 
@@ -48,8 +48,8 @@ concepts::has_method, has_method_with_signature, has_static_function и has_stat
 
 ## Подключение и проверки
 
-CMake: UniversalDevKit::Meta.Headers. NuGet: UniversalDevKit.Meta, linkage Shared. Android: universaldevkit-meta-shared-release через udk_meta_shared::Meta и штатный udk_android_link; подробнее в Packages/Build/Android/README.md.
+CMake: UniversalDevKit::Helpers.Headers. NuGet: UniversalDevKit.Helpers, linkage Shared. Android: universaldevkit-helpers-shared-release через udk_helpers_shared::Helpers и штатный udk_android_link; подробнее в Packages/Build/Android/README.md.
 
 Tests/Fixtures/Consumers/MetaPackage проверяет utilities, матрицу FunctionTraits, выбор типов в Logic и concepts. Migration/CommandLineParser.h — изолированный перенос реального старого consumer с заменой namespace, include и requires; исходный UtilityHelpersLib не меняется. Его методы Description, MapParsedResults и Validate проверяются новыми traits при сборке, разбор аргументов выполняется при запуске.
 
-Эти три CTest-сценария входят в TestCMakePackage.ps1. AndroidPrefab.Tests.ps1 -Components Meta -SkipDevice собирает независимый JNI/APK consumer из AAR; для runtime необходим выбранный adb Serial и запуск без SkipDevice.
+Эти три CTest-сценария входят в TestCMakePackage.ps1. AndroidPrefab.Tests.ps1 -Components Helpers -SkipDevice собирает независимый JNI/APK consumer из AAR; для runtime необходим выбранный adb Serial и запуск без SkipDevice.

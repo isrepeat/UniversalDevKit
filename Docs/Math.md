@@ -1,6 +1,6 @@
 # Math
 
-Header-only компонент C++20 из UtilityHelpersLib/Helpers/Helpers.Shared/Helpers/Math. Публичные include начинаются с UniversalDevKit/Math/, основной namespace — universaldevkit::math. Math публично зависит от Meta, предоставляющего __requires_expr.
+Раздел Math единого header-only компонента Helpers C++20 из UtilityHelpersLib/Helpers/Helpers.Shared/Helpers/Math. Публичные include начинаются с UniversalDevKit/Helpers/Math/, основной namespace — universaldevkit::helpers::math. Math использует соседний раздел Meta, предоставляющего __requires_expr.
 
 Первоначальный перенос без исправления алгоритмов сохранён отдельным коммитом 9fd59e2. Текущие исправления:
 
@@ -13,8 +13,8 @@ Function1D — нешаблонный header-only класс с std::function, s
 
 DifferentialVar хранит value и grad. AccumulateGrad прибавляет явно переданный градиент, ResetGrad обнуляет только градиент, Reset обнуляет оба поля. Это контейнер данных, а не граф вычислений или механизм автоматического дифференцирования. Скалярная специализация по-прежнему принимает арифметические типы, тензорная — Tensor; контракт типов в этом исправлении не сужается.
 
-CMake: UniversalDevKit::Math.Headers. NuGet: UniversalDevKit.Math с linkage Shared. Android: universaldevkit-math-shared-release и udk_math_shared::Math. Реестр и проекты Shared/HeaderCheck создаются штатным генератором. Helpers/Math.h не изменён.
+CMake: UniversalDevKit::Helpers.Headers. NuGet: UniversalDevKit.Helpers с linkage Shared. Android: universaldevkit-helpers-shared-release и udk_helpers_shared::Helpers. Реестр и проекты Shared/HeaderCheck создаются штатным генератором. HeleprsTest/Math.h не изменён.
 
-Tests/Fixtures/Consumers/MathPackage проверяет ссылочные типы и изменение данных Tensor в constexpr/runtime, типы алиасов, преобразования const Rect/Size, накопление/сброс градиента и вызов явно заданных функций. AndroidPrefab.Tests.ps1 -Components Math -SkipDevice собирает отдельный JNI/APK consumer из AAR; без устройства это не подтверждает runtime.
+Tests/Fixtures/Consumers/MathPackage проверяет ссылочные типы и изменение данных Tensor в constexpr/runtime, типы алиасов, преобразования const Rect/Size, накопление/сброс градиента и вызов явно заданных функций. AndroidPrefab.Tests.ps1 -Components Helpers -SkipDevice собирает отдельный JNI/APK consumer из AAR; без устройства это не подтверждает runtime.
 
 Контракт rank-0 и проверка границ Tensor остаются отдельными задачами. Исходные вспомогательные details и встроенные compile-time тесты пока сохранены.

@@ -155,6 +155,7 @@ foreach ($record in $records) {
 
 # 6. Create one component package; dependency binaries remain in their own packages.
 foreach ($component in $selected) {
+    $componentHasBinaries = $registry[$component].Kind -ne 'headerOnly'
     $package = $packages[$component]
     # Use fresh staging to avoid carrying stale files into a new release.
     $stage = Join-Path $output ('staging/' + $component + '-' + [Guid]::NewGuid().ToString('N'))
@@ -180,7 +181,7 @@ foreach ($component in $selected) {
         $configuration = $record.Configuration
         $destination = Join-Path $payload "binaries/$runtime/$configuration"
         [void][IO.Directory]::CreateDirectory($destination)
-        if ($hasBinaries) { Copy-Item -LiteralPath (Join-Path $record.Install "lib/cmake/UniversalDevKit/UniversalDevKit.Build-$configuration.json") -Destination (Join-Path $destination 'Release.json') }
+        if ($componentHasBinaries) { Copy-Item -LiteralPath (Join-Path $record.Install "lib/cmake/UniversalDevKit/UniversalDevKit.Build-$configuration.json") -Destination (Join-Path $destination 'Release.json') }
 
         # Copy only this component's libraries and DLLs for the current configuration.
         foreach ($entry in @($record.Metadata.components | Where-Object { $_.name -ceq $component })) {
@@ -195,7 +196,7 @@ foreach ($component in $selected) {
             $condition = (RootCondition $component $mode) + " and '`$(UniversalDevKitRuntime)' == '$runtime' and '`$(Configuration)' == '$configuration'"
             $root = '$(__UniversalDevKit' + $component + 'PackageRoot)'
             $guard = "binaries\$runtime\$configuration\Abi.h"
-            if ($hasBinaries) {
+            if ($componentHasBinaries) {
                 # Forced includes validate the actual settings of each compilation unit.
                 Copy-Item -LiteralPath (Join-Path $record.Install "lib/cmake/UniversalDevKit/UniversalDevKit.Abi-$configuration.h") -Destination (Join-Path $destination 'Abi.h')
                 $compilerParts = $compiler -split '\.'
@@ -220,7 +221,7 @@ foreach ($component in $selected) {
                     $link += $library + $(if ($library.EndsWith('.lib')) { ';' } else { '.lib;' })
                 }
             }
-            $forced = if ($hasBinaries) { "$root$guard;" } else { '' }
+            $forced = if ($componentHasBinaries) { "$root$guard;" } else { '' }
             $variants.Add("  <ItemDefinitionGroup Condition=`"$condition`"><ClCompile><AdditionalIncludeDirectories>$includes%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories><ForcedIncludeFiles>$forced%(ForcedIncludeFiles)</ForcedIncludeFiles><PreprocessorDefinitions>$definitions%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile><Link><AdditionalDependencies>$link%(AdditionalDependencies)</AdditionalDependencies></Link></ItemDefinitionGroup>")
 
             # Include private transitive DLLs in the runtime set.
@@ -271,7 +272,7 @@ foreach ($component in $selected) {
     foreach ($pair in @(
         @{ Key = 'PackageVersion'; Value = $version },
         @{ Key = 'ValidModes'; Value = $validModes },
-        @{ Key = 'HasBinaries'; Value = $hasBinaries.ToString().ToLowerInvariant() },
+        @{ Key = 'HasBinaries'; Value = $componentHasBinaries.ToString().ToLowerInvariant() },
         @{ Key = 'ExpectedToolset'; Value = $toolset },
         @{ Key = 'ExpectedTools'; Value = $vcTools }
     )) {

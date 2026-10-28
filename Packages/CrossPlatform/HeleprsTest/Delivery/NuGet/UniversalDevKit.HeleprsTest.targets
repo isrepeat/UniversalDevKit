@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Package-specific integration. Edit this file directly. -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <UniversalDevKitRuntime Condition="'$(UniversalDevKitRuntime)' == ''">Dynamic</UniversalDevKitRuntime>
+    <__UniversalDevKitHeleprsTestPackageRoot>$(MSBuildThisFileDirectory)..\..\</__UniversalDevKitHeleprsTestPackageRoot>
+    <__UniversalDevKitHeleprsTestPackageVersion>$(__UniversalDevKitHeleprsTestPackageVersion)</__UniversalDevKitHeleprsTestPackageVersion>
+    <UniversalDevKitHeleprsTestLinkage Condition="'$(UniversalDevKitHeleprsTestLinkage)' == ''">Static</UniversalDevKitHeleprsTestLinkage>
+  </PropertyGroup>
+  <Import Project="Generated\Settings.targets" />
+  <ItemGroup>
+    <__UniversalDevKitNuGetRoot Include="$(UniversalDevKitComponents)" />
+  </ItemGroup>
+  <Target Name="__UniversalDevKitHeleprsTestValidateNuGet" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(Platform)' != 'x64'" Text="UniversalDevKit.HeleprsTest: only Windows x64 is packaged." />
+    <Error Condition="'$(Configuration)' != 'Debug' and '$(Configuration)' != 'Release'" Text="UniversalDevKit.HeleprsTest: select Debug or Release." />
+    <Error Condition="'$(UniversalDevKitComponents)' == ''" Text="Set UniversalDevKitComponents to explicitly selected root components." />
+    <Error Condition="!$([System.String]::Copy(';$(__UniversalDevKitHeleprsTestValidModes);').Contains(';$(UniversalDevKitHeleprsTestLinkage);'))" Text="UniversalDevKit.HeleprsTest: unsupported linkage." />
+    <Error Condition="'$(UniversalDevKitRuntime)' != 'Static' and '$(UniversalDevKitRuntime)' != 'Dynamic'" Text="UniversalDevKitRuntime must be Static (MT) or Dynamic (MD)." />
+    <Error Condition="'$(__UniversalDevKitHeleprsTestHasBinaries)' == 'true' and '$(PlatformToolset)' != '$(__UniversalDevKitHeleprsTestExpectedToolset)'" Text="UniversalDevKit.HeleprsTest: package requires toolset $(__UniversalDevKitHeleprsTestExpectedToolset)." />
+    <Error Condition="'$(__UniversalDevKitHeleprsTestHasBinaries)' == 'true' and '$(VCToolsVersion)' != '$(__UniversalDevKitHeleprsTestExpectedTools)'" Text="UniversalDevKit.HeleprsTest: package requires MSVC tools $(__UniversalDevKitHeleprsTestExpectedTools)." />
+    <Error Condition="'$(__UniversalDevKitHeleprsTestPackageRoot)' == ''" Text="UniversalDevKit package import is missing." />
+
+  </Target>
+  <Target Name="__UniversalDevKitHeleprsTestCopyNuGetRuntime" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Copy SourceFiles="@(__UniversalDevKitHeleprsTestNuGetRuntime)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

@@ -82,7 +82,7 @@ install(DIRECTORY "Includes/Core/" DESTINATION "include")
 foreach(componentName IN LISTS availablePackageComponents)
     install(DIRECTORY "Includes/${componentName}/" DESTINATION "include")
 endforeach()
-# Namespace + EXPORT_NAME дают, например, UniversalDevKit::Helpers.Static.
+# Namespace + EXPORT_NAME дают, например, UniversalDevKit::HeleprsTest.Static.
 install(EXPORT UniversalDevKitTargets
     NAMESPACE UniversalDevKit::
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/UniversalDevKit"

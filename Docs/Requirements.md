@@ -56,7 +56,7 @@ Windows threads использует штатную поддержку MSVC/CRT 
 
 ## Проверки
 
-Diagnostic теперь объявляет threads в JSON; его CMake-файл не содержит отдельной настройки потоков. Tests/Fixtures/Libraries/Registry проверяет C++20 через std::span и системную Windows-библиотеку через WSAStartup/WSACleanup. Отдельный Windows-исходник вызывается из общей реализации, поэтому его отсутствие вызывает ошибку линковки.
+DiagnosticTest теперь объявляет threads в JSON; его CMake-файл не содержит отдельной настройки потоков. Tests/Fixtures/Libraries/Registry проверяет C++20 через std::span и системную Windows-библиотеку через WSAStartup/WSACleanup. Отдельный Windows-исходник вызывается из общей реализации, поэтому его отсутствие вызывает ошибку линковки.
 
 TestComponentRegistry проверяет нормализацию требований и генерируемые MSBuild-элементы. `cmake -P Tests/Integration/Cmake/RequirementValidation.cmake` проверяет тот же контракт CMake, включая ошибки для неизвестного требования, неверного стандарта и типа threads. TestCMakePackage дополнительно устанавливает новый компонент и собирает отдельного потребителя, у которого исходно запрошен C++17: требование C++20 передаётся из пакета.
 

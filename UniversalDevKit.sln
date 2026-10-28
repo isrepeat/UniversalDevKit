@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.10.12224.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Static", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Static.vcxproj", "{A7CE4335-D8E6-4E53-B810-7D932E87BA59}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.HeleprsTest.Static", "Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Static.vcxproj", "{A7CE4335-D8E6-4E53-B810-7D932E87BA59}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}"
 	ProjectSection(SolutionItems) = preProject
@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", 
 		Scripts\PowerShell\UpdateProjectFilters.ps1 = Scripts\PowerShell\UpdateProjectFilters.ps1
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Static", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Static.vcxproj", "{C6B94069-54C2-4B96-880D-4C058A605C56}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.DiagnosticTest.Static", "Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Static.vcxproj", "{C6B94069-54C2-4B96-880D-4C058A605C56}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{13DA8639-4234-4E82-9423-056A19840860}"
 EndProject
@@ -40,8 +40,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{8CB5D103-21B9-4651-A4A1-671107F28847}"
 	ProjectSection(SolutionItems) = preProject
-		Projects\Components\Diagnostic.json = Projects\Components\Diagnostic.json
-		Projects\Components\Helpers.json = Projects\Components\Helpers.json
+		Projects\Components\DiagnosticTest.json = Projects\Components\DiagnosticTest.json
+		Projects\Components\HeleprsTest.json = Projects\Components\HeleprsTest.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}"
@@ -53,22 +53,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{08C8
 		Projects\MsBuild\UniversalDevKit.Sources.targets = Projects\MsBuild\UniversalDevKit.Sources.targets
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Shared", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems", "{F27F4562-11C4-42EF-AC5A-26101FD26F46}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.HeleprsTest.Shared", "Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Shared.vcxitems", "{F27F4562-11C4-42EF-AC5A-26101FD26F46}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Dynamic", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Dynamic.vcxproj", "{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.HeleprsTest.Dynamic", "Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Dynamic.vcxproj", "{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Shared", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems", "{28F717C7-A2EF-405E-96F1-538329030ACF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.DiagnosticTest.Shared", "Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Shared.vcxitems", "{28F717C7-A2EF-405E-96F1-538329030ACF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Dynamic", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj", "{88573491-8330-4D25-A3C2-FAAB1D69E589}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.DiagnosticTest.Dynamic", "Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Dynamic.vcxproj", "{88573491-8330-4D25-A3C2-FAAB1D69E589}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{8B6DD9E6-3057-45B9-80F6-B813601BE33B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeleprsTest", "HeleprsTest", "{8B6DD9E6-3057-45B9-80F6-B813601BE33B}"
 	ProjectSection(SolutionItems) = preProject
-		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Dependencies.props = Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Dependencies.props
+		Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Dependencies.props = Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Dependencies.props
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DiagnosticTest", "DiagnosticTest", "{5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}"
 	ProjectSection(SolutionItems) = preProject
-		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dependencies.props = Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dependencies.props
+		Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Dependencies.props = Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Dependencies.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{066DAD5F-063F-43BF-8ADC-0E76A36CA54D}"
@@ -155,34 +155,34 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{BE41E66B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatform", "{907E880C-10F6-4C85-9DF8-5C73F54646DB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{072E1208-58D6-471D-B494-5D5670688291}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DiagnosticTest", "DiagnosticTest", "{072E1208-58D6-471D-B494-5D5670688291}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\Diagnostic\Package.json = Packages\CrossPlatform\Diagnostic\Package.json
+		Packages\CrossPlatform\DiagnosticTest\Package.json = Packages\CrossPlatform\DiagnosticTest\Package.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{3F409C4A-6700-4061-AA77-627289E619E9}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\Delivery.json
-		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.nuspec = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.nuspec
-		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.props = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.props
-		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.targets = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.targets
+		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\Delivery.json
+		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.nuspec = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.nuspec
+		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.props = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.props
+		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.targets = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.targets
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeleprsTest", "HeleprsTest", "{BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\Helpers\Package.json = Packages\CrossPlatform\Helpers\Package.json
+		Packages\CrossPlatform\HeleprsTest\Package.json = Packages\CrossPlatform\HeleprsTest\Package.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{521E2788-845C-4B8F-B742-DB0FDF5271D3}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\Helpers\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\Helpers\Delivery\NuGet\Delivery.json
-		Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.nuspec = Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.nuspec
-		Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.props = Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.props
-		Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.targets = Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.targets
+		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\Delivery.json
+		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.nuspec = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.nuspec
+		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.props = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.props
+		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.targets = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.targets
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}"
@@ -191,8 +191,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{DC
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatform", "{CA7AB659-38EB-4E98-99A7-95A777DCD074}"
 	ProjectSection(SolutionItems) = preProject
-		Scripts\Packages\CrossPlatform\Pack.Diagnostic.cmd = Scripts\Packages\CrossPlatform\Pack.Diagnostic.cmd
-		Scripts\Packages\CrossPlatform\Pack.Helpers.cmd = Scripts\Packages\CrossPlatform\Pack.Helpers.cmd
+		Scripts\Packages\CrossPlatform\Pack.DiagnosticTest.cmd = Scripts\Packages\CrossPlatform\Pack.DiagnosticTest.cmd
+		Scripts\Packages\CrossPlatform\Pack.HeleprsTest.cmd = Scripts\Packages\CrossPlatform\Pack.HeleprsTest.cmd
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MessagingModule", "MessagingModule", "{BC0651B9-7642-4436-BF89-5D8B8BD4F4A0}"
@@ -209,12 +209,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000101}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\Diagnostic\Delivery\Android\Delivery.json = Packages\CrossPlatform\Diagnostic\Delivery\Android\Delivery.json
+		Packages\CrossPlatform\DiagnosticTest\Delivery\Android\Delivery.json = Packages\CrossPlatform\DiagnosticTest\Delivery\Android\Delivery.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000102}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\Helpers\Delivery\Android\Delivery.json = Packages\CrossPlatform\Helpers\Delivery\Android\Delivery.json
+		Packages\CrossPlatform\HeleprsTest\Delivery\Android\Delivery.json = Packages\CrossPlatform\HeleprsTest\Delivery\Android\Delivery.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000300}"
@@ -231,17 +231,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{A63D24
 		Scripts\Android\Gradle\gradlew.bat = Scripts\Android\Gradle\gradlew.bat
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Meta.Shared", "Projects\MsBuild\Meta\UniversalDevKit.Meta.Shared.vcxitems", "{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Shared", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems", "{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meta", "Meta", "{50CDBD24-894E-0FD6-7C08-442980AADBB7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{50CDBD24-894E-0FD6-7C08-442980AADBB7}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Meta.HeaderCheck", "Projects\MsBuild\Meta\UniversalDevKit.Meta.HeaderCheck.vcxproj", "{E21B97A1-D847-2938-4E29-760523C97389}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Math", "Math", "{B7DB4011-D541-EB16-8C70-09156341D287}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Math.Shared", "Projects\MsBuild\Math\UniversalDevKit.Math.Shared.vcxitems", "{815ABCB2-BFA4-4BF8-AB85-AE1A38874096}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Math.HeaderCheck", "Projects\MsBuild\Math\UniversalDevKit.Math.HeaderCheck.vcxproj", "{5186584A-FE10-0699-E723-A6FC080988C6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.HeaderCheck", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj", "{E21B97A1-D847-2938-4E29-760523C97389}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -269,10 +263,6 @@ Global
 		{E21B97A1-D847-2938-4E29-760523C97389}.Debug|x64.Build.0 = Debug|x64
 		{E21B97A1-D847-2938-4E29-760523C97389}.Release|x64.ActiveCfg = Release|x64
 		{E21B97A1-D847-2938-4E29-760523C97389}.Release|x64.Build.0 = Release|x64
-		{5186584A-FE10-0699-E723-A6FC080988C6}.Debug|x64.ActiveCfg = Debug|x64
-		{5186584A-FE10-0699-E723-A6FC080988C6}.Debug|x64.Build.0 = Debug|x64
-		{5186584A-FE10-0699-E723-A6FC080988C6}.Release|x64.ActiveCfg = Release|x64
-		{5186584A-FE10-0699-E723-A6FC080988C6}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -317,23 +307,18 @@ Global
 		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
 		{50CDBD24-894E-0FD6-7C08-442980AADBB7} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{E21B97A1-D847-2938-4E29-760523C97389} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
-		{B7DB4011-D541-EB16-8C70-09156341D287} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
-		{815ABCB2-BFA4-4BF8-AB85-AE1A38874096} = {B7DB4011-D541-EB16-8C70-09156341D287}
-		{5186584A-FE10-0699-E723-A6FC080988C6} = {B7DB4011-D541-EB16-8C70-09156341D287}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7A3009E-A79E-4542-AC95-DD9B9C113922}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{28f717c7-a2ef-405e-96f1-538329030acf}*SharedItemsImports = 9
-		Projects\MsBuild\Math\UniversalDevKit.Math.Shared.vcxitems*{5186584a-fe10-0699-e723-a6fc080988c6}*SharedItemsImports = 4
-		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{56ed54d2-4f7a-4cd2-91ba-3d710d8f9c24}*SharedItemsImports = 4
-		Projects\MsBuild\Math\UniversalDevKit.Math.Shared.vcxitems*{815abcb2-bfa4-4bf8-ab85-ae1a38874096}*SharedItemsImports = 9
-		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{88573491-8330-4d25-a3c2-faab1d69e589}*SharedItemsImports = 4
-		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{a7ce4335-d8e6-4e53-b810-7d932e87ba59}*SharedItemsImports = 4
-		Projects\MsBuild\Meta\UniversalDevKit.Meta.Shared.vcxitems*{c1e8c40d-b9b5-4c0d-9f7e-1b793d3c13ae}*SharedItemsImports = 9
-		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{c6b94069-54c2-4b96-880d-4c058a605c56}*SharedItemsImports = 4
-		Projects\MsBuild\Meta\UniversalDevKit.Meta.Shared.vcxitems*{e21b97a1-d847-2938-4e29-760523c97389}*SharedItemsImports = 4
-		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{f27f4562-11c4-42ef-ac5a-26101fd26f46}*SharedItemsImports = 9
+		Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Shared.vcxitems*{28f717c7-a2ef-405e-96f1-538329030acf}*SharedItemsImports = 9
+		Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Shared.vcxitems*{56ed54d2-4f7a-4cd2-91ba-3d710d8f9c24}*SharedItemsImports = 4
+		Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Shared.vcxitems*{88573491-8330-4d25-a3c2-faab1d69e589}*SharedItemsImports = 4
+		Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Shared.vcxitems*{a7ce4335-d8e6-4e53-b810-7d932e87ba59}*SharedItemsImports = 4
+		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{c1e8c40d-b9b5-4c0d-9f7e-1b793d3c13ae}*SharedItemsImports = 9
+		Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Shared.vcxitems*{c6b94069-54c2-4b96-880d-4c058a605c56}*SharedItemsImports = 4
+		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{e21b97a1-d847-2938-4e29-760523c97389}*SharedItemsImports = 4
+		Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Shared.vcxitems*{f27f4562-11c4-42ef-ac5a-26101fd26f46}*SharedItemsImports = 9
 	EndGlobalSection
 EndGlobal

@@ -63,12 +63,12 @@ using System.Diagnostics;
 
 ### Расположение исходников
 
-- Иерархия namespace должна полностью отражать иерархию папок исходников. Например, `Includes/Meta/UniversalDevKit/Meta/Utilities/PointerGetter.h` объявляет класс в `universaldevkit::meta::utilities`, а не в `universaldevkit::meta`.
+- Иерархия namespace должна полностью отражать иерархию папок исходников. Например, `Includes/Helpers/UniversalDevKit/Helpers/Meta/Utilities/PointerGetter.h` объявляет класс в `universaldevkit::helpers::meta::utilities`, а не в `universaldevkit::helpers::meta`.
 
 - Файлы проектов сборки находятся в `Projects/MsBuild/` и `Projects/Cmake/`; описание пакетов — в `Packages/`.
 - Артефакты собственной сборки всегда находятся в `!artifacts/<ОС>-<архитектура>/<система сборки>/<проект>/`, вне каталогов исходников. При компиляции исходников внутри потребителя используются его изолированные каталоги артефактов.
 
-- Публичные заголовки и шаблонная реализация хранятся в `Includes/<компонент>/UniversalDevKit/<компонент>/`, например `Helpers/Math.h` или `Diagnostic/Logging.h`.
+- Публичные заголовки и шаблонная реализация хранятся в `Includes/<компонент>/UniversalDevKit/<компонент>/`, например `Helpers/Math.h` или `DiagnosticTest/Logging.h`.
 - Компилируемая реализация и внутренние заголовки хранятся в `Sources/<компонент>/`. Платформенные реализации находятся в `Sources/<компонент>/platform/<платформа>/`.
 - Публичные include-пути потребителя — `Includes/Core/` и `Includes/<компонент>/` согласно графу зависимостей. Заголовки подключаются как `<UniversalDevKit/Helpers/Math.h>`; общий корень `Includes/` не передаётся.
 - CMake и MSBuild используют единственный экземпляр исходников. Каталоги создаются по мере появления кода; шаблонным хелперам отдельные `.cpp` не требуются.

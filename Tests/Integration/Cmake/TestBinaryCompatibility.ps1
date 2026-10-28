@@ -57,9 +57,9 @@ foreach ($runtime in @('Dynamic', 'Static')) {
 
 # Stop incompatible installation before overwriting binaries.
 $mdPrefix = Join-Path $run 'install-Dynamic'
-$before = (Get-FileHash (Join-Path $mdPrefix 'bin/universaldevkit_diagnostic_dynamic.dll')).Hash
+$before = (Get-FileHash (Join-Path $mdPrefix 'bin/universaldevkit_diagnostictest_dynamic.dll')).Hash
 AssertFails @('--install', (Join-Path $run 'build-Static'), '--config', 'Release', '--prefix', $mdPrefix) 'incompatible package'
-if ((Get-FileHash (Join-Path $mdPrefix 'bin/universaldevkit_diagnostic_dynamic.dll')).Hash -ne $before) { throw 'Rejected install changed binary' }
+if ((Get-FileHash (Join-Path $mdPrefix 'bin/universaldevkit_diagnostictest_dynamic.dll')).Hash -ne $before) { throw 'Rejected install changed binary' }
 
 foreach ($case in @('CRT', 'Iterator')) {
     $consumer = Join-Path $run "rejected-$case"

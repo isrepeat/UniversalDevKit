@@ -43,7 +43,7 @@ Connect добавляет импорты выбранных Shared.vcxitems и 
 
 Connect добавляет ProjectReference на библиотечные проекты. MSBuild строит зависимости и передаёт требуемые .lib финальному линкеру. Сгенерированные Dependencies.props описывают межкомпонентные связи.
 
-Статические архивы UDK не объединяются автоматически в один архив. Например, Diagnostic.Static содержит свою реализацию, а consumer должен получить также Helpers.Static. Connect рассчитывает этот набор; у библиотечных ссылок различается LinkLibraryDependencies в зависимости от роли проекта.
+Статические архивы UDK не объединяются автоматически в один архив. Например, DiagnosticTest.Static содержит свою реализацию, а consumer должен получить также HeleprsTest.Static. Connect рассчитывает этот набор; у библиотечных ссылок различается LinkLibraryDependencies в зависимости от роли проекта.
 
 ## Как собирается Dynamic
 
@@ -54,7 +54,7 @@ Consumer линкуется с импортной .lib, а реализация 
 ## Режим ProjectOnly
 
 ```powershell
-./Scripts/PowerShell/Connect.ps1 -ProjectOnly -ProjectPath C:/Projects/App/App.vcxproj -Components Diagnostic
+./Scripts/PowerShell/Connect.ps1 -ProjectOnly -ProjectPath C:/Projects/App/App.vcxproj -Components DiagnosticTest
 ```
 
 Этот режим изменяет только .vcxproj и поддерживает Shared. Sources.targets раскрывает зависимости во время вычисления проекта. Static/Dynamic через ProjectOnly сейчас не поддерживаются.

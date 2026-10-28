@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "adapter": "component",
+  "id": "UniversalDevKit.HeleprsTest",
+  "supportedPlatforms": ["Windows"],
+  "nuspec": "UniversalDevKit.HeleprsTest.nuspec",
+  "integration": {
+    "props": "UniversalDevKit.HeleprsTest.props",
+    "targets": "UniversalDevKit.HeleprsTest.targets"
+  }
+}

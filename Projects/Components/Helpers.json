@@ -1,26 +1,31 @@
 {
   "name": "Helpers",
-  "dependencies": [],
-  "msbuildGuid": "{F27F4562-11C4-42EF-AC5A-26101FD26F46}",
+  "kind": "headerOnly",
+  "msbuildGuid": "{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}",
   "headers": [
-    "Includes/Helpers/UniversalDevKit/Helpers/Math.h",
-    "Includes/Helpers/UniversalDevKit/Helpers/Text.h"
+    "Includes/Helpers/UniversalDevKit/Helpers/Math/Differentiation.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Math/Function1D.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Math/Rect.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Math/Size.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Math/Tensor.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/Concepts.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/Diagnostics.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/FunctionTraits.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/Logic.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/Tags.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/TypeTraits.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/Utilities/PointerGetter.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/Utilities/TypeErasedDeleter.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/Utilities/ValueExtractor.h"
   ],
-  "sources": [
-    "Sources/Helpers/Math.cpp",
-    "Sources/Helpers/Text.cpp"
-  ],
+  "sources": [],
   "filters": {
+    "files": {},
     "roots": [
       {
         "path": "Includes/Helpers/UniversalDevKit/Helpers",
         "filter": ""
-      },
-      {
-        "path": "Sources/Helpers",
-        "filter": ""
       }
-    ],
-    "files": {}
+    ]
   }
 }

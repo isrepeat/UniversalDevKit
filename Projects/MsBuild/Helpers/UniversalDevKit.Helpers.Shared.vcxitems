@@ -3,7 +3,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <HasSharedItems>true</HasSharedItems>
-    <ItemsProjectGuid>{F27F4562-11C4-42EF-AC5A-26101FD26F46}</ItemsProjectGuid>
+    <ItemsProjectGuid>{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}</ItemsProjectGuid>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.props" Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
   <ItemDefinitionGroup>
@@ -12,22 +12,48 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math.h">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Differentiation.h">
+      <__UniversalDevKitFilter>Math</__UniversalDevKitFilter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Text.h">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Function1D.h">
+      <__UniversalDevKitFilter>Math</__UniversalDevKitFilter>
     </ClInclude>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Helpers\Math.cpp">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ObjectFileName>$(IntDir)UniversalDevKit\Helpers\Math.obj</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Helpers\Text.cpp">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ObjectFileName>$(IntDir)UniversalDevKit\Helpers\Text.obj</ObjectFileName>
-    </ClCompile>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Rect.h">
+      <__UniversalDevKitFilter>Math</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Size.h">
+      <__UniversalDevKitFilter>Math</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Tensor.h">
+      <__UniversalDevKitFilter>Math</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Meta\Concepts.h">
+      <__UniversalDevKitFilter>Meta</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Meta\Diagnostics.h">
+      <__UniversalDevKitFilter>Meta</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Meta\FunctionTraits.h">
+      <__UniversalDevKitFilter>Meta</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Meta\Logic.h">
+      <__UniversalDevKitFilter>Meta</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Meta\Tags.h">
+      <__UniversalDevKitFilter>Meta</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Meta\TypeTraits.h">
+      <__UniversalDevKitFilter>Meta</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Meta\Utilities\PointerGetter.h">
+      <__UniversalDevKitFilter>Meta\Utilities</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Meta\Utilities\TypeErasedDeleter.h">
+      <__UniversalDevKitFilter>Meta\Utilities</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Meta\Utilities\ValueExtractor.h">
+      <__UniversalDevKitFilter>Meta\Utilities</__UniversalDevKitFilter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <__UniversalDevKitCompileRequirement Include="Helpers">

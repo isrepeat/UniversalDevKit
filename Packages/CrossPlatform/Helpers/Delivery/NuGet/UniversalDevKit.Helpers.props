@@ -4,8 +4,6 @@
   <Import Project="Generated\Settings.props" />
   <PropertyGroup>
     <__UniversalDevKitHelpersPackageRoot>$(MSBuildThisFileDirectory)..\..\</__UniversalDevKitHelpersPackageRoot>
-
-    <UniversalDevKitRuntime Condition="'$(UniversalDevKitRuntime)' == ''">Dynamic</UniversalDevKitRuntime>
-    <UniversalDevKitHelpersLinkage Condition="'$(UniversalDevKitHelpersLinkage)' == ''">Static</UniversalDevKitHelpersLinkage>
+    <UniversalDevKitHelpersLinkage Condition="'$(UniversalDevKitHelpersLinkage)' == ''">Shared</UniversalDevKitHelpersLinkage>
   </PropertyGroup>
 </Project>

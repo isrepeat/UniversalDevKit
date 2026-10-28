@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Package-specific integration. Edit this file directly. -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="Generated\Settings.props" />
+  <PropertyGroup>
+    <__UniversalDevKitDiagnosticTestPackageRoot>$(MSBuildThisFileDirectory)..\..\</__UniversalDevKitDiagnosticTestPackageRoot>
+
+    <UniversalDevKitRuntime Condition="'$(UniversalDevKitRuntime)' == ''">Dynamic</UniversalDevKitRuntime>
+    <UniversalDevKitDiagnosticTestLinkage Condition="'$(UniversalDevKitDiagnosticTestLinkage)' == ''">Static</UniversalDevKitDiagnosticTestLinkage>
+  </PropertyGroup>
+</Project>

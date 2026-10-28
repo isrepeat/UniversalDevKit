@@ -1,4 +1,4 @@
-#include <UniversalDevKit/Diagnostic/Logging.h>
+#include <UniversalDevKit/DiagnosticTest/Logging.h>
 
 #include <string_view>
 #include <algorithm>
@@ -36,8 +36,8 @@ namespace {
 }
 
 int main() {
-    using universaldevkit::diagnostic::Log;
-    using universaldevkit::diagnostic::TryLog;
+    using universaldevkit::diagnostictest::Log;
+    using universaldevkit::diagnostictest::TryLog;
     static_assert(noexcept(Log(std::string_view{})));
     static_assert(noexcept(TryLog(std::string_view{})));
 
@@ -56,7 +56,7 @@ int main() {
     expected += binary + '\n';
     if (capture.str() != expected) { return 3; }
 
-    // 2. Несколько потоков пишут через один Diagnostic; строки не должны смешиваться.
+    // 2. Несколько потоков пишут через один DiagnosticTest; строки не должны смешиваться.
     capture.str("");
     std::vector<std::thread> threads;
     std::vector<std::string> expectedLines;

@@ -36,11 +36,11 @@ Tests/Fixtures/Libraries/Registry также является отдельным
 
 Исходный prefix после переноса отсутствует. Проверка показывает, что установленный экспорт работает после смены пути; исходники самого тестового приложения берутся из Tests/Fixtures/Consumers/CmakePackage. Результаты сохраняются в !artifacts для анализа.
 
-Тот же скрипт проверяет контракт через Tests/Fixtures/Consumers/CmakeContract: прямой и транзитивный конфликт вариантов, внутреннюю статическую зависимость DLL, конфликт при add_subdirectory, исключённый компонент и отсутствующий Dynamic-target. Отдельный Release-only пакет Helpers.Static собирается и запускается; запрос Debug и попытка подключения x64-пакета из Win32 отклоняются. Отрицательные проверки требуют не только ненулевой код, но и ожидаемую диагностику.
+Тот же скрипт проверяет контракт через Tests/Fixtures/Consumers/CmakeContract: прямой и транзитивный конфликт вариантов, внутреннюю статическую зависимость DLL, конфликт при add_subdirectory, исключённый компонент и отсутствующий Dynamic-target. Отдельный Release-only пакет HeleprsTest.Static собирается и запускается; запрос Debug и попытка подключения x64-пакета из Win32 отклоняются. Отрицательные проверки требуют не только ненулевой код, но и ожидаемую диагностику.
 
 ## Проверить Android AAR/Prefab
 
-Реальные Helpers/Diagnostic проверяются через [AndroidPrefab.Tests.ps1](../Tests/Integration/Packages/AndroidPrefab.Tests.ps1) или [RunAndroidPrefabTests.cmd](../Tests/Scripts/RunAndroidPrefabTests.cmd). Профиль инструментов, Maven-координаты и CMake-подключение описаны в [Android AAR/Prefab](../Packages/Build/Android/README.md).
+Реальные HeleprsTest/DiagnosticTest проверяются через [AndroidPrefab.Tests.ps1](../Tests/Integration/Packages/AndroidPrefab.Tests.ps1) или [RunAndroidPrefabTests.cmd](../Tests/Scripts/RunAndroidPrefabTests.cmd). Профиль инструментов, Maven-координаты и CMake-подключение описаны в [Android AAR/Prefab](../Packages/Build/Android/README.md).
 
 `RunAndroidPrefabTests.cmd -SkipDevice` собирает независимый APK и проверяет набор SO, единственный libc++_shared.so, private-заголовки и отказы при конфликте вариантов/static STL. Общая Android-группа включает этот build-only сценарий как AndroidPrefabBuild. Для instrumentation уберите SkipDevice и передайте Serial: только UDK_RESULT=PASS подтверждает вызов C++ API на Android. Сохранённые BuildPassed-DeviceNotRun отчёты запуск не подтверждают.
 
@@ -60,7 +60,7 @@ TestCMakePackage также собирает и устанавливает Tests
 
 ## Состояние между модулями
 
-Если один статический компонент включён в EXE и несколько DLL, каждый модуль может получить отдельное состояние. В Diagnostic таким состоянием является локальный статический mutex. Проверка вариантов подключения не превращает его в общий mutex процесса.
+Если один статический компонент включён в EXE и несколько DLL, каждый модуль может получить отдельное состояние. В DiagnosticTest таким состоянием является локальный статический mutex. Проверка вариантов подключения не превращает его в общий mutex процесса.
 
 Для сервисов с кешами и регистрами область экземпляра задаётся stateScope: module или process; process требует Dynamic. Подробности — [общее состояние](StateScope.md). Общий экземпляр требует общей динамической реализации либо передачи сервисного объекта приложением.
 

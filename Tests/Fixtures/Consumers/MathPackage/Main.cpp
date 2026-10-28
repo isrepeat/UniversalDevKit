@@ -1,13 +1,13 @@
-#include <UniversalDevKit/Math/Differentiation.h>
-#include <UniversalDevKit/Math/Function1D.h>
-#include <UniversalDevKit/Math/Tensor.h>
-#include <UniversalDevKit/Math/Rect.h>
-#include <UniversalDevKit/Math/Size.h>
+#include <UniversalDevKit/Helpers/Math/Differentiation.h>
+#include <UniversalDevKit/Helpers/Math/Function1D.h>
+#include <UniversalDevKit/Helpers/Math/Tensor.h>
+#include <UniversalDevKit/Helpers/Math/Rect.h>
+#include <UniversalDevKit/Helpers/Math/Size.h>
 
 #include <type_traits>
 #include <utility>
 
-namespace math = universaldevkit::math;
+namespace math = universaldevkit::helpers::math;
 
 static_assert(std::is_same_v<decltype(std::declval<math::Mat<int, 2, 3>&>()[0][0]), int&>);
 static_assert(std::is_same_v<decltype(std::declval<const math::Mat<int, 2, 3>&>()[0][0]), const int&>);
@@ -37,7 +37,7 @@ constexpr bool CheckIndexing() {
 static_assert(CheckIndexing());
 
 int main() {
-    namespace math = universaldevkit::math;
+    namespace math = universaldevkit::helpers::math;
     const math::Vec<int, 3> left{ 1, 2, 3 };
     const math::Vec<int, 3> right{ 4, 5, 6 };
     if (left * right != 32) { return 1; }

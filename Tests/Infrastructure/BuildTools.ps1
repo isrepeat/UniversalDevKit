@@ -18,7 +18,7 @@ function Invoke-TestBuild {
 
 function Invoke-TestApplication {
     param([string]$Executable, [string]$ExpectedOutput)
-    # stderr contains normal Diagnostic output; PowerShell 5.1 must not treat it as a test failure.
+    # stderr contains normal DiagnosticTest output; PowerShell 5.1 must not treat it as a test failure.
     $start = [Diagnostics.ProcessStartInfo]::new()
     $start.FileName = $Executable
     $start.WorkingDirectory = [IO.Path]::GetDirectoryName($Executable)

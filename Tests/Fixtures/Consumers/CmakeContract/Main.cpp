@@ -1,3 +1,3 @@
-#include <UniversalDevKit/Helpers/Math.h>
+#include <UniversalDevKit/HeleprsTest/Math.h>
 
-int main() { return universaldevkit::math::IsPowerOfTwo(8) ? 0 : 1; }
+int main() { return universaldevkit::heleprstest::math::IsPowerOfTwo(8) ? 0 : 1; }

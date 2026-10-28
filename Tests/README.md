@@ -1,6 +1,6 @@
 # Проверки UniversalDevKit
 
-Реальные Android AAR/Prefab Helpers/Diagnostic: [архитектура и запуск](../Packages/Build/Android/README.md). AndroidPrefabBuild в общем runner проверяет сборку APK без устройства. Отдельный RunAndroidPrefabTests.cmd принимает -Serial для instrumentation либо явный -SkipDevice для сборки; BuildPassed-DeviceNotRun не является подтверждением запуска на Android.
+Реальные Android AAR/Prefab HeleprsTest/DiagnosticTest: [архитектура и запуск](../Packages/Build/Android/README.md). AndroidPrefabBuild в общем runner проверяет сборку APK без устройства. Отдельный RunAndroidPrefabTests.cmd принимает -Serial для instrumentation либо явный -SkipDevice для сборки; BuildPassed-DeviceNotRun не является подтверждением запуска на Android.
 
 WinRT-пакет проверяется через RunWinRtPackageTests.cmd: native Desktop и C# CsWinRT consumer восстанавливают WinMD/DLL из NuGet, генерируют проекции и выполняют штатную активацию через манифест EXE. Изолированные запуски без DLL должны завершаться отказом; системная регистрация не изменяется. Подробности — [проверки пакетов](Integration/Packages/README.md).
 
@@ -12,7 +12,7 @@ WinRT-пакет проверяется через RunWinRtPackageTests.cmd: nat
 
 ## Native NuGet
 
-Native PackageReference проверяется отдельно через `Tests/Scripts/RunNuGetPackageReferenceTests.cmd`: Helpers/Diagnostic, Static/Dynamic, MD/MT, Debug/Release, локальный feed и отдельный restore cache для каждого consumer, private requirements, точный набор DLL и чистый запуск. Требуется поддерживающий MSBuild с EnableNativePackageReferenceSupport; проверено на MSBuild 18.11. Подробности подключения — [NuGet](../Packages/Build/NuGet/README.md#native-packagereference).
+Native PackageReference проверяется отдельно через `Tests/Scripts/RunNuGetPackageReferenceTests.cmd`: HeleprsTest/DiagnosticTest, Static/Dynamic, MD/MT, Debug/Release, локальный feed и отдельный restore cache для каждого consumer, private requirements, точный набор DLL и чистый запуск. Требуется поддерживающий MSBuild с EnableNativePackageReferenceSupport; проверено на MSBuild 18.11. Подробности подключения — [NuGet](../Packages/Build/NuGet/README.md#native-packagereference).
 
 Diamond с автоматическими транзитивными импортами запускается через `RunDiamondMatrixTests.cmd -Delivery NuGet -PackageReference`. Проверяются все шесть вариантов, оба consumer, CRT/конфигурации, доставка DLL и отказ при конфликте. В общем runner: `RunAllTests.cmd -Test NativePackageReference` или `-Test DiamondPackageReference`.
 
@@ -35,9 +35,9 @@ Diamond с автоматическими транзитивными импор�
 
 Для двойного клика используйте Tests/Scripts/RunNuGet.cmd и RunNuGetRegistry.cmd. Обёртки работают независимо от текущего каталога, используют Windows PowerShell 5.1, сохраняют код завершения и делают паузу. RunNuGet.cmd передаёт MIT LICENSE из корня репозитория; остальные параметры, например -Feed, передаются в тестовый скрипт.
 
-`Tests/Integration/Packages/NuGet.Tests.ps1 -LicenseFile ./LICENSE` собирает локальный feed Helpers/Diagnostic, выполняет restore в отдельные consumer и проверяет MD/MT, Debug/Release, Static/Dynamic, точную зависимость Diagnostic → Helpers и отказы для неподдерживаемой платформы, режима и STL ABI. Артефакты и binlogs сохраняются под !artifacts/tests. Можно передать Feed для проверки уже выпущенных пакетов. Группа запускается отдельно от RunTests.cmd.
+`Tests/Integration/Packages/NuGet.Tests.ps1 -LicenseFile ./LICENSE` собирает локальный feed HeleprsTest/DiagnosticTest, выполняет restore в отдельные consumer и проверяет MD/MT, Debug/Release, Static/Dynamic, точную зависимость DiagnosticTest → HeleprsTest и отказы для неподдерживаемой платформы, режима и STL ABI. Артефакты и binlogs сохраняются под !artifacts/tests. Можно передать Feed для проверки уже выпущенных пакетов. Группа запускается отдельно от RunTests.cmd.
 
-`Tests/Integration/Packages/NuGet.Registry.Tests.ps1` проверяет тот же упаковщик с другим реестром: HeaderProbe → HeaderLeaf. Оба пакета формируются из header-only fixture и используются отдельным MSBuild-consumer в Debug/Release. Это проверяет отсутствие зависимости упаковщика от рабочих имён Helpers/Diagnostic.
+`Tests/Integration/Packages/NuGet.Registry.Tests.ps1` проверяет тот же упаковщик с другим реестром: HeaderProbe → HeaderLeaf. Оба пакета формируются из header-only fixture и используются отдельным MSBuild-consumer в Debug/Release. Это проверяет отсутствие зависимости упаковщика от рабочих имён HeleprsTest/DiagnosticTest.
 
 Каждый RunTests сохраняет полный вывод консоли в `!artifacts/tests/reports/<дата-время-id>/console.log` и таблицу `summary.csv`. Статусы: Passed — пройден, Failed — ошибка, NotRun — не достигнут после остановки, NotSelected — не выбран, Running — начат без зафиксированного завершения. Таблица обновляется во время запуска; при принудительном закрытии консоли текущий тест может остаться Running. Сценарий Diamond отражён одной строкой, подробности его вариантов находятся в console.log. Отчёты сохраняются и при CleanOnSuccess; отдельные MSBuild log/binlog остаются в каталогах сценариев без этого параметра.
 
@@ -49,7 +49,7 @@ Diamond с автоматическими транзитивными импор�
 
 Необязательные сборочные расширения проверяются отдельно: `pwsh -NoProfile -File Tests/Infrastructure/TestBuildExtensions.ps1`. Fixture Generated создаёт публичный заголовок и реализацию, проверяет инкрементальную генерацию CMake/MSBuild, Shared и установленный CMake-пакет. Подробности — [сборочные расширения](../Docs/BuildExtensions.md).
 
-HeaderIsolation проверяет компонентный include-корень Helpers.Headers без сборки библиотек: Helpers и Core доступны, заголовки Diagnostic недоступны. Проверка входит в TestCMakePackage.ps1; ограниченный пакет также проверяется на отсутствие заголовков исключённого Diagnostic.
+HeaderIsolation проверяет компонентный include-корень HeleprsTest.Headers без сборки библиотек: HeleprsTest и Core доступны, заголовки DiagnosticTest недоступны. Проверка входит в TestCMakePackage.ps1; ограниченный пакет также проверяется на отсутствие заголовков исключённого DiagnosticTest.
 
 Runtime-сценарий дополнительно проверяет параллельную сборку одного solution с двумя consumer: App1 использует /MD(d), App2 — /MT(d). Библиотеки собираются с настройками каждого consumer без общего UniversalDevKitRuntime; хеши доставленных DLL сверяются с соответствующими md/mt-артефактами. Смешанная сборка выполняется первой в новом окружении.
 
@@ -66,11 +66,11 @@ Runtime-сценарий дополнительно проверяет пара�
 
 Для просмотра и редактирования тестов откройте `UniversalDevKit.Tests.sln` в корне репозитория. Solution повторяет дерево Tests; fixture-проекты представлены как Solution Items. Build этого решения не запускает сценарии: используйте `Tests/Scripts/RunTests.cmd` или отдельные команды ниже. Основное решение UniversalDevKit.sln содержит только ссылки на инструкцию, запуск и тестовое решение.
 
-TestCMakePackage.ps1 дополнительно запускает LoggingStatic/LoggingDynamic в Debug/Release: контракт буфера и CR/LF, одновременные вызовы четырёх потоков, ошибки вывода с исключениями и без, восстановление после ошибки. Используется один экземпляр Diagnostic с /MD. Выгрузка плагинов и независимые /MT runtime этим сценарием не проверяются.
+TestCMakePackage.ps1 дополнительно запускает LoggingStatic/LoggingDynamic в Debug/Release: контракт буфера и CR/LF, одновременные вызовы четырёх потоков, ошибки вывода с исключениями и без, восстановление после ошибки. Используется один экземпляр DiagnosticTest с /MD. Выгрузка плагинов и независимые /MT runtime этим сценарием не проверяются.
 
 ## Как пользоваться тестами
 
-Сценарий Runtime запускается через `RunTests.ps1 -Scenario Runtime`: Debug/Release с /MD и /MT, Dynamic Diagnostic с внутренней Static Helpers, запуск consumer, сохранение обоих CRT-вариантов и отказ при конфликте CRT. Для /MT параметр UniversalDevKitRuntime=Static передаётся всей сборке. Этот сценарий проверяет сборку из исходников; совместимость готового пакета по CRT и нескольким toolsets он не подтверждает.
+Сценарий Runtime запускается через `RunTests.ps1 -Scenario Runtime`: Debug/Release с /MD и /MT, Dynamic DiagnosticTest с внутренней Static HeleprsTest, запуск consumer, сохранение обоих CRT-вариантов и отказ при конфликте CRT. Для /MT параметр UniversalDevKitRuntime=Static передаётся всей сборке. Этот сценарий проверяет сборку из исходников; совместимость готового пакета по CRT и нескольким toolsets он не подтверждает.
 
 Команды ниже выполняются из корня UniversalDevKit. Нужны Git, Windows PowerShell 5.1 и Visual Studio с C++ tools/MSBuild. Открытие UniversalDevKit.Tests.sln удобно для просмотра файлов; команда Build этого решения не заменяет запуск тестов.
 
@@ -101,9 +101,9 @@ WorkingTree используется по умолчанию и проверяе
 
 1. **Граф и меню.** Scripts/PowerShell/Connect.Tests.ps1 проверяет расчёт вариантов зависимостей, наборы линковки, import-макросов и runtime, отклонение конфликтов и отдельные проверки меню/форматирования. Полный интерактивный сеанс клавиатуры этот тест не воспроизводит. Это самостоятельный тест; Integration/MsBuild/Connect.Tests.ps1 с тем же именем содержит общие функции интеграционных сценариев. RunTests.ps1 использует оба файла по назначению.
 2. **Генератор реестра.** Infrastructure/TestComponentRegistry.ps1 проверяет создание библиотечных проектов и их добавление в solution, выбор платформенных исходников, требования C++20 и системной библиотеки, ограничения process-state компонентов и отклонение некорректных требований JSON.
-3. **Shared.** Подключает исходники Helpers/Diagnostic и зависимости через настоящий Connect. Повторный Apply не должен менять настройки consumer и связи solution или дублировать imports. Собирает Debug/Release x64 и запускает App1 и независимый App2; проверяет сохранность файла соседнего проекта.
+3. **Shared.** Подключает исходники HeleprsTest/DiagnosticTest и зависимости через настоящий Connect. Повторный Apply не должен менять настройки consumer и связи solution или дублировать imports. Собирает Debug/Release x64 и запускает App1 и независимый App2; проверяет сохранность файла соседнего проекта.
 4. **Static.** Повторяет интеграционную проверку со статическими библиотеками: проверяет ссылки без Shared imports, окончательную линковку и запуск обоих приложений в Debug/Release x64.
-5. **Dynamic.** Проверяет бинарное подключение, сборку DLL и consumer, доставку Diagnostic DLL и запуск обоих приложений в Debug/Release x64. Транзитивный runtime-набор дополнительно проверяется сценарием Diamond.
+5. **Dynamic.** Проверяет бинарное подключение, сборку DLL и consumer, доставку DiagnosticTest DLL и запуск обоих приложений в Debug/Release x64. Транзитивный runtime-набор дополнительно проверяется сценарием Diamond.
 6. **ModeSwitch.** В одном окружении последовательно переключает Shared → Static → Dynamic → Shared. Для каждого режима выполняет проверки подключения, повторного Apply, сборки и запуска.
 7. **Disconnect.** После успешного Shared-подключения удаляет компоненты из App1, проверяет отсутствие блоков интеграции и независимую сборку/запуск App2 в Debug/Release. App1 после отключения не собирается: его исходники всё ещё используют API UDK.
 8. **Export.** Использует отдельный тестовый компонент ExportProbe. Проверяет Static/Dynamic Debug/Release x64, вызов публичной функции внешним consumer и метаданные версии. Через dumpbin проверяет наличие публичного UdkPublicProbe и отсутствие внутреннего UdkInternalProbe в экспортах DLL.
@@ -168,7 +168,7 @@ powershell.exe -NoProfile -File Tests/Scripts/PowerShell/RunTests.ps1 -Scenario 
 
 Каждый запуск создаёт отдельный Git-репозиторий Consumer под `!artifacts/tests/<yyyy.MM.dd-guid>/`. WorkingTree копирует tracked и untracked файлы UDK, включая текущие изменения; ignored-файлы, удалённые файлы и Tests исключаются. Submodule добавляет настоящий локальный Git submodule на выбранной ревизии; незакоммиченные изменения UDK в этот режим не попадают. Ревизия должна содержать проверяемые инструменты подключения.
 
-Первый сценарий запускает существующие проверки графа и меню, подключает Helpers/Diagnostic Shared через настоящий Connect, повторяет Apply и проверяет неизменность настроек consumer, состава проектов и Shared-связей solution, отсутствие повторных Shared imports. Изменение форматирования или папок solution выводится отдельно как NOTE. Затем собирает всё решение в Debug/Release x64 и запускает оба приложения. MSBuild text logs и binlogs сохраняются в `logs/` окружения.
+Первый сценарий запускает существующие проверки графа и меню, подключает HeleprsTest/DiagnosticTest Shared через настоящий Connect, повторяет Apply и проверяет неизменность настроек consumer, состава проектов и Shared-связей solution, отсутствие повторных Shared imports. Изменение форматирования или папок solution выводится отдельно как NOTE. Затем собирает всё решение в Debug/Release x64 и запускает оба приложения. MSBuild text logs и binlogs сохраняются в `logs/` окружения.
 
 ## Хранение вариантов
 

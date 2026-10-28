@@ -19,6 +19,8 @@
 
 ## Архитектура и компоненты
 
+- [Helpers](Helpers.md) — единый header-only компонент с разделами Meta и Math, отличие от HeleprsTest.
+
 - [Архитектура](Architecture.md) — организация кода и пути сборки.
 - [Meta](Meta.md) — C++20 concepts, traits, utilities и перенос старых потребителей.
 - [Math](Math.md) — первоначальный перенос математических helpers.

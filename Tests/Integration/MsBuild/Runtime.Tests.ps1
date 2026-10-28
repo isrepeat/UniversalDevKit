@@ -9,8 +9,8 @@ $OutputEncoding = [Text.UTF8Encoding]::new($false)
 $arguments = @{
     SolutionPath = Join-Path $Workspace.Consumer 'Consumer.sln'
     ProjectPath = Join-Path $Workspace.Consumer 'App1/App1.vcxproj'
-    Components = @('Diagnostic', 'Helpers')
-    ComponentModes = @{ Diagnostic = 'Dynamic'; Helpers = 'Static' }
+    Components = @('DiagnosticTest', 'HeleprsTest')
+    ComponentModes = @{ DiagnosticTest = 'Dynamic'; HeleprsTest = 'Static' }
 }
 if ($SolutionInjectorPath) { $arguments.SolutionInjectorPath = $SolutionInjectorPath }
 & (Join-Path $Workspace.Library 'Scripts/PowerShell/Connect.ps1') @arguments | Out-Host
@@ -25,10 +25,10 @@ foreach ($configuration in @('Debug', 'Release')) {
         $outDir = Join-Path $Workspace.Consumer "!artifacts/x64/$configuration/$app/bin"
         Invoke-TestApplication (Join-Path $outDir "$app.exe") "$app passed"
         $runtimeDirectory = if ($app -eq 'App1') { 'md' } else { 'mt' }
-        $expected = @(Get-ChildItem (Join-Path $Workspace.Library '!artifacts/Windows-x64/msbuild') -Recurse -Filter 'UniversalDevKit.Diagnostic.Dynamic.dll' |
-            Where-Object { $_.FullName -match "[\\/]$runtimeDirectory[\\/]Diagnostic.Dynamic[\\/]$configuration[\\/]bin[\\/]" })
+        $expected = @(Get-ChildItem (Join-Path $Workspace.Library '!artifacts/Windows-x64/msbuild') -Recurse -Filter 'UniversalDevKit.DiagnosticTest.Dynamic.dll' |
+            Where-Object { $_.FullName -match "[\\/]$runtimeDirectory[\\/]DiagnosticTest.Dynamic[\\/]$configuration[\\/]bin[\\/]" })
         if ($expected.Count -ne 1) { throw "Missing unique DLL for $app/$configuration/$runtimeDirectory" }
-        $actual = Join-Path $outDir 'UniversalDevKit.Diagnostic.Dynamic.dll'
+        $actual = Join-Path $outDir 'UniversalDevKit.DiagnosticTest.Dynamic.dll'
         if ((Get-FileHash $actual).Hash -ne (Get-FileHash $expected[0].FullName).Hash) {
             throw "Wrong CRT DLL copied to $app"
         }
@@ -50,7 +50,7 @@ foreach ($configuration in @('Debug', 'Release')) {
 # Both variants must coexist without overwriting each other.
 $artifacts = Join-Path $Workspace.Library '!artifacts/Windows-x64/msbuild'
 foreach ($runtimeDirectory in @('md', 'mt')) {
-    $binaries = @(Get-ChildItem $artifacts -Recurse -Filter 'UniversalDevKit.Diagnostic.Dynamic.dll' |
+    $binaries = @(Get-ChildItem $artifacts -Recurse -Filter 'UniversalDevKit.DiagnosticTest.Dynamic.dll' |
         Where-Object { $_.FullName -match "[\\/]$runtimeDirectory[\\/]" })
     if ($binaries.Count -ne 2) { throw "Expected Debug/Release DLLs in $runtimeDirectory" }
 }

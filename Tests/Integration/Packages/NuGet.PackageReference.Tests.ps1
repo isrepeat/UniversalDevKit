@@ -36,14 +36,16 @@ try {
     $version = (Get-Content (Join-Path $repository 'Version.json') -Raw | ConvertFrom-Json).version
     $fixture = Join-Path $repository 'Tests/Fixtures/Consumers/NuGet'
     foreach ($runtime in @('Dynamic', 'Static')) {
-        foreach ($component in @('Diagnostic', 'Helpers')) {
-            foreach ($linkage in @('Static', 'Dynamic')) {
+        foreach ($component in @('DiagnosticTest', 'HeleprsTest', 'Helpers')) {
+            $linkages = if ($component -eq 'Helpers') { @('Shared') } else { @('Static', 'Dynamic') }
+            foreach ($linkage in $linkages) {
                 $name = "$runtime-$component-$linkage"
                 $consumer = Join-Path $run $name
                 [void][IO.Directory]::CreateDirectory($consumer)
                 $cache = Join-Path $consumer 'cache'
                 Copy-Item -LiteralPath (Join-Path $fixture 'PackageReference.Main.cpp') -Destination (Join-Path $consumer 'Main.cpp')
-                $definitions = if ($component -eq 'Helpers') { 'UDK_TEST_HELPERS_ONLY=1;' } else { '' }
+                $definitions = if ($component -eq 'HeleprsTest') { 'UDK_TEST_HELEPRSTEST_ONLY=1;' } else { '' }
+                if ($component -eq 'Helpers') { $definitions = 'UDK_TEST_HEADER_HELPERS=1;' }
                 if ($linkage -eq 'Dynamic') { $definitions += 'UDK_TEST_DYNAMIC=1;' }
                 $text = [IO.File]::ReadAllText((Join-Path $fixture 'PackageReference.vcxproj.in')).Replace('{{VERSION}}', $version).Replace('{{COMPONENT}}', $component).Replace('{{RUNTIME}}', $runtime).Replace('{{LINKAGE}}', $linkage).Replace('{{DEFINITIONS}}', $definitions)
                 $project = Join-Path $consumer 'Consumer.vcxproj'
@@ -57,7 +59,7 @@ try {
                 $assetsPath = Join-Path $consumer 'obj/project.assets.json'
                 if (-not (Test-Path -LiteralPath $assetsPath)) { throw 'Native PackageReference restore did not produce project.assets.json. A supporting Visual Studio is required.' }
                 $assets = Get-Content -LiteralPath $assetsPath -Raw | ConvertFrom-Json
-                $expectedPackages = if ($component -eq 'Diagnostic') { @('Diagnostic', 'Helpers') } else { @('Helpers') }
+                $expectedPackages = if ($component -eq 'DiagnosticTest') { @('DiagnosticTest', 'HeleprsTest') } else { @($component) }
                 foreach ($package in $expectedPackages) {
                     if (-not $assets.libraries.PSObject.Properties["UniversalDevKit.$package/$version"]) { throw "Missing restored dependency: $package" }
                 }
@@ -80,11 +82,14 @@ try {
                     finally { $env:PATH = $oldPath }
                     $results += [pscustomobject]@{ Runtime = $runtime; Component = $component; Linkage = $linkage; Configuration = $configuration; Status = 'Passed' }
                 }
-                if ($runtime -eq 'Dynamic') {
+                if ($runtime -eq 'Dynamic' -and $component -ne 'Helpers') {
                     InvokeChecked ($common + @('/t:Rebuild', '/p:Configuration=Release', '/p:UdkTestWrongCrt=true')) (Join-Path $consumer 'wrong-crt.log') 'CRT mismatch'
                 }
-                if ($component -eq 'Diagnostic') {
-                    InvokeChecked ($common + @('/t:Rebuild', '/p:Configuration=Release', '/p:UniversalDevKitComponents=Helpers', '/p:UniversalDevKitHelpersLinkage=Shared')) (Join-Path $consumer 'wrong-linkage.log') 'unsupported linkage'
+                if ($component -eq 'DiagnosticTest') {
+                    InvokeChecked ($common + @('/t:Rebuild', '/p:Configuration=Release', '/p:UniversalDevKitComponents=HeleprsTest', '/p:UniversalDevKitHeleprsTestLinkage=Shared')) (Join-Path $consumer 'wrong-linkage.log') 'unsupported linkage'
+                }
+                if ($component -eq 'Helpers') {
+                    InvokeChecked ($common + @('/t:Rebuild', '/p:Configuration=Release', '/p:UniversalDevKitHelpersLinkage=Dynamic')) (Join-Path $consumer 'wrong-linkage.log') 'unsupported linkage'
                 }
                 Write-Host "PASS: $name Debug/Release"
             }

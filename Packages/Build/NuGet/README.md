@@ -12,7 +12,7 @@ Build.ps1 создаёт build/native/Generated/Settings.props с версией
 
 ```powershell
 ./Packages/Build/NuGet/Build.ps1 -LicenseFile ./LICENSE
-./Packages/Build/NuGet/Build.ps1 -Components Diagnostic -LicenseFile ./LICENSE
+./Packages/Build/NuGet/Build.ps1 -Components DiagnosticTest -LicenseFile ./LICENSE
 ./Tests/Integration/Packages/NuGet.Tests.ps1 -LicenseFile ./LICENSE
 ./Tests/Integration/Packages/NuGet.Registry.Tests.ps1
 ```
@@ -25,9 +25,9 @@ LicenseFile обязателен, его текст включается как 
 
 Первый проверенный путь использует packages.config. NuGet в Visual Studio добавляет imports build/native/UniversalDevKit.<компонент>.props и .targets; restore восстанавливает файлы, но не создаёт imports в вручную написанном vcxproj. Все props импортируются до всех пакетных targets. Это обеспечивает доступность корней транзитивных пакетов независимо от порядка targets.
 
-Consumer явно задаёт корневые компоненты в UniversalDevKitComponents, например Diagnostic;Helpers. Пакеты, доставленные как зависимости, автоматически не становятся корнями. UniversalDevKit<компонент>Linkage выбирает вариант корня; по умолчанию Static, для process — Dynamic, для headerOnly — Shared. UniversalDevKitRuntime выбирает Dynamic (MD) или Static (MT), по умолчанию Dynamic. Consumer выбирает C++20 или более новый необходимый стандарт самостоятельно; его RuntimeLibrary пакет не меняет.
+Consumer явно задаёт корневые компоненты в UniversalDevKitComponents, например DiagnosticTest;HeleprsTest. Пакеты, доставленные как зависимости, автоматически не становятся корнями. UniversalDevKit<компонент>Linkage выбирает вариант корня; по умолчанию Static, для process — Dynamic, для headerOnly — Shared. UniversalDevKitRuntime выбирает Dynamic (MD) или Static (MT), по умолчанию Dynamic. Consumer выбирает C++20 или более новый необходимый стандарт самостоятельно; его RuntimeLibrary пакет не меняет.
 
-Ссылки финального линкера, import-макросы, публичные include-пути, системные библиотеки и транзитивные DLL вычисляются Resolve-UdkLinkageGraph, используемым Connect. Пересекающиеся графы корней проверяются на конфликт вариантов. Например, Diagnostic требует private/static Helpers: отдельный корень Helpers.Dynamic конфликтует с ним, а Diagnostic.Dynamic без корня Helpers не линкует Helpers.Static в приложение.
+Ссылки финального линкера, import-макросы, публичные include-пути, системные библиотеки и транзитивные DLL вычисляются Resolve-UdkLinkageGraph, используемым Connect. Пересекающиеся графы корней проверяются на конфликт вариантов. Например, DiagnosticTest требует private/static HeleprsTest: отдельный корень HeleprsTest.Dynamic конфликтует с ним, а DiagnosticTest.Dynamic без корня HeleprsTest не линкует HeleprsTest.Static в приложение.
 
 Метаданные установленного выпуска включаются в binaries/<runtime>/<configuration>/Release.json. Принудительно подключённый Abi.h проверяет фактический CRT, конфигурацию, iterator debug level и точную версию компилятора; targets проверяет VCToolsVersion/toolset и версии зависимостей. Другие платформы пока не проверены.
 
@@ -40,12 +40,12 @@ Consumer явно задаёт корневые компоненты в Universa
 ```xml
 <PropertyGroup Label="Globals">
   <EnableNativePackageReferenceSupport>true</EnableNativePackageReferenceSupport>
-  <UniversalDevKitComponents>Diagnostic</UniversalDevKitComponents>
+  <UniversalDevKitComponents>DiagnosticTest</UniversalDevKitComponents>
   <UniversalDevKitRuntime>Dynamic</UniversalDevKitRuntime>
-  <UniversalDevKitDiagnosticLinkage>Dynamic</UniversalDevKitDiagnosticLinkage>
+  <UniversalDevKitDiagnosticTestLinkage>Dynamic</UniversalDevKitDiagnosticTestLinkage>
 </PropertyGroup>
 <ItemGroup>
-  <PackageReference Include="UniversalDevKit.Diagnostic" Version="[0.1.0]" />
+  <PackageReference Include="UniversalDevKit.DiagnosticTest" Version="[0.1.0]" />
 </ItemGroup>
 ```
 
@@ -53,7 +53,7 @@ Consumer явно задаёт корневые компоненты в Universa
 
 Упаковщик создаёт buildTransitive/native/<package ID>.props/.targets, импортирующие штатную интеграцию из build/native. Поэтому восстановленные зависимости автоматически объявляют свои корни и версии до вычисления графа, но не становятся корнями UniversalDevKitComponents и не передают private include-пути/import-макросы. Линковка, ABI-проверки и копирование runtime используют ту же реализацию, что и packages.config.
 
-Проверка реальных Helpers/Diagnostic: Tests/Scripts/RunNuGetPackageReferenceTests.cmd либо NuGet.PackageReference.Tests.ps1. Каждый consumer восстанавливается в собственный кеш из локального feed; проверяются project.assets.json, точные версии зависимостей, Static/Dynamic, MD/MT, Debug/Release, приватные требования, DLL и чистый запуск. Ошибочный CRT и неподдерживаемый вариант должны отклоняться. Параметр -Feed позволяет проверить уже собранные пакеты.
+Проверка реальных HeleprsTest/DiagnosticTest: Tests/Scripts/RunNuGetPackageReferenceTests.cmd либо NuGet.PackageReference.Tests.ps1. Каждый consumer восстанавливается в собственный кеш из локального feed; проверяются project.assets.json, точные версии зависимостей, Static/Dynamic, MD/MT, Debug/Release, приватные требования, DLL и чистый запуск. Ошибочный CRT и неподдерживаемый вариант должны отклоняться. Параметр -Feed позволяет проверить уже собранные пакеты.
 
 Полная матрица Diamond с двумя consumer и конфликтами: Tests/Integration/Cmake/Diamond.Tests.ps1 -Delivery NuGet -PackageReference. Все шесть графов используют один корневой PackageReference на приложение; транзитивные зависимости и DLL приходят из пакетов автоматически. Общий runner содержит NativePackageReference и DiamondPackageReference.
 

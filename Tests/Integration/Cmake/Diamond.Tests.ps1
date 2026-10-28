@@ -135,14 +135,14 @@ try {
         }
         if ('NuGet' -in $Delivery) {
             # Пакетные определения используют штатную интеграцию; исходники компонентов остаются в fixture.
-            $basePackage = Join-Path $repository 'Packages/CrossPlatform/Helpers'
+            $basePackage = Join-Path $repository 'Packages/CrossPlatform/HeleprsTest'
             foreach ($component in @('A','B','C','D')) {
                 $packageRoot = Join-Path $library "Packages/CrossPlatform/$component"
                 foreach ($file in (Get-ChildItem -LiteralPath $basePackage -File -Recurse)) {
-                    $relative = $file.FullName.Substring($basePackage.Length+1).Replace('Helpers', $component)
+                    $relative = $file.FullName.Substring($basePackage.Length+1).Replace('HeleprsTest', $component)
                     $destination = Join-Path $packageRoot $relative
                     [void][IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($destination))
-                    $text = [IO.File]::ReadAllText($file.FullName).Replace('Helpers', $component)
+                    $text = [IO.File]::ReadAllText($file.FullName).Replace('HeleprsTest', $component)
                     [IO.File]::WriteAllText($destination, $text, [Text.UTF8Encoding]::new($false))
                 }
             }
@@ -162,7 +162,7 @@ try {
                     $dependencies = if ($component -eq 'A') { @('B','C','D') } else { @('D') }
                     $props = @($dependencies | ForEach-Object { '  <Import Project="packages\UniversalDevKit.' + $_ + '.' + $version + '\build\native\UniversalDevKit.' + $_ + '.props" />' }) -join "`r`n"
                     $targets = @($dependencies | ForEach-Object { '  <Import Project="packages\UniversalDevKit.' + $_ + '.' + $version + '\build\native\UniversalDevKit.' + $_ + '.targets" />' }) -join "`r`n"
-                    $text = [IO.File]::ReadAllText((Join-Path $repository 'Tests/Fixtures/Consumers/NuGet/Consumer.vcxproj.in')).Replace('Helpers', $component).Replace('{{VERSION}}', $version).Replace('{{DIAGNOSTIC_IMPORT}}',$targets).Replace('{{DIAGNOSTIC_PROPS}}',$props).Replace('{{ROOTS}}',$component)
+                    $text = [IO.File]::ReadAllText((Join-Path $repository 'Tests/Fixtures/Consumers/NuGet/Consumer.vcxproj.in')).Replace('HeleprsTest', $component).Replace('{{VERSION}}', $version).Replace('{{DIAGNOSTIC_IMPORT}}',$targets).Replace('{{DIAGNOSTIC_PROPS}}',$props).Replace('{{ROOTS}}',$component)
                     $publicB = if ($caseName -like 'Private*') { 0 } else { 1 }
                     $definitions = "DIAMOND_TEST_BOUNDARIES=1;DIAMOND_TEST_HEADER_ISOLATION=1;DIAMOND_TEST_PUBLIC_B=$publicB" + $(if ($mode -eq 'Dynamic') { ';DIAMOND_TEST_DYNAMIC=1' } else { '' })
                     if ($caseName -eq 'PublicStaticDynamic') { $definitions += ';DIAMOND_TEST_PUBLIC_STATIC=1' }

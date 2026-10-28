@@ -20,14 +20,14 @@
 ## Приоритет оставшихся работ
 
 1. Check/Repair Connect: обнаруживать расхождение фактического consumer/solution с рассчитанным планом, восстанавливать только настройки UDK и сохранять пользовательские изменения.
-2. Завершить Android runtime-проверку на устройстве/эмуляторе. Реальные Helpers/Diagnostic уже собираются NDK r27c и упаковываются в Prefab; APK и состав SO проверены, но устройства во время проверки не было.
+2. Завершить Android runtime-проверку на устройстве/эмуляторе. Реальные HeleprsTest/DiagnosticTest уже собираются NDK r27c и упаковываются в Prefab; APK и состав SO проверены, но устройства во время проверки не было.
 3. Расширять Android-профиль: Debug-consumer, дополнительные графы/компоненты и совместная работа нескольких SO. Продуктовый Java/Kotlin API с JNI добавлять при потребности; текущая поставка предназначена для C++.
 4. Автоматизация проверки изменений: CI, включение новых infrastructure-тестов в общий runner, отрицательные fixtures вложенных полей реестра.
 5. Расширение Windows-пакетов: реальные продуктовые WinRT-потребители и дополнительные архитектуры только после расширения проверенной политики выпуска. Native PackageReference реализован для поддерживающего MSBuild.
 6. Завершение надёжности Connect: кеш распаковки, полный интерактивный прогон, политика очистки backup-файлов.
 7. Linux: реальная матрица toolchains, сборка/запуск, экспорт SO и перенесённый пакет. Это отдельный этап после текущего Windows/Android-сценария.
 
-Первоначальный пункт 3 о продуктовой Android-упаковке реализован для C++: [AAR/Prefab и Maven](Packages/Build/Android/README.md). Открытым остаётся runtime-подтверждение на устройстве и расширение профиля. В сохранённых отчётах arm64-v8a проверены Helpers/Diagnostic Static/Dynamic, x86_64 — Diagnostic.Dynamic; статус BuildPassed-DeviceNotRun не означает успешный запуск.
+Первоначальный пункт 3 о продуктовой Android-упаковке реализован для C++: [AAR/Prefab и Maven](Packages/Build/Android/README.md). Открытым остаётся runtime-подтверждение на устройстве и расширение профиля. В сохранённых отчётах arm64-v8a проверены HeleprsTest/DiagnosticTest Static/Dynamic, x86_64 — DiagnosticTest.Dynamic; статус BuildPassed-DeviceNotRun не означает успешный запуск.
 
 Внешние пакеты, RTTI, исключения, общий Result/Error и стабильный C-интерфейс добавляются при конкретной потребности API. Выгрузка DLL исключена из текущего сценария: библиотеки остаются загруженными до завершения процесса.
 
@@ -45,10 +45,10 @@
 - [x] Закрепить базовый контракт версии, неизвестных полей и значений по умолчанию; добавить общие отрицательные JSON fixtures для CMake/PowerShell.
 - [ ] Расширить общие отрицательные fixtures для всех вложенных платформенных и фильтровых полей.
 
-- [x] Добавить единый контракт requirements/platformRequirements для C++17/20/23, threads и системных библиотек; Diagnostic получает Threads из JSON.
+- [x] Добавить единый контракт requirements/platformRequirements для C++17/20/23, threads и системных библиотек; DiagnosticTest получает Threads из JSON.
 - [ ] Расширять контракт по необходимости: внешние пакеты, RTTI и исключения требуют отдельных правил и проверок.
 - [x] Проверить Windows-исходник и системную библиотеку в MSBuild/CMake, а также отказ для неподдерживаемой ОС.
-- [x] Собрать реальные Helpers/Diagnostic Android NDK r27c для arm64-v8a/x86_64, Static/Dynamic Release; реализация общая с Windows, Android-специфические исходники сейчас не нужны.
+- [x] Собрать реальные HeleprsTest/DiagnosticTest Android NDK r27c для arm64-v8a/x86_64, Static/Dynamic Release; реализация общая с Windows, Android-специфические исходники сейчас не нужны.
 - [ ] Запустить Android consumer на устройстве/эмуляторе и проверить будущие платформенные реализации; Linux пока не проверен.
 - [x] Закрепить Android NDK/JDK и общий поиск инструментов: [Toolchain.json](Scripts/Android/Toolchain.json), [ResolveToolchain.ps1](Scripts/Android/ResolveToolchain.ps1) и Gradle Wrapper. Упаковщик использует штатный NDK toolchain.
 - [ ] Добавить проверенные Linux toolchains/presets; при необходимости отдельного прямого CMake-сценария добавить Android presets. Текущий Android-профиль задаётся упаковщиком и Gradle consumer.
@@ -72,14 +72,14 @@
 - [ ] Назначать политику конкретным компонентам с состоянием согласно требованиям их API.
 - [x] Поддержать общую DLL/SO через linkage=dynamic, включая Shared/Static-потребителей.
 - [x] Проверить общий счётчик сервиса в приложении и двух плагинах.
-- [x] Определить границы синхронизации Diagnostic: один mutex на экземпляр реализации, независимые копии разрешены; описать ограничения в Docs/Abi.md и публичном заголовке.
-- [x] Проверить конкурентное логирование через один экземпляр Diagnostic Static/Dynamic в Debug/Release установленного пакета.
+- [x] Определить границы синхронизации DiagnosticTest: один mutex на экземпляр реализации, независимые копии разрешены; описать ограничения в Docs/Abi.md и публичном заголовке.
+- [x] Проверить конкурентное логирование через один экземпляр DiagnosticTest Static/Dynamic в Debug/Release установленного пакета.
 - [x] Документировать, что проверка вариантов подключения не обеспечивает единственный экземпляр статического состояния на процесс: Docs/Connect.md и Docs/StateScope.md.
 - [ ] При появлении реального process-сервиса проверить конкурентный доступ из нескольких модулей; тест общего счётчика подтверждает общий экземпляр, но не потоковую безопасность будущих сервисов.
 
 Выгрузка плагинов/DLL не входит в текущие требования; отдельные unload-тесты не планируются.
 
-В Diagnostic остаётся локальный статический mutex. При включении реализации в несколько DLL возможны независимые экземпляры; аналогичная проблема возникнет у кешей и регистров обработчиков.
+В DiagnosticTest остаётся локальный статический mutex. При включении реализации в несколько DLL возможны независимые экземпляры; аналогичная проблема возникнет у кешей и регистров обработчиков.
 
 ## Совместимость бинарников и изоляция сборок
 
@@ -97,7 +97,7 @@
 ### Матрицы Linux и Android
 
 - [ ] Определить и проверить матрицу Linux: архитектура, компилятор, стандартная библиотека и минимальная системная среда.
-- [x] Закрепить первый Android build-профиль: arm64-v8a/x86_64, NDK r27c 27.2.12479018, API 24, c++_shared, Release, 16-KiB страницы. Собраны оба ABI; APK проверены для четырёх arm64-вариантов и Diagnostic.Dynamic x86_64.
+- [x] Закрепить первый Android build-профиль: arm64-v8a/x86_64, NDK r27c 27.2.12479018, API 24, c++_shared, Release, 16-KiB страницы. Собраны оба ABI; APK проверены для четырёх arm64-вариантов и DiagnosticTest.Dynamic x86_64.
 - [ ] Подтвердить Android runtime-профиль реальным запуском; расширить проверки на Debug и остальные сочетания x86_64.
 
 ### Изоляция сборок и установки
@@ -143,13 +143,13 @@
 
 ## NuGet и Android-пакеты
 
-- [x] Добавить Windows native NuGet Helpers/Diagnostic в Packages/CrossPlatform с [общим упаковщиком](Packages/Build/NuGet/README.md) без копирования реализации. Для Android добавлен отдельный [AAR/Prefab-упаковщик](Packages/Build/Android/README.md); инструментальные и составные адаптеры остаются будущим расширением.
-- [x] Для Windows x64 native NuGet Helpers/Diagnostic реализовать выбор MD/MT и Debug/Release, линковку, import-макросы, доставку DLL и точную зависимость версий через пакетные targets.
+- [x] Добавить Windows native NuGet HeleprsTest/DiagnosticTest в Packages/CrossPlatform с [общим упаковщиком](Packages/Build/NuGet/README.md) без копирования реализации. Для Android добавлен отдельный [AAR/Prefab-упаковщик](Packages/Build/Android/README.md); инструментальные и составные адаптеры остаются будущим расширением.
+- [x] Для Windows x64 native NuGet HeleprsTest/DiagnosticTest реализовать выбор MD/MT и Debug/Release, линковку, import-макросы, доставку DLL и точную зависимость версий через пакетные targets.
 - [x] Читать NuGet-компоненты и зависимости из реестра, переиспользовать расчёт графа Connect и поддержать header-only пакеты без привязки к именам компонентов.
 - [x] Проверить native NuGet Diamond: Static/Dynamic, public/private, mixed public/private Static внутри DLL, транзитивные DLL, отдельное восстановление App1/App2, Debug/Release x64, /MD и /MT и отказ при конфликте вариантов.
-- [x] Добавить native PackageReference: buildTransitive-импорты, автоматическое восстановление зависимостей, реальные Helpers/Diagnostic и Diamond, Static/Dynamic, MD/MT, Debug/Release, private requirements, транзитивные DLL и отказы при конфликте. Сценарий требует EnableNativePackageReferenceSupport и проверен на MSBuild 18.11; возможность Microsoft пока экспериментальная.
+- [x] Добавить native PackageReference: buildTransitive-импорты, автоматическое восстановление зависимостей, реальные HeleprsTest/DiagnosticTest и Diamond, Static/Dynamic, MD/MT, Debug/Release, private requirements, транзитивные DLL и отказы при конфликте. Сценарий требует EnableNativePackageReferenceSupport и проверен на MSBuild 18.11; возможность Microsoft пока экспериментальная.
 - [ ] Расширить native NuGet на другие архитектуры и другие сложные графы.
-- [x] Реализовать C++-поставку Helpers/Diagnostic через AAR/Prefab и локальный Maven; JNI используется только для тестового instrumentation, а не как продуктовый API.
+- [x] Реализовать C++-поставку HeleprsTest/DiagnosticTest через AAR/Prefab и локальный Maven; JNI используется только для тестового instrumentation, а не как продуктовый API.
 - [x] Описать public-заголовки, внутренние link-модули без заголовков, Static/Dynamic, ABI и зависимости через штатный граф компонентов. Адаптеры объявлены в Package.json/Delivery/Android.
 - [x] Использовать c++_shared для библиотек и consumer; не вкладывать runtime в каждый AAR. В проверенных APK ровно одна libc++_shared.so и ожидаемые UDK SO.
 - [ ] Проверить runtime на устройстве и согласование с другими нативными SO реального приложения.
@@ -167,7 +167,7 @@
 - [ ] Расширить проверки переноса пакета на Linux/Android и выбранную матрицу toolchains/CRT.
 - [x] Проверить реальные Windows NuGet-consumer, включая запуск, транзитивные DLL и конфликты вариантов: [native NuGet и PackageReference](Packages/Build/NuGet/README.md), Diamond.
 - [x] Собрать реальные Android AAR-consumer и проверить состав APK: [AndroidPrefab.Tests.ps1](Tests/Integration/Packages/AndroidPrefab.Tests.ps1).
-- [ ] Запустить Android AAR-consumer на устройстве/эмуляторе и проверить более сложные графы транзитивных SO. Текущий Diagnostic.Dynamic содержит private Helpers.Static, поэтому нескольких UDK SO в этой цепочке нет.
+- [ ] Запустить Android AAR-consumer на устройстве/эмуляторе и проверить более сложные графы транзитивных SO. Текущий DiagnosticTest.Dynamic содержит private HeleprsTest.Static, поэтому нескольких UDK SO в этой цепочке нет.
 - [x] Компилировать публичные заголовки по отдельности без исходников компонентов в Debug/Release x64: TestPublicHeaders.ps1; проверка входит в RunTests и общую группу ConnectAndPublicHeaders.
 - [x] Проверить запуск Windows/MSBuild Dynamic-consumer Diamond из чистого каталога с ожидаемым набором DLL и ограниченным PATH.
 - [x] Проверить Diamond Static/Dynamic-consumer из чистого каталога с точным набором DLL и ограниченным PATH через CMake checkout, установленный пакет и native NuGet.

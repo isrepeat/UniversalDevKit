@@ -3,7 +3,7 @@
 ## Реальные компоненты UDK
 
 - [Windows native NuGet](../../../Packages/Build/NuGet/README.md): NuGet.Tests.ps1, NuGet.Registry.Tests.ps1 и NuGet.PackageReference.Tests.ps1.
-- [Android AAR/Prefab](../../../Packages/Build/Android/README.md#проверка): [AndroidPrefab.Tests.ps1](AndroidPrefab.Tests.ps1), независимый [APK-потребитель](../../Fixtures/Consumers/AndroidPrefab), Static/Dynamic Helpers/Diagnostic, состав SO и отрицательные проверки совместимости.
+- [Android AAR/Prefab](../../../Packages/Build/Android/README.md#проверка): [AndroidPrefab.Tests.ps1](AndroidPrefab.Tests.ps1), независимый [APK-потребитель](../../Fixtures/Consumers/AndroidPrefab), Static/Dynamic HeleprsTest/DiagnosticTest, состав SO и отрицательные проверки совместимости.
 
 Для Android `RunAndroidPrefabTests.cmd -SkipDevice` проверяет сборку без устройства. Запуск instrumentation выполняется без SkipDevice с выбранным Serial; только UDK_RESULT=PASS подтверждает вызов API на Android. Существующие отчёты BuildPassed-DeviceNotRun подтверждают сборку APK, но не runtime.
 
@@ -13,7 +13,7 @@
 
 | Семейство | Покрываемые существующие пакеты | Проверка |
 |---|---|---|
-| NativeWindows | Native-часть CppFeatures, CrashHandling, XamlRuntime | Существующий NuGet.Tests.ps1: Helpers/Diagnostic, CRT, Static/Dynamic, Debug/Release |
+| NativeWindows | Native-часть CppFeatures, CrashHandling, XamlRuntime | Существующий NuGet.Tests.ps1: HeleprsTest/DiagnosticTest, CRT, Static/Dynamic, Debug/Release |
 | Managed | Managed-доставка PluginSDK и проекций | net8.0 DLL, PackageReference, сборка и вызов |
 | WinRt | WinRT ABI CppFeatures/CrashHandling и host-инструмент XamlRuntime | DLL из NuGet, IActivationFactory/IInspectable, создание объекта и вызов интерфейса; запуск EXE из tools/win-x64 |
 | BuildTools | AndroidBuildTools | Инструмент из NuGet выполняется через buildTransitive и генерирует файл consumer |
