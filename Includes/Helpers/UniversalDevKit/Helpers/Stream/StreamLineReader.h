@@ -1,7 +1,9 @@
 #pragma once
+#include <stdexcept>
 #include <optional>
 #include <istream>
 #include <utility>
+#include <limits>
 #include <string>
 #include <deque>
 
@@ -14,7 +16,7 @@ namespace universaldevkit::helpers::stream {
             : inStream(inStream)
             , historyDeque()
             , peekBuffer(std::nullopt)
-            , historyCapacityLimit(historyCapacity > 0 ? historyCapacity : 1) {
+            , historyCapacityLimit(ValidateHistoryCapacity(historyCapacity)) {
         }
 
         // Return the next line without consuming it from this reader.
@@ -35,7 +37,7 @@ namespace universaldevkit::helpers::stream {
             return this->ReadLine(dummyIndex);
         }
 
-        // Consume a line and return its history index through outIndex.
+        // Return the zero-based index within the retained history, after eviction.
         std::optional<std::string> ReadLine(int& outIndex) {
             std::string line;
 
@@ -49,27 +51,52 @@ namespace universaldevkit::helpers::stream {
                 }
             }
 
-            // The index is the history size before this line is added.
-            outIndex = this->historyDeque.size();
-
             this->historyDeque.push_back(line);
             this->EnforceCapacity();
+            outIndex = static_cast<int>(this->historyDeque.size() - 1);
             return line;
         }
 
         // Read history: offset 0 is the last consumed line, 1 is the preceding line.
-        std::optional<std::string> LookAhead(int offset) const {
-            if (offset >= this->historyDeque.size()) {
+        std::optional<std::string> GetHistoryLine(int offset) const {
+            if (offset < 0 || static_cast<std::size_t>(offset) >= this->historyDeque.size()) {
                 return std::nullopt;
             }
-            int indexFromStart = this->historyDeque.size() - 1 - offset;
+            const auto indexFromStart = this->historyDeque.size() - 1 - static_cast<std::size_t>(offset);
             return this->historyDeque[indexFromStart];
         }
 
+        [[deprecated("Use GetHistoryLine; this method reads history, not future lines.")]]
+        std::optional<std::string> LookAhead(int offset) const {
+            return this->GetHistoryLine(offset);
+        }
+
     private:
+        static std::size_t ValidateHistoryCapacity(std::size_t capacity) {
+            if (capacity > static_cast<std::size_t>(std::numeric_limits<int>::max())) {
+                throw std::invalid_argument("History capacity exceeds the supported index range");
+            }
+            return capacity > 0 ? capacity : 1;
+        }
+
         bool LoadNextLine(std::string& outLine) {
-            if (!std::getline(this->inStream, outLine)) {
-                return false;
+            outLine.clear();
+            try {
+                if (!std::getline(this->inStream, outLine)) {
+                    if (this->inStream.bad() || !this->inStream.eof()) {
+                        throw std::ios_base::failure("Unable to read a line");
+                    }
+                    return false;
+                }
+            }
+            catch (const std::ios_base::failure&) {
+                // EOF is normal, including for the final line without a newline.
+                if (this->inStream.bad() || !this->inStream.eof()) {
+                    throw;
+                }
+                if (outLine.empty()) {
+                    return false;
+                }
             }
             this->TrimCarriageReturn(outLine);
             return true;

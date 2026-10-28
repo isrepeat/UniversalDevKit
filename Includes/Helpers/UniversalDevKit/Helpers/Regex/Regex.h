@@ -97,6 +97,36 @@ namespace universaldevkit::helpers::regex {
         return std::nullopt;
     }
 
+    // Observing results borrow text storage. Rvalue strings require an owning
+    // OutString (for example std::string) instead of the default string_view.
+    template <typename CharT, typename OutString = std::basic_string_view<CharT>, typename Traits, typename Allocator>
+        requires std::is_same_v<OutString, std::basic_string_view<CharT>>
+    std::vector<RegexMatchResult<CharT, OutString>> GetRegexMatches(
+        std::basic_string<CharT, Traits, Allocator>&&,
+        const std::basic_regex<CharT>&
+    ) = delete;
+
+    template <typename CharT, typename OutString = std::basic_string_view<CharT>, typename Traits, typename Allocator>
+        requires std::is_same_v<OutString, std::basic_string_view<CharT>>
+    std::vector<RegexMatchResult<CharT, OutString>> GetRegexMatches(
+        const std::basic_string<CharT, Traits, Allocator>&&,
+        const std::basic_regex<CharT>&
+    ) = delete;
+
+    template <typename CharT, typename OutString = std::basic_string_view<CharT>, typename Traits, typename Allocator>
+        requires std::is_same_v<OutString, std::basic_string_view<CharT>>
+    std::optional<RegexMatchResult<CharT, OutString>> GetRegexMatch(
+        std::basic_string<CharT, Traits, Allocator>&&,
+        const std::basic_regex<CharT>&
+    ) = delete;
+
+    template <typename CharT, typename OutString = std::basic_string_view<CharT>, typename Traits, typename Allocator>
+        requires std::is_same_v<OutString, std::basic_string_view<CharT>>
+    std::optional<RegexMatchResult<CharT, OutString>> GetRegexMatch(
+        const std::basic_string<CharT, Traits, Allocator>&&,
+        const std::basic_regex<CharT>&
+    ) = delete;
+
     inline bool FindInsideTagWithRegex(std::wstring_view text, std::wstring_view tag, const std::wregex& innerRx) {
         const std::wregex rx(std::wstring(L"([^<]*)<") + std::wstring(tag) + L"[^>]*>(.+?)<[/]" + std::wstring(tag) + L">([^<]*)");
 

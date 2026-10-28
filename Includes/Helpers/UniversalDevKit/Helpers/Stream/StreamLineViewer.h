@@ -4,9 +4,11 @@
 #include <string_view>
 #include <filesystem>
 #include <algorithm>
-#include <optional>
+#include <stdexcept>
+#include <cstdint>
 #include <fstream>
 #include <utility>
+#include <limits>
 #include <string>
 #include <vector>
 #include <span>
@@ -30,8 +32,23 @@ namespace universaldevkit::helpers::stream {
         StreamLineViewer(const StreamLineViewer&) = delete;
         StreamLineViewer& operator=(const StreamLineViewer&) = delete;
 
-        StreamLineViewer(StreamLineViewer&&) noexcept = default;
-        StreamLineViewer& operator=(StreamLineViewer&&) noexcept = default;
+        // Rebase internal views, including when the source string uses SSO.
+        // Previously returned views/spans are invalidated by a move.
+        StreamLineViewer(StreamLineViewer&& streamLineViewer) noexcept
+            : StreamLineViewer(std::move(streamLineViewer), streamLineViewer.buffer.data()) {
+        }
+
+        StreamLineViewer& operator=(StreamLineViewer&& streamLineViewer) noexcept {
+            if (this != &streamLineViewer) {
+                const auto* sourceBase = streamLineViewer.buffer.data();
+                this->buffer = std::move(streamLineViewer.buffer);
+                this->lines = std::move(streamLineViewer.lines);
+                this->RebaseLines(sourceBase);
+                streamLineViewer.lines.clear();
+                streamLineViewer.buffer.clear();
+            }
+            return *this;
+        }
 
         std::span<const std::string_view> GetAllLines() const {
             return std::span<const std::string_view>(this->lines.data(), this->lines.size());
@@ -60,28 +77,57 @@ namespace universaldevkit::helpers::stream {
 
             const std::size_t count = end - start;
 
-            return std::span<const std::string_view>(this->lines.data() + start, count);
+            return this->GetAllLines().subspan(start, count);
         }
 
     private:
+        StreamLineViewer(StreamLineViewer&& streamLineViewer, const char* sourceBase) noexcept
+            : buffer(std::move(streamLineViewer.buffer))
+            , lines(std::move(streamLineViewer.lines)) {
+            this->RebaseLines(sourceBase);
+            streamLineViewer.lines.clear();
+            streamLineViewer.buffer.clear();
+        }
+
+        void RebaseLines(const char* sourceBase) noexcept {
+            for (auto& line : this->lines) {
+                const auto offset = static_cast<std::size_t>(line.data() - sourceBase);
+                line = std::string_view(this->buffer.data() + offset, line.size());
+            }
+        }
+
+        // Read the entire seekable stream from the beginning; do not hide I/O failures.
         std::string ReadAll(std::istream& inStream) {
-            std::string outBuffer;
+            if (!inStream.good()) {
+                throw std::ios_base::failure("StreamLineViewer requires a readable stream");
+            }
             inStream.seekg(0, std::ios::end);
-
-            std::streampos endPos = inStream.tellg();
-            if (endPos < 0) {
-                return {};
+            if (!inStream) {
+                throw std::ios_base::failure("StreamLineViewer requires a seekable stream");
             }
 
-            const std::size_t size = static_cast<std::size_t>(endPos);
-            outBuffer.resize(size);
+            const auto endOffset = static_cast<std::streamoff>(inStream.tellg());
+            if (!inStream || endOffset < 0) {
+                throw std::ios_base::failure("Unable to determine stream length");
+            }
+            const auto length = static_cast<std::uintmax_t>(endOffset);
+            if (length > std::numeric_limits<std::size_t>::max() ||
+                length > static_cast<std::uintmax_t>(std::numeric_limits<std::streamsize>::max())) {
+                throw std::length_error("Stream is too large");
+            }
 
+            std::string outBuffer(static_cast<std::size_t>(length), '\0');
             inStream.seekg(0, std::ios::beg);
-
-            if (size > 0) {
-                inStream.read(outBuffer.data(), static_cast<std::streamsize>(size));
+            if (!inStream) {
+                throw std::ios_base::failure("Unable to seek to stream beginning");
             }
-
+            if (!outBuffer.empty()) {
+                const auto expected = static_cast<std::streamsize>(outBuffer.size());
+                inStream.read(outBuffer.data(), expected);
+                if (!inStream || inStream.gcount() != expected) {
+                    throw std::ios_base::failure("Unable to read the complete stream");
+                }
+            }
             return outBuffer;
         }
 

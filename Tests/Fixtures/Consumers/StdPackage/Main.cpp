@@ -51,7 +51,9 @@ int main() {
     auto nodes = roots | stdEx::views::flatten_tree([](Node* node) { return node->children; })
         | stdEx::views::to<std::vector<Node*>>();
     Require(nodes == std::vector<Node*>({&root, &leaf}));
-    Require(std::format("{}", std::filesystem::path("sample.txt")) == "sample.txt");
+    const auto path = universaldevkit::helpers::stdext::Path(std::filesystem::path(u8"sample-\u00e9.txt"));
+    Require(std::format("{}", path) == "sample-\xc3\xa9.txt");
+    Require(std::format(L"{}", path) == L"sample-\u00e9.txt");
     Require(stdEx::ifstream::KnownUTFByteOrderMarks.at(stdEx::UTFByteOrderMark::UTF8).size() == 3);
 
     // Reader peeking preserves logical position and history tracks consumed lines.
@@ -59,11 +61,12 @@ int main() {
     universaldevkit::helpers::stream::StreamLineReader reader(input, 2);
     Require(reader.PeekLine().value() == "first");
     Require(reader.PeekLine().value() == "first");
-    Require(reader.ReadLine().value() == "first");
-    Require(reader.ReadLine().value() == "second");
-    Require(reader.LookAhead(0).value() == "second");
-    Require(reader.ReadLine().value() == "third");
-    Require(reader.LookAhead(1).value() == "second");
+    int historyIndex = -1;
+    Require(reader.ReadLine(historyIndex).value() == "first" && historyIndex == 0);
+    Require(reader.ReadLine(historyIndex).value() == "second" && historyIndex == 1);
+    Require(reader.GetHistoryLine(0).value() == "second");
+    Require(reader.ReadLine(historyIndex).value() == "third" && historyIndex == 1);
+    Require(reader.GetHistoryLine(1).value() == "second");
     Require(!reader.ReadLine());
 
     // Viewer owns the text buffer and exposes views into its lines.
@@ -81,6 +84,8 @@ int main() {
     auto match = universaldevkit::helpers::regex::GetRegexMatch<char>("code=42", std::regex("code=(\\d+)"));
     Require(match.has_value() && match->capturedGroups[1] == "42");
     Require(!universaldevkit::helpers::regex::GetRegexMatch<char>("no match", std::regex("\\d+")));
+    auto owningMatch = universaldevkit::helpers::regex::GetRegexMatch<char, std::string>(std::string("code=42"), std::regex("code=(\\d+)"));
+    Require(owningMatch.has_value() && owningMatch->capturedGroups[1] == "42");
 
     // fstreamEx now uses the shared Stream and Regex implementations.
     const std::filesystem::path filePath("std-package-encoding.tmp");
