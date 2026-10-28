@@ -35,6 +35,8 @@ try {
     if (-not $rejected) { throw 'Header-only accepted Static mode' }
     if (Test-Path (Join-Path $workspace.Library 'Projects/MsBuild/HeaderProbe/UniversalDevKit.HeaderProbe.Static.vcxproj')) { throw 'Unexpected Static project' }
     if (Test-Path (Join-Path $workspace.Library 'Projects/MsBuild/HeaderProbe/UniversalDevKit.HeaderProbe.Dynamic.vcxproj')) { throw 'Unexpected Dynamic project' }
+    $headerCheck = Get-Content (Join-Path $workspace.Library 'Projects/MsBuild/HeaderProbe/UniversalDevKit.HeaderProbe.HeaderCheck.vcxproj') -Raw
+    if (-not $headerCheck.Contains('Includes\HeaderLeaf;')) { throw 'HeaderCheck is missing transitive header-only include paths' }
     $build = Join-Path $workspace.Library '!artifacts/h'
     $install = Join-Path $workspace.Root 'install'
     InvokeChecked $CMake @('-S', $workspace.Library, '-B', $build, '-G', 'Visual Studio 18 2026', '-A', 'x64', '-DUniversalDevKit_BUILD_STATIC=OFF', '-DUniversalDevKit_BUILD_DYNAMIC=OFF', "-DCMAKE_INSTALL_PREFIX=$install")

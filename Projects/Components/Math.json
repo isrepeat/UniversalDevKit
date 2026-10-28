@@ -1,0 +1,22 @@
+{
+  "name": "Math",
+  "kind": "headerOnly",
+  "msbuildGuid": "{815ABCB2-BFA4-4BF8-AB85-AE1A38874096}",
+  "headers": [
+    "Includes/Math/UniversalDevKit/Math/Differentation.h",
+    "Includes/Math/UniversalDevKit/Math/Function1D.h",
+    "Includes/Math/UniversalDevKit/Math/Rect.h",
+    "Includes/Math/UniversalDevKit/Math/Size.h",
+    "Includes/Math/UniversalDevKit/Math/Tensor.h"
+  ],
+  "sources": [],
+  "dependencies": [
+    { "component": "Meta", "visibility": "public", "linkage": "same" }
+  ],
+  "filters": {
+    "roots": [
+      { "path": "Includes/Math/UniversalDevKit/Math", "filter": "" }
+    ],
+    "files": {}
+  }
+}

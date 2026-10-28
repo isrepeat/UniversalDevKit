@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "name": "Math",
+  "component": "Math",
+  "versionSource": "../../../Version.json",
+  "deliveries": {
+    "NuGet": "Delivery/NuGet/Delivery.json",
+    "Android": "Delivery/Android/Delivery.json"
+  }
+}

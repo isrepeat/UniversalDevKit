@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "adapter": "component",
+  "id": "UniversalDevKit.Math",
+  "supportedPlatforms": ["Windows"],
+  "nuspec": "UniversalDevKit.Math.nuspec",
+  "integration": {
+    "props": "UniversalDevKit.Math.props",
+    "targets": "UniversalDevKit.Math.targets"
+  }
+}

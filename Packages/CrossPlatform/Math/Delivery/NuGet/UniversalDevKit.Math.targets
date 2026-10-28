@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Package-specific integration. Edit this file directly. -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <__UniversalDevKitMathPackageRoot>$(MSBuildThisFileDirectory)..\..\</__UniversalDevKitMathPackageRoot>
+    <__UniversalDevKitMathPackageVersion>$(__UniversalDevKitMathPackageVersion)</__UniversalDevKitMathPackageVersion>
+    <UniversalDevKitMathLinkage Condition="'$(UniversalDevKitMathLinkage)' == ''">Shared</UniversalDevKitMathLinkage>
+  </PropertyGroup>
+  <Import Project="Generated\Settings.targets" />
+  <ItemGroup>
+    <__UniversalDevKitNuGetRoot Include="$(UniversalDevKitComponents)" />
+  </ItemGroup>
+  <Target Name="__UniversalDevKitMathValidateNuGet" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(Platform)' != 'x64'" Text="UniversalDevKit.Math: only Windows x64 is packaged." />
+    <Error Condition="'$(Configuration)' != 'Debug' and '$(Configuration)' != 'Release'" Text="UniversalDevKit.Math: select Debug or Release." />
+    <Error Condition="'$(UniversalDevKitComponents)' == ''" Text="Set UniversalDevKitComponents to explicitly selected root components." />
+    <Error Condition="!$([System.String]::Copy(';$(__UniversalDevKitMathValidModes);').Contains(';$(UniversalDevKitMathLinkage);'))" Text="UniversalDevKit.Math: unsupported linkage." />
+    <Error Condition="'$(__UniversalDevKitMathPackageRoot)' == ''" Text="UniversalDevKit package import is missing." />
+  </Target>
+</Project>

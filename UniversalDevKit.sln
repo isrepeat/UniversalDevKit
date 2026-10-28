@@ -237,12 +237,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meta", "Meta", "{50CDBD24-8
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Meta.HeaderCheck", "Projects\MsBuild\Meta\UniversalDevKit.Meta.HeaderCheck.vcxproj", "{E21B97A1-D847-2938-4E29-760523C97389}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Math", "Math", "{B7DB4011-D541-EB16-8C70-09156341D287}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Math.Shared", "Projects\MsBuild\Math\UniversalDevKit.Math.Shared.vcxitems", "{815ABCB2-BFA4-4BF8-AB85-AE1A38874096}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Math.HeaderCheck", "Projects\MsBuild\Math\UniversalDevKit.Math.HeaderCheck.vcxproj", "{5186584A-FE10-0699-E723-A6FC080988C6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5186584A-FE10-0699-E723-A6FC080988C6}.Debug|x64.ActiveCfg = Debug|x64
+		{5186584A-FE10-0699-E723-A6FC080988C6}.Debug|x64.Build.0 = Debug|x64
+		{5186584A-FE10-0699-E723-A6FC080988C6}.Release|x64.ActiveCfg = Release|x64
+		{5186584A-FE10-0699-E723-A6FC080988C6}.Release|x64.Build.0 = Release|x64
 		{E21B97A1-D847-2938-4E29-760523C97389}.Debug|x64.ActiveCfg = Debug|x64
 		{E21B97A1-D847-2938-4E29-760523C97389}.Debug|x64.Build.0 = Debug|x64
 		{E21B97A1-D847-2938-4E29-760523C97389}.Release|x64.ActiveCfg = Release|x64
@@ -268,6 +278,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{5186584A-FE10-0699-E723-A6FC080988C6} = {B7DB4011-D541-EB16-8C70-09156341D287}
+		{815ABCB2-BFA4-4BF8-AB85-AE1A38874096} = {B7DB4011-D541-EB16-8C70-09156341D287}
+		{B7DB4011-D541-EB16-8C70-09156341D287} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{E21B97A1-D847-2938-4E29-760523C97389} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
 		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
 		{50CDBD24-894E-0FD6-7C08-442980AADBB7} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
@@ -312,6 +325,7 @@ Global
 		SolutionGuid = {D7A3009E-A79E-4542-AC95-DD9B9C113922}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Projects\MsBuild\Math\UniversalDevKit.Math.Shared.vcxitems*{5186584a-fe10-0699-e723-a6fc080988c6}*SharedItemsImports = 4
 		Projects\MsBuild\Meta\UniversalDevKit.Meta.Shared.vcxitems*{e21b97a1-d847-2938-4e29-760523c97389}*SharedItemsImports = 4
 		Projects\MsBuild\Meta\UniversalDevKit.Meta.Shared.vcxitems*{c1e8c40d-b9b5-4c0d-9f7e-1b793d3c13ae}*SharedItemsImports = 9
 		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{28f717c7-a2ef-405e-96f1-538329030acf}*SharedItemsImports = 9

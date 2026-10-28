@@ -650,8 +650,16 @@ foreach ($name in $componentNames) {
     $guid = ([Guid]::new([byte[]]$hash[0..15])).ToString().ToUpperInvariant()
     $libraryGuids["$name.HeaderCheck"] = '{' + $guid + '}'
     $standard = $binaryComponentRegistry[$name].Requirements.CxxStandard
+    $headerGraph = Resolve-UdkLinkageGraph @($name) @{ $name = 'Shared' } $binaryComponentRegistry
+    foreach ($requirement in $headerGraph.RequirementComponents) {
+        $standard = [Math]::Max($standard, $binaryComponentRegistry[$requirement].Requirements.CxxStandard)
+    }
     $language = if ($standard -eq 23) { 'stdcpplatest' } else { 'stdcpp' + $standard }
     $content = $projectTemplate.Replace('@COMPONENT@', $name).Replace('@GUID@', $guid).Replace('@CONFIGURATION_TYPE@', 'Application').Replace('@DYNAMIC_DEFINITIONS@', '').Replace('stdcpp20', $language)
+    $dependencyIncludes = @($headerGraph.RequirementComponents | Where-Object { $_ -ne $name } | ForEach-Object { '$(MSBuildThisFileDirectory)..\..\..\Includes\' + $_ })
+    if ($dependencyIncludes.Count) {
+        $content = $content.Replace('<LanguageStandard>', '<AdditionalIncludeDirectories>' + ($dependencyIncludes -join ';') + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>' + "`n      <LanguageStandard>")
+    }
     $content = $content.Replace('  <Import Project="UniversalDevKit.' + $name + '.Dependencies.props" />', '  <ItemGroup><ClCompile Include="HeaderCheck.cpp" /></ItemGroup>')
     $source = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Templates/HeaderCheck.cpp.in')).TrimEnd([char[]]"`r`n") + "`n"
     $definition = Get-Content -LiteralPath (Join-Path $repositoryPath "Projects/Components/$name.json") -Raw | ConvertFrom-Json
