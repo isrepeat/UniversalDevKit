@@ -9,6 +9,7 @@
 #include <spdlog/logger.h>
 
 #include <UniversalDevKit/Helpers/System/ApplicationPaths.h>
+#include <UniversalDevKit/Helpers/Text/Unicode.h>
 
 #if defined(_WIN32)
 #include <Windows.h>
@@ -161,6 +162,10 @@ namespace universaldevkit::diagnostic {
         }
     } // namespace details
 
+    ThreadScope::ThreadScope(std::wstring name, std::source_location sourceLocation, LoggerId loggerId)
+        : ThreadScope(helpers::text::Unicode::ToUtf8(name), sourceLocation, loggerId) {
+    }
+
     ThreadScope::ThreadScope(std::string name, std::source_location sourceLocation, LoggerId loggerId) noexcept
         : name{ std::move(name) }
         , sourceLocation{ sourceLocation }
@@ -178,6 +183,10 @@ namespace universaldevkit::diagnostic {
         if (this->active) {
             Logger::LogForId(this->loggerId, Level::Debug, "Thread", this->sourceLocation, "Thread END '{}'", this->name);
         }
+    }
+
+    LogScope::LogScope(std::string category, std::wstring name, std::source_location sourceLocation, LoggerId loggerId)
+        : LogScope(std::move(category), helpers::text::Unicode::ToUtf8(name), sourceLocation, loggerId) {
     }
 
     LogScope::LogScope(std::string category, std::string name, std::source_location sourceLocation, LoggerId loggerId) noexcept
@@ -355,6 +364,24 @@ namespace universaldevkit::diagnostic {
         }
         catch (...) {
             return false;
+        }
+    }
+
+    void Logger::Write(
+        Level level,
+        std::string_view category,
+        std::wstring_view message,
+        std::source_location sourceLocation,
+        LoggerId loggerId
+    ) noexcept {
+        if (!Logger::ShouldLog(level, loggerId)) {
+            return;
+        }
+        try {
+            Logger::Write(level, category, helpers::text::Unicode::ToUtf8(message), sourceLocation, loggerId);
+        }
+        catch (...) {
+            Logger::Write(Level::Error, "Diagnostic", "Failed to convert wide log message to UTF-8", sourceLocation, loggerId);
         }
     }
 

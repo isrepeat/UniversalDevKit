@@ -121,7 +121,17 @@ std::thread worker([] {
 worker.join();
 ```
 
-Wide-форматирование старой обёртки принимало L"...", std::wstring и wchar_t-форматы через fmt. CustomTypeSpecialization.h предоставлял fmt::formatter для filesystem::path, Flags и условно QString, в char/wchar_t вариантах. Текущий Diagnostic принимает UTF-8 char-форматы через std::format: std::wstring необходимо явно преобразовывать в UTF-8, пользовательским типам нужен std::formatter либо готовая строка. Старые fmt::formatter автоматически с std::format не работают. Unicode в имени файла уже поддерживается независимо от форматирования текста. Для вывода пути в тексте сообщения в UDK есть Helpers/StdExt/FormatSpecializations.h и обёртка universaldevkit::helpers::stdext::Path(path), имеющая std::formatter.
+Diagnostic поддерживает narrow- и wide-форматы std::format. Обычные макросы, варианты _N/_C/_S и UDK_LOG_SCOPE принимают как "...", так и L"...". Для wide-формата подходят std::wstring и std::wstring_view в аргументах. Готовый wide-текст передаётся через Logger::Write(level, category, wideMessage). Категории и LogContext остаются UTF-8. Narrow- и wide-аргументы не смешиваются автоматически: допустимость определяется std::format. Форматные строки Log должны быть проверяемыми при компиляции; динамический std::wstring_view передаётся как готовое сообщение в Write, не как runtime-формат.
+
+```cpp
+UDK_LOG_INFO("Application", L"Открыт файл {}", std::wstring(L"документ.txt"));
+UDK_LOG_SCOPE("Storage", L"Загрузка ресурса {}", 42);
+diagnostic::Logger::Write(diagnostic::Level::Info, "Application", std::wstring_view(L"Готовое сообщение"));
+```
+
+Wide-сообщение сначала форматируется на стороне потребителя в std::wstring, затем DLL преобразует готовый текст в UTF-8 через Helpers/Text/Unicode.h. Backend и файлы остаются UTF-8, spdlog/fmt наружу не выставляются. Некорректный Unicode отклоняется; Write перехватывает ошибку и пытается записать диагностическое сообщение уровня Error с учётом текущего фильтра. Прямые wide-конструкторы LogScope/ThreadScope могут выбросить исключение преобразования; макросы перехватывают его. Имя потока также может быть std::wstring/std::wstring_view.
+
+Для пользовательского типа обязателен явный std::formatter<T, char> и/или std::formatter<T, wchar_t>. Специализации располагаются в конце того же файла, где определён тип, после закрытия namespace типа. Можно использовать общую специализацию по CharT. Отдельные файлы форматтеров, автоматическое использование operator<< и произвольного ToString не добавляются. Форматтер использует стандартный <format>, не Diagnostic: циклической зависимости Helpers → Diagnostic нет. Старые fmt::formatter необходимо явно адаптировать к std::formatter. Для путей уже есть Helpers/StdExt/FormatSpecializations.h и stdext::Path(path); это отдельная существующая обёртка стандартного типа, а не fallback для произвольных объектов.
 
 Папку EXE Diagnostic получает через Helpers/System/ApplicationPaths.h (приватная зависимость Helpers). GetPackageDirectory в этом helper означает папку установки UWP/MSIX; она не используется как writable-папка логов. Режимы LogFolder::Package и ApplicationOrPackage получают LocalState через ApplicationPaths::GetPackageLocalDataDirectory(); платформенный код из Logging.cpp удалён.
 

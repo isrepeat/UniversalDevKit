@@ -14,6 +14,7 @@
     <Filter Include="StdExt\Extensions\rangesEx" />
     <Filter Include="Stream" />
     <Filter Include="System" />
+    <Filter Include="Text" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Collection\Algorithms.h">
@@ -128,6 +129,9 @@
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\System\ApplicationPaths.h">
       <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Text\Unicode.h">
+      <Filter>Text</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

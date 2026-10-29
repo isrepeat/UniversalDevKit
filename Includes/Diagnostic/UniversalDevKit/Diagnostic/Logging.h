@@ -77,6 +77,14 @@ namespace universaldevkit::diagnostic {
         ) noexcept;
 
         // Formatting stays in the caller; no spdlog or fmt types cross the DLL boundary.
+        static UNIVERSALDEVKIT_DIAGNOSTIC_API void Write(
+            Level level,
+            std::string_view category,
+            std::wstring_view message,
+            std::source_location sourceLocation = std::source_location::current(),
+            LoggerId loggerId = 0
+        ) noexcept;
+
         template<typename... TArgs>
         static void Log(
             Level level,
@@ -107,6 +115,37 @@ namespace universaldevkit::diagnostic {
                 Logger::Write(Level::Error, "Diagnostic", "Failed to format log message", sourceLocation, loggerId);
             }
         }
+
+        template<typename... TArgs>
+        static void Log(
+            Level level,
+            std::string_view category,
+            std::source_location sourceLocation,
+            std::wformat_string<TArgs...> format,
+            TArgs&&... args
+        ) noexcept {
+            Logger::LogForId(0, level, category, sourceLocation, format, std::forward<TArgs>(args)...);
+        }
+
+        template<typename... TArgs>
+        static void LogForId(
+            LoggerId loggerId,
+            Level level,
+            std::string_view category,
+            std::source_location sourceLocation,
+            std::wformat_string<TArgs...> format,
+            TArgs&&... args
+        ) noexcept {
+            if (!Logger::ShouldLog(level, loggerId)) {
+                return;
+            }
+            try {
+                Logger::Write(level, category, std::format(format, std::forward<TArgs>(args)...), sourceLocation, loggerId);
+            }
+            catch (...) {
+                Logger::Write(Level::Error, "Diagnostic", "Failed to format log message", sourceLocation, loggerId);
+            }
+        }
     };
 
     class ThreadScope final {
@@ -118,6 +157,11 @@ namespace universaldevkit::diagnostic {
             LoggerId loggerId = 0
         ) noexcept;
         UNIVERSALDEVKIT_DIAGNOSTIC_API ~ThreadScope() noexcept;
+        UNIVERSALDEVKIT_DIAGNOSTIC_API ThreadScope(
+            std::wstring name,
+            std::source_location sourceLocation,
+            LoggerId loggerId = 0
+        );
 
         ThreadScope(const ThreadScope&) = delete;
         ThreadScope& operator=(const ThreadScope&) = delete;
@@ -141,6 +185,12 @@ namespace universaldevkit::diagnostic {
             LoggerId loggerId = 0
         ) noexcept;
         UNIVERSALDEVKIT_DIAGNOSTIC_API ~LogScope() noexcept;
+        UNIVERSALDEVKIT_DIAGNOSTIC_API LogScope(
+            std::string category,
+            std::wstring name,
+            std::source_location sourceLocation,
+            LoggerId loggerId = 0
+        );
 
         LogScope(const LogScope&) = delete;
         LogScope& operator=(const LogScope&) = delete;
@@ -249,7 +299,7 @@ namespace universaldevkit::diagnostic {
 #define UDK_LOG_THREAD_N(id, name) \
     auto UDK_DIAGNOSTIC_JOIN(udkThreadScope, __COUNTER__) = [&](::std::source_location udkSourceLocation) -> ::universaldevkit::diagnostic::ThreadScope { \
         try { \
-            return { ::std::string(name), udkSourceLocation, (id) }; \
+            return { ::std::basic_string(name), udkSourceLocation, (id) }; \
         } catch (...) { \
             return {}; \
         } \
