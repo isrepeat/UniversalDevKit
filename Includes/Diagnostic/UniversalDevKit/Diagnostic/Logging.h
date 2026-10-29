@@ -2,6 +2,7 @@
 #include "Export.h"
 
 #include <source_location>
+#include <system_error>
 #include <string_view>
 #include <filesystem>
 #include <cstddef>
@@ -49,6 +50,29 @@ namespace universaldevkit::diagnostic {
         bool colorConsole = true;
     };
 
+    enum class LoggerInitError {
+        None,
+        AlreadyInitialized,
+        FileAlreadyUsed,
+        InvalidOptions,
+        DirectoryUnavailable,
+        FileOpenFailed,
+        PackageUnavailable,
+        UnsupportedPlatform,
+        ShutdownRegistrationFailed,
+        InitializationFailed
+    };
+
+    struct LoggerInitResult {
+        LoggerInitError error = LoggerInitError::None;
+        std::error_code systemError;
+        std::string message;
+
+        explicit operator bool() const noexcept {
+            return this->error == LoggerInitError::None;
+        }
+    };
+
     struct LogContext {
         std::string className;
         std::string instanceName;
@@ -63,7 +87,7 @@ namespace universaldevkit::diagnostic {
         Logger() = delete;
 
         // The host initializes logging; normal exit calls Shutdown automatically.
-        static UNIVERSALDEVKIT_DIAGNOSTIC_API bool Initialize(const LoggerOptions& loggerOptions = {}, LoggerId loggerId = 0) noexcept;
+        [[nodiscard]] static UNIVERSALDEVKIT_DIAGNOSTIC_API LoggerInitResult Initialize(const LoggerOptions& loggerOptions = {}, LoggerId loggerId = 0);
         static UNIVERSALDEVKIT_DIAGNOSTIC_API void Shutdown() noexcept;
         static UNIVERSALDEVKIT_DIAGNOSTIC_API void Flush(LoggerId loggerId = 0) noexcept;
         static UNIVERSALDEVKIT_DIAGNOSTIC_API void SetLevel(Level level, LoggerId loggerId = 0) noexcept;

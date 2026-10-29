@@ -218,42 +218,55 @@ namespace universaldevkit::diagnostic {
         }
     }
 
-    bool Logger::Initialize(const LoggerOptions& loggerOptions, LoggerId loggerId) noexcept {
+    LoggerInitResult Logger::Initialize(const LoggerOptions& loggerOptions, LoggerId loggerId) {
+        auto loggerInitError = LoggerInitError::InitializationFailed;
         try {
             auto& state = details::GetState();
             std::scoped_lock lock{ state.mutex };
             if (state.entries.contains(loggerId) && state.entries.at(loggerId).logger) {
-                return false;
+                return { LoggerInitError::AlreadyInitialized, {}, "Logger ID is already initialized" };
             }
 
+            if (loggerOptions.minimumLevel < Level::Trace || loggerOptions.minimumLevel > Level::Off ||
+                loggerOptions.logFolder < LogFolder::CurrentDirectory || loggerOptions.logFolder > LogFolder::ApplicationOrPackage ||
+                (loggerOptions.fileMode != FileMode::Append && loggerOptions.fileMode != FileMode::Truncate) ||
+                (!loggerOptions.filePath.empty() && (loggerOptions.maxFileSize == 0 || loggerOptions.maxFiles > 200000))) {
+                return { LoggerInitError::InvalidOptions, {}, "Invalid level, folder, file mode or rotation limits" };
+            }
+#if !defined(_WIN32)
+            if (loggerOptions.enableDebugger || loggerOptions.logFolder == LogFolder::Package) {
+                return { LoggerInitError::UnsupportedPlatform, {}, "Requested Windows debugger or package folder on another platform" };
+            }
+#endif
+            if (!loggerOptions.filePath.empty() && loggerOptions.logFolder == LogFolder::Package &&
+                helpers::system::ApplicationPaths::GetPackageLocalDataDirectory().empty()) {
+                return { LoggerInitError::PackageUnavailable, {}, "Application has no package identity" };
+            }
+
+            loggerInitError = LoggerInitError::DirectoryUnavailable;
             // Resolve and validate the destination before opening or truncating it.
             const auto filePath = details::ResolvePath(loggerOptions);
             for (const auto& [id, entry] : state.entries) {
                 if (entry.logger && !entry.filePath.empty() && !filePath.empty() &&
                     std::filesystem::exists(filePath) && std::filesystem::equivalent(entry.filePath, filePath)) {
-                    throw std::invalid_argument("A logger already owns this file");
+                    return { LoggerInitError::FileAlreadyUsed, {}, "A different logger ID already owns this file" };
                 }
-            }
-            if (!filePath.empty() && loggerOptions.maxFileSize == 0) {
-                throw std::invalid_argument("maxFileSize must be positive");
             }
 
             // Build the requested outputs; file ownership remains unique per ID.
-#if !defined(_WIN32)
-            if (loggerOptions.enableDebugger) {
-                throw std::invalid_argument("Debugger output is supported only on Windows");
-            }
-#endif
+            loggerInitError = LoggerInitError::InitializationFailed;
             spdlog::sink_ptr sink;
             if (filePath.empty() && !loggerOptions.enableConsole && !loggerOptions.enableDebugger) {
                 sink = std::make_shared<spdlog::sinks::stderr_sink_mt>();
             }
             else if (!filePath.empty()) {
+                loggerInitError = LoggerInitError::DirectoryUnavailable;
                 std::filesystem::create_directories(filePath.parent_path());
+                loggerInitError = LoggerInitError::FileOpenFailed;
                 if (loggerOptions.fileMode == FileMode::Truncate) {
                     std::ofstream stream(filePath, std::ios::binary | std::ios::trunc);
                     if (!stream) {
-                        throw std::runtime_error("Cannot truncate log file");
+                        return { LoggerInitError::FileOpenFailed, {}, "Cannot truncate log file" };
                     }
                 }
                 const bool oversized = std::filesystem::exists(filePath) &&
@@ -265,6 +278,7 @@ namespace universaldevkit::diagnostic {
                     oversized
                 );
             }
+            loggerInitError = LoggerInitError::InitializationFailed;
             std::vector<spdlog::sink_ptr> sinks;
             if (sink) {
                 sink->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] [%t] {%s:%# %!} %v");
@@ -293,8 +307,7 @@ namespace universaldevkit::diagnostic {
             // Register once, including when the host explicitly shuts down and restarts logging.
             if (!state.shutdownRegistered) {
                 if (std::atexit(&Logger::Shutdown) != 0) {
-                    details::EmergencyWrite("Diagnostic: shutdown registration failed");
-                    return false;
+                    return { LoggerInitError::ShutdownRegistrationFailed, {}, "Cannot register automatic logger shutdown" };
                 }
                 state.shutdownRegistered = true;
             }
@@ -302,11 +315,22 @@ namespace universaldevkit::diagnostic {
                 logger->info("========== New session started (logger {}) ==========", loggerId);
             }
             state.entries[loggerId] = details::Entry{ std::move(logger), filePath, loggerOptions.minimumLevel };
-            return true;
+            return {};
+        }
+        catch (const std::bad_alloc&) {
+            throw;
+        }
+        catch (const std::invalid_argument& invalidArgument) {
+            return { LoggerInitError::InvalidOptions, {}, invalidArgument.what() };
+        }
+        catch (const std::system_error& systemError) {
+            return { loggerInitError, systemError.code(), systemError.what() };
+        }
+        catch (const std::exception& exception) {
+            return { loggerInitError, {}, exception.what() };
         }
         catch (...) {
-            details::EmergencyWrite("Diagnostic: initialization failed");
-            return false;
+            return { LoggerInitError::InitializationFailed, {}, "Unknown logger initialization failure" };
         }
     }
 

@@ -2,6 +2,22 @@
 
 Минимальный C++20 сервис логирования со статическим классом `Logger`: `UniversalDevKit::Diagnostic.Dynamic`, namespace `universaldevkit::diagnostic`. Компонент имеет `stateScope=process`: штатные способы подключения разрешают только DLL/SO. Все модули приложения должны использовать один загруженный экземпляр Diagnostic. Тестовый DiagnosticTest остаётся отдельным компонентом.
 
+## Результат инициализации
+
+Initialize возвращает LoggerInitResult с полями error (LoggerInitError), systemError (std::error_code), message (текст причины). Успех: error == None, остальные поля пусты. explicit operator bool позволяет использовать if (!result) и прежнюю проверку if (!Logger::Initialize(...)). Неявное присваивание результата переменной bool больше не поддерживается; ABI изменён, потребителей DLL необходимо пересобрать.
+
+```cpp
+const auto result = diagnostic::Logger::Initialize(loggerOptions);
+if (!result) {
+    // result.error — причина для программной обработки.
+    // result.message — описание; systemError заполнен, если исходная ошибка предоставила код.
+}
+```
+
+Коды: AlreadyInitialized, FileAlreadyUsed, InvalidOptions, DirectoryUnavailable, FileOpenFailed, PackageUnavailable, UnsupportedPlatform, ShutdownRegistrationFailed, InitializationFailed. InvalidOptions проверяется до открытия/усечения файла, включая уровни и лимиты ротации. Уже активный ID сохраняет конфигурацию при отказе. Неуспешно создаваемый ID не публикуется. Ошибки spdlog содержат текст, но systemError может быть пустым: backend не предоставляет структурированный исходный код. Глобальной последней ошибки нет.
+
+Initialize больше не noexcept: результат содержит динамическую строку, поэтому std::bad_alloc может выйти вызывающему коду, в том числе при формировании сообщения ошибки. Обычные ошибки конфигурации и файловой системы возвращаются результатом; Write/Flush/Shutdown остаются noexcept.
+
 ## Использование
 
 При первой успешной Initialize сервис один раз регистрирует Logger::Shutdown через std::atexit. При штатном завершении приложения ручной Shutdown не требуется. Явный вызов остаётся доступным для раннего освобождения ресурсов; повторная инициализация не добавляет новые обработчики завершения. При abort, TerminateProcess, необработанном access violation или другом аварийном завершении автоматический Shutdown не гарантируется. Рабочие потоки должны завершиться до выхода из main; Diagnostic DLL должна оставаться загруженной, пока есть её пользователи. Поздние записи после автоматического Shutdown используют fallback.
@@ -48,7 +64,7 @@ UDK_LOG_WARNING_N(7, "Network", "Retry attempt {}", 3);
 diagnostic::Logger::SetLevel(diagnostic::Level::Error, 7);
 ```
 
-ID 0 используется всеми прежними макросами и методами по умолчанию. Макросы UDK_LOG_TRACE_N/DEBUG_N/INFO_N/WARNING_N/ERROR_N/CRITICAL_N принимают первым аргументом ID. Для готового текста: Logger::Write(level, category, message, sourceLocation, loggerId). Для форматирования напрямую — Logger::LogForId(loggerId, level, category, sourceLocation, format, args...). Flush(loggerId) сбрасывает выбранный логгер; Shutdown завершает все ID. Повторная Initialize того же активного ID и открытие уже занятого другим ID файла возвращают false.
+ID 0 используется всеми прежними макросами и методами по умолчанию. Макросы UDK_LOG_TRACE_N/DEBUG_N/INFO_N/WARNING_N/ERROR_N/CRITICAL_N принимают первым аргументом ID. Для готового текста: Logger::Write(level, category, message, sourceLocation, loggerId). Для форматирования напрямую — Logger::LogForId(loggerId, level, category, sourceLocation, format, args...). Flush(loggerId) сбрасывает выбранный логгер; Shutdown завершает все ID. Повторная Initialize того же активного ID и открытие уже занятого другим ID файла возвращают неуспешный LoggerInitResult.
 
 FileMode::Append сохраняет существующее содержимое, FileMode::Truncate очищает активный файл при инициализации. Родительские папки создаются автоматически. Для Windows используются wide filename API spdlog, поэтому Unicode в пути не зависит от ANSI code page.
 
@@ -60,12 +76,12 @@ appendNewSession добавляет строку New session started с ID пр�
 |---|---|
 | CurrentDirectory | Относительно текущей рабочей папки; абсолютный filePath также допустим |
 | Application | Папка исполняемого файла EXE, не Diagnostic DLL |
-| Package | Windows package LocalState; без package identity и на других ОС Initialize возвращает false |
+| Package | Windows package LocalState; без package identity и на других ОС Initialize возвращает неуспешный LoggerInitResult |
 | ApplicationOrPackage | В Windows LocalState при наличии package identity, иначе папка EXE |
 
-Для выбора Application/Package путь должен быть относительным без ..; абсолютный путь передаётся с CurrentDirectory. Application реализован для Windows и Linux (/proc/self/exe), для других платформ задавайте полный путь явно. Папка EXE может быть недоступна для записи: ошибка открытия возвращает false. Package использует ApplicationPaths::GetPackageLocalDataDirectory() через Windows ApplicationData.LocalFolder; в текущей проверке подтверждён отказ для unpackaged EXE, запуск внутри установленного MSIX отдельно не проверен.
+Для выбора Application/Package путь должен быть относительным без ..; абсолютный путь передаётся с CurrentDirectory. Application реализован для Windows и Linux (/proc/self/exe), для других платформ задавайте полный путь явно. Папка EXE может быть недоступна для записи: ошибка открытия возвращает неуспешный LoggerInitResult. Package использует ApplicationPaths::GetPackageLocalDataDirectory() через Windows ApplicationData.LocalFolder; в текущей проверке подтверждён отказ для unpackaged EXE, запуск внутри установленного MSIX отдельно не проверен.
 
-Initialize вызывается владельцем приложения; повторный вызов для активного ID возвращает false без изменения конфигурации. После Shutdown допускается повторная инициализация. SetLevel и ShouldLog работают до инициализации; начальный уровень Info. До Initialize и после Shutdown прошедшие фильтр сообщения выводятся напрямую в stderr без метаданных. Shutdown сохраняет текущий уровень фильтрации каждого ID. Ошибки инициализации возвращают false, остальные ошибки логирования не выходят исключениями в приложение. Резервный вывод best effort: ошибки самого stderr не восстанавливаются, параллельные резервные записи могут перемешиваться.
+Initialize вызывается владельцем приложения; повторный вызов для активного ID возвращает неуспешный LoggerInitResult без изменения конфигурации. После Shutdown допускается повторная инициализация. SetLevel и ShouldLog работают до инициализации; начальный уровень Info. До Initialize и после Shutdown прошедшие фильтр сообщения выводятся напрямую в stderr без метаданных. Shutdown сохраняет текущий уровень фильтрации каждого ID. Ошибки инициализации возвращают неуспешный LoggerInitResult, остальные ошибки логирования не выходят исключениями в приложение. Резервный вывод best effort: ошибки самого stderr не восстанавливаются, параллельные резервные записи могут перемешиваться.
 
 Макросы проверяют уровень до вычисления категории и аргументов. Log форматирует через std::format на стороне вызывающего модуля и перехватывает ошибки форматирования; Write принимает уже готовый текст и никогда не интерпретирует скобки как формат. Прямой вызов Log не предотвращает вычисление аргументов до входа в функцию. В DLL не передаются fmt/spdlog типы, владение строками или форматируемые пользовательские объекты. Публичный C++ ABI требует совместимых компилятора, STL и настроек сборки; это не универсальный C ABI.
 
@@ -83,7 +99,7 @@ git submodule update --init ThirdParty/spdlog
 
 ## Debugger, консоль и контекст
 
-LoggerOptions::enableDebugger добавляет Windows debugger sink (Visual Studio Output / Debug). На других ОС Initialize возвращает false при включённом enableDebugger. LoggerOptions::enableConsole добавляет stderr-консоль параллельно файлу/debugger. colorConsole=true включает автоматический выбор цвета для терминала; false отключает цвет. При перенаправлении цвет обычно отключается. Файловые и debugger-записи не содержат управляющих цветовых последовательностей. Если файл и дополнительные выходы не заданы, сохраняется прежний простой stderr. Каждый выход получает flush после сообщения.
+LoggerOptions::enableDebugger добавляет Windows debugger sink (Visual Studio Output / Debug). На других ОС Initialize возвращает неуспешный LoggerInitResult при включённом enableDebugger. LoggerOptions::enableConsole добавляет stderr-консоль параллельно файлу/debugger. colorConsole=true включает автоматический выбор цвета для терминала; false отключает цвет. При перенаправлении цвет обычно отключается. Файловые и debugger-записи не содержат управляющих цветовых последовательностей. Если файл и дополнительные выходы не заданы, сохраняется прежний простой stderr. Каждый выход получает flush после сообщения.
 
 ```cpp
 diagnostic::LoggerOptions loggerOptions;
