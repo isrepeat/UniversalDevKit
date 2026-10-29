@@ -7,6 +7,8 @@ param(
     [string]$GradleCache,
     [string]$JavaHome,
     [string]$AndroidSdk,
+    [string]$AndroidSerial,
+    [ValidateSet('arm64-v8a', 'x86_64')][string]$AndroidAbi = 'arm64-v8a',
     [switch]$ListOnly
 )
 $ErrorActionPreference = 'Stop'
@@ -28,6 +30,8 @@ if (-not $CMake) {
 }
 $cases = @(
     @{ Name = 'ScriptEncoding'; Group = 'Windows'; Path = 'Tests/Infrastructure/TestScriptEncoding.ps1'; Args = @() }
+    @{ Name = 'DiagnosticContract'; Group = 'Windows'; Path = 'Tests/Integration/Diagnostic/Diagnostic.Tests.ps1'; Args = @('-CMake', $CMake) }
+    @{ Name = 'DiagnosticAndroid'; Group = 'Android'; Path = 'Tests/Integration/Diagnostic/Diagnostic.Tests.ps1'; Args = @('-Platform', 'Android', '-CMake', $CMake) }
     @{ Name = 'ComponentGeneration'; Group = 'Windows'; Path = 'Scripts/PowerShell/GenerateComponentProjects.ps1'; Args = @('-Check') }
     @{ Name = 'RegistryContract'; Group = 'Windows'; Path = 'Tests/Infrastructure/TestRegistryContract.ps1'; Args = @('-CMake', $CMake) }
     @{ Name = 'ComponentRegistry'; Group = 'Windows'; Path = 'Tests/Infrastructure/TestComponentRegistry.ps1'; Args = @() }
@@ -47,6 +51,11 @@ $cases = @(
     @{ Name = 'AndroidMavenDelivery'; Group = 'Android'; Path = 'Tests/Integration/Packages/PackageDelivery.Tests.ps1'; Args = @('-Family', 'AndroidMaven', '-Gradle', $Gradle, '-JavaHome', $JavaHome, '-AndroidSdk', $AndroidSdk) }
 )
 if ($GradleCache) { $cases[-1].Args += @('-GradleCache', $GradleCache) }
+$diagnosticAndroid = $cases | Where-Object Name -eq 'DiagnosticAndroid'
+$diagnosticAndroid.Args += @('-Abi', $AndroidAbi)
+if ($AndroidNdk) { $diagnosticAndroid.Args += @('-AndroidNdk', $AndroidNdk) }
+if ($AndroidSdk) { $diagnosticAndroid.Args += @('-AndroidSdk', $AndroidSdk) }
+if ($AndroidSerial) { $diagnosticAndroid.Args += @('-Serial', $AndroidSerial) }
 foreach ($name in $Test) {
     if ($name -notin @($cases | ForEach-Object { $_.Name })) { throw "Unknown test: $name" }
 }

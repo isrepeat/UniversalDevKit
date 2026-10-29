@@ -1,5 +1,7 @@
 # Проверки UniversalDevKit
 
+Новый Diagnostic (не DiagnosticTest) проверяется общим C++-набором contract/threads/modules на Windows и Android: [сценарии и запуск](Integration/Diagnostic/README.md). Прямой запуск: Tests/Scripts/RunDiagnosticTests.cmd; Android: -Platform Android (-SkipDevice только для сборки). Debug/Release Windows входят в общий runner как DiagnosticContract, Android — DiagnosticAndroid с устройством. Build и Execution отмечаются отдельно в summary.csv; DeviceNotRun не подтверждает работу на Android.
+
 Реальные Android AAR/Prefab HeleprsTest/DiagnosticTest: [архитектура и запуск](../Packages/Build/Android/README.md). AndroidPrefabBuild в общем runner проверяет сборку APK без устройства. Отдельный RunAndroidPrefabTests.cmd принимает -Serial для instrumentation либо явный -SkipDevice для сборки; BuildPassed-DeviceNotRun не является подтверждением запуска на Android.
 
 WinRT-пакет проверяется через RunWinRtPackageTests.cmd: native Desktop и C# CsWinRT consumer восстанавливают WinMD/DLL из NuGet, генерируют проекции и выполняют штатную активацию через манифест EXE. Изолированные запуски без DLL должны завершаться отказом; системная регистрация не изменяется. Подробности — [проверки пакетов](Integration/Packages/README.md).
