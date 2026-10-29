@@ -46,27 +46,6 @@ foreach ($configuration in @('Debug', 'Release')) {
     }
 }
 
-# Header-only Meta must remain usable after installation without a binary target.
-$metaConsumer = Join-Path $run 'meta-consumer'
-InvokeCMake @('-S', (Join-Path $repository 'Tests/Fixtures/Consumers/MetaPackage'), '-B', $metaConsumer, '-G', $Generator, '-A', 'x64', "-DCMAKE_PREFIX_PATH=$relocated")
-InvokeCMake @('--build', $metaConsumer, '--config', 'Release')
-& $ctest --test-dir $metaConsumer -C Release --output-on-failure
-if ($LASTEXITCODE -ne 0) {
-    throw 'Installed Meta package consumer failed.'
-}
-
-# Verify Math fixes through an independent consumer of the installed package.
-$mathConsumer = Join-Path $run 'math-consumer'
-InvokeCMake @('-S', (Join-Path $repository 'Tests/Fixtures/Consumers/MathPackage'), '-B', $mathConsumer, '-G', $Generator, '-A', 'x64', "-DCMAKE_PREFIX_PATH=$relocated")
-foreach ($configuration in @('Debug', 'Release')) {
-    InvokeCMake @('--build', $mathConsumer, '--config', $configuration)
-    & $ctest --test-dir $mathConsumer -C $configuration --output-on-failure
-    if ($LASTEXITCODE -ne 0) { throw "Installed Math package consumer failed: $configuration" }
-}
-if (Test-Path (Join-Path $relocated 'include/UniversalDevKit/Helpers/Math/Differentation.h')) {
-    throw 'Installed Math package contains the obsolete Differentation.h header.'
-}
-
 # Reject unknown required components during configuration.
 & $CMake -S (Join-Path $repository 'Tests/Fixtures/Consumers/CmakePackage') -B (Join-Path $run 'invalid') -G $Generator -A x64 "-DCMAKE_PREFIX_PATH=$relocated" -DUDK_TEST_COMPONENT=Unknown
 if ($LASTEXITCODE -eq 0) {

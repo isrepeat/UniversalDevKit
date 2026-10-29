@@ -15,6 +15,6 @@ DifferentialVar хранит value и grad. AccumulateGrad прибавляет 
 
 CMake: UniversalDevKit::Helpers.Headers. NuGet: UniversalDevKit.Helpers с linkage Shared. Android: universaldevkit-helpers-shared-release и udk_helpers_shared::Helpers. Реестр и проекты Shared/HeaderCheck создаются штатным генератором. HeleprsTest/Math.h не изменён.
 
-Tests/Fixtures/Consumers/MathPackage проверяет ссылочные типы и изменение данных Tensor в constexpr/runtime, типы алиасов, преобразования const Rect/Size, накопление/сброс градиента и вызов явно заданных функций. AndroidPrefab.Tests.ps1 -Components Helpers -SkipDevice собирает отдельный JNI/APK consumer из AAR; без устройства это не подтверждает runtime.
+AndroidPrefab.Tests.ps1 -Components Helpers -SkipDevice собирает отдельный JNI/APK consumer из AAR; без устройства это не подтверждает runtime.
 
 Контракт rank-0 и проверка границ Tensor остаются отдельными задачами. Исходные вспомогательные details и встроенные compile-time тесты пока сохранены.

@@ -50,6 +50,4 @@ concepts::has_method, has_method_with_signature, has_static_function и has_stat
 
 CMake: UniversalDevKit::Helpers.Headers. NuGet: UniversalDevKit.Helpers, linkage Shared. Android: universaldevkit-helpers-shared-release через udk_helpers_shared::Helpers и штатный udk_android_link; подробнее в Packages/Build/Android/README.md.
 
-Tests/Fixtures/Consumers/MetaPackage проверяет utilities, матрицу FunctionTraits, выбор типов в Logic и concepts. Migration/CommandLineParser.h — изолированный перенос реального старого consumer с заменой namespace, include и requires; исходный UtilityHelpersLib не меняется. Его методы Description, MapParsedResults и Validate проверяются новыми traits при сборке, разбор аргументов выполняется при запуске.
-
-Эти три CTest-сценария входят в TestCMakePackage.ps1. AndroidPrefab.Tests.ps1 -Components Helpers -SkipDevice собирает независимый JNI/APK consumer из AAR; для runtime необходим выбранный adb Serial и запуск без SkipDevice.
+AndroidPrefab.Tests.ps1 -Components Helpers -SkipDevice собирает независимый JNI/APK consumer из AAR; для runtime необходим выбранный adb Serial и запуск без SkipDevice.
