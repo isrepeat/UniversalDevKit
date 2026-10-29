@@ -17,6 +17,7 @@
 #include <pthread.h>
 #endif
 
+#include <condition_variable>
 #include <unordered_map>
 #include <filesystem>
 #include <algorithm>
@@ -40,7 +41,11 @@ namespace universaldevkit::diagnostic {
 
         struct State {
             std::mutex mutex;
+            std::condition_variable conditionVariable;
             std::unordered_map<LoggerId, Entry> entries;
+            std::size_t activeOperations = 0;
+            std::uint64_t completedShutdowns = 0;
+            bool isStopping = false;
             bool shutdownRegistered = false;
         };
 
@@ -62,12 +67,51 @@ namespace universaldevkit::diagnostic {
             }
         }
 
-        std::shared_ptr<spdlog::logger> GetLogger(LoggerId loggerId) {
-            auto& state = details::GetState();
-            std::scoped_lock lock{ state.mutex };
-            auto entry = state.entries.find(loggerId);
-            return entry == state.entries.end() ? nullptr : entry->second.logger;
-        }
+        class BackendAccess final {
+        public:
+            explicit BackendAccess(LoggerId loggerId)
+                : state{ details::GetState() } {
+                std::scoped_lock lock{ this->state.mutex };
+                if (!this->state.isStopping) {
+                    const auto entry = this->state.entries.find(loggerId);
+                    if (entry != this->state.entries.end() && entry->second.logger) {
+                        this->logger = entry->second.logger;
+                        ++this->state.activeOperations;
+                        ++BackendAccess::currentThreadOperations;
+                    }
+                }
+            }
+
+            ~BackendAccess() noexcept {
+                if (this->logger) {
+                    // Release the backend before signaling that this operation has finished.
+                    this->logger.reset();
+                    --BackendAccess::currentThreadOperations;
+                    std::scoped_lock lock{ this->state.mutex };
+                    if (--this->state.activeOperations == 0) {
+                        this->state.conditionVariable.notify_all();
+                    }
+                }
+            }
+
+            BackendAccess(const BackendAccess&) = delete;
+            BackendAccess& operator=(const BackendAccess&) = delete;
+            BackendAccess(BackendAccess&&) = delete;
+            BackendAccess& operator=(BackendAccess&&) = delete;
+
+            spdlog::logger* GetLogger() const noexcept {
+                return this->logger.get();
+            }
+
+            static bool IsCurrentThreadActive() noexcept {
+                return BackendAccess::currentThreadOperations != 0;
+            }
+
+        private:
+            State& state;
+            std::shared_ptr<spdlog::logger> logger;
+            inline static thread_local std::size_t currentThreadOperations = 0;
+        };
 
         std::filesystem::path ResolvePath(const LoggerOptions& loggerOptions) {
             if (loggerOptions.filePath.empty()) {
@@ -223,6 +267,9 @@ namespace universaldevkit::diagnostic {
         try {
             auto& state = details::GetState();
             std::scoped_lock lock{ state.mutex };
+            if (state.isStopping) {
+                return { LoggerInitError::ShutdownInProgress, {}, "Logger shutdown is in progress" };
+            }
             if (state.entries.contains(loggerId) && state.entries.at(loggerId).logger) {
                 return { LoggerInitError::AlreadyInitialized, {}, "Logger ID is already initialized" };
             }
@@ -335,31 +382,63 @@ namespace universaldevkit::diagnostic {
     }
 
     void Logger::Shutdown() noexcept {
+        static thread_local bool isShuttingDown = false;
+        if (isShuttingDown || details::BackendAccess::IsCurrentThreadActive()) {
+            details::EmergencyWrite("Diagnostic: Shutdown cannot run inside a backend operation");
+            return;
+        }
         try {
-            std::vector<std::shared_ptr<spdlog::logger>> loggers;
-            {
-                auto& state = details::GetState();
-                std::scoped_lock lock{ state.mutex };
-                loggers.reserve(state.entries.size());
-                for (auto& [id, entry] : state.entries) {
-                    if (entry.logger) {
-                        loggers.push_back(std::move(entry.logger));
-                    }
+            // Stop admission atomically; concurrent Shutdown calls join this shutdown generation.
+            auto& state = details::GetState();
+            std::unique_lock lock{ state.mutex };
+            if (state.isStopping) {
+                const auto completedShutdowns = state.completedShutdowns;
+                state.conditionVariable.wait(lock, [&state, completedShutdowns] {
+                    return state.completedShutdowns != completedShutdowns;
+                });
+                return;
+            }
+            state.isStopping = true;
+            isShuttingDown = true;
+            state.conditionVariable.wait(lock, [&state] { return state.activeOperations == 0; });
+
+            // No operation can acquire these backends now. Close without holding the registry lock.
+            for (;;) {
+                const auto entry = std::find_if(state.entries.begin(), state.entries.end(), [](const auto& item) {
+                    return static_cast<bool>(item.second.logger);
+                });
+                if (entry == state.entries.end()) {
+                    break;
                 }
+                auto logger = std::move(entry->second.logger);
+                lock.unlock();
+                try {
+                    logger->flush();
+                }
+                catch (...) {
+                    details::EmergencyWrite("Diagnostic: shutdown flush failed");
+                }
+                logger.reset();
+                lock.lock();
             }
-            for (const auto& logger : loggers) {
-                logger->flush();
-            }
+
+            // Keep levels for fallback logging and permit reinitialization only after file closure.
+            state.isStopping = false;
+            ++state.completedShutdowns;
+            isShuttingDown = false;
+            state.conditionVariable.notify_all();
         }
         catch (...) {
+            isShuttingDown = false;
             details::EmergencyWrite("Diagnostic: shutdown failed");
         }
     }
 
     void Logger::Flush(LoggerId loggerId) noexcept {
         try {
-            if (auto logger = details::GetLogger(loggerId)) {
-                logger->flush();
+            const details::BackendAccess backendAccess{ loggerId };
+            if (backendAccess.GetLogger()) {
+                backendAccess.GetLogger()->flush();
             }
         }
         catch (...) {
@@ -420,8 +499,9 @@ namespace universaldevkit::diagnostic {
             return;
         }
         try {
-            if (auto logger = details::GetLogger(loggerId)) {
-                logger->log(
+            const details::BackendAccess backendAccess{ loggerId };
+            if (backendAccess.GetLogger()) {
+                backendAccess.GetLogger()->log(
                     spdlog::source_loc{ sourceLocation.file_name(), static_cast<int>(sourceLocation.line()), sourceLocation.function_name() },
                     details::ToSpdlogLevel(level),
                     "[{}] {}",

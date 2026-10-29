@@ -60,7 +60,8 @@ namespace universaldevkit::diagnostic {
         PackageUnavailable,
         UnsupportedPlatform,
         ShutdownRegistrationFailed,
-        InitializationFailed
+        InitializationFailed,
+        ShutdownInProgress
     };
 
     struct LoggerInitResult {
@@ -88,6 +89,8 @@ namespace universaldevkit::diagnostic {
 
         // The host initializes logging; normal exit calls Shutdown automatically.
         [[nodiscard]] static UNIVERSALDEVKIT_DIAGNOSTIC_API LoggerInitResult Initialize(const LoggerOptions& loggerOptions = {}, LoggerId loggerId = 0);
+        // Waits for admitted backend writes/flushes and releases files before returning.
+        // Concurrent new writes use fallback; callers must still quiesce before DLL unload.
         static UNIVERSALDEVKIT_DIAGNOSTIC_API void Shutdown() noexcept;
         static UNIVERSALDEVKIT_DIAGNOSTIC_API void Flush(LoggerId loggerId = 0) noexcept;
         static UNIVERSALDEVKIT_DIAGNOSTIC_API void SetLevel(Level level, LoggerId loggerId = 0) noexcept;
