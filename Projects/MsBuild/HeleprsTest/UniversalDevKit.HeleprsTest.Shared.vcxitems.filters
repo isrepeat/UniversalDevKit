@@ -6,6 +6,7 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\HeleprsTest\Math.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\HeleprsTest\Text.cpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\HeleprsTest\UniversalDevKit\HeleprsTest\Export.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\HeleprsTest\UniversalDevKit\HeleprsTest\Math.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\HeleprsTest\UniversalDevKit\HeleprsTest\Text.h" />
   </ItemGroup>

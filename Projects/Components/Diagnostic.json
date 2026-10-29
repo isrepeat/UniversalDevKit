@@ -1,0 +1,26 @@
+{
+  "name": "Diagnostic",
+  "stateScope": "process",
+  "requirements": {
+    "cxxStandard": 20,
+    "threads": true
+  },
+  "msbuildGuid": "{AB97876A-F25A-4AAE-BACD-D32C776BB261}",
+  "headers": [
+    "Includes/Diagnostic/UniversalDevKit/Diagnostic/Logging.h"
+  ],
+  "sources": [
+    "Sources/Diagnostic/Logging.cpp"
+  ],
+  "buildExtensions": {
+    "cmake": "Projects/Cmake/Diagnostic/Spdlog.cmake",
+    "msbuildTargets": "Projects/MsBuild/Diagnostic/Spdlog.targets"
+  },
+  "filters": {
+    "roots": [
+      { "path": "Includes/Diagnostic/UniversalDevKit/Diagnostic", "filter": "" },
+      { "path": "Sources/Diagnostic", "filter": "" }
+    ],
+    "files": {}
+  }
+}

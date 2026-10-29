@@ -237,6 +237,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{50CD
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.HeaderCheck", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj", "{E21B97A1-D847-2938-4E29-760523C97389}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Dynamic", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj", "{F104C833-785D-E25F-5F10-B46284462A11}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Shared", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems", "{AB97876A-F25A-4AAE-BACD-D32C776BB261}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -263,6 +269,10 @@ Global
 		{E21B97A1-D847-2938-4E29-760523C97389}.Debug|x64.Build.0 = Debug|x64
 		{E21B97A1-D847-2938-4E29-760523C97389}.Release|x64.ActiveCfg = Release|x64
 		{E21B97A1-D847-2938-4E29-760523C97389}.Release|x64.Build.0 = Release|x64
+		{F104C833-785D-E25F-5F10-B46284462A11}.Debug|x64.ActiveCfg = Debug|x64
+		{F104C833-785D-E25F-5F10-B46284462A11}.Debug|x64.Build.0 = Debug|x64
+		{F104C833-785D-E25F-5F10-B46284462A11}.Release|x64.ActiveCfg = Release|x64
+		{F104C833-785D-E25F-5F10-B46284462A11}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -307,6 +317,9 @@ Global
 		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
 		{50CDBD24-894E-0FD6-7C08-442980AADBB7} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{E21B97A1-D847-2938-4E29-760523C97389} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
+		{DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{F104C833-785D-E25F-5F10-B46284462A11} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
+		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7A3009E-A79E-4542-AC95-DD9B9C113922}
@@ -316,9 +329,11 @@ Global
 		Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Shared.vcxitems*{56ed54d2-4f7a-4cd2-91ba-3d710d8f9c24}*SharedItemsImports = 4
 		Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Shared.vcxitems*{88573491-8330-4d25-a3c2-faab1d69e589}*SharedItemsImports = 4
 		Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Shared.vcxitems*{a7ce4335-d8e6-4e53-b810-7d932e87ba59}*SharedItemsImports = 4
+		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{ab97876a-f25a-4aae-bacd-d32c776bb261}*SharedItemsImports = 9
 		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{c1e8c40d-b9b5-4c0d-9f7e-1b793d3c13ae}*SharedItemsImports = 9
 		Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Shared.vcxitems*{c6b94069-54c2-4b96-880d-4c058a605c56}*SharedItemsImports = 4
 		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{e21b97a1-d847-2938-4e29-760523c97389}*SharedItemsImports = 4
+		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{f104c833-785d-e25f-5f10-b46284462a11}*SharedItemsImports = 4
 		Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Shared.vcxitems*{f27f4562-11c4-42ef-ac5a-26101fd26f46}*SharedItemsImports = 9
 	EndGlobalSection
 EndGlobal

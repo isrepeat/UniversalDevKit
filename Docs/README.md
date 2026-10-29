@@ -19,6 +19,8 @@
 
 ## Архитектура и компоненты
 
+- [Diagnostic](Diagnostic.md) — минимальный сервис логирования в общей DLL с приватным spdlog.
+
 - [Helpers](Helpers.md) — единый header-only компонент с разделами Meta, Math, Patterns, StdExt, Stream и Regex, отличие от HeleprsTest.
 - [Std](Std.md) — расширения StdExt, автоматический alias stdEx и отложенные исправления.
 

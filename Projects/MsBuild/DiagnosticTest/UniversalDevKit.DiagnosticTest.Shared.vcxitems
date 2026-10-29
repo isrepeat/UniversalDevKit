@@ -15,6 +15,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\DiagnosticTest\UniversalDevKit\DiagnosticTest\Logging.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\DiagnosticTest\UniversalDevKit\DiagnosticTest\Export.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\DiagnosticTest\Logging.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>

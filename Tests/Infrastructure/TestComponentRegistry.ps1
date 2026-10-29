@@ -46,7 +46,10 @@ Write-Output 'New component, solution entries and conditional platform sources p
 if (@($updates | Where-Object RelativePath -like '*Service.Static.vcxproj').Count) {
     throw 'Process-state Static project was generated'
 }
-if ($solution[0].Content.Contains('UniversalDevKit.Service.Shared') -or $solution[0].Content.Contains('UniversalDevKit.Service.Static')) {
+if (-not $solution[0].Content.Contains('UniversalDevKit.Service.Shared')) {
+    throw 'Missing process-state Shared project for source browsing'
+}
+if ($solution[0].Content.Contains('UniversalDevKit.Service.Static')) {
     throw 'Forbidden process-state projects were added to solution'
 }
 $sourceTargets = @($updates | Where-Object RelativePath -eq 'Projects/MsBuild/UniversalDevKit.Sources.targets')[0].Content

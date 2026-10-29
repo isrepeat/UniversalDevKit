@@ -13,10 +13,11 @@
   <Import Project="UniversalDevKit.props"
           Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
   <ItemGroup>
-    <__UniversalDevKitAvailableComponent Include="DiagnosticTest;HeleprsTest;Helpers" />
+    <__UniversalDevKitAvailableComponent Include="Diagnostic;DiagnosticTest;HeleprsTest;Helpers" />
     <__UniversalDevKitComponent Include="$(UniversalDevKitComponents)" />
   </ItemGroup>
   <PropertyGroup>
+    <__HasUniversalDevKitDiagnostic>false</__HasUniversalDevKitDiagnostic>
     <__HasUniversalDevKitDiagnosticTest>false</__HasUniversalDevKitDiagnosticTest>
     <__HasUniversalDevKitDiagnosticTest Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';DiagnosticTest;'))">true</__HasUniversalDevKitDiagnosticTest>
     <__HasUniversalDevKitHeleprsTest>false</__HasUniversalDevKitHeleprsTest>
@@ -61,7 +62,9 @@
           BeforeTargets="PrepareForBuild">
     <Error Condition="'$(UniversalDevKitComponents)' == ''"
            Text="UniversalDevKitComponents must be specified." />
-    <Error Condition="'%(__UniversalDevKitComponent.Identity)' != 'DiagnosticTest' and '%(__UniversalDevKitComponent.Identity)' != 'HeleprsTest' and '%(__UniversalDevKitComponent.Identity)' != 'Helpers'"
+    <Error Condition="'%(__UniversalDevKitComponent.Identity)' != 'Diagnostic' and '%(__UniversalDevKitComponent.Identity)' != 'DiagnosticTest' and '%(__UniversalDevKitComponent.Identity)' != 'HeleprsTest' and '%(__UniversalDevKitComponent.Identity)' != 'Helpers'"
            Text="Unsupported UniversalDevKit component: %(__UniversalDevKitComponent.Identity)" />
+    <Error Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;'))"
+           Text="Process-state component requires Dynamic: Diagnostic. Use Connect with a solution." />
   </Target>
 </Project>

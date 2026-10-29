@@ -5,6 +5,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\DiagnosticTest\Logging.cpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\DiagnosticTest\UniversalDevKit\DiagnosticTest\Export.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\DiagnosticTest\UniversalDevKit\DiagnosticTest\Logging.h" />
   </ItemGroup>
 </Project>

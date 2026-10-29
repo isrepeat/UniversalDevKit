@@ -18,6 +18,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\HeleprsTest\UniversalDevKit\HeleprsTest\Text.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\HeleprsTest\UniversalDevKit\HeleprsTest\Export.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\HeleprsTest\Math.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>

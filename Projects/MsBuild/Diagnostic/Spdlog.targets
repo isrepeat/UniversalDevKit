@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <__UniversalDevKitDiagnosticSpdlogRoot>$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\</__UniversalDevKitDiagnosticSpdlogRoot>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(__UniversalDevKitDiagnosticSpdlogRoot)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <ExceptionHandling>Sync</ExceptionHandling>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="$(__UniversalDevKitDiagnosticSpdlogRoot)src\spdlog.cpp;$(__UniversalDevKitDiagnosticSpdlogRoot)src\stdout_sinks.cpp;$(__UniversalDevKitDiagnosticSpdlogRoot)src\color_sinks.cpp;$(__UniversalDevKitDiagnosticSpdlogRoot)src\file_sinks.cpp;$(__UniversalDevKitDiagnosticSpdlogRoot)src\async.cpp;$(__UniversalDevKitDiagnosticSpdlogRoot)src\cfg.cpp;$(__UniversalDevKitDiagnosticSpdlogRoot)src\bundled_fmtlib_format.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ObjectFileName>$(IntDir)UniversalDevKit\Diagnostic\spdlog\%(Filename).obj</ObjectFileName>
+    </ClCompile>
+  </ItemGroup>
+  <Target Name="__UniversalDevKitDiagnosticValidateSpdlog" BeforeTargets="PrepareForBuild">
+    <Error Condition="!Exists('$(__UniversalDevKitDiagnosticSpdlogRoot)include\spdlog\version.h')" Text="Initialize spdlog: git submodule update --init ThirdParty/spdlog" />
+  </Target>
+</Project>

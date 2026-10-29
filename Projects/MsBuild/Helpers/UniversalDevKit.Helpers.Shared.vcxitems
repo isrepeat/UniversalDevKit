@@ -123,6 +123,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Stream\StreamLineViewer.h">
       <__UniversalDevKitFilter>Stream</__UniversalDevKitFilter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Export.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <__UniversalDevKitCompileRequirement Include="Helpers">

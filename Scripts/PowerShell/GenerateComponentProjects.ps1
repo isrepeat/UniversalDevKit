@@ -295,6 +295,14 @@ foreach ($includePath in $manifest.includes) {
         $lines.Add('      <__UniversalDevKitFilter>' + (EscapeXml (GetComponentFilter $path $component.filters)) + '</__UniversalDevKitFilter>')
         $lines.Add('    </ClInclude>')
     }
+    # Generated export headers are project items even when omitted from the registry.
+    $exportHeader = "Includes/$name/UniversalDevKit/$name/Export.h"
+    if ($exportHeader -notin $component.headers) {
+        $include = EscapeXml ('$' + '(MSBuildThisFileDirectory)..\..\..\' + $exportHeader.Replace('/', '\'))
+        $lines.Add('    <ClInclude Include="' + $include + '">')
+        $lines.Add('      <__UniversalDevKitFilter>' + (EscapeXml (GetComponentFilter $exportHeader $component.filters)) + '</__UniversalDevKitFilter>')
+        $lines.Add('    </ClInclude>')
+    }
     foreach ($path in $componentSources) {
         if ($path -isnot [string]) {
             throw "${name}.sources must contain strings."
@@ -716,7 +724,6 @@ if (Test-Path -LiteralPath $solutionPath) {
         $componentFolder = EnsureSolutionFolder $name $msbuildFolder "Projects/MsBuild/$name"
         foreach ($mode in @('Shared', 'Static', 'Dynamic', 'HeaderCheck')) {
             if ($mode -eq 'Shared') {
-                if ($binaryComponentRegistry[$name].StateScope -eq 'process') { continue }
                 $guid = '{' + $binaryComponentRegistry[$name].SharedGuid.ToString().ToUpperInvariant() + '}'
             } else {
                 if (-not $libraryGuids.ContainsKey("$name.$mode")) { continue }
@@ -729,7 +736,7 @@ if (Test-Path -LiteralPath $solutionPath) {
         foreach ($mode in @('Shared', 'Static', 'Dynamic', 'HeaderCheck')) {
             if ($mode -eq 'HeaderCheck' -and $binaryComponentRegistry[$name].Kind -ne 'headerOnly') { continue }
             if ($mode -in @('Static', 'Dynamic') -and $binaryComponentRegistry[$name].Kind -eq 'headerOnly') { continue }
-            if ($mode -ne 'Dynamic' -and $binaryComponentRegistry[$name].StateScope -eq 'process') {
+            if ($mode -notin @('Shared', 'Dynamic') -and $binaryComponentRegistry[$name].StateScope -eq 'process') {
                 continue
             }
             $extension = if ($mode -eq 'Shared') {
