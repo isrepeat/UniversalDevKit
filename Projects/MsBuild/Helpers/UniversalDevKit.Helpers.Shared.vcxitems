@@ -12,6 +12,27 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Preprocessor.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Collection\Algorithms.h">
+      <__UniversalDevKitFilter>Collection</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Collection\fixed_container.h">
+      <__UniversalDevKitFilter>Collection</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Collection\iter_to_last.h">
+      <__UniversalDevKitFilter>Collection</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Collection\iterable_queue.h">
+      <__UniversalDevKitFilter>Collection</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Event\IEvent.h">
+      <__UniversalDevKitFilter>Event</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Event\Signal.h">
+      <__UniversalDevKitFilter>Event</__UniversalDevKitFilter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Differentiation.h">
       <__UniversalDevKitFilter>Math</__UniversalDevKitFilter>
     </ClInclude>

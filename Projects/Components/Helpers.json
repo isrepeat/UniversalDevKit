@@ -3,6 +3,13 @@
   "kind": "headerOnly",
   "msbuildGuid": "{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}",
   "headers": [
+    "Includes/Helpers/UniversalDevKit/Helpers/Preprocessor.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Collection/Algorithms.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Collection/fixed_container.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Collection/iter_to_last.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Collection/iterable_queue.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Event/IEvent.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Event/Signal.h",
     "Includes/Helpers/UniversalDevKit/Helpers/Math/Differentiation.h",
     "Includes/Helpers/UniversalDevKit/Helpers/Math/Function1D.h",
     "Includes/Helpers/UniversalDevKit/Helpers/Math/Rect.h",
