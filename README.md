@@ -19,7 +19,7 @@ Helpers — единый header-only компонент с папками Meta, 
 
 ## Подключение к приложению
 
-[Diagnostic](Docs/Diagnostic.md) — минимальный сервис логирования с одним stderr sink в общей DLL/SO (`stateScope=process`). Для его сборки получите закреплённый spdlog: `git submodule update --init ThirdParty/spdlog`. Публичный API не требует заголовков spdlog.
+[Diagnostic](Docs/Diagnostic.md) — сервис логирования в общей DLL/SO (`stateScope=process`): stderr или файлы по ID, append/truncate, ротация и маркеры сессий. Для его сборки получите закреплённый spdlog: `git submodule update --init ThirdParty/spdlog`. Публичный API не требует заголовков spdlog.
 
 **Visual Studio / MSBuild:** запустите [Scripts/Connect.cmd](Scripts/Connect.cmd), выберите solution, проект, компоненты и способ подключения. Нажмите Apply, перезагрузите solution и соберите приложение. Connect настроит ссылки и необходимые зависимости.
 

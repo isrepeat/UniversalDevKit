@@ -1,20 +1,40 @@
-#include <UniversalDevKit/Diagnostic/Logging.h>
+#include "../../Includes/Diagnostic/UniversalDevKit/Diagnostic/Logging.h"
 
+#include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_sinks.h>
 #include <spdlog/logger.h>
 
-#include <atomic>
+#include <UniversalDevKit/Helpers/System/ApplicationPaths.h>
+
+#if defined(_WIN32)
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <Windows.h>
+#include <appmodel.h>
+#endif
+
+#include <unordered_map>
+#include <filesystem>
+#include <stdexcept>
 #include <cstdlib>
+#include <fstream>
 #include <cstdio>
 #include <memory>
+#include <vector>
 #include <mutex>
 
 namespace universaldevkit::diagnostic {
     namespace details {
+        struct Entry {
+            std::shared_ptr<spdlog::logger> logger;
+            std::filesystem::path filePath;
+            Level minimumLevel = Level::Info;
+        };
+
         struct State {
             std::mutex mutex;
-            std::shared_ptr<spdlog::logger> logger;
-            std::atomic<Level> minimumLevel{ Level::Info };
+            std::unordered_map<LoggerId, Entry> entries;
             bool shutdownRegistered = false;
         };
 
@@ -36,10 +56,49 @@ namespace universaldevkit::diagnostic {
             }
         }
 
-        std::shared_ptr<spdlog::logger> GetLogger() {
+        std::shared_ptr<spdlog::logger> GetLogger(LoggerId loggerId) {
             auto& state = details::GetState();
             std::scoped_lock lock{ state.mutex };
-            return state.logger;
+            auto entry = state.entries.find(loggerId);
+            return entry == state.entries.end() ? nullptr : entry->second.logger;
+        }
+
+        std::filesystem::path ResolvePath(const LoggerOptions& loggerOptions) {
+            if (loggerOptions.filePath.empty()) {
+                return {};
+            }
+            if (loggerOptions.logFolder == LogFolder::CurrentDirectory) {
+                return std::filesystem::weakly_canonical(std::filesystem::absolute(loggerOptions.filePath));
+            }
+            if (loggerOptions.filePath.is_absolute() || loggerOptions.filePath.has_root_path()) {
+                throw std::invalid_argument("Folder-relative log paths must not be rooted");
+            }
+            for (const auto& part : loggerOptions.filePath) {
+                if (part == "..") {
+                    throw std::invalid_argument("Log path must stay inside the selected folder");
+                }
+            }
+            std::filesystem::path folder;
+            switch (loggerOptions.logFolder) {
+            case LogFolder::Application:
+                folder = helpers::system::ApplicationPaths::GetExecutableDirectory();
+                break;
+            case LogFolder::Package:
+                folder = helpers::system::ApplicationPaths::GetPackageLocalDataDirectory();
+                if (folder.empty()) {
+                    throw std::runtime_error("Application has no package identity");
+                }
+                break;
+            case LogFolder::ApplicationOrPackage:
+                folder = helpers::system::ApplicationPaths::GetPackageLocalDataDirectory();
+                if (folder.empty()) {
+                    folder = helpers::system::ApplicationPaths::GetExecutableDirectory();
+                }
+                break;
+            default:
+                throw std::invalid_argument("Unknown log folder");
+            }
+            return std::filesystem::weakly_canonical(folder / loggerOptions.filePath);
         }
 
         void EmergencyWrite(std::string_view message) noexcept {
@@ -50,16 +109,49 @@ namespace universaldevkit::diagnostic {
         }
     } // namespace details
 
-    bool Logger::Initialize(const Options& options) noexcept {
+    bool Logger::Initialize(const LoggerOptions& loggerOptions, LoggerId loggerId) noexcept {
         try {
             auto& state = details::GetState();
             std::scoped_lock lock{ state.mutex };
-            if (state.logger) {
+            if (state.entries.contains(loggerId) && state.entries.at(loggerId).logger) {
                 return false;
             }
 
-            auto sink = std::make_shared<spdlog::sinks::stderr_sink_mt>();
-            auto logger = std::make_shared<spdlog::logger>("Diagnostic", std::move(sink));
+            // Resolve and validate the destination before opening or truncating it.
+            const auto filePath = details::ResolvePath(loggerOptions);
+            for (const auto& [id, entry] : state.entries) {
+                if (entry.logger && !entry.filePath.empty() && !filePath.empty() &&
+                    std::filesystem::exists(filePath) && std::filesystem::equivalent(entry.filePath, filePath)) {
+                    throw std::invalid_argument("A logger already owns this file");
+                }
+            }
+            if (!filePath.empty() && loggerOptions.maxFileSize == 0) {
+                throw std::invalid_argument("maxFileSize must be positive");
+            }
+
+            // Each ID owns one sink; all file access goes through that sink.
+            spdlog::sink_ptr sink;
+            if (filePath.empty()) {
+                sink = std::make_shared<spdlog::sinks::stderr_sink_mt>();
+            }
+            else {
+                std::filesystem::create_directories(filePath.parent_path());
+                if (loggerOptions.fileMode == FileMode::Truncate) {
+                    std::ofstream stream(filePath, std::ios::binary | std::ios::trunc);
+                    if (!stream) {
+                        throw std::runtime_error("Cannot truncate log file");
+                    }
+                }
+                const bool oversized = std::filesystem::exists(filePath) &&
+                    std::filesystem::file_size(filePath) > loggerOptions.maxFileSize;
+                sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+                    filePath.native(),
+                    loggerOptions.maxFileSize,
+                    loggerOptions.maxFiles,
+                    oversized
+                );
+            }
+            auto logger = std::make_shared<spdlog::logger>("Diagnostic." + std::to_string(loggerId), std::move(sink));
             logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] [%t] {%s:%# %!} %v");
             logger->set_level(spdlog::level::trace);
             logger->flush_on(spdlog::level::trace);
@@ -74,8 +166,10 @@ namespace universaldevkit::diagnostic {
                 }
                 state.shutdownRegistered = true;
             }
-            state.minimumLevel.store(options.minimumLevel, std::memory_order_relaxed);
-            state.logger = std::move(logger);
+            if (!filePath.empty() && loggerOptions.appendNewSession) {
+                logger->info("========== New session started (logger {}) ==========", loggerId);
+            }
+            state.entries[loggerId] = details::Entry{ std::move(logger), filePath, loggerOptions.minimumLevel };
             return true;
         }
         catch (...) {
@@ -86,13 +180,18 @@ namespace universaldevkit::diagnostic {
 
     void Logger::Shutdown() noexcept {
         try {
-            std::shared_ptr<spdlog::logger> logger;
+            std::vector<std::shared_ptr<spdlog::logger>> loggers;
             {
                 auto& state = details::GetState();
                 std::scoped_lock lock{ state.mutex };
-                logger = std::move(state.logger);
+                loggers.reserve(state.entries.size());
+                for (auto& [id, entry] : state.entries) {
+                    if (entry.logger) {
+                        loggers.push_back(std::move(entry.logger));
+                    }
+                }
             }
-            if (logger) {
+            for (const auto& logger : loggers) {
                 logger->flush();
             }
         }
@@ -101,9 +200,9 @@ namespace universaldevkit::diagnostic {
         }
     }
 
-    void Logger::Flush() noexcept {
+    void Logger::Flush(LoggerId loggerId) noexcept {
         try {
-            if (auto logger = details::GetLogger()) {
+            if (auto logger = details::GetLogger(loggerId)) {
                 logger->flush();
             }
         }
@@ -112,30 +211,42 @@ namespace universaldevkit::diagnostic {
         }
     }
 
-    void Logger::SetLevel(Level level) noexcept {
+    void Logger::SetLevel(Level level, LoggerId loggerId) noexcept {
         try {
-            details::GetState().minimumLevel.store(level, std::memory_order_relaxed);
+            auto& state = details::GetState();
+            std::scoped_lock lock{ state.mutex };
+            state.entries[loggerId].minimumLevel = level;
         }
         catch (...) {
             details::EmergencyWrite("Diagnostic: level update failed");
         }
     }
 
-    bool Logger::ShouldLog(Level level) noexcept {
+    bool Logger::ShouldLog(Level level, LoggerId loggerId) noexcept {
         try {
-            return level >= details::GetState().minimumLevel.load(std::memory_order_relaxed) && level < Level::Off;
+            auto& state = details::GetState();
+            std::scoped_lock lock{ state.mutex };
+            const auto entry = state.entries.find(loggerId);
+            const auto minimumLevel = entry == state.entries.end() ? Level::Info : entry->second.minimumLevel;
+            return level >= minimumLevel && level < Level::Off;
         }
         catch (...) {
             return false;
         }
     }
 
-    void Logger::Write(Level level, std::string_view category, std::string_view message, std::source_location sourceLocation) noexcept {
-        if (!Logger::ShouldLog(level)) {
+    void Logger::Write(
+        Level level,
+        std::string_view category,
+        std::string_view message,
+        std::source_location sourceLocation,
+        LoggerId loggerId
+    ) noexcept {
+        if (!Logger::ShouldLog(level, loggerId)) {
             return;
         }
         try {
-            if (auto logger = details::GetLogger()) {
+            if (auto logger = details::GetLogger(loggerId)) {
                 logger->log(
                     spdlog::source_loc{ sourceLocation.file_name(), static_cast<int>(sourceLocation.line()), sourceLocation.function_name() },
                     details::ToSpdlogLevel(level),
