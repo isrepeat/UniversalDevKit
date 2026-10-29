@@ -7,7 +7,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <utility>
+#include <chrono>
 #include <format>
+#include <string>
 
 namespace universaldevkit::diagnostic {
     enum class Level {
@@ -42,6 +44,18 @@ namespace universaldevkit::diagnostic {
         std::size_t maxFileSize = 10 * 1024 * 1024;
         std::size_t maxFiles = 1;
         bool appendNewSession = true;
+        bool enableConsole = false;
+        bool enableDebugger = false;
+        bool colorConsole = true;
+    };
+
+    struct LogContext {
+        std::string className;
+        std::string instanceName;
+
+        std::string GetCategory() const {
+            return this->instanceName.empty() ? this->className : std::format("{}[{}]", this->className, this->instanceName);
+        }
     };
 
     class Logger final {
@@ -94,6 +108,54 @@ namespace universaldevkit::diagnostic {
             }
         }
     };
+
+    class ThreadScope final {
+    public:
+        ThreadScope() = default;
+        UNIVERSALDEVKIT_DIAGNOSTIC_API ThreadScope(
+            std::string name,
+            std::source_location sourceLocation,
+            LoggerId loggerId = 0
+        ) noexcept;
+        UNIVERSALDEVKIT_DIAGNOSTIC_API ~ThreadScope() noexcept;
+
+        ThreadScope(const ThreadScope&) = delete;
+        ThreadScope& operator=(const ThreadScope&) = delete;
+        ThreadScope(ThreadScope&&) = delete;
+        ThreadScope& operator=(ThreadScope&&) = delete;
+
+    private:
+        std::string name;
+        std::source_location sourceLocation;
+        LoggerId loggerId = 0;
+        bool active = false;
+    };
+
+    class LogScope final {
+    public:
+        LogScope() = default;
+        UNIVERSALDEVKIT_DIAGNOSTIC_API LogScope(
+            std::string category,
+            std::string name,
+            std::source_location sourceLocation,
+            LoggerId loggerId = 0
+        ) noexcept;
+        UNIVERSALDEVKIT_DIAGNOSTIC_API ~LogScope() noexcept;
+
+        LogScope(const LogScope&) = delete;
+        LogScope& operator=(const LogScope&) = delete;
+        LogScope(LogScope&&) = delete;
+        LogScope& operator=(LogScope&&) = delete;
+
+    private:
+        std::string category;
+        std::string name;
+        std::source_location sourceLocation;
+        LoggerId loggerId = 0;
+        std::chrono::steady_clock::time_point started;
+        bool active = false;
+        int exceptionsOnEntry = 0;
+    };
 }
 
 // Check before evaluating category and formatting arguments.
@@ -136,3 +198,61 @@ namespace universaldevkit::diagnostic {
 #define UDK_LOG_WARNING_N(id, category, ...) UDK_LOG_AT_N(id, ::universaldevkit::diagnostic::Level::Warning, category, __VA_ARGS__)
 #define UDK_LOG_ERROR_N(id, category, ...) UDK_LOG_AT_N(id, ::universaldevkit::diagnostic::Level::Error, category, __VA_ARGS__)
 #define UDK_LOG_CRITICAL_N(id, category, ...) UDK_LOG_AT_N(id, ::universaldevkit::diagnostic::Level::Critical, category, __VA_ARGS__)
+
+// Place at the start of a class; subsequent declarations resume private access.
+#define UDK_LOG_CLASS(className) \
+    private: \
+        ::universaldevkit::diagnostic::LogContext logContext{ #className, {} }; \
+    public: \
+        const ::universaldevkit::diagnostic::LogContext& __LgCtx() const noexcept { return this->logContext; } \
+        void SetLogInstanceName(::std::string name) { this->logContext.instanceName = ::std::move(name); } \
+    private:
+
+#define UDK_LOG_TRACE_C(...) UDK_LOG_TRACE(this->__LgCtx().GetCategory(), __VA_ARGS__)
+#define UDK_LOG_TRACE_S(logContext, ...) UDK_LOG_TRACE((logContext).GetCategory(), __VA_ARGS__)
+#define UDK_LOG_DEBUG_C(...) UDK_LOG_DEBUG(this->__LgCtx().GetCategory(), __VA_ARGS__)
+#define UDK_LOG_DEBUG_S(logContext, ...) UDK_LOG_DEBUG((logContext).GetCategory(), __VA_ARGS__)
+#define UDK_LOG_INFO_C(...) UDK_LOG_INFO(this->__LgCtx().GetCategory(), __VA_ARGS__)
+#define UDK_LOG_INFO_S(logContext, ...) UDK_LOG_INFO((logContext).GetCategory(), __VA_ARGS__)
+#define UDK_LOG_WARNING_C(...) UDK_LOG_WARNING(this->__LgCtx().GetCategory(), __VA_ARGS__)
+#define UDK_LOG_WARNING_S(logContext, ...) UDK_LOG_WARNING((logContext).GetCategory(), __VA_ARGS__)
+#define UDK_LOG_ERROR_C(...) UDK_LOG_ERROR(this->__LgCtx().GetCategory(), __VA_ARGS__)
+#define UDK_LOG_ERROR_S(logContext, ...) UDK_LOG_ERROR((logContext).GetCategory(), __VA_ARGS__)
+#define UDK_LOG_CRITICAL_C(...) UDK_LOG_CRITICAL(this->__LgCtx().GetCategory(), __VA_ARGS__)
+#define UDK_LOG_CRITICAL_S(logContext, ...) UDK_LOG_CRITICAL((logContext).GetCategory(), __VA_ARGS__)
+
+#define UDK_DIAGNOSTIC_JOIN_INNER(left, right) left##right
+#define UDK_DIAGNOSTIC_JOIN(left, right) UDK_DIAGNOSTIC_JOIN_INNER(left, right)
+
+// The lambda formats the scope label once, and only when Debug is enabled.
+#define UDK_LOG_SCOPE_N(id, category, ...) \
+    auto UDK_DIAGNOSTIC_JOIN(udkLogScope, __COUNTER__) = [&](::std::source_location udkSourceLocation) -> ::universaldevkit::diagnostic::LogScope { \
+        const auto udkLoggerId = (id); \
+        if (!::universaldevkit::diagnostic::Logger::ShouldLog(::universaldevkit::diagnostic::Level::Debug, udkLoggerId)) { \
+            return {}; \
+        } \
+        try { \
+            return { ::std::string(category), ::std::format(__VA_ARGS__), udkSourceLocation, udkLoggerId }; \
+        } catch (...) { \
+            return {}; \
+        } \
+    }(::std::source_location::current())
+
+#define UDK_LOG_SCOPE(category, ...) UDK_LOG_SCOPE_N(0, category, __VA_ARGS__)
+#define UDK_LOG_FUNCTION_SCOPE(category) UDK_LOG_SCOPE(category, "{}", udkSourceLocation.function_name())
+#define UDK_LOG_FUNCTION_ENTER(category) UDK_LOG_DEBUG(category, ">> {}", ::std::source_location::current().function_name())
+#define UDK_LOG_SCOPE_C(...) UDK_LOG_SCOPE(this->__LgCtx().GetCategory(), __VA_ARGS__)
+#define UDK_LOG_FUNCTION_SCOPE_C() UDK_LOG_FUNCTION_SCOPE(this->__LgCtx().GetCategory())
+#define UDK_LOG_FUNCTION_ENTER_C() UDK_LOG_FUNCTION_ENTER(this->__LgCtx().GetCategory())
+
+// Naming is independent of Debug filtering; evaluate the supplied name once.
+#define UDK_LOG_THREAD_N(id, name) \
+    auto UDK_DIAGNOSTIC_JOIN(udkThreadScope, __COUNTER__) = [&](::std::source_location udkSourceLocation) -> ::universaldevkit::diagnostic::ThreadScope { \
+        try { \
+            return { ::std::string(name), udkSourceLocation, (id) }; \
+        } catch (...) { \
+            return {}; \
+        } \
+    }(::std::source_location::current())
+
+#define UDK_LOG_THREAD(name) UDK_LOG_THREAD_N(0, name)

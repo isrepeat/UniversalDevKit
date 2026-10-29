@@ -1,25 +1,30 @@
 #include "../../Includes/Diagnostic/UniversalDevKit/Diagnostic/Logging.h"
 
 #include <spdlog/sinks/rotating_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/stdout_sinks.h>
+#if defined(_WIN32)
+#include <spdlog/sinks/msvc_sink.h>
+#endif
 #include <spdlog/logger.h>
 
 #include <UniversalDevKit/Helpers/System/ApplicationPaths.h>
 
 #if defined(_WIN32)
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
 #include <Windows.h>
-#include <appmodel.h>
+#elif defined(__linux__) || defined(__APPLE__)
+#include <pthread.h>
 #endif
 
 #include <unordered_map>
 #include <filesystem>
+#include <algorithm>
+#include <exception>
 #include <stdexcept>
 #include <cstdlib>
 #include <fstream>
 #include <cstdio>
+#include <limits>
 #include <memory>
 #include <vector>
 #include <mutex>
@@ -101,6 +106,53 @@ namespace universaldevkit::diagnostic {
             return std::filesystem::weakly_canonical(folder / loggerOptions.filePath);
         }
 
+        bool SetCurrentThreadName(std::string_view name) noexcept {
+            try {
+                if (name.find('\0') != std::string_view::npos) {
+                    return false;
+                }
+#if defined(_WIN32)
+                if (name.empty()) {
+                    return SUCCEEDED(::SetThreadDescription(::GetCurrentThread(), L""));
+                }
+                if (name.size() > static_cast<std::size_t>((std::numeric_limits<int>::max)())) {
+                    return false;
+                }
+                const auto length = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, name.data(), static_cast<int>(name.size()), nullptr, 0);
+                if (length == 0) {
+                    return false;
+                }
+                std::wstring wideName(static_cast<std::size_t>(length), L'\0');
+                if (::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, name.data(), static_cast<int>(name.size()), wideName.data(), length) == 0) {
+                    return false;
+                }
+                return SUCCEEDED(::SetThreadDescription(::GetCurrentThread(), wideName.c_str()));
+#elif defined(__linux__) || defined(__APPLE__)
+                // The OS limit includes the terminator; preserve complete UTF-8 characters.
+#if defined(__linux__)
+                constexpr std::size_t limit = 15;
+#else
+                constexpr std::size_t limit = 63;
+#endif
+                auto length = (std::min)(name.size(), limit);
+                while (length < name.size() && length > 0 && (static_cast<unsigned char>(name[length]) & 0xC0) == 0x80) {
+                    --length;
+                }
+                const std::string shortName(name.substr(0, length));
+#if defined(__linux__)
+                return ::pthread_setname_np(::pthread_self(), shortName.c_str()) == 0;
+#else
+                return ::pthread_setname_np(shortName.c_str()) == 0;
+#endif
+#else
+                return false;
+#endif
+            }
+            catch (...) {
+                return false;
+            }
+        }
+
         void EmergencyWrite(std::string_view message) noexcept {
             // No allocation, callbacks or recursive logging in the fallback.
             std::fwrite(message.data(), 1, message.size(), stderr);
@@ -108,6 +160,54 @@ namespace universaldevkit::diagnostic {
             std::fflush(stderr);
         }
     } // namespace details
+
+    ThreadScope::ThreadScope(std::string name, std::source_location sourceLocation, LoggerId loggerId) noexcept
+        : name{ std::move(name) }
+        , sourceLocation{ sourceLocation }
+        , loggerId{ loggerId }
+        , active{ Logger::ShouldLog(Level::Debug, loggerId) } {
+        if (!details::SetCurrentThreadName(this->name)) {
+            Logger::LogForId(this->loggerId, Level::Warning, "Thread", this->sourceLocation, "Cannot set thread name '{}'", this->name);
+        }
+        if (this->active) {
+            Logger::LogForId(this->loggerId, Level::Debug, "Thread", this->sourceLocation, "Thread START '{}'", this->name);
+        }
+    }
+
+    ThreadScope::~ThreadScope() noexcept {
+        if (this->active) {
+            Logger::LogForId(this->loggerId, Level::Debug, "Thread", this->sourceLocation, "Thread END '{}'", this->name);
+        }
+    }
+
+    LogScope::LogScope(std::string category, std::string name, std::source_location sourceLocation, LoggerId loggerId) noexcept
+        : category{ std::move(category) }
+        , name{ std::move(name) }
+        , sourceLocation{ sourceLocation }
+        , loggerId{ loggerId }
+        , started{ std::chrono::steady_clock::now() }
+        , active{ Logger::ShouldLog(Level::Debug, loggerId) }
+        , exceptionsOnEntry{ std::uncaught_exceptions() } {
+        if (this->active) {
+            Logger::LogForId(this->loggerId, Level::Debug, this->category, this->sourceLocation, ">> {}", this->name);
+        }
+    }
+
+    LogScope::~LogScope() noexcept {
+        if (this->active) {
+            const auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - this->started);
+            Logger::LogForId(
+                this->loggerId,
+                Level::Debug,
+                this->category,
+                this->sourceLocation,
+                "<< {} ({} us{})",
+                this->name,
+                elapsed.count(),
+                std::uncaught_exceptions() > this->exceptionsOnEntry ? ", exception" : ""
+            );
+        }
+    }
 
     bool Logger::Initialize(const LoggerOptions& loggerOptions, LoggerId loggerId) noexcept {
         try {
@@ -129,12 +229,17 @@ namespace universaldevkit::diagnostic {
                 throw std::invalid_argument("maxFileSize must be positive");
             }
 
-            // Each ID owns one sink; all file access goes through that sink.
+            // Build the requested outputs; file ownership remains unique per ID.
+#if !defined(_WIN32)
+            if (loggerOptions.enableDebugger) {
+                throw std::invalid_argument("Debugger output is supported only on Windows");
+            }
+#endif
             spdlog::sink_ptr sink;
-            if (filePath.empty()) {
+            if (filePath.empty() && !loggerOptions.enableConsole && !loggerOptions.enableDebugger) {
                 sink = std::make_shared<spdlog::sinks::stderr_sink_mt>();
             }
-            else {
+            else if (!filePath.empty()) {
                 std::filesystem::create_directories(filePath.parent_path());
                 if (loggerOptions.fileMode == FileMode::Truncate) {
                     std::ofstream stream(filePath, std::ios::binary | std::ios::trunc);
@@ -151,8 +256,26 @@ namespace universaldevkit::diagnostic {
                     oversized
                 );
             }
-            auto logger = std::make_shared<spdlog::logger>("Diagnostic." + std::to_string(loggerId), std::move(sink));
-            logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] [%t] {%s:%# %!} %v");
+            std::vector<spdlog::sink_ptr> sinks;
+            if (sink) {
+                sink->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] [%t] {%s:%# %!} %v");
+                sinks.push_back(std::move(sink));
+            }
+            if (loggerOptions.enableConsole) {
+                auto consoleSink = std::make_shared<spdlog::sinks::stderr_color_sink_mt>(
+                    loggerOptions.colorConsole ? spdlog::color_mode::automatic : spdlog::color_mode::never
+                );
+                consoleSink->set_pattern("%^[%Y-%m-%d %H:%M:%S.%e] [%l] [%t] {%s:%# %!} %v%$");
+                sinks.push_back(std::move(consoleSink));
+            }
+#if defined(_WIN32)
+            if (loggerOptions.enableDebugger) {
+                auto debuggerSink = std::make_shared<spdlog::sinks::msvc_sink_mt>();
+                debuggerSink->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] [%t] {%s:%# %!} %v");
+                sinks.push_back(std::move(debuggerSink));
+            }
+#endif
+            auto logger = std::make_shared<spdlog::logger>("Diagnostic." + std::to_string(loggerId), sinks.begin(), sinks.end());
             logger->set_level(spdlog::level::trace);
             logger->flush_on(spdlog::level::trace);
             logger->set_error_handler([](const std::string&) {
