@@ -23,12 +23,10 @@
     </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\HeleprsTest\Math.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\HeleprsTest\Math.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\HeleprsTest\Text.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\HeleprsTest\Text.obj</ObjectFileName>
     </ClCompile>
   </ItemGroup>

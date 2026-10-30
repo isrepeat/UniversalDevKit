@@ -20,7 +20,6 @@
     </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\DiagnosticTest\Logging.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\DiagnosticTest\Logging.obj</ObjectFileName>
     </ClCompile>
   </ItemGroup>

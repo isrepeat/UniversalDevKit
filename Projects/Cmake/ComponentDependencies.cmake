@@ -274,7 +274,7 @@ foreach(componentName IN LISTS registeredComponentNames)
         endif()
         # Публичное имя и Headers сохраняют одинаковый контракт checkout и пакета.
         add_library(${componentTargetName} ${cmakeLibraryType} ${componentFilePaths})
-        udkApplyThirdParty(${componentTargetName} "${componentDefinitionJson_${componentName}}")
+        udkApplyComponentCompile(${componentTargetName} "${componentDefinitionJson_${componentName}}")
         add_library(UniversalDevKit::${componentName}.${componentVariant} ALIAS ${componentTargetName})
         target_link_libraries(${componentTargetName} PUBLIC UniversalDevKit::${componentName}.Headers)
         target_compile_features(${componentTargetName} PUBLIC cxx_std_${componentRequiredStandard_${componentName}})

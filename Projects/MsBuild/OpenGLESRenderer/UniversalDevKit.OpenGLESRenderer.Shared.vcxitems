@@ -26,12 +26,10 @@
     </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\OpenGLESRenderer\OpenGlRenderer.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\OpenGLESRenderer\OpenGlRenderer.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\OpenGLESRenderer\StandardShaders.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\OpenGLESRenderer\StandardShaders.obj</ObjectFileName>
     </ClCompile>
   </ItemGroup>

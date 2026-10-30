@@ -1,0 +1,12 @@
+{
+  "name": "HeaderProbe",
+  "msbuildGuid": "{C6B70835-6844-42F4-A981-A2834221C7EF}",
+  "headers": [],
+  "sources": [],
+  "compile": {
+    "preprocessorDefinitions": [
+      "FEATURE",
+      "FEATURE"
+    ]
+  }
+}

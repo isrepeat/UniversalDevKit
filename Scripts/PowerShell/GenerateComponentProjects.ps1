@@ -57,48 +57,42 @@ function ValidateFilterPath($Value, [string]$Label) {
     }
 }
 
-function GetThirdPartyEntries($Component) {
-    if (-not $Component.PSObject.Properties['thirdParty']) { return }
-    if ($Component.thirdParty -isnot [Array] -or $Component.kind -eq 'headerOnly') {
-        throw 'thirdParty requires an array on a compiled component.'
+function ValidateCompileSettings($Settings) {
+    if ($Settings -isnot [pscustomobject]) { throw 'compile must be an object.' }
+    foreach ($field in $Settings.PSObject.Properties.Name) {
+        if ($field -notin @('includeDirectories', 'preprocessorDefinitions', 'precompiledHeader')) {
+            throw "Unsupported compile field: $field"
+        }
+        if ($field -eq 'precompiledHeader') {
+            if ($Settings.$field -cnotin @('inherit', 'notUsing')) { throw 'Invalid precompiledHeader.' }
+            continue
+        }
+        if ($Settings.$field -isnot [Array]) { throw "compile.$field must be an array." }
+        $seen = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+        foreach ($value in $Settings.$field) {
+            if ($value -isnot [string] -or -not $seen.Add($value)) { throw "Invalid or duplicate compile.$field entry." }
+            if ($field -eq 'preprocessorDefinitions') {
+                if ($value -cnotmatch '^[A-Za-z_][A-Za-z0-9_]*(=[^;\r\n$@%<>]*)?$') { throw "Invalid preprocessor definition: $value" }
+            } else {
+                ValidateFilterPath $value 'compile.includeDirectories'
+                if (-not $value -or -not (Test-Path -LiteralPath (Join-Path $repositoryPath $value) -PathType Container)) {
+                    throw "Missing include directory: $value"
+                }
+            }
+        }
     }
-    $names = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
-    foreach ($entry in $Component.thirdParty) {
-        if ($entry -isnot [pscustomobject]) { throw 'thirdParty entry must be an object.' }
-        foreach ($field in $entry.PSObject.Properties.Name) {
-            if ($field -notin @('name', 'root', 'sources', 'headers', 'includeDirectories', 'compileDefinitions')) {
-                throw "Unknown thirdParty field: $field"
-            }
-        }
-        if ($entry.name -isnot [string] -or $entry.name -notmatch '^[A-Za-z0-9_][A-Za-z0-9_.-]*$' -or -not $names.Add($entry.name)) {
-            throw 'Invalid or duplicate thirdParty name.'
-        }
-        ValidateFilterPath $entry.root 'thirdParty.root'
-        if (-not $entry.root.StartsWith('ThirdParty/', [StringComparison]::Ordinal) -or
-            -not (Test-Path -LiteralPath (Join-Path $repositoryPath $entry.root) -PathType Container)) {
-            throw "Invalid thirdParty root: $($entry.root)"
-        }
-        foreach ($field in @('sources', 'headers', 'includeDirectories', 'compileDefinitions')) {
-            if ($entry.$field -isnot [Array]) { throw "thirdParty.$field must be an array." }
-            $seen = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
-            foreach ($value in $entry.$field) {
-                if ($value -isnot [string] -or -not $seen.Add($value)) { throw "Invalid or duplicate thirdParty.$field entry." }
-                if ($field -eq 'compileDefinitions') {
-                    if ($value -notmatch '^[A-Za-z_][A-Za-z0-9_]*(=[^;\r\n$@%<>]*)?$') { throw "Invalid compile definition: $value" }
-                    continue
-                }
-                ValidateFilterPath $value "thirdParty.$field"
-                if (-not $value) { throw "Empty thirdParty.$field path." }
-                $path = $entry.root + '/' + $value
-                if ($field -eq 'includeDirectories') {
-                    if (-not (Test-Path -LiteralPath (Join-Path $repositoryPath $path) -PathType Container)) { throw "Missing include directory: $path" }
-                } else {
-                    ValidateFile $path ($entry.root + '/')
-                    if ($field -eq 'sources' -and [IO.Path]::GetExtension($path) -cne '.cpp') { throw "Expected .cpp source: $path" }
-                }
-            }
-        }
-        $entry
+}
+
+function AddCompileMetadata($Lines, $Settings) {
+    if ($Settings.includeDirectories.Count) {
+        $includes = @($Settings.includeDirectories | ForEach-Object { '$(MSBuildThisFileDirectory)..\..\..\' + $_.Replace('/', '\') })
+        $Lines.Add('      <AdditionalIncludeDirectories>' + (EscapeXml (($includes + '%(AdditionalIncludeDirectories)') -join ';')) + '</AdditionalIncludeDirectories>')
+    }
+    if ($Settings.preprocessorDefinitions.Count) {
+        $Lines.Add('      <PreprocessorDefinitions>' + (EscapeXml (($Settings.preprocessorDefinitions + '%(PreprocessorDefinitions)') -join ';')) + '</PreprocessorDefinitions>')
+    }
+    if ($Settings.precompiledHeader -ne 'inherit') {
+        $Lines.Add('      <PrecompiledHeader>NotUsing</PrecompiledHeader>')
     }
 }
 
@@ -202,7 +196,7 @@ foreach ($includePath in $manifest.includes) {
     }
     # Reject unknown fields; dependencies and platforms require explicit generator support.
     foreach ($field in $component.PSObject.Properties.Name) {
-        if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'thirdParty', 'kind')) {
+        if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind')) {
             throw "Unsupported field ${name}: $field"
         }
     }
@@ -306,11 +300,26 @@ foreach ($includePath in $manifest.includes) {
             if ([IO.Path]::GetExtension($extension.Value) -cne $expectedExtension) { throw "Invalid build extension suffix: $($extension.Value)" }
         }
     }
-    $thirdParty = @(GetThirdPartyEntries $component)
-    $thirdPartyFiles = @($thirdParty | ForEach-Object { $entry = $_; @($entry.sources) + @($entry.headers) | ForEach-Object { $entry.root + '/' + $_ } })
-    ValidateFilterSettings $component.filters $component $thirdPartyFiles
-    $thirdPartyIncludes = @($thirdParty | ForEach-Object { $entry = $_; $entry.includeDirectories | ForEach-Object { '$(MSBuildThisFileDirectory)..\..\..\' + $entry.root.Replace('/', '\') + '\' + $_.Replace('/', '\') } })
-    $thirdPartyDefinitions = @($thirdParty | ForEach-Object { $_.compileDefinitions })
+    if ($component.PSObject.Properties['compile']) { ValidateCompileSettings $component.compile }
+    if ($kind -eq 'headerOnly' -and ($component.PSObject.Properties['compile'] -or $component.PSObject.Properties['sourceSettings'])) {
+        throw 'Header-only component cannot contain compile settings.'
+    }
+    $fileSettings = @{}
+    if ($component.PSObject.Properties['sourceSettings']) {
+        if ($component.sourceSettings -isnot [Array]) { throw 'sourceSettings must be an array.' }
+        foreach ($entry in $component.sourceSettings) {
+            if ($entry -isnot [pscustomobject] -or @($entry.PSObject.Properties.Name | Where-Object { $_ -notin @('files', 'compile') }).Count -or
+                $entry.files -isnot [Array] -or -not $entry.files.Count) { throw 'Invalid sourceSettings entry.' }
+            ValidateCompileSettings $entry.compile
+            foreach ($path in $entry.files) {
+                if ($path -isnot [string] -or $path -cnotin $componentSources -or $fileSettings.ContainsKey($path)) {
+                    throw "Unknown or duplicate sourceSettings file: $path"
+                }
+                $fileSettings[$path] = $entry.compile
+            }
+        }
+    }
+    ValidateFilterSettings $component.filters $component @()
     $files = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
     $objects = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
     $lines = [Collections.Generic.List[string]]::new()
@@ -335,11 +344,7 @@ foreach ($includePath in $manifest.includes) {
         if ($path -isnot [string]) {
             throw "${name}.headers must contain strings."
         }
-        if ($path.StartsWith("Sources/$name/", [StringComparison]::Ordinal)) {
-            ValidateFile $path "Sources/$name/"
-        } else {
-            ValidateFile $path "Includes/$name/UniversalDevKit/$name/"
-        }
+        ValidateFile $path ''
         if (-not $files.Add($path)) {
             throw "Duplicate component file: $path"
         }
@@ -360,14 +365,18 @@ foreach ($includePath in $manifest.includes) {
         if ($path -isnot [string]) {
             throw "${name}.sources must contain strings."
         }
-        ValidateFile $path "Sources/$name/"
+        ValidateFile $path ''
         if (-not $files.Add($path)) {
             throw "Duplicate component file: $path"
         }
         if ([IO.Path]::GetExtension($path) -cne '.cpp') {
             throw "Expected .cpp source: $path"
         }
-        $relative = $path.Substring("Sources/$name/".Length)
+        $relative = if ($path.StartsWith("Sources/$name/", [StringComparison]::Ordinal)) {
+            $path.Substring("Sources/$name/".Length)
+        } else {
+            'Repository/' + $path
+        }
         $object = [IO.Path]::ChangeExtension($relative, '.obj').Replace('/', '\')
         if (-not $objects.Add($object)) {
             throw "Duplicate object path: $path"
@@ -380,32 +389,17 @@ foreach ($includePath in $manifest.includes) {
         }
         $lines.Add('    <ClCompile Include="' + $include + '"' + $conditionAttribute + '>')
         $lines.Add('      <__UniversalDevKitFilter>' + (EscapeXml (GetComponentFilter $path $component.filters)) + '</__UniversalDevKitFilter>')
-        $lines.Add('      <PrecompiledHeader>NotUsing</PrecompiledHeader>')
-        if ($thirdPartyIncludes.Count) { $lines.Add('      <AdditionalIncludeDirectories>' + (EscapeXml (($thirdPartyIncludes + '%(AdditionalIncludeDirectories)') -join ';')) + '</AdditionalIncludeDirectories>') }
-        if ($thirdPartyDefinitions.Count) { $lines.Add('      <PreprocessorDefinitions>' + (EscapeXml (($thirdPartyDefinitions + '%(PreprocessorDefinitions)') -join ';')) + '</PreprocessorDefinitions>') }
-        $lines.Add('      <ObjectFileName>$(IntDir)UniversalDevKit\' + $name + '\' + (EscapeXml $object) + '</ObjectFileName>')
-        $lines.Add('    </ClCompile>')
-    }
-    foreach ($entry in $thirdParty) {
-        foreach ($field in @('sources', 'headers')) {
-            foreach ($relative in $entry.$field) {
-                $path = $entry.root + '/' + $relative
-                if (-not $files.Add($path)) { throw "Duplicate component file: $path" }
-                $itemType = if ($field -eq 'sources') { 'ClCompile' } else { 'ClInclude' }
-                $include = EscapeXml ('$(MSBuildThisFileDirectory)..\..\..\' + $path.Replace('/', '\'))
-                $lines.Add('    <' + $itemType + ' Include="' + $include + '">')
-                $lines.Add('      <__UniversalDevKitFilter>' + (EscapeXml (GetComponentFilter $path $component.filters)) + '</__UniversalDevKitFilter>')
-                if ($field -eq 'sources') {
-                    $object = 'ThirdParty\' + $entry.name + '\' + [IO.Path]::ChangeExtension($relative, '.obj').Replace('/', '\')
-                    if (-not $objects.Add($object)) { throw "Duplicate object path: $path" }
-                    $lines.Add('      <PrecompiledHeader>NotUsing</PrecompiledHeader>')
-                    if ($thirdPartyIncludes.Count) { $lines.Add('      <AdditionalIncludeDirectories>' + (EscapeXml (($thirdPartyIncludes + '%(AdditionalIncludeDirectories)') -join ';')) + '</AdditionalIncludeDirectories>') }
-                    if ($thirdPartyDefinitions.Count) { $lines.Add('      <PreprocessorDefinitions>' + (EscapeXml (($thirdPartyDefinitions + '%(PreprocessorDefinitions)') -join ';')) + '</PreprocessorDefinitions>') }
-                    $lines.Add('      <ObjectFileName>$(IntDir)UniversalDevKit\' + $name + '\' + (EscapeXml $object) + '</ObjectFileName>')
-                }
-                $lines.Add('    </' + $itemType + '>')
+        $settings = @{ precompiledHeader = 'inherit'; includeDirectories = @(); preprocessorDefinitions = @() }
+        foreach ($scope in @($component.compile, $fileSettings[$path])) {
+            if ($null -eq $scope) { continue }
+            foreach ($field in $scope.PSObject.Properties.Name) {
+                if ($field -eq 'precompiledHeader') { $settings[$field] = $scope.$field }
+                else { $settings[$field] += $scope.$field }
             }
         }
+        AddCompileMetadata $lines $settings
+        $lines.Add('      <ObjectFileName>$(IntDir)UniversalDevKit\' + $name + '\' + (EscapeXml $object) + '</ObjectFileName>')
+        $lines.Add('    </ClCompile>')
     }
     $lines.Add('  </ItemGroup>')
     if ($component.stateScope -eq 'process') {

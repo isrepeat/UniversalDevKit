@@ -95,87 +95,70 @@
     </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\Animation.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\Animation.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\Binding.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\Binding.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\ElementBuilder.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\ElementBuilder.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\GestureRecognizer.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\GestureRecognizer.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\Input.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\Input.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\InteractionController.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\InteractionController.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\RenderEngine.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\RenderEngine.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\ScrollController.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\ScrollController.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\UserControl.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\UserControl.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\VisualState.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\VisualState.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\XamlAttribute.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\XamlAttribute.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\XamlLayout.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\XamlLayout.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\RuntimeMarkup\RuntimeBindingRegistry.cpp">
       <__UniversalDevKitFilter>RuntimeMarkup</__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\RuntimeMarkup\RuntimeBindingRegistry.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\RuntimeMarkup\RuntimeReloadTransaction.cpp">
       <__UniversalDevKitFilter>RuntimeMarkup</__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\RuntimeMarkup\RuntimeReloadTransaction.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\RuntimeMarkup\RuntimeTreeBuilder.cpp">
       <__UniversalDevKitFilter>RuntimeMarkup</__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\RuntimeMarkup\RuntimeTreeBuilder.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\RuntimeMarkup\XamlParser.cpp">
       <__UniversalDevKitFilter>RuntimeMarkup</__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\RuntimeMarkup\XamlParser.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\RuntimeMarkup\XamlSchemaValidator.cpp">
       <__UniversalDevKitFilter>RuntimeMarkup</__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\RuntimeMarkup\XamlSchemaValidator.obj</ObjectFileName>
     </ClCompile>
   </ItemGroup>

@@ -19,24 +19,20 @@
     "Sources/Diagnostic/Logging.cpp",
     "Sources/Diagnostic/platform/windows/PlatformBackendWindows.cpp",
     "Sources/Diagnostic/platform/android/PlatformBackendAndroid.cpp",
-    "Sources/Diagnostic/platform/linux/PlatformBackendLinux.cpp"
+    "Sources/Diagnostic/platform/linux/PlatformBackendLinux.cpp",
+    "ThirdParty/spdlog/src/spdlog.cpp",
+    "ThirdParty/spdlog/src/stdout_sinks.cpp",
+    "ThirdParty/spdlog/src/color_sinks.cpp",
+    "ThirdParty/spdlog/src/file_sinks.cpp",
+    "ThirdParty/spdlog/src/async.cpp",
+    "ThirdParty/spdlog/src/cfg.cpp",
+    "ThirdParty/spdlog/src/bundled_fmtlib_format.cpp"
   ],
-  "thirdParty": [{
-    "name": "spdlog",
-    "root": "ThirdParty/spdlog",
-    "sources": [
-      "src/spdlog.cpp",
-      "src/stdout_sinks.cpp",
-      "src/color_sinks.cpp",
-      "src/file_sinks.cpp",
-      "src/async.cpp",
-      "src/cfg.cpp",
-      "src/bundled_fmtlib_format.cpp"
-    ],
-    "headers": [],
-    "includeDirectories": ["include"],
-    "compileDefinitions": ["SPDLOG_COMPILED_LIB", "SPDLOG_WCHAR_FILENAMES"]
-  }],
+  "compile": {
+    "includeDirectories": ["ThirdParty/spdlog/include"],
+    "preprocessorDefinitions": ["SPDLOG_COMPILED_LIB", "SPDLOG_WCHAR_FILENAMES"],
+    "precompiledHeader": "notUsing"
+  },
   "buildExtensions": {
     "cmake": "Projects/Cmake/Diagnostic/Spdlog.cmake",
     "msbuildTargets": "Projects/MsBuild/Diagnostic/Spdlog.targets"
