@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "adapter": "tool",
+  "id": "UniversalDevKit.XamlCompiler",
+  "supportedPlatforms": ["Windows"],
+  "nuspec": "UniversalDevKit.XamlCompiler.nuspec"
+}

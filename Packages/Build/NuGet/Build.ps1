@@ -57,7 +57,7 @@ foreach ($definitionFile in Get-ChildItem -LiteralPath (Join-Path $repository 'P
     if ($delivery.adapter -ne 'component' -or 'Windows' -notin $delivery.supportedPlatforms) { continue }
     if ($delivery.schemaVersion -ne 1 -or -not $definition.component -or $delivery.id -notmatch '^[A-Za-z0-9_.-]+$') { throw "Unsupported NuGet delivery: $($definitionFile.FullName)" }
     foreach ($field in $delivery.PSObject.Properties.Name) {
-        if ($field -notin @('schemaVersion', 'adapter', 'id', 'supportedPlatforms', 'supportedRuntimes', 'integration', 'nuspec')) { throw "Unknown delivery field: $field" }
+        if ($field -notin @('schemaVersion', 'adapter', 'id', 'supportedPlatforms', 'supportedRuntimes', 'integration', 'nuspec', 'stagingScript')) { throw "Unknown delivery field: $field" }
     }
     $packageVersion = (Get-Content -LiteralPath (Join-Path $definitionFile.DirectoryName $definition.versionSource) -Raw | ConvertFrom-Json).version
     if ($packageVersion -ne $version) { throw "Component package must use the UDK release version: $($definition.name)" }
@@ -78,7 +78,14 @@ foreach ($definitionFile in Get-ChildItem -LiteralPath (Join-Path $repository 'P
     }
     $supportedRuntimes = if ($delivery.PSObject.Properties['supportedRuntimes']) { @($delivery.supportedRuntimes) } else { @('Dynamic', 'Static') }
     if (-not $supportedRuntimes.Count -or @($supportedRuntimes | Where-Object { $_ -notin @('Dynamic', 'Static') }).Count) { throw "Invalid supportedRuntimes: $($definition.name)" }
-    $packages[$definition.component] = [pscustomobject]@{ Name = $definition.name; Id = $delivery.id; Directory = $definitionFile.DirectoryName; Integration = $integration; Nuspec = $nuspecPath; SupportedRuntimes = $supportedRuntimes }
+    $stagingScript = $null
+    if ($delivery.stagingScript) {
+        $stagingScript = [IO.Path]::GetFullPath((Join-Path $deliveryDirectory $delivery.stagingScript))
+        if (-not $stagingScript.StartsWith($packagePrefix, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path -LiteralPath $stagingScript -PathType Leaf)) {
+            throw "Invalid package staging script: $stagingScript"
+        }
+    }
+    $packages[$definition.component] = [pscustomobject]@{ Name = $definition.name; Id = $delivery.id; Directory = $definitionFile.DirectoryName; Integration = $integration; Nuspec = $nuspecPath; SupportedRuntimes = $supportedRuntimes; StagingScript = $stagingScript }
     $packageIds[$delivery.id] = $true
 }
 foreach ($name in $selected) {
@@ -131,7 +138,7 @@ foreach ($runtime in @('Dynamic', 'Static')) {
     $install = Join-Path $output "install-$runtime"
     RunCMake @('-S', $repository, '-B', $build, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug;Release', '-DUniversalDevKit_ENFORCE_RELEASE_POLICY=ON', "-DUniversalDevKitRuntime=$runtime", "-DCMAKE_INSTALL_PREFIX=$install", ('-DUniversalDevKit_COMPONENTS=' + ($selected -join ';')))
     foreach ($configuration in @('Debug', 'Release')) {
-        RunCMake @('--build', $build, '--config', $configuration)
+        RunCMake @('--build', $build, '--config', $configuration, '--parallel', '4')
         RunCMake @('--install', $build, '--config', $configuration)
         $metadata = if ($hasBinaries) {
             Get-Content (Join-Path $install "lib/cmake/UniversalDevKit/UniversalDevKit.Build-$configuration.json") -Raw | ConvertFrom-Json
@@ -320,6 +327,7 @@ foreach ($component in $selected) {
             '  <Import Project="$(MSBuildThisFileDirectory)..\..\build\native\' + $package.Id + '.' + $kind + '" />' + "`n" + '</Project>'
         WriteGenerated (Join-Path $payload "buildTransitive/native/$($package.Id).$kind") $wrapper
     }
+    if ($package.StagingScript) { & $package.StagingScript -Payload $payload -RepositoryPath $repository }
     $spec = Get-Content -LiteralPath $package.Nuspec -Raw
     WriteGenerated (Join-Path $stage "$component.nuspec") ($spec.Replace('{{COMPONENT}}', $component).Replace('{{PACKAGE_ID}}', $package.Id).Replace('{{VERSION}}', $version).Replace('{{DEPENDENCIES}}', $dependencies))
 

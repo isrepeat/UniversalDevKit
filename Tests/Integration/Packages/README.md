@@ -4,6 +4,8 @@ Diagnostic включён в проверки настоящих пакетов:
 
 ## Реальные компоненты UDK
 
+XamlRuntime/OpenGLESRenderer включаются параметром Components в общие NuGet.PackageReference.Tests.ps1 и AndroidPrefab.Tests.ps1. Проверяются реальные пакеты и существующие независимые потребители; новых узких тестовых проектов не создаётся.
+
 Kotlin-пакеты AndroidCoreSdk и AndroidAppKit перенесены в Packages/Android. Реальная поставка проверяется AndroidKotlin.Tests.ps1: публикация обоих AAR в отдельный Maven feed, точная зависимость CoreSdk и компиляция независимого Kotlin-потребителя. AndroidMaven в таблице ниже остаётся тестовой заглушкой инфраструктуры.
 
 - [Windows native NuGet](../../../Packages/Build/NuGet/README.md): NuGet.Tests.ps1, NuGet.Registry.Tests.ps1 и NuGet.PackageReference.Tests.ps1.

@@ -287,6 +287,16 @@ foreach ($component in $Components) {
 
         # 6.5. Добавляем лицензию и контракт выпуска, затем сохраняем AAR и POM в Maven-feed.
         Copy-Item -LiteralPath (Join-Path $repository 'LICENSE') -Destination (Join-Path $stage 'LICENSE.txt')
+        if ($graph.ResolvedModes.ContainsKey('Diagnostic')) {
+            [void][IO.Directory]::CreateDirectory((Join-Path $stage 'licenses'))
+            Copy-Item -LiteralPath (Join-Path $repository 'ThirdParty/spdlog/LICENSE') -Destination (Join-Path $stage 'licenses/spdlog.LICENSE')
+        }
+        if ($component -eq 'OpenGLESRenderer') {
+            [void][IO.Directory]::CreateDirectory((Join-Path $stage 'licenses'))
+            foreach ($name in @('stb_truetype.h', 'nanosvg.h', 'nanosvgrast.h')) {
+                Copy-Item -LiteralPath (Join-Path $repository "ThirdParty/XamlRuntime/$name") -Destination (Join-Path $stage 'licenses')
+            }
+        }
         WriteJson (Join-Path $stage 'udk-release.json') $contract
 
         # Maven сохраняет идентичность и версию; публикация во внешний сервер не выполняется.

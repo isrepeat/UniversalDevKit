@@ -20,12 +20,26 @@ cmake --build !artifacts/Windows-x64/cmake/XamlRefactor --config Debug
 ctest --test-dir !artifacts/Windows-x64/cmake/XamlRefactor -C Debug --output-on-failure
 ```
 
-ColorAnimation сравнивает скомпилированную страницу и runtime-дерево, RGBA, Current, opacity и отказ при неверной разметке. Contracts проверяет геометрию, затухание, Unicode и время жизни подписок. Release проверяется той же командой с другой конфигурацией.
+ColorAnimation сравнивает скомпилированную страницу и runtime-дерево, RGBA, Current, opacity и отказ при неверной разметке. Release проверяется той же командой с другой конфигурацией.
 
 Для библиотеки используйте корневой CMake с UniversalDevKit_COMPONENTS=XamlRuntime либо OpenGLESRenderer. Targets: UniversalDevKit::XamlRuntime.Static/Dynamic и UniversalDevKit::OpenGLESRenderer.Static/Dynamic. Include: UniversalDevKit/XamlRuntime и UniversalDevKit/OpenGLESRenderer. MSBuild-проекты генерируются из того же реестра.
 
 Windows renderer требует UniversalDevKitAngleRoot либо UDK_ANGLE_ROOT: установку ANGLE include/lib или распакованную прежнюю поставку с build/native/include и runtimes/win-x64/native/Release. Используются только ANGLE headers/import libraries; старые XamlRuntime-библиотеки не линкуются. На Android используется системный GLESv3. Исходники stb_truetype, NanoSVG и vcpkg recipe ANGLE находятся в ThirdParty/XamlRuntime с исходными лицензионными уведомлениями.
 
-Android: NDK r27c, API 24+, arm64-v8a/x86_64 и c++_shared. Host-компилятор собирается отдельно под Windows. Компиляция renderer не подтверждает пиксельный результат, работу preview или запуск APK на устройстве.
+Android: NDK r27c, API 24+, arm64-v8a/x86_64 и c++_shared. Host-компилятор собирается отдельно под Windows. Компиляция renderer не подтверждает пиксельный результат, работу preview или запуск APK на устройстве. Новые проверки отдельных примитивов не добавляются; используются существующие общие сценарии исходников и пакетных потребителей.
 
 Исходная точка переноса: tmp-коммит 14c8eaa, источник UtilityHelpersLib 1c12ac945f33ecab88f70756b300d4f2e8b440e5. Пакетная доставка и переход существующих приложений проверяются отдельно от контрактов исходников.
+
+На этом этапе изменён только основной UDK. Постоянный переход исходников AndroidBuildTools, AndroidTemplates, Preview SDK и рабочих приложений отложен до следующих отдельных этапов. Изолированная копия ApkUpdaterNew использовалась для проверки ANGLE, reload и сборки APK; исходный проект не изменялся. Android-устройство не подключено, поэтому проверка APK ограничена сборкой.
+
+## Доставка
+
+Windows: Scripts/Packages/CrossPlatform/Pack.XamlRuntime.cmd и Pack.OpenGLESRenderer.cmd. Перед упаковкой renderer задайте UDK_ANGLE_ROOT. Native NuGet восстанавливает Helpers и Diagnostic точной версии UDK, передаёт DLL и ANGLE runtime потребителю. Поддерживается MD/MDd; MT/MTd отклоняется до компиляции. UniversalDevKit.XamlRuntimeLinkage и UniversalDevKitOpenGLESRendererLinkage выбирают Static/Dynamic, по умолчанию Static.
+
+Android: Packages/Build/Android/Build.ps1 -Components XamlRuntime,OpenGLESRenderer. Координаты org.universaldevkit:universaldevkit-xamlruntime-static-release и universaldevkit-openglesrenderer-static-release; для Dynamic замените static на dynamic. Каждый AAR содержит собственный граф native-зависимостей, включая необходимый Diagnostic SO, и используется через штатный udk_android_link. Единственный libc++_shared.so доставляет приложение.
+
+Host-инструмент: Scripts/Packages/Windows/Pack.XamlCompiler.cmd выпускает UniversalDevKit.XamlCompiler с tools/win-x64/XamlCompiler.exe. Версия compiler/runtime закрепляется одной версией Version.json; автоматический поиск последней несовместимой версии не требуется.
+
+Общие проверки: NuGet.PackageReference.Tests.ps1 -Components XamlRuntime,OpenGLESRenderer и AndroidPrefab.Tests.ps1 -Components XamlRuntime,OpenGLESRenderer -SkipDevice. Они используют существующие независимые consumers, проверяют восстановление, линковку и состав runtime-файлов. Отдельные тесты мелких операций не добавлены.
+
+Установленная CMake-поставка renderer включает ANGLE headers/import libraries/DLL и переносится между каталогами. find_package(UniversalDevKit CONFIG REQUIRED) создаёт UniversalDevKit::ANGLE для потребителей EGL. udk_xaml_copy_runtime вызывается после создания конечного target в том же CMakeLists.txt и копирует Diagnostic/ANGLE runtime. Для checkout-потребителя точка входа — Projects/Cmake/XamlRuntime/Consumer.cmake; на Android она также копирует libc++_shared.so выбранного NDK. При source-сборке задайте ANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON.

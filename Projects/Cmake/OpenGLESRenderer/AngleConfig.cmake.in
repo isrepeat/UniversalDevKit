@@ -1,0 +1,26 @@
+# Сгенерировано OpenGLESRenderer/Build.cmake. Источник изменений: AngleConfig.cmake.in.
+include_guard(GLOBAL)
+get_filename_component(udkAnglePrefix "${CMAKE_CURRENT_LIST_DIR}/../../.." ABSOLUTE)
+if(NOT TARGET UniversalDevKit::ANGLE)
+    foreach(library EGL GLESv2)
+        add_library(UniversalDevKit::Angle${library} SHARED IMPORTED GLOBAL)
+        set_target_properties(UniversalDevKit::Angle${library} PROPERTIES IMPORTED_CONFIGURATIONS "Debug;Release")
+        foreach(configuration Debug Release)
+            string(TOUPPER "${configuration}" upperConfiguration)
+            set_target_properties(UniversalDevKit::Angle${library} PROPERTIES
+                "IMPORTED_IMPLIB_${upperConfiguration}" "${udkAnglePrefix}/@CMAKE_INSTALL_LIBDIR@/ANGLE/${configuration}/lib${library}.lib"
+                "IMPORTED_LOCATION_${upperConfiguration}" "${udkAnglePrefix}/@CMAKE_INSTALL_BINDIR@/ANGLE/${configuration}/lib${library}.dll")
+        endforeach()
+    endforeach()
+    add_library(UniversalDevKit::ANGLE INTERFACE IMPORTED GLOBAL)
+    set_target_properties(UniversalDevKit::ANGLE PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${udkAnglePrefix}/@CMAKE_INSTALL_INCLUDEDIR@/ANGLE"
+        INTERFACE_LINK_LIBRARIES "UniversalDevKit::AngleEGL;UniversalDevKit::AngleGLESv2")
+endif()
+
+function(udk_xaml_copy_runtime target)
+    add_custom_command(TARGET ${target} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${target}> $<TARGET_FILE_DIR:${target}>
+        COMMAND ${CMAKE_COMMAND} -E copy_directory "${udkAnglePrefix}/@CMAKE_INSTALL_BINDIR@/ANGLE/$<CONFIG>" $<TARGET_FILE_DIR:${target}>
+        COMMAND_EXPAND_LISTS)
+endfunction()

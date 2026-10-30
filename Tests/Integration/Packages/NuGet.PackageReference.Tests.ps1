@@ -2,7 +2,7 @@ param(
     [string]$Feed,
     [string]$CMake,
     [string]$NuGet = 'nuget.exe',
-    [ValidateSet('DiagnosticTest', 'HeleprsTest', 'Helpers', 'Diagnostic')]
+    [ValidateSet('DiagnosticTest', 'HeleprsTest', 'Helpers', 'Diagnostic', 'XamlRuntime', 'OpenGLESRenderer')]
     [string[]]$Components = @('DiagnosticTest', 'HeleprsTest', 'Helpers', 'Diagnostic')
 )
 $env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
@@ -53,6 +53,8 @@ try {
                 $definitions = if ($component -eq 'HeleprsTest') { 'UDK_TEST_HELEPRSTEST_ONLY=1;' } else { '' }
                 if ($component -eq 'Helpers') { $definitions = 'UDK_TEST_HEADER_HELPERS=1;' }
                 if ($component -eq 'Diagnostic') { $definitions = 'UDK_TEST_DIAGNOSTIC=1;' }
+                if ($component -in @('XamlRuntime', 'OpenGLESRenderer')) { $definitions = 'UDK_TEST_XAML=1;' }
+                if ($component -eq 'OpenGLESRenderer') { $definitions += 'UDK_TEST_RENDERER=1;' }
                 if ($linkage -eq 'Dynamic') { $definitions += 'UDK_TEST_DYNAMIC=1;' }
                 $text = [IO.File]::ReadAllText((Join-Path $fixture 'PackageReference.vcxproj.in')).Replace('{{VERSION}}', $version).Replace('{{COMPONENT}}', $component).Replace('{{RUNTIME}}', $runtime).Replace('{{LINKAGE}}', $linkage).Replace('{{DEFINITIONS}}', $definitions)
                 $project = Join-Path $consumer 'Consumer.vcxproj'
@@ -66,14 +68,14 @@ try {
                 $assetsPath = Join-Path $consumer 'obj/project.assets.json'
                 if (-not (Test-Path -LiteralPath $assetsPath)) { throw 'Native PackageReference restore did not produce project.assets.json. A supporting Visual Studio is required.' }
                 $assets = Get-Content -LiteralPath $assetsPath -Raw | ConvertFrom-Json
-                $expectedPackages = if ($component -eq 'DiagnosticTest') { @('DiagnosticTest', 'HeleprsTest') } elseif ($component -eq 'Diagnostic') { @('Diagnostic', 'Helpers') } else { @($component) }
+                $expectedPackages = if ($component -eq 'DiagnosticTest') { @('DiagnosticTest', 'HeleprsTest') } elseif ($component -eq 'Diagnostic') { @('Diagnostic', 'Helpers') } elseif ($component -in @('XamlRuntime', 'OpenGLESRenderer')) { @($component, 'XamlRuntime', 'Diagnostic', 'Helpers') | Select-Object -Unique } else { @($component) }
                 foreach ($package in $expectedPackages) {
                     if (-not $assets.libraries.PSObject.Properties["UniversalDevKit.$package/$version"]) { throw "Missing restored dependency: $package" }
                 }
-                if ($component -eq 'Diagnostic' -and $runtime -eq 'Static') {
-                    InvokeChecked ($common + @('/t:Rebuild', '/p:Configuration=Debug')) (Join-Path $consumer 'unsupported-crt.log') 'Diagnostic requires Dynamic CRT'
+                if ($component -in @('Diagnostic', 'XamlRuntime', 'OpenGLESRenderer') -and $runtime -eq 'Static') {
+                    InvokeChecked ($common + @('/t:Rebuild', '/p:Configuration=Debug')) (Join-Path $consumer 'unsupported-crt.log') 'requires Dynamic CRT'
                     $results += [pscustomobject]@{ Runtime = $runtime; Component = $component; Linkage = $linkage; Configuration = 'Debug'; Status = 'RejectedUnsupportedCrt' }
-                    Write-Host "PASS: Diagnostic rejects static CRT before compilation"
+                    Write-Host "PASS: $component rejects static CRT before compilation"
                     continue
                 }
                 foreach ($configuration in @('Debug', 'Release')) {
@@ -81,8 +83,16 @@ try {
                     $bin = Join-Path $consumer "out/$configuration"
                     $dlls = @(Get-ChildItem -LiteralPath $bin -Filter '*.dll')
                     $expectedCount = if ($linkage -eq 'Dynamic') { 1 } else { 0 }
-                    if ($dlls.Count -ne $expectedCount) { throw "Unexpected runtime DLL count: $name/$configuration" }
-                    if ($expectedCount -and $dlls[0].Name -notmatch "(?i)^universaldevkit_${component}_dynamicd?\.dll$") { throw 'Wrong runtime DLL delivered.' }
+                    if ($component -in @('XamlRuntime', 'OpenGLESRenderer')) { $expectedCount++ }
+                    if ($component -eq 'OpenGLESRenderer' -and $linkage -eq 'Dynamic') { $expectedCount++ }
+                    $udkDlls = @($dlls | Where-Object Name -Like 'universaldevkit_*')
+                    if ($udkDlls.Count -ne $expectedCount) { throw "Unexpected UDK DLL count: $name/$configuration" }
+                    if ($linkage -eq 'Dynamic' -and -not @($udkDlls | Where-Object Name -Match "(?i)^universaldevkit_${component}_dynamicd?\.dll$").Count) { throw 'Root runtime DLL is missing.' }
+                    if ($component -eq 'OpenGLESRenderer') {
+                        foreach ($dependency in @('libEGL.dll', 'libGLESv2.dll')) {
+                            if (-not (Test-Path (Join-Path $bin $dependency))) { throw "ANGLE runtime is missing: $dependency" }
+                        }
+                    } elseif ($dlls.Count -ne $expectedCount) { throw "Unexpected non-UDK DLL: $name/$configuration" }
                     $clean = Join-Path $consumer "clean-$configuration"
                     [void][IO.Directory]::CreateDirectory($clean)
                     Copy-Item -LiteralPath (Join-Path $bin 'Consumer.exe') -Destination $clean

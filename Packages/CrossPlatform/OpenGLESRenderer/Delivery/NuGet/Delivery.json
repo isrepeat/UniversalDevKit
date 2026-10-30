@@ -1,0 +1,17 @@
+{
+  "supportedPlatforms": [
+    "Windows"
+  ],
+  "adapter": "component",
+  "stagingScript": "StageAngle.ps1",
+  "schemaVersion": 1,
+  "nuspec": "UniversalDevKit.OpenGLESRenderer.nuspec",
+  "supportedRuntimes": [
+    "Dynamic"
+  ],
+  "id": "UniversalDevKit.OpenGLESRenderer",
+  "integration": {
+    "targets": "UniversalDevKit.OpenGLESRenderer.targets",
+    "props": "UniversalDevKit.OpenGLESRenderer.props"
+  }
+}

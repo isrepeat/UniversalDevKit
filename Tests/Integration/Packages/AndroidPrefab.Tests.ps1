@@ -20,6 +20,10 @@ $OutputEncoding = [Text.UTF8Encoding]::new($false)
 $ErrorActionPreference = 'Stop'
 $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
 . (Join-Path $repository 'Scripts/Android/ResolveToolchain.ps1')
+. (Join-Path $repository 'Scripts/PowerShell/Modules/Module.Udk.Connection/Private/Requirements.ps1')
+. (Join-Path $repository 'Scripts/PowerShell/Modules/Module.Udk.Connection/Private/ComponentRegistry.ps1')
+. (Join-Path $repository 'Scripts/PowerShell/Modules/Module.Udk.Connection/Private/ConnectionPlan.ps1')
+$componentRegistry = Get-UdkComponentRegistry $repository
 $tools = Resolve-UdkAndroidToolchain -AndroidNdk $AndroidNdk -AndroidSdk $AndroidSdk -JavaHome $JavaHome -Gradle $Gradle -ForConsumer
 $AndroidNdk = $tools.AndroidNdk
 $AndroidSdk = $tools.AndroidSdk
@@ -98,7 +102,10 @@ try {
             try {
                 $libraries = @($zip.Entries.FullName | Where-Object { $_ -match "^lib/$Abi/.*\.so$" } | ForEach-Object { ($_ -split '/')[-1] } | Sort-Object)
                 $expected = @('libc++_shared.so', 'libudk_android_consumer.so')
-                if ($linkage -eq 'Dynamic') { $expected += 'libuniversaldevkit_' + $component.ToLowerInvariant() + '_dynamic.so' }
+                $graph = Resolve-UdkLinkageGraph @($component) @{ $component = $linkage } $componentRegistry
+                foreach ($dependencyName in $graph.ResolvedModes.Keys) {
+                    if ($graph.ResolvedModes[$dependencyName] -eq 'Dynamic') { $expected += 'libuniversaldevkit_' + $dependencyName.ToLowerInvariant() + '_dynamic.so' }
+                }
                 if (Compare-Object @($expected | Sort-Object) $libraries) { throw "Unexpected APK runtime libraries: $libraries" }
             } finally { $zip.Dispose() }
             $status = 'BuildPassed-DeviceNotRun'
