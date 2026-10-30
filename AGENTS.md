@@ -63,6 +63,8 @@ using System.Diagnostics;
 
 ### Расположение исходников
 
+- Имена платформенных файлов заканчиваются суффиксом платформы перед расширением: `PlatformBackendWindows.cpp`, `PlatformBackendAndroid.cpp`, `PlatformBackendLinux.cpp`. Имена файлов разных платформ должны различаться независимо от каталогов; уникальные пути объектных файлов не заменяют это правило. Суффиксы `Windows`, `Android`, `Linux`, `MacOS` обозначают вариант реализации и не входят в имена классов, других описываемых сущностей или namespace: все варианты реализуют `PlatformBackend`. При определении соимённого заголовка для первого include-блока платформенный суффикс игнорируется: `PlatformBackendWindows.cpp` подключает общий `PlatformBackend.h` как соимённый заголовок. Платформенные сегменты каталогов реализации `platform/<платформа>/` также не добавляются в namespace общего класса.
+
 - Безымянные namespace запрещены. Для внутренних деталей реализации используется именованный namespace `details`.
 
 - Иерархия namespace должна полностью отражать иерархию папок исходников. Например, `Includes/Helpers/UniversalDevKit/Helpers/Meta/Utilities/PointerGetter.h` объявляет класс в `universaldevkit::helpers::meta::utilities`, а не в `universaldevkit::helpers::meta`.

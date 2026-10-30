@@ -3,30 +3,22 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/stdout_sinks.h>
-#if defined(_WIN32)
-#include <spdlog/sinks/msvc_sink.h>
-#endif
 #include <spdlog/logger.h>
 
 #include <UniversalDevKit/Helpers/System/ApplicationPaths.h>
+#include <UniversalDevKit/Helpers/System/Thread.h>
 #include <UniversalDevKit/Helpers/Text/Unicode.h>
 
-#if defined(_WIN32)
-#include <Windows.h>
-#elif defined(__linux__) || defined(__APPLE__)
-#include <pthread.h>
-#endif
+#include "PlatformBackend.h"
 
 #include <condition_variable>
 #include <unordered_map>
 #include <filesystem>
-#include <algorithm>
 #include <exception>
 #include <stdexcept>
 #include <cstdlib>
 #include <fstream>
 #include <cstdio>
-#include <limits>
 #include <memory>
 #include <vector>
 #include <mutex>
@@ -151,53 +143,6 @@ namespace universaldevkit::diagnostic {
             return std::filesystem::weakly_canonical(folder / loggerOptions.filePath);
         }
 
-        bool SetCurrentThreadName(std::string_view name) noexcept {
-            try {
-                if (name.find('\0') != std::string_view::npos) {
-                    return false;
-                }
-#if defined(_WIN32)
-                if (name.empty()) {
-                    return SUCCEEDED(::SetThreadDescription(::GetCurrentThread(), L""));
-                }
-                if (name.size() > static_cast<std::size_t>((std::numeric_limits<int>::max)())) {
-                    return false;
-                }
-                const auto length = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, name.data(), static_cast<int>(name.size()), nullptr, 0);
-                if (length == 0) {
-                    return false;
-                }
-                std::wstring wideName(static_cast<std::size_t>(length), L'\0');
-                if (::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, name.data(), static_cast<int>(name.size()), wideName.data(), length) == 0) {
-                    return false;
-                }
-                return SUCCEEDED(::SetThreadDescription(::GetCurrentThread(), wideName.c_str()));
-#elif defined(__linux__) || defined(__APPLE__)
-                // The OS limit includes the terminator; preserve complete UTF-8 characters.
-#if defined(__linux__)
-                constexpr std::size_t limit = 15;
-#else
-                constexpr std::size_t limit = 63;
-#endif
-                auto length = (std::min)(name.size(), limit);
-                while (length < name.size() && length > 0 && (static_cast<unsigned char>(name[length]) & 0xC0) == 0x80) {
-                    --length;
-                }
-                const std::string shortName(name.substr(0, length));
-#if defined(__linux__)
-                return ::pthread_setname_np(::pthread_self(), shortName.c_str()) == 0;
-#else
-                return ::pthread_setname_np(shortName.c_str()) == 0;
-#endif
-#else
-                return false;
-#endif
-            }
-            catch (...) {
-                return false;
-            }
-        }
-
         void EmergencyWrite(std::string_view message) noexcept {
             // No allocation, callbacks or recursive logging in the fallback.
             std::fwrite(message.data(), 1, message.size(), stderr);
@@ -215,7 +160,7 @@ namespace universaldevkit::diagnostic {
         , sourceLocation{ sourceLocation }
         , loggerId{ loggerId }
         , active{ Logger::ShouldLog(Level::Debug, loggerId) } {
-        if (!details::SetCurrentThreadName(this->name)) {
+        if (!helpers::system::Thread::SetCurrentThreadName(this->name)) {
             Logger::LogForId(this->loggerId, Level::Warning, "Thread", this->sourceLocation, "Cannot set thread name '{}'", this->name);
         }
         if (this->active) {
@@ -266,7 +211,7 @@ namespace universaldevkit::diagnostic {
         auto loggerInitError = LoggerInitError::InitializationFailed;
         try {
             auto& state = details::GetState();
-            std::scoped_lock lock{ state.mutex };
+            std::lock_guard<std::mutex> lock{ state.mutex };
             if (state.isStopping) {
                 return { LoggerInitError::ShutdownInProgress, {}, "Logger shutdown is in progress" };
             }
@@ -280,11 +225,13 @@ namespace universaldevkit::diagnostic {
                 (!loggerOptions.filePath.empty() && (loggerOptions.maxFileSize == 0 || loggerOptions.maxFiles > 200000))) {
                 return { LoggerInitError::InvalidOptions, {}, "Invalid level, folder, file mode or rotation limits" };
             }
-#if !defined(_WIN32)
-            if (loggerOptions.enableDebugger || loggerOptions.logFolder == LogFolder::Package) {
-                return { LoggerInitError::UnsupportedPlatform, {}, "Requested Windows debugger or package folder on another platform" };
+            if (loggerOptions.logFolder == LogFolder::Package && !PlatformBackend::SupportsPackageDirectories()) {
+                return { LoggerInitError::UnsupportedPlatform, {}, "Package directories are not supported on this platform" };
             }
-#endif
+            const auto debuggerSink = loggerOptions.enableDebugger ? PlatformBackend::CreateDebuggerSink() : nullptr;
+            if (loggerOptions.enableDebugger && !debuggerSink) {
+                return { LoggerInitError::UnsupportedPlatform, {}, "Debugger output is not supported on this platform" };
+            }
             if (!loggerOptions.filePath.empty() && loggerOptions.logFolder == LogFolder::Package &&
                 helpers::system::ApplicationPaths::GetPackageLocalDataDirectory().empty()) {
                 return { LoggerInitError::PackageUnavailable, {}, "Application has no package identity" };
@@ -338,13 +285,10 @@ namespace universaldevkit::diagnostic {
                 consoleSink->set_pattern("%^[%Y-%m-%d %H:%M:%S.%e] [%l] [%t] {%s:%# %!} %v%$");
                 sinks.push_back(std::move(consoleSink));
             }
-#if defined(_WIN32)
-            if (loggerOptions.enableDebugger) {
-                auto debuggerSink = std::make_shared<spdlog::sinks::msvc_sink_mt>();
+            if (debuggerSink) {
                 debuggerSink->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] [%t] {%s:%# %!} %v");
-                sinks.push_back(std::move(debuggerSink));
+                sinks.push_back(debuggerSink);
             }
-#endif
             auto logger = std::make_shared<spdlog::logger>("Diagnostic." + std::to_string(loggerId), sinks.begin(), sinks.end());
             logger->set_level(spdlog::level::trace);
             logger->flush_on(spdlog::level::trace);

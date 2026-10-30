@@ -12,6 +12,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\PlatformBackend.h" />
     <ClCompile Include="$(__UniversalDevKitDiagnosticSpdlogRoot)src\spdlog.cpp;$(__UniversalDevKitDiagnosticSpdlogRoot)src\stdout_sinks.cpp;$(__UniversalDevKitDiagnosticSpdlogRoot)src\color_sinks.cpp;$(__UniversalDevKitDiagnosticSpdlogRoot)src\file_sinks.cpp;$(__UniversalDevKitDiagnosticSpdlogRoot)src\async.cpp;$(__UniversalDevKitDiagnosticSpdlogRoot)src\cfg.cpp;$(__UniversalDevKitDiagnosticSpdlogRoot)src\bundled_fmtlib_format.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ObjectFileName>$(IntDir)UniversalDevKit\Diagnostic\spdlog\%(Filename).obj</ObjectFileName>

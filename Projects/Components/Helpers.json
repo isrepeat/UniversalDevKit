@@ -5,6 +5,7 @@
   "headers": [
     "Includes/Helpers/UniversalDevKit/Helpers/Text/Unicode.h",
     "Includes/Helpers/UniversalDevKit/Helpers/System/ApplicationPaths.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/System/Thread.h",
     "Includes/Helpers/UniversalDevKit/Helpers/Preprocessor.h",
     "Includes/Helpers/UniversalDevKit/Helpers/Collection/Algorithms.h",
     "Includes/Helpers/UniversalDevKit/Helpers/Collection/fixed_container.h",

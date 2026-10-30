@@ -1,8 +1,9 @@
 #include <UniversalDevKit/Diagnostic/Logging.h>
+#include <UniversalDevKit/Platform.h>
 
 #include "ContractValue.h"
 
-#if defined(_WIN32)
+#if UNIVERSALDEVKIT_PLATFORM_WINDOWS
 #include <io.h>
 #else
 #include <unistd.h>
@@ -24,7 +25,7 @@
 #include <string>
 #include <set>
 
-#if defined(_WIN32)
+#if UNIVERSALDEVKIT_PLATFORM_WINDOWS
 #define DIAGNOSTIC_TEST_IMPORT __declspec(dllimport)
 #else
 #define DIAGNOSTIC_TEST_IMPORT
@@ -80,7 +81,7 @@ namespace diagnostic_tests {
 
     void Fallback(const fs::path& path) {
         // Restore stderr before asserting so a failure is visible to the runner.
-#if defined(_WIN32)
+#if UNIVERSALDEVKIT_PLATFORM_WINDOWS
         auto* file = ::_wfopen(path.c_str(), L"w+b");
         const int stderrFd = ::_fileno(stderr);
         const int original = ::_dup(stderrFd);
@@ -99,7 +100,7 @@ namespace diagnostic_tests {
             diagnostic::Logger::Write(diagnostic::Level::Warning, "Fallback", "fallback-after-shutdown");
         }
         std::fflush(stderr);
-#if defined(_WIN32)
+#if UNIVERSALDEVKIT_PLATFORM_WINDOWS
         const bool restored = original >= 0 && ::_dup2(original, stderrFd) == 0;
         if (original >= 0) { ::_close(original); }
 #else

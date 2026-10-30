@@ -1,0 +1,32 @@
+#pragma once
+// Platform flags are always defined as 0 or 1; use them with #if, not #ifdef.
+#if defined(_WIN32)
+#define UNIVERSALDEVKIT_PLATFORM_WINDOWS 1
+#else
+#define UNIVERSALDEVKIT_PLATFORM_WINDOWS 0
+#endif
+
+#if defined(__ANDROID__)
+#define UNIVERSALDEVKIT_PLATFORM_ANDROID 1
+#else
+#define UNIVERSALDEVKIT_PLATFORM_ANDROID 0
+#endif
+
+#if defined(__linux__) && !defined(__ANDROID__)
+#define UNIVERSALDEVKIT_PLATFORM_LINUX 1
+#else
+#define UNIVERSALDEVKIT_PLATFORM_LINUX 0
+#endif
+
+#if defined(__APPLE__)
+#include <TargetConditionals.h>
+#if TARGET_OS_OSX
+#define UNIVERSALDEVKIT_PLATFORM_MACOS 1
+#else
+#define UNIVERSALDEVKIT_PLATFORM_MACOS 0
+#endif
+#else
+#define UNIVERSALDEVKIT_PLATFORM_MACOS 0
+#endif
+
+#define UNIVERSALDEVKIT_PLATFORM_POSIX (UNIVERSALDEVKIT_PLATFORM_ANDROID || UNIVERSALDEVKIT_PLATFORM_LINUX || UNIVERSALDEVKIT_PLATFORM_MACOS)

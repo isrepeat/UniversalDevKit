@@ -18,6 +18,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\System\ApplicationPaths.h">
       <__UniversalDevKitFilter>System</__UniversalDevKitFilter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\System\Thread.h">
+      <__UniversalDevKitFilter>System</__UniversalDevKitFilter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Preprocessor.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>

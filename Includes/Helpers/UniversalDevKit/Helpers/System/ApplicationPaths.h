@@ -1,5 +1,7 @@
 #pragma once
-#if defined(_WIN32)
+#include <UniversalDevKit/Platform.h>
+
+#if UNIVERSALDEVKIT_PLATFORM_WINDOWS
 #pragma push_macro("NOMINMAX")
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -16,7 +18,7 @@
 #pragma comment(lib, "windowsapp")
 #endif
 #pragma pop_macro("NOMINMAX")
-#elif defined(__APPLE__)
+#elif UNIVERSALDEVKIT_PLATFORM_MACOS
 #include <mach-o/dyld.h>
 #endif
 
@@ -32,7 +34,7 @@ namespace universaldevkit::helpers::system {
         ApplicationPaths() = delete;
 
         static std::filesystem::path GetExecutablePath() {
-#if defined(_WIN32)
+#if UNIVERSALDEVKIT_PLATFORM_WINDOWS
             std::vector<wchar_t> buffer(512);
             for (;;) {
                 const auto length = ::GetModuleFileNameW(nullptr, buffer.data(), static_cast<DWORD>(buffer.size()));
@@ -47,9 +49,9 @@ namespace universaldevkit::helpers::system {
                 }
                 buffer.resize(buffer.size() * 2);
             }
-#elif defined(__linux__)
+#elif (UNIVERSALDEVKIT_PLATFORM_LINUX || UNIVERSALDEVKIT_PLATFORM_ANDROID)
             return std::filesystem::read_symlink("/proc/self/exe");
-#elif defined(__APPLE__)
+#elif UNIVERSALDEVKIT_PLATFORM_MACOS
             std::uint32_t length = 0;
             ::_NSGetExecutablePath(nullptr, &length);
             std::vector<char> buffer(length);
@@ -69,7 +71,7 @@ namespace universaldevkit::helpers::system {
         // Installation directory, not writable package data or the current directory.
         // An unpackaged process (or a non-Windows platform) has no Windows package.
         static std::filesystem::path GetPackageDirectory() {
-#if defined(_WIN32)
+#if UNIVERSALDEVKIT_PLATFORM_WINDOWS
 #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
             UINT32 length = 0;
             const auto result = ::GetCurrentPackagePath(&length, nullptr);
@@ -95,7 +97,7 @@ namespace universaldevkit::helpers::system {
 
         // Writable per-user LocalState; never the package installation directory.
         static std::filesystem::path GetPackageLocalDataDirectory() {
-#if defined(_WIN32)
+#if UNIVERSALDEVKIT_PLATFORM_WINDOWS
             if (ApplicationPaths::GetPackageDirectory().empty()) {
                 return {};
             }
@@ -120,7 +122,7 @@ namespace universaldevkit::helpers::system {
         }
 
         static std::filesystem::path GetApplicationDirectory() {
-#if defined(__ANDROID__)
+#if UNIVERSALDEVKIT_PLATFORM_ANDROID
             throw std::runtime_error("Android application directories require an application Context; use its files/assets APIs");
 #else
             const auto packageDirectory = ApplicationPaths::GetPackageDirectory();

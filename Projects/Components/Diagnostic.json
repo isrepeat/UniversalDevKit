@@ -13,7 +13,10 @@
     "Includes/Diagnostic/UniversalDevKit/Diagnostic/Logging.h"
   ],
   "sources": [
-    "Sources/Diagnostic/Logging.cpp"
+    "Sources/Diagnostic/Logging.cpp",
+    "Sources/Diagnostic/platform/windows/PlatformBackendWindows.cpp",
+    "Sources/Diagnostic/platform/android/PlatformBackendAndroid.cpp",
+    "Sources/Diagnostic/platform/linux/PlatformBackendLinux.cpp"
   ],
   "buildExtensions": {
     "cmake": "Projects/Cmake/Diagnostic/Spdlog.cmake",

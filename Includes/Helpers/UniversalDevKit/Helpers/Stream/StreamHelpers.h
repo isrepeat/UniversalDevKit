@@ -1,5 +1,7 @@
 #pragma once
-#if defined(_WIN32) && defined(_DEBUG)
+#include <UniversalDevKit/Platform.h>
+
+#if UNIVERSALDEVKIT_PLATFORM_WINDOWS && defined(_DEBUG)
 #pragma push_macro("NOMINMAX")
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -16,7 +18,7 @@
 namespace universaldevkit::helpers::stream {
     namespace detail {
         inline void DebugBreakIfAttached() {
-#if defined(_WIN32) && defined(_DEBUG)
+#if UNIVERSALDEVKIT_PLATFORM_WINDOWS && defined(_DEBUG)
             if (::IsDebuggerPresent()) {
                 ::DebugBreak();
             }

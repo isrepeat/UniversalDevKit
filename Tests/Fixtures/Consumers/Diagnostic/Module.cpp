@@ -1,6 +1,7 @@
 #include <UniversalDevKit/Diagnostic/Logging.h>
+#include <UniversalDevKit/Platform.h>
 
-#if defined(_WIN32)
+#if UNIVERSALDEVKIT_PLATFORM_WINDOWS
 #define DIAGNOSTIC_TEST_API __declspec(dllexport)
 #else
 #define DIAGNOSTIC_TEST_API __attribute__((visibility("default")))
