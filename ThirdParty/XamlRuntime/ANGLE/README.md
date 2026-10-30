@@ -1,6 +1,6 @@
 # Рецепт ANGLE
 
-Рецепт перенесён из `UtilityHelpersLib/NugetProjects/XamlRuntime/Nuget/XamlRuntime.Package/ThirdParty/ANGLE`. Он описывает внешнюю зависимость OpenGLESRenderer для Windows. Каталог пока сохраняет расположение первоначального импорта XamlRuntime; сборка пакета UDK ещё не подключена к этому рецепту.
+Рецепт перенесён из `UtilityHelpersLib/NugetProjects/XamlRuntime/Nuget/XamlRuntime.Package/ThirdParty/ANGLE`. Он описывает внешнюю зависимость OpenGLESRenderer для Windows. Каталог пока сохраняет расположение первоначального импорта XamlRuntime. Подготовщик `Packages/CrossPlatform/OpenGLESRenderer/Delivery/NuGet/PrepareAngle.ps1` использует manifest и overlay перед сборкой компонента.
 
 ## Закреплённые источники
 
@@ -22,4 +22,4 @@ Manifest должен использоваться вместе с overlay `Cust
 
 Пробел в начале пустой контекстной строки unified diff является частью формата patch. Его нельзя удалять при форматировании. Репозиторий хранит файлы без завершающего CR/LF; перед применением патчей подготовщик должен создать рабочую копию overlay и добавить в ней завершающий LF к `.patch`, как делал старый упаковщик. Исходный рецепт при этом не изменяется.
 
-Получение инструментов, короткий рабочий путь для Windows, кеширование, вызов vcpkg и передача результата в сборку UDK будут подключены отдельным шагом.
+Подготовщик использует установленный vcpkg, короткий рабочий путь для Windows, persistent installed-дерево и binary cache; возвращает путь к установке в CMake. Изменение упаковки ANGLE выполняется отдельным шагом.

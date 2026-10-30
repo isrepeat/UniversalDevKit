@@ -1,17 +1,14 @@
 {
-  "supportedPlatforms": [
-    "Windows"
-  ],
-  "adapter": "component",
-  "stagingScript": "StageAngle.ps1",
   "schemaVersion": 1,
-  "nuspec": "UniversalDevKit.OpenGLESRenderer.nuspec",
-  "supportedRuntimes": [
-    "Dynamic"
-  ],
+  "adapter": "component",
   "id": "UniversalDevKit.OpenGLESRenderer",
+  "supportedPlatforms": ["Windows"],
+  "supportedRuntimes": ["Dynamic"],
+  "nuspec": "UniversalDevKit.OpenGLESRenderer.nuspec",
+  "preparationScript": "PrepareAngle.ps1",
+  "stagingScript": "StageAngle.ps1",
   "integration": {
-    "targets": "UniversalDevKit.OpenGLESRenderer.targets",
-    "props": "UniversalDevKit.OpenGLESRenderer.props"
+    "props": "UniversalDevKit.OpenGLESRenderer.props",
+    "targets": "UniversalDevKit.OpenGLESRenderer.targets"
   }
 }
