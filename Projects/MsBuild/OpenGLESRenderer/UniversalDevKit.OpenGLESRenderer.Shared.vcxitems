@@ -21,6 +21,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\OpenGLESRenderer\UniversalDevKit\OpenGLESRenderer\OpenGlRenderer.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\OpenGLESRenderer\StandardShaders.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\OpenGLESRenderer\OpenGlRenderer.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>

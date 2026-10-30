@@ -9,5 +9,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\OpenGLESRenderer\UniversalDevKit\OpenGLESRenderer\Config.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\OpenGLESRenderer\UniversalDevKit\OpenGLESRenderer\Export.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\OpenGLESRenderer\UniversalDevKit\OpenGLESRenderer\OpenGlRenderer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\OpenGLESRenderer\StandardShaders.h" />
   </ItemGroup>
 </Project>

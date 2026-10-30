@@ -6,6 +6,9 @@
     <Filter Include="platform\android" />
     <Filter Include="platform\linux" />
     <Filter Include="platform\windows" />
+    <Filter Include="ThirdParty" />
+    <Filter Include="ThirdParty\spdlog" />
+    <Filter Include="ThirdParty\spdlog\src" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\Logging.cpp" />
@@ -18,7 +21,29 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\platform\windows\PlatformBackendWindows.cpp">
       <Filter>platform\windows</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\async.cpp">
+      <Filter>ThirdParty\spdlog\src</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\bundled_fmtlib_format.cpp">
+      <Filter>ThirdParty\spdlog\src</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\cfg.cpp">
+      <Filter>ThirdParty\spdlog\src</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\color_sinks.cpp">
+      <Filter>ThirdParty\spdlog\src</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\file_sinks.cpp">
+      <Filter>ThirdParty\spdlog\src</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\spdlog.cpp">
+      <Filter>ThirdParty\spdlog\src</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\stdout_sinks.cpp">
+      <Filter>ThirdParty\spdlog\src</Filter>
+    </ClCompile>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\Export.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\Logging.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\PlatformBackend.h" />
   </ItemGroup>
 </Project>

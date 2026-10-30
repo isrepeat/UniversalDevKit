@@ -1,4 +1,5 @@
 # Общие правила версии и структуры реестра проверяются до создания targets.
+include("${CMAKE_CURRENT_LIST_DIR}/ThirdParty.cmake")
 function(udkCheckObjectKeys json allowed label)
     string(JSON kind TYPE "${json}")
     if(NOT kind STREQUAL "OBJECT")
@@ -23,7 +24,8 @@ function(udkCheckRegistryPath path)
 endfunction()
 
 function(udkCheckComponentContract json)
-    udkCheckObjectKeys("${json}" "name;msbuildGuid;headers;sources;filters;dependencies;supportedPlatforms;platformSources;stateScope;requirements;platformRequirements;buildExtensions;kind" component)
+    udkCheckObjectKeys("${json}" "name;msbuildGuid;headers;sources;filters;dependencies;supportedPlatforms;platformSources;stateScope;requirements;platformRequirements;buildExtensions;thirdParty;kind" component)
+    udkReadThirdParty("${json}")
     foreach(key IN ITEMS name msbuildGuid)
         string(JSON type TYPE "${json}" ${key})
         if(NOT type STREQUAL "STRING")

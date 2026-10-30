@@ -15,15 +15,6 @@
 #include <vector>
 
 namespace universaldevkit::xamlruntime {
-    // Общие каналы композиции, не зависящие от конкретного эффекта.
-    struct VisualTransform {
-        float opacity = 1.0f;
-        float offsetX = 0.0f;
-        float offsetY = 0.0f;
-    };
-
-    struct EmptyState {};
-
     namespace details {
         UNIVERSALDEVKIT_XAMLRUNTIME_API float ParseStateFloat(const std::string& value);
         UNIVERSALDEVKIT_XAMLRUNTIME_API int ParseStateInt(const std::string& value);
@@ -44,7 +35,16 @@ namespace universaldevkit::xamlruntime {
                 return value;
             }
         }
-    }
+    } // namespace details
+
+    // Общие каналы композиции, не зависящие от конкретного эффекта.
+    struct VisualTransform {
+        float opacity = 1.0f;
+        float offsetX = 0.0f;
+        float offsetY = 0.0f;
+    };
+
+    struct EmptyState {};
 
     template<typename TOwner, typename TValue>
     struct OptionDeclaration {

@@ -1,9 +1,11 @@
 {
   "name": "Diagnostic",
   "stateScope": "process",
-  "dependencies": [
-    { "component": "Helpers", "visibility": "private", "linkage": "same" }
-  ],
+  "dependencies": [{
+      "component": "Helpers",
+      "visibility": "private",
+      "linkage": "same"
+  }],
   "requirements": {
     "cxxStandard": 20,
     "threads": true
@@ -18,6 +20,22 @@
     "Sources/Diagnostic/platform/android/PlatformBackendAndroid.cpp",
     "Sources/Diagnostic/platform/linux/PlatformBackendLinux.cpp"
   ],
+  "thirdParty": [{
+    "name": "spdlog",
+    "root": "ThirdParty/spdlog",
+    "sources": [
+      "src/spdlog.cpp",
+      "src/stdout_sinks.cpp",
+      "src/color_sinks.cpp",
+      "src/file_sinks.cpp",
+      "src/async.cpp",
+      "src/cfg.cpp",
+      "src/bundled_fmtlib_format.cpp"
+    ],
+    "headers": [],
+    "includeDirectories": ["include"],
+    "compileDefinitions": ["SPDLOG_COMPILED_LIB", "SPDLOG_WCHAR_FILENAMES"]
+  }],
   "buildExtensions": {
     "cmake": "Projects/Cmake/Diagnostic/Spdlog.cmake",
     "msbuildTargets": "Projects/MsBuild/Diagnostic/Spdlog.targets"
@@ -25,7 +43,8 @@
   "filters": {
     "roots": [
       { "path": "Includes/Diagnostic/UniversalDevKit/Diagnostic", "filter": "" },
-      { "path": "Sources/Diagnostic", "filter": "" }
+      { "path": "Sources/Diagnostic", "filter": "" },
+      { "path": "ThirdParty/spdlog", "filter": "ThirdParty/spdlog" }
     ],
     "files": {}
   }

@@ -1,6 +1,7 @@
 param(
     [string]$RepositoryRoot = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)),
-    [switch]$Check
+    [switch]$Check,
+    [switch]$PassThru
 )
 
 $env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
@@ -113,6 +114,9 @@ foreach ($project in $projects) {
     $updates.Add(@{ Path = $destination; Content = $expected; RelativePath = $relativeDestination })
 }
 
+if ($PassThru) {
+    return $updates.ToArray()
+}
 if ($Check) {
     if ($updates.Count) {
         throw ('Project filters are out of date: ' + (($updates | ForEach-Object { $_.RelativePath }) -join ', '))
