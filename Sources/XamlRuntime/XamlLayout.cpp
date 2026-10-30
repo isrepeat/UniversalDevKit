@@ -1,52 +1,20 @@
-#include <Helpers.Logging/Logging.h>
-
 #include "../../Includes/XamlRuntime/UniversalDevKit/XamlRuntime/XamlLayout.h"
+
+#include <UniversalDevKit/Diagnostic/Logging.h>
+#include <UniversalDevKit/Helpers/Text/Utf8.h>
+
 #include "../../Includes/XamlRuntime/UniversalDevKit/XamlRuntime/Binding.h"
 
 #include <algorithm>
 #include <sstream>
-#include <limits>
 #include <cctype>
+#include <limits>
 
-namespace xaml::_details {
+namespace universaldevkit::xamlruntime::details {
     std::vector<TextGlyphMetric> textGlyphMetrics;
 
     size_t utf8Length(const std::string& text) {
-        size_t result = 0;
-        for (const unsigned char character : text) {
-            if ((character & 0xC0) != 0x80) {
-                ++result;
-            }
-        }
-        return result;
-    }
-
-    uint32_t decodeUtf8(const char*& current, const char* end) {
-        const auto lead = static_cast<unsigned char>(*current++);
-        if (lead < 0x80) {
-            return lead;
-        }
-        if ((lead & 0xE0) == 0xC0 && current < end) {
-            const auto second = static_cast<unsigned char>(*current++);
-            return static_cast<uint32_t>(lead & 0x1F) << 6 | static_cast<uint32_t>(second & 0x3F);
-        }
-        if ((lead & 0xF0) == 0xE0 && end - current >= 2) {
-            const auto second = static_cast<unsigned char>(*current++);
-            const auto third = static_cast<unsigned char>(*current++);
-            return static_cast<uint32_t>(lead & 0x0F) << 12
-                | static_cast<uint32_t>(second & 0x3F) << 6
-                | static_cast<uint32_t>(third & 0x3F);
-        }
-        if ((lead & 0xF8) == 0xF0 && end - current >= 3) {
-            const auto second = static_cast<unsigned char>(*current++);
-            const auto third = static_cast<unsigned char>(*current++);
-            const auto fourth = static_cast<unsigned char>(*current++);
-            return static_cast<uint32_t>(lead & 0x07) << 18
-                | static_cast<uint32_t>(second & 0x3F) << 12
-                | static_cast<uint32_t>(third & 0x3F) << 6
-                | static_cast<uint32_t>(fourth & 0x3F);
-        }
-        return '?';
+        return universaldevkit::helpers::text::Utf8::Length(text);
     }
 
     float textHeight(const Element& element) {
@@ -66,7 +34,7 @@ namespace xaml::_details {
         const char* current = element.Text().data();
         const char* const end = current + element.Text().size();
         while (current < end) {
-            const TextGlyphMetric* const glyph = glyphFor(decodeUtf8(current, end));
+            const TextGlyphMetric* const glyph = glyphFor(universaldevkit::helpers::text::Utf8::Next(current, end, '?'));
             if (glyph == nullptr) {
                 continue;
             }
@@ -117,33 +85,19 @@ namespace xaml::_details {
     }
 
     float horizontal(const attr::Thickness& thickness) {
-        return thickness.left + thickness.right;
+        return thickness.Horizontal();
     }
 
     float vertical(const attr::Thickness& thickness) {
-        return thickness.top + thickness.bottom;
+        return thickness.Vertical();
     }
 
     Rect inset(Rect bounds, attr::Thickness thickness) {
-        return {
-            bounds.x + thickness.left,
-            bounds.y + thickness.top,
-            std::max(0.0f, bounds.width - horizontal(thickness)),
-            std::max(0.0f, bounds.height - vertical(thickness)),
-        };
+        return universaldevkit::helpers::math::Geometry::Inset(bounds, thickness);
     }
 
     Rect intersect(Rect first, Rect second) {
-        const float left = std::max(first.x, second.x);
-        const float top = std::max(first.y, second.y);
-        const float right = std::min(first.x + first.width, second.x + second.width);
-        const float bottom = std::min(first.y + first.height, second.y + second.height);
-        return {
-            left,
-            top,
-            std::max(0.0f, right - left),
-            std::max(0.0f, bottom - top),
-        };
+        return universaldevkit::helpers::math::Geometry::Intersect(first, second);
     }
 
     void clipSubtree(Element& element) {
@@ -494,7 +448,7 @@ namespace xaml::_details {
     }
 }
 
-namespace xaml {
+namespace universaldevkit::xamlruntime {
     Element::Element(ElementType type)
         : type(type) {
     }
@@ -1273,13 +1227,13 @@ namespace xaml {
     }
 
     void SetTextGlyphMetrics(std::vector<TextGlyphMetric> value) {
-        _details::textGlyphMetrics = std::move(value);
+        details::textGlyphMetrics = std::move(value);
     }
 
     void layoutInViewport(Element& root, Size availableSize) {
-        _details::measure(root, availableSize.width);
+        details::measure(root, availableSize.width);
         const Rect bounds{0.0f, 0.0f, availableSize.width, availableSize.height};
-        _details::arrange(root, bounds, bounds);
+        details::arrange(root, bounds, bounds);
         root.availableSize = availableSize;
         root.layoutInvalid = false;
     }
@@ -1287,11 +1241,11 @@ namespace xaml {
     void layout(Element& root, Size availableSize) {
         // Разделение measure/arrange позволяет заменить или расширить layout
         // контейнеры, не меняя контракт визуального дерева.
-        const Size desired = _details::measure(root, availableSize.width);
+        const Size desired = details::measure(root, availableSize.width);
         // Layout вызывается только при invalidation, а не в каждом render frame.
         // Поэтому запись полезна для диагностики перестроений и не создаёт
         // постоянной нагрузки в render loop.
-        LOG_DEBUG(
+        UDK_LOG_DEBUG(
             "XamlRuntime.Layout",
             "Layout: root='{}', available={}x{}, desired={}x{}",
             root.Id(),
@@ -1300,7 +1254,7 @@ namespace xaml {
             desired.width,
             desired.height);
         if (root.Type() == ElementType::page) {
-            _details::arrange(
+            details::arrange(
                 root,
                 {0.0f, 0.0f, availableSize.width, availableSize.height},
                 {0.0f, 0.0f, availableSize.width, availableSize.height});
@@ -1314,7 +1268,7 @@ namespace xaml {
             desired.width,
             desired.height,
         };
-        _details::arrange(root, rootBounds, rootBounds);
+        details::arrange(root, rootBounds, rootBounds);
         root.availableSize = availableSize;
         root.layoutInvalid = false;
     }

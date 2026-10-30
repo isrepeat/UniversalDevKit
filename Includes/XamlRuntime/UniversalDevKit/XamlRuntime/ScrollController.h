@@ -1,12 +1,14 @@
 #pragma once
+#include "Config.h"
+#include "Export.h"
 
 #include <chrono>
 #include <vector>
 
-namespace xaml {
-    class Element;
+namespace universaldevkit::xamlruntime {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API Element;
 
-    class ScrollController final {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API ScrollController final {
     public:
         void Begin(Element& scrollViewer);
         bool Drag(float verticalDelta);

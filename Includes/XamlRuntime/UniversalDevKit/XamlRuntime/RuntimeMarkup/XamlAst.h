@@ -1,8 +1,11 @@
 #pragma once
+#include "../Config.h"
+#include "../Export.h"
+
 #include <string>
 #include <vector>
 
-namespace xaml::runtime {
+namespace universaldevkit::xamlruntime::runtimemarkup {
     struct XamlSourceLocation {
         std::string path;
         int line = 1;

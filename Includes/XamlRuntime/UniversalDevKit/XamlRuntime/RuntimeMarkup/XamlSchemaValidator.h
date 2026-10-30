@@ -1,11 +1,14 @@
 #pragma once
+#include "../Config.h"
+#include "../Export.h"
+
 #include "XamlAst.h"
 
-#include <set>
 #include <string_view>
+#include <set>
 
-namespace xaml::runtime {
-    class XamlSchemaValidator final {
+namespace universaldevkit::xamlruntime::runtimemarkup {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API XamlSchemaValidator final {
     public:
         void Validate(
             const XamlElementNode& root,

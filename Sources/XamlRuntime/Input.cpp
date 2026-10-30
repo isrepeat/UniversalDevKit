@@ -1,12 +1,12 @@
-#include <Helpers.Logging/Logging.h>
-
 #include "../../Includes/XamlRuntime/UniversalDevKit/XamlRuntime/Input.h"
+
+#include <UniversalDevKit/Diagnostic/Logging.h>
+
 #include "../../Includes/XamlRuntime/UniversalDevKit/XamlRuntime/VisualState.h"
 
-namespace xaml::_details {
+namespace universaldevkit::xamlruntime::details {
     bool Contains(const Rect& bounds, float x, float y) {
-        return x >= bounds.x && x <= bounds.x + bounds.width
-            && y >= bounds.y && y <= bounds.y + bounds.height;
+        return universaldevkit::helpers::math::Geometry::Contains(bounds, x, y);
     }
 
     bool HasIntrinsicInteraction(const Element& element) {
@@ -91,17 +91,17 @@ namespace xaml::_details {
     }
 }
 
-namespace xaml {
+namespace universaldevkit::xamlruntime {
     bool IsInteractive(const Element& element) {
-        return _details::HasIntrinsicInteraction(element) || element.HasCommand();
+        return details::HasIntrinsicInteraction(element) || element.HasCommand();
     }
 
     Element* HitTest(Element& root, float x, float y) {
-        return _details::HitTestElement(root, x, y, 0.0f, 0.0f).interactive;
+        return details::HitTestElement(root, x, y, 0.0f, 0.0f).interactive;
     }
 
     Element* HitTestVisual(Element& root, float x, float y) {
-        return _details::HitTestVisualElement(root, x, y, 0.0f, 0.0f);
+        return details::HitTestVisualElement(root, x, y, 0.0f, 0.0f);
     }
 
     bool HandleTap(Element& element) {
@@ -110,7 +110,7 @@ namespace xaml {
         }
         if (element.Type() == ElementType::toggleSwitch) {
             element.SetIsOn(!element.IsOn());
-            LOG_DEBUG(
+            UDK_LOG_DEBUG(
                 "XamlRuntime.Input",
                 "Toggle tap: element='{}', isOn={}",
                 element.Id(),
@@ -118,7 +118,7 @@ namespace xaml {
             return true;
         }
         if (element.HasCommand()) {
-            LOG_DEBUG(
+            UDK_LOG_DEBUG(
                 "XamlRuntime.Input",
                 "Tap: element='{}'",
                 element.Id());

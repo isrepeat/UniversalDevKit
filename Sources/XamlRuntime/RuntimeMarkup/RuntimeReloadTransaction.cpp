@@ -3,7 +3,7 @@
 #include "../../../Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RuntimeMarkup/RuntimeDiagnostics.h"
 #include "../../../Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RuntimeMarkup/XamlParser.h"
 
-namespace xaml::runtime::_details {
+namespace universaldevkit::xamlruntime::runtimemarkup::details {
     void Collect(const Element& node, std::map<std::string, const Element*>& elements) {
         if (!node.Id().empty()) {
             elements.emplace(node.Id(), &node);
@@ -28,7 +28,7 @@ namespace xaml::runtime::_details {
     }
 }
 
-namespace xaml::runtime {
+namespace universaldevkit::xamlruntime::runtimemarkup {
     //
     // API
     //
@@ -43,10 +43,10 @@ namespace xaml::runtime {
         // подменить ViewModel при горячей замене.
         result.root->SetDataContext(previous.DataContext());
         std::map<std::string, const Element*> elements;
-        _details::Collect(previous, elements);
+        details::Collect(previous, elements);
         // Переносим только состояние одноимённых элементов того же типа. Иначе
         // состояние старого контрола могло бы быть неприменимо к новому.
-        _details::Restore(*result.root, elements);
+        details::Restore(*result.root, elements);
         result.root->SetVisibility(previous.VisibilityValue());
         layout(*result.root, availableSize);
         return result;

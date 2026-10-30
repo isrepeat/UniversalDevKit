@@ -1,6 +1,6 @@
 # UniversalDevKit
 
-Временная исходная точка переноса [XamlRuntime, OpenGLESRenderer и XamlCompiler](Docs/XamlRuntime.md) находится в отдельных Includes/Sources и Projects/Cmake. Это tmp-этап перед переходом на Helpers/Math, Diagnostic и штатные компонентные поставки.
+[XamlRuntime и OpenGLESRenderer](Docs/XamlRuntime.md) используют общий реестр компонентов, Helpers/Math, Helpers/Event, Helpers/Text и Diagnostic. XamlCompiler собирается отдельно для host-платформы.
 
 **Навигация:** Главная
 

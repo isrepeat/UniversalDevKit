@@ -1,10 +1,12 @@
 #pragma once
+#include "Config.h"
+#include "Export.h"
 
 #include <string_view>
 #include <optional>
 #include <cstdint>
 
-namespace xaml {
+namespace universaldevkit::xamlruntime {
     enum class XamlAttribute {
         id,
         dataContext,
@@ -76,7 +78,7 @@ namespace xaml {
         wireframe = 1 << 23,
     };
 
-    std::optional<XamlAttribute> ParseXamlAttribute(std::string_view name);
-    std::string_view XamlAttributeName(XamlAttribute attribute);
-    XamlAttributeGroup XamlAttributeGroupOf(XamlAttribute attribute);
+    UNIVERSALDEVKIT_XAMLRUNTIME_API std::optional<XamlAttribute> ParseXamlAttribute(std::string_view name);
+    UNIVERSALDEVKIT_XAMLRUNTIME_API std::string_view XamlAttributeName(XamlAttribute attribute);
+    UNIVERSALDEVKIT_XAMLRUNTIME_API XamlAttributeGroup XamlAttributeGroupOf(XamlAttribute attribute);
 }

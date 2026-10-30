@@ -6,7 +6,7 @@
 
 #include <algorithm>
 
-namespace xaml {
+namespace universaldevkit::xamlruntime {
     void InteractionController::PointerDown(
         Element& root,
         AnimationController& animations,

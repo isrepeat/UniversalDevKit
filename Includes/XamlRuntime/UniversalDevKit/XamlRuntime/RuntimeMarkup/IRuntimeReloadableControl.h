@@ -1,7 +1,10 @@
 #pragma once
+#include "../Config.h"
+#include "../Export.h"
+
 #include "RuntimeBindingContext.h"
 
-namespace xaml::runtime {
+namespace universaldevkit::xamlruntime::runtimemarkup {
     class IRuntimeReloadableControl {
     public:
         virtual ~IRuntimeReloadableControl() = default;

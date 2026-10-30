@@ -1,0 +1,8 @@
+function(udk_extend_XamlRuntime target variant outputRoot)
+    if(NOT TARGET XamlRuntime::Runtime)
+        add_library(XamlRuntime::Runtime ALIAS ${target})
+    endif()
+    if(MSVC)
+        target_compile_options(${target} PRIVATE /utf-8 /EHsc)
+    endif()
+endfunction()

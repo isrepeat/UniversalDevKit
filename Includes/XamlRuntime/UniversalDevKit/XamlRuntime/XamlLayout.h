@@ -1,20 +1,25 @@
 #pragma once
+#include <UniversalDevKit/Helpers/Math/Geometry.h>
+#include <UniversalDevKit/Helpers/Math/Color.h>
+
 #include "ObservableCollection.h"
 #include "Storyboard.h"
 #include "Animation.h"
+#include "Config.h"
+#include "Export.h"
 
 #include <initializer_list>
 #include <functional>
-#include <utility>
 #include <cstdint>
+#include <utility>
 #include <memory>
 #include <string>
 #include <vector>
 
-namespace xaml {
+namespace universaldevkit::xamlruntime {
     class IRenderBackend;
-    class RendererRegistry;
-    class BindingScope;
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API RendererRegistry;
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API BindingScope;
 
     struct TextGlyphMetric {
         std::string fontWeight;
@@ -66,19 +71,9 @@ namespace xaml {
             visible,
         };
 
-        struct Color {
-            float red = 1.0f;
-            float green = 1.0f;
-            float blue = 1.0f;
-            float alpha = 1.0f;
-        };
+        using Color = universaldevkit::helpers::math::Color;
 
-        struct Thickness {
-            float left = 0.0f;
-            float right = 0.0f;
-            float top = 0.0f;
-            float bottom = 0.0f;
-        };
+        using Thickness = universaldevkit::helpers::math::Insets_f;
 
         enum class WireframeLineStyle {
             solid,
@@ -94,19 +89,15 @@ namespace xaml {
         };
     }
 
-    struct Size {
-        float width = 0.0f;
-        float height = 0.0f;
-    };
+    using Size = universaldevkit::helpers::math::Size_f;
+    using Rect = universaldevkit::helpers::math::Bounds_f;
 
-    struct Rect {
-        float x = 0.0f;
-        float y = 0.0f;
-        float width = 0.0f;
-        float height = 0.0f;
-    };
+    UNIVERSALDEVKIT_XAMLRUNTIME_API void layout(Element& root, Size availableSize);
+    UNIVERSALDEVKIT_XAMLRUNTIME_API void layoutInViewport(Element& root, Size availableSize);
+    UNIVERSALDEVKIT_XAMLRUNTIME_API void Render(Element& root, IRenderBackend& backend);
+    UNIVERSALDEVKIT_XAMLRUNTIME_API void Render(Element& root, IRenderBackend& backend, const RendererRegistry& renderers);
 
-    class Element {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API Element {
     public:
         using Command = std::function<void()>;
         using ItemTemplate = std::function<std::unique_ptr<Element>(const void*, BindingScope&)>;
@@ -354,10 +345,10 @@ namespace xaml {
         friend class AnimationController;
         friend class AnimationRegistry;
         friend class AnimationInvocation;
-        friend void layout(Element& root, Size availableSize);
-        friend void layoutInViewport(Element& root, Size availableSize);
-        friend void Render(Element& root, IRenderBackend& backend);
-        friend void Render(
+        friend UNIVERSALDEVKIT_XAMLRUNTIME_API void layout(Element& root, Size availableSize);
+        friend UNIVERSALDEVKIT_XAMLRUNTIME_API void layoutInViewport(Element& root, Size availableSize);
+        friend UNIVERSALDEVKIT_XAMLRUNTIME_API void Render(Element& root, IRenderBackend& backend);
+        friend UNIVERSALDEVKIT_XAMLRUNTIME_API void Render(
             Element& root,
             IRenderBackend& backend,
             const RendererRegistry& renderers);
@@ -449,10 +440,8 @@ namespace xaml {
 
     // Проходит от root по индексам дочерних элементов из path: {1, 1} означает
     // root.Children()[1]->Children()[1]. Пустой путь возвращает сам root.
-    Element& ElementAt(Element& root, std::initializer_list<size_t> path);
+    UNIVERSALDEVKIT_XAMLRUNTIME_API Element& ElementAt(Element& root, std::initializer_list<size_t> path);
 
-    void SetTextGlyphMetrics(std::vector<TextGlyphMetric> value);
+    UNIVERSALDEVKIT_XAMLRUNTIME_API void SetTextGlyphMetrics(std::vector<TextGlyphMetric> value);
 
-    void layout(Element& root, Size availableSize);
-    void layoutInViewport(Element& root, Size availableSize);
 }

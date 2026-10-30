@@ -1,11 +1,14 @@
 #pragma once
+#include "../Config.h"
+#include "../Export.h"
+
 #include "XamlAst.h"
 
 #include <string_view>
 #include <map>
 
-namespace xaml::runtime {
-    class XamlParser final {
+namespace universaldevkit::xamlruntime::runtimemarkup {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API XamlParser final {
     public:
         XamlElementNode Parse(std::string_view markup, std::string_view sourcePath);
 

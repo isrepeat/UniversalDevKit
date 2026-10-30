@@ -42,7 +42,11 @@
     "Includes/Helpers/UniversalDevKit/Helpers/Regex/Regex.h",
     "Includes/Helpers/UniversalDevKit/Helpers/Stream/StreamHelpers.h",
     "Includes/Helpers/UniversalDevKit/Helpers/Stream/StreamLineReader.h",
-    "Includes/Helpers/UniversalDevKit/Helpers/Stream/StreamLineViewer.h"
+    "Includes/Helpers/UniversalDevKit/Helpers/Stream/StreamLineViewer.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Math/Geometry.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Math/Color.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Math/Motion.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Text/Utf8.h"
   ],
   "sources": [],
   "filters": {

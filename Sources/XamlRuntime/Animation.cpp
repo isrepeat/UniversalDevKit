@@ -3,11 +3,11 @@
 #include "../../Includes/XamlRuntime/UniversalDevKit/XamlRuntime/ElementBuilder.h"
 #include "../../Includes/XamlRuntime/UniversalDevKit/XamlRuntime/XamlLayout.h"
 
-#include <stdexcept>
 #include <algorithm>
+#include <stdexcept>
 #include <cmath>
 
-namespace xaml::_details {
+namespace universaldevkit::xamlruntime::details {
     attr::Color AnimatedColor(const Element& target, AnimatedProperty property) {
         switch (property) {
         case AnimatedProperty::background: return target.Background();
@@ -74,7 +74,7 @@ namespace xaml::_details {
     }
 }
 
-namespace xaml {
+namespace universaldevkit::xamlruntime {
     AnimationTrack AnimationTrack::Color(AnimatedProperty property, const attr::Color& from, const attr::Color& to,
         std::chrono::milliseconds duration, Easing easing, bool fromCurrent) {
         if (property != AnimatedProperty::background && property != AnimatedProperty::foreground
@@ -87,8 +87,8 @@ namespace xaml {
         track.duration = duration;
         track.easing = easing;
         track.isColor = true;
-        track.fromColor = _details::ColorChannels(from);
-        track.toColor = _details::ColorChannels(to);
+        track.fromColor = details::ColorChannels(from);
+        track.toColor = details::ColorChannels(to);
         return track;
     }
 
@@ -483,7 +483,7 @@ namespace xaml {
                 continue;
             }
             AddPropertyTrack(target, track.property,
-                track.fromCurrent ? _details::AnimatedValue(target, track.property, trigger) : track.from,
+                track.fromCurrent ? details::AnimatedValue(target, track.property, trigger) : track.from,
                 track.toToggleState ? (target.IsOn() ? 1.0f : 0.0f) : track.to,
                 useTransitions ? track.duration : std::chrono::milliseconds(0), track.easing,
                 trigger == AnimationTrigger::show || trigger == AnimationTrigger::hide);
@@ -556,7 +556,7 @@ namespace xaml {
         tracks.erase(std::remove_if(tracks.begin(), tracks.end(),
             [property](const RunningAnimation& track) { return track.field == nullptr && track.property == property; }),
             tracks.end());
-        _details::SetAnimatedValue(target, property, duration.count() == 0 ? to : from);
+        details::SetAnimatedValue(target, property, duration.count() == 0 ? to : from);
         if (duration.count() != 0) {
             tracks.push_back({nullptr, from, to, 0.0f, static_cast<float>(duration.count()), easing, property, presence});
         }
@@ -564,7 +564,7 @@ namespace xaml {
 
     void AnimationController::AddColorTrack(Element& target, const AnimationTrack& track, bool useTransitions,
         bool presence) {
-        const auto from = track.fromCurrent ? _details::ColorChannels(_details::AnimatedColor(target, track.property))
+        const auto from = track.fromCurrent ? details::ColorChannels(details::AnimatedColor(target, track.property))
             : track.fromColor;
         const auto valid = [](const std::array<float, 4>& color) {
             return std::all_of(color.begin(), color.end(), [](float channel) {
@@ -579,7 +579,7 @@ namespace xaml {
             return running.field == nullptr && running.property == track.property;
         }), tracks.end());
         const auto duration = useTransitions ? track.duration : std::chrono::milliseconds(0);
-        _details::SetAnimatedColor(target, track.property, duration.count() == 0 ? track.toColor : from);
+        details::SetAnimatedColor(target, track.property, duration.count() == 0 ? track.toColor : from);
         if (duration.count() != 0) {
             RunningAnimation running{nullptr, 0.0f, 0.0f, 0.0f, static_cast<float>(duration.count()),
                 track.easing, track.property, presence};
@@ -672,23 +672,20 @@ namespace xaml {
         for (auto& track : state.tracks) {
             track.elapsed += milliseconds;
             float progress = std::min(1.0f, track.elapsed / track.duration);
-            if (track.easing == Easing::cubicOut) {
-                const float inverse = 1.0f - progress;
-                progress = 1.0f - inverse * inverse * inverse;
-            }
+            progress = universaldevkit::helpers::math::Motion::Ease(track.easing, progress);
             if (track.isColor) {
                 std::array<float, 4> color;
                 for (size_t i = 0; i < color.size(); ++i) {
-                    color[i] = track.fromColor[i] + (track.toColor[i] - track.fromColor[i]) * progress;
+                    color[i] = std::lerp(track.fromColor[i], track.toColor[i], progress);
                 }
-                _details::SetAnimatedColor(element, track.property, color);
+                details::SetAnimatedColor(element, track.property, color);
                 continue;
             }
-            const float value = track.from + (track.to - track.from) * progress;
+            const float value = std::lerp(track.from, track.to, progress);
             if (track.field != nullptr) {
                 *track.field = value;
             } else {
-                _details::SetAnimatedValue(element, track.property, value);
+                details::SetAnimatedValue(element, track.property, value);
             }
         }
         state.tracks.erase(std::remove_if(state.tracks.begin(), state.tracks.end(),

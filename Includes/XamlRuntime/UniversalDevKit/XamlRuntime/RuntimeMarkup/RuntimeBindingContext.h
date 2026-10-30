@@ -1,4 +1,7 @@
 #pragma once
+#include "../Config.h"
+#include "../Export.h"
+
 #include "RuntimeBindingRegistry.h"
 #include "XamlAst.h"
 
@@ -7,7 +10,7 @@
 #include <string>
 #include <map>
 
-namespace xaml::runtime {
+namespace universaldevkit::xamlruntime::runtimemarkup {
     struct RuntimeBindingContext {
         std::shared_ptr<RuntimeBindingRegistry> bindings;
         std::string owner;

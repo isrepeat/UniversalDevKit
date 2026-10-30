@@ -1,10 +1,12 @@
 #pragma once
 #include "XamlLayout.h"
+#include "Config.h"
+#include "Export.h"
 
 #include <memory>
 
-namespace xaml {
-    class UserControl : public Element {
+namespace universaldevkit::xamlruntime {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API UserControl : public Element {
     public:
         UserControl();
         ~UserControl() override;

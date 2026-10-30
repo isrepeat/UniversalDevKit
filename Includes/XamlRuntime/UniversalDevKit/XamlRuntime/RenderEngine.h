@@ -1,13 +1,14 @@
 #pragma once
-
 #include "XamlLayout.h"
+#include "Config.h"
+#include "Export.h"
 
 #include <initializer_list>
 #include <unordered_map>
 #include <string_view>
 #include <functional>
 
-namespace xaml {
+namespace universaldevkit::xamlruntime {
     struct ShaderUniform {
         std::string_view name;
         float values[4]{};
@@ -47,7 +48,7 @@ namespace xaml {
             attr::Color tint) = 0;
     };
 
-    class RenderInvocation {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API RenderInvocation {
     public:
         RenderInvocation(
             IRenderBackend& backend,
@@ -113,7 +114,7 @@ namespace xaml {
         const TState& state;
     };
 
-    class RendererRegistry final {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API RendererRegistry final {
     public:
         explicit RendererRegistry(StateRegistry states = {});
 
@@ -149,6 +150,6 @@ namespace xaml {
         std::unordered_map<std::string, Entry> renderers;
     };
 
-    void Render(Element& root, IRenderBackend& backend);
-    void Render(Element& root, IRenderBackend& backend, const RendererRegistry& renderers);
+    UNIVERSALDEVKIT_XAMLRUNTIME_API void Render(Element& root, IRenderBackend& backend);
+    UNIVERSALDEVKIT_XAMLRUNTIME_API void Render(Element& root, IRenderBackend& backend, const RendererRegistry& renderers);
 }

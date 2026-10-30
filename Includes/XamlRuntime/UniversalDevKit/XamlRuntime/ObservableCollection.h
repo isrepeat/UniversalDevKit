@@ -1,13 +1,18 @@
 #pragma once
-#include <functional>
+#include <UniversalDevKit/Helpers/Event/Signal.h>
+
+#include "Config.h"
+#include "Export.h"
+
 #include <initializer_list>
+#include <functional>
 #include <iterator>
-#include <list>
 #include <cstddef>
 #include <utility>
 #include <vector>
+#include <list>
 
-namespace xaml {
+namespace universaldevkit::xamlruntime {
     enum class CollectionChangeKind { insert, remove, replace, move, reset };
 
     struct CollectionChange {
@@ -65,22 +70,17 @@ namespace xaml {
         }
 
         Unsubscribe Subscribe(ChangedHandler handler) const {
-            this->handlers.push_back(std::move(handler));
-            const size_t index = this->handlers.size() - 1;
-            return [this, index]() { this->handlers[index] = nullptr; };
+            auto connection = this->changed.Subscribe(std::move(handler));
+            return [connection = std::move(connection)]() { connection->Disconnect(); };
         }
 
     private:
         void Notify(CollectionChange change) const {
-            for (const ChangedHandler& handler : this->handlers) {
-                if (handler) {
-                    handler(change);
-                }
-            }
+            this->changed.Invoke(change);
         }
 
     private:
         std::list<TValue> values;
-        mutable std::vector<ChangedHandler> handlers;
+        mutable universaldevkit::helpers::event::Signal<void(CollectionChange)> changed;
     };
 }

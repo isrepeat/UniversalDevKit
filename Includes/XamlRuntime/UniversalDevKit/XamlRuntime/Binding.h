@@ -1,12 +1,14 @@
 #pragma once
 #include "XamlLayout.h"
+#include "Config.h"
+#include "Export.h"
 
 #include <functional>
 #include <utility>
 #include <vector>
 
-namespace xaml {
-    class BindingScope final {
+namespace universaldevkit::xamlruntime {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API BindingScope final {
     public:
         BindingScope() = default;
         ~BindingScope();
@@ -33,8 +35,9 @@ namespace xaml {
             TGetter getter,
             TSetter setter,
             TProperty property) {
-            const auto apply = [&element, &viewModel, getter, setter]() {
-                std::invoke(setter, element, std::invoke(getter, viewModel));
+            const auto target = this->AddRuntimeTarget(element);
+            const auto apply = [target, &viewModel, getter, setter]() {
+                if (*target) { std::invoke(setter, **target, std::invoke(getter, viewModel)); }
             };
             apply();
             this->unsubscriptions.push_back(viewModel.Subscribe([apply, property](TProperty changedProperty) {
@@ -55,8 +58,9 @@ namespace xaml {
             TTargetSetter targetSetter,
             TProperty property) {
             this->AddOneWay(element, viewModel, sourceGetter, targetSetter, property);
-            this->sourceUpdates.push_back({&element, [&element, &viewModel, sourceSetter, targetGetter]() {
-                std::invoke(sourceSetter, viewModel, std::invoke(targetGetter, element));
+            const auto target = this->AddRuntimeTarget(element);
+            this->sourceUpdates.push_back({&element, [target, &viewModel, sourceSetter, targetGetter]() {
+                if (*target) { std::invoke(sourceSetter, viewModel, std::invoke(targetGetter, **target)); }
             }});
         }
 

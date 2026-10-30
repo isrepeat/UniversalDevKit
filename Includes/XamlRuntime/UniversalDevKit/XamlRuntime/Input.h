@@ -1,10 +1,11 @@
 #pragma once
-
 #include "XamlLayout.h"
+#include "Config.h"
+#include "Export.h"
 
-namespace xaml {
-    bool IsInteractive(const Element& element);
-    Element* HitTest(Element& root, float x, float y);
-    Element* HitTestVisual(Element& root, float x, float y);
-    bool HandleTap(Element& element);
+namespace universaldevkit::xamlruntime {
+    UNIVERSALDEVKIT_XAMLRUNTIME_API bool IsInteractive(const Element& element);
+    UNIVERSALDEVKIT_XAMLRUNTIME_API Element* HitTest(Element& root, float x, float y);
+    UNIVERSALDEVKIT_XAMLRUNTIME_API Element* HitTestVisual(Element& root, float x, float y);
+    UNIVERSALDEVKIT_XAMLRUNTIME_API bool HandleTap(Element& element);
 }

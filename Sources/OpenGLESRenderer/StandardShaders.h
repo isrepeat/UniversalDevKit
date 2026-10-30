@@ -1,6 +1,7 @@
 #pragma once
+#include <UniversalDevKit/OpenGLESRenderer/Config.h>
 
-namespace es_renderer::_details {
+namespace universaldevkit::openglesrenderer::details {
     // Встроенные GLSL-программы базовой отрисовки.
     extern const char TextVertexShader[];
     extern const char TextFragmentShader[];

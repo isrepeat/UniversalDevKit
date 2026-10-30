@@ -3,8 +3,8 @@
 #include <algorithm>
 #include <stdexcept>
 #include <iostream>
-#include <sstream>
 #include <fstream>
+#include <sstream>
 #include <cctype>
 #include <string>
 #include <vector>
@@ -13,7 +13,7 @@
 #include <map>
 #include <set>
 
-namespace {
+namespace details {
     struct Element {
         // Промежуточное дерево: оно не зависит от runtime и существует только
         // во время компиляции XAML в C++.
@@ -1273,7 +1273,7 @@ namespace {
         const std::string generatedTypeName = isUserControl ? typeName + "Xaml" : typeName;
         const std::string factoryMethod = isUserControl ? "BuildContent" : "Create";
         const bool usesItemsSource = isUserControl && this->UsesControlItemsSource(rootElement);
-        body << "namespace xaml::generated {\n"
+        body << "namespace universaldevkit::xamlruntime::generated {\n"
             << "    class " << generatedTypeName << " final {\n"
             << "    public:\n"
             << "        template <typename TViewModel" << (usesItemsSource ? ", typename TItemsSource" : "") << ">\n"
@@ -1378,7 +1378,7 @@ int main(int argc, char* argv[]) {
                 throw std::runtime_error("Unknown argument: " + std::string(argv[index]));
             }
         }
-        XamlCompiler compiler;
+        details::XamlCompiler compiler;
         compiler.Compile(
             argv[1],
             argv[2],

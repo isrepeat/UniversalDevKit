@@ -1,34 +1,31 @@
-# XamlRuntime: временный перенос (tmp)
+# XamlRuntime
 
-Исходники перенесены из UtilityHelpersLib, commit 1c12ac945f33ecab88f70756b300d4f2e8b440e5. Это исходная точка для следующих отдельных коммитов: перенос общей математики в Helpers/Math, переход на Diagnostic, адаптация реестра компонентов и пакетных поставок.
+XamlRuntime и OpenGLESRenderer зарегистрированы в Components.json и используют общий граф CMake/MSBuild UDK. XamlCompiler — отдельный host-инструмент в Projects/Cmake/XamlCompiler. Namespace: universaldevkit::xamlruntime, universaldevkit::xamlruntime::runtimemarkup и universaldevkit::openglesrenderer. Aliases xaml, xaml::runtime и es_renderer сохранены для перехода потребителей; новые определения namespace используют полные имена UDK.
 
-## Состав
+## Общие механизмы
 
-- Includes/XamlRuntime/UniversalDevKit/XamlRuntime — заголовки runtime; Sources/XamlRuntime — реализация.
-- Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer — заголовки renderer; Sources/OpenGLESRenderer — реализация.
-- Sources/XamlCompiler/Main.cpp — host-компилятор XAML; Projects/Cmake/XamlCompiler — его самостоятельная сборка.
-- ThirdParty/XamlRuntime — исходные stb_truetype, NanoSVG и ANGLE vcpkg recipes. Лицензионные уведомления внутри файлов сохранены. Готовые ANGLE-бинарники не включены.
-- Sources/XamlRuntime/LegacyLogging — временная приватная копия Helpers.Logging с исходными Windows/Android backend. Она использует существующий ThirdParty/spdlog UDK в header-only режиме. Это не Diagnostic и не новый публичный компонент.
-- Tests/XamlRuntime — существующая проверка ColorAnimation и её разметка.
+Геометрия находится в Helpers/Math/Geometry.h: Bounds хранит x/y/width/height, существующий Rect сохраняет left/top/right/bottom. FromEdges/ToEdges явно преобразуют представления. Contains включает границы, Intersect сохраняет пустое пересечение, Inset ограничивает размер снизу нулём. RoundOut округляет наружу и сохраняет пустоту. FitScale требует положительный исходный размер и неотрицательный конечный.
 
-Поведение layout, binding, анимаций, clipping, цветов и жестов сохраняется. Namespace xaml/es_renderer и старые имена сущностей пока сохранены намеренно. Публичные include переведены на UniversalDevKit/XamlRuntime и UniversalDevKit/OpenGLESRenderer; host-компилятор генерирует новые include. Внутренние include пересчитаны после разделения заголовков и реализации. Переформатирование и исправления алгоритмов отложены; этот tmp-коммит не является завершением миграции.
+Color.h содержит RGBA и покомпонентную интерполяцию без смены цветового пространства. Motion.h содержит easing и экспоненциальное движение; нулевое затухание соответствует равномерному движению, expm1 сохраняет точность при малом шаге. Выбор анимируемого свойства, часы, пороги жестов и layout остаются в XamlRuntime.
 
-## Сборка Windows
+UTF-8 объединён в Helpers/Text/Utf8.h. Unicode использует строгую проверку последовательностей, renderer заменяет повреждённые последовательности на '?'. ObservableCollection использует Helpers/Event/Signal. Отписка безопасна после уничтожения источника; новые подписки не входят в уже начатое уведомление. Текущий набор callback фиксируется Signal на начало уведомления.
 
-Временный CMake-проект независим от корневого Components.json: он создаёт только исходные статические библиотеки и host-инструмент, не объявляя ещё не адаптированные Dynamic/Shared варианты и пакетные контракты. Общая сборка UDK не изменена. Visual Studio использует сгенерированные CMake проекты внутри !artifacts.
+Логирование использует приватную зависимость Diagnostic.Dynamic. LegacyLogging удалён. Приложение/host инициализирует Diagnostic; runtime не меняет его настройки и не вызывает Shutdown. Все модули процесса должны использовать одну Diagnostic DLL/SO и совместимый C++ runtime.
+
+## Проверка исходников
 
 ```powershell
-cmake -S Projects/Cmake/XamlRuntime -B !artifacts/Windows-x64/cmake/XamlRuntimeTmp -G "Visual Studio 18 2026" -A x64 -DUniversalDevKitXaml_BUILD_RENDERER=OFF
-cmake --build !artifacts/Windows-x64/cmake/XamlRuntimeTmp --config Debug
-ctest --test-dir !artifacts/Windows-x64/cmake/XamlRuntimeTmp -C Debug --output-on-failure
+cmake -S Tests/XamlRuntime -B !artifacts/Windows-x64/cmake/XamlRefactor -G "Visual Studio 18 2026" -A x64
+cmake --build !artifacts/Windows-x64/cmake/XamlRefactor --config Debug
+ctest --test-dir !artifacts/Windows-x64/cmake/XamlRefactor -C Debug --output-on-failure
 ```
 
-Для renderer включите UniversalDevKitXaml_BUILD_RENDERER и передайте UniversalDevKitXaml_ANGLE_ROOT: каталог установки ANGLE с include/lib либо распакованный старый XamlRuntime NuGet с build/native/include и runtimes/win-x64/native/Release. Используются только ANGLE headers/import libraries, библиотеки старого XamlRuntime не подключаются. Renderer сейчас собирается как static archive; для его запуска приложению отдельно нужны совместимые ANGLE DLL и их runtime-зависимости. Автоматическая сборка и доставка ANGLE появятся при адаптации пакетов.
+ColorAnimation сравнивает скомпилированную страницу и runtime-дерево, RGBA, Current, opacity и отказ при неверной разметке. Contracts проверяет геометрию, затухание, Unicode и время жизни подписок. Release проверяется той же командой с другой конфигурацией.
 
-Targets: UniversalDevKit::XamlRuntime.Static, UniversalDevKit::OpenGLESRenderer.Static. Старые XamlRuntime::Runtime и XamlRuntime::OpenGLESRenderer сохранены как CMake aliases. Потребитель может подключить Projects/Cmake/XamlRuntime через add_subdirectory; параметры compiler/tests при этом следует отключить, если инструменты не нужны.
+Для библиотеки используйте корневой CMake с UniversalDevKit_COMPONENTS=XamlRuntime либо OpenGLESRenderer. Targets: UniversalDevKit::XamlRuntime.Static/Dynamic и UniversalDevKit::OpenGLESRenderer.Static/Dynamic. Include: UniversalDevKit/XamlRuntime и UniversalDevKit/OpenGLESRenderer. MSBuild-проекты генерируются из того же реестра.
 
-## Android
+Windows renderer требует UniversalDevKitAngleRoot либо UDK_ANGLE_ROOT: установку ANGLE include/lib или распакованную прежнюю поставку с build/native/include и runtimes/win-x64/native/Release. Используются только ANGLE headers/import libraries; старые XamlRuntime-библиотеки не линкуются. На Android используется системный GLESv3. Исходники stb_truetype, NanoSVG и vcpkg recipe ANGLE находятся в ThirdParty/XamlRuntime с исходными лицензионными уведомлениями.
 
-Используйте штатный NDK r27c toolchain, ABI arm64-v8a или x86_64, API 24 и c++_shared. При cross-build обязательно отключите UniversalDevKitXaml_BUILD_COMPILER и UniversalDevKitXaml_BUILD_TESTS: host-компилятор собирается отдельно под Windows. Android renderer использует системный GLESv3; legacy logging использует logcat.
+Android: NDK r27c, API 24+, arm64-v8a/x86_64 и c++_shared. Host-компилятор собирается отдельно под Windows. Компиляция renderer не подтверждает пиксельный результат, работу preview или запуск APK на устройстве.
 
-Начальная проверка: Windows Debug/Release с выполнением существующего ColorAnimation-теста и Android native-сборка. Она не подтверждает пиксельный результат renderer, preview, APK или работу на Android-устройстве. NuGet/AAR публикация, переход потребителей и удаление старой реализации здесь не выполняются.
+Исходная точка переноса: tmp-коммит 14c8eaa, источник UtilityHelpersLib 1c12ac945f33ecab88f70756b300d4f2e8b440e5. Пакетная доставка и переход существующих приложений проверяются отдельно от контрактов исходников.

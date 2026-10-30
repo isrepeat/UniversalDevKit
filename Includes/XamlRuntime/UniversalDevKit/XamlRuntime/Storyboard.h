@@ -1,13 +1,17 @@
 #pragma once
+#include <UniversalDevKit/Helpers/Math/Motion.h>
+#include <UniversalDevKit/Helpers/Math/Color.h>
+
+#include "Config.h"
+#include "Export.h"
 
 #include <unordered_map>
-#include <string>
 #include <chrono>
+#include <string>
 #include <vector>
 #include <array>
 
-namespace xaml {
-    namespace attr { struct Color; }
+namespace universaldevkit::xamlruntime {
 
     enum class AnimatedProperty {
         opacity,
@@ -33,12 +37,10 @@ namespace xaml {
         visualState,
     };
 
-    enum class Easing {
-        linear,
-        cubicOut,
-    };
+    namespace attr { using Color = universaldevkit::helpers::math::Color; }
+    using Easing = universaldevkit::helpers::math::Easing;
 
-    class AnimationSettings final {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API AnimationSettings final {
     public:
         void Set(std::string name, std::string value);
         const std::string& Get(const std::string& name) const;
@@ -49,7 +51,7 @@ namespace xaml {
         std::unordered_map<std::string, std::string> values;
     };
 
-    struct AnimationTrack {
+    struct UNIVERSALDEVKIT_XAMLRUNTIME_API AnimationTrack {
         AnimatedProperty property = AnimatedProperty::opacity;
         float from = 0.0f;
         float to = 0.0f;

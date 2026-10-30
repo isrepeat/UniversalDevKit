@@ -5,8 +5,8 @@
 #include <algorithm>
 #include <cmath>
 
-namespace xaml {
-    namespace _details {
+namespace universaldevkit::xamlruntime {
+    namespace details {
         constexpr float velocityThreshold = 35.0f;
         constexpr float maximumVelocity = 8000.0f;
         constexpr float stopVelocity = 5.0f;
@@ -56,9 +56,9 @@ namespace xaml {
         const float distance = this->samples.back().position - this->samples.front().position;
         this->velocity = std::clamp(
             distance / seconds,
-            -_details::maximumVelocity,
-            _details::maximumVelocity);
-        this->isInertial = std::abs(this->velocity) >= _details::velocityThreshold;
+            -details::maximumVelocity,
+            details::maximumVelocity);
+        this->isInertial = std::abs(this->velocity) >= details::velocityThreshold;
         this->updatedAt = std::chrono::steady_clock::now();
         this->samples.clear();
         this->dragDistance = 0.0f;
@@ -70,22 +70,22 @@ namespace xaml {
         }
         const auto now = std::chrono::steady_clock::now();
         const float elapsed = std::min(
-            _details::maximumFrameDuration,
+            details::maximumFrameDuration,
             std::chrono::duration<float>(now - this->updatedAt).count());
         this->updatedAt = now;
         if (elapsed <= 0.0f) {
             return true;
         }
         const float offset = this->target->VerticalOffset();
-        const float decay = std::exp(-_details::deceleration * elapsed);
-        const float distance = this->velocity * (1.0f - decay) / _details::deceleration;
+        const auto motionStep = universaldevkit::helpers::math::Motion::ExponentialStep(this->velocity, details::deceleration, elapsed);
+        const float distance = motionStep.distance;
         this->target->SetVerticalOffset(offset + distance);
         if (this->target->VerticalOffset() == offset) {
             this->Cancel();
             return false;
         }
-        this->velocity *= decay;
-        if (std::abs(this->velocity) < _details::stopVelocity) {
+        this->velocity = motionStep.velocity;
+        if (std::abs(this->velocity) < details::stopVelocity) {
             this->Cancel();
         }
         return true;

@@ -9,8 +9,8 @@
 #include <chrono>
 #include <cmath>
 
-namespace xaml {
-    namespace _details {
+namespace universaldevkit::xamlruntime {
+    namespace details {
         constexpr float GestureThreshold = 8.0f;
         constexpr float PanCompletionThreshold = 180.0f;
     }
@@ -46,7 +46,7 @@ namespace xaml {
     bool PanGestureRecognizer::Update(const GestureContext& context) {
         const float horizontalDistance = context.currentX - context.downX;
         const float verticalDistance = context.currentY - context.downY;
-        if (std::max(std::abs(horizontalDistance), std::abs(verticalDistance)) < _details::GestureThreshold
+        if (std::max(std::abs(horizontalDistance), std::abs(verticalDistance)) < details::GestureThreshold
             || std::abs(horizontalDistance) <= std::abs(verticalDistance)
             || !this->targetPredicate
             || !this->targetPredicate(context.target)) {
@@ -58,7 +58,7 @@ namespace xaml {
 
     GestureResult PanGestureRecognizer::Complete(const GestureContext& context) {
         const float horizontalDistance = context.currentX - context.downX;
-        if (std::abs(horizontalDistance) < _details::PanCompletionThreshold) {
+        if (std::abs(horizontalDistance) < details::PanCompletionThreshold) {
             context.animations.Animate(
                 context.target,
                 AnimatedProperty::renderOffsetX,
@@ -94,7 +94,7 @@ namespace xaml {
         const float horizontalDistance = context.currentX - context.downX;
         const float verticalDistance = context.currentY - context.downY;
         if (context.scrollViewer == nullptr
-            || std::max(std::abs(horizontalDistance), std::abs(verticalDistance)) < _details::GestureThreshold
+            || std::max(std::abs(horizontalDistance), std::abs(verticalDistance)) < details::GestureThreshold
             || std::abs(verticalDistance) <= std::abs(horizontalDistance)) {
             return false;
         }

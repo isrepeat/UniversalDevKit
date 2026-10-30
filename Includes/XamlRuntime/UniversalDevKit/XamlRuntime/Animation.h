@@ -1,5 +1,7 @@
 #pragma once
 #include "VisualState.h"
+#include "Config.h"
+#include "Export.h"
 
 #include <unordered_map>
 #include <functional>
@@ -8,9 +10,9 @@
 #include <string>
 #include <any>
 
-namespace xaml {
-    class Element;
-    class AnimationRegistry;
+namespace universaldevkit::xamlruntime {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API Element;
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API AnimationRegistry;
 
     enum class PresencePhase { hidden, appearing, visible, disappearing };
 
@@ -59,7 +61,7 @@ namespace xaml {
     };
 
     // Нетипизированный контекст вызова. Типизированные контексты предоставляют своё состояние и общую трансформацию.
-    class AnimationInvocation {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API AnimationInvocation {
     public:
         AnimationInvocation(Element& element, AnimationTrigger trigger, bool startingFromHidden = false,
             const AnimationSettings* settings = nullptr);
@@ -123,7 +125,7 @@ namespace xaml {
         TState& state;
     };
 
-    class AnimationRegistry final {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API AnimationRegistry final {
     public:
         explicit AnimationRegistry(StateRegistry states = {});
 
@@ -178,7 +180,7 @@ namespace xaml {
         std::unordered_map<std::string, Entry> handlers;
     };
 
-    class AnimationController final {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API AnimationController final {
     public:
         void Attach(Element& root, const AnimationRegistry& registry, bool animateInitial = false);
         void Animate(Element& target, AnimatedProperty property, float from, float to,
@@ -234,7 +236,7 @@ namespace xaml {
         float playbackRate = 1.0f;
     };
 
-    class VisualStateManager final {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API VisualStateManager final {
     public:
         static bool GoToState(Element& scope, const std::string& groupName,
             const std::string& stateName, bool useTransitions = true);

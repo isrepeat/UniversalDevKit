@@ -1,12 +1,13 @@
 #pragma once
-
 #include "ScrollController.h"
+#include "Config.h"
+#include "Export.h"
 
 #include <functional>
 
-namespace xaml {
-    class AnimationController;
-    class Element;
+namespace universaldevkit::xamlruntime {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API AnimationController;
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API Element;
 
     enum class GestureKind {
         none,
@@ -41,7 +42,7 @@ namespace xaml {
         int itemIndex = -1;
     };
 
-    class GestureRecognizer {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API GestureRecognizer {
     public:
         virtual ~GestureRecognizer() = default;
 
@@ -51,7 +52,7 @@ namespace xaml {
         virtual bool UpdateInertia() = 0;
     };
 
-    class TapGestureRecognizer final : public GestureRecognizer {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API TapGestureRecognizer final : public GestureRecognizer {
     public:
         bool Update(const GestureContext& context) override;
         GestureResult Complete(const GestureContext& context) override;
@@ -59,7 +60,7 @@ namespace xaml {
         bool UpdateInertia() override;
     };
 
-    class PanGestureRecognizer final : public GestureRecognizer {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API PanGestureRecognizer final : public GestureRecognizer {
     public:
         using TargetPredicate = std::function<bool(const Element&)>;
 
@@ -77,7 +78,7 @@ namespace xaml {
         TargetPredicate targetPredicate;
     };
 
-    class ScrollGestureRecognizer final : public GestureRecognizer {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API ScrollGestureRecognizer final : public GestureRecognizer {
     public:
         bool Update(const GestureContext& context) override;
         GestureResult Complete(const GestureContext& context) override;

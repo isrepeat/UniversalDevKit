@@ -5,7 +5,7 @@
 #include <cctype>
 #include <set>
 
-namespace xaml::runtime::_details {
+namespace universaldevkit::xamlruntime::runtimemarkup::details {
     std::string Resolve(std::string& name, const std::map<std::string, std::string>& namespaces,
         const XamlSourceLocation& location, bool attribute) {
         const auto colon = name.find(':');
@@ -24,7 +24,7 @@ namespace xaml::runtime::_details {
     }
 }
 
-namespace xaml::runtime {
+namespace universaldevkit::xamlruntime::runtimemarkup {
     RuntimeDiagnostic::RuntimeDiagnostic(const XamlSourceLocation& location, const std::string& message)
         : std::runtime_error(location.path + ":" + std::to_string(location.line) + ":"
             + std::to_string(location.column) + ": " + message) {
@@ -223,10 +223,10 @@ namespace xaml::runtime {
                 node.attributes.push_back(std::move(attribute));
             }
         }
-        node.nameSpace = _details::Resolve(node.name, namespaces, node.location, false);
+        node.nameSpace = details::Resolve(node.name, namespaces, node.location, false);
         names.clear();
         for (auto& attribute : node.attributes) {
-            attribute.nameSpace = _details::Resolve(attribute.name, namespaces, attribute.location, true);
+            attribute.nameSpace = details::Resolve(attribute.name, namespaces, attribute.location, true);
             if (!names.insert(attribute.nameSpace + "|" + attribute.name).second) {
                 throw RuntimeDiagnostic(attribute.location, "Duplicate expanded attribute name");
             }

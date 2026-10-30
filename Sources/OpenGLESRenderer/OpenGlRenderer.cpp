@@ -11,10 +11,11 @@
 #define NANOSVGRAST_IMPLEMENTATION
 #include "../../ThirdParty/XamlRuntime/nanosvgrast.h"
 
-#include <Helpers.Logging/Logging.h>
+#include <UniversalDevKit/Diagnostic/Logging.h>
+#include <UniversalDevKit/Helpers/Text/Utf8.h>
 
 #undef DrawText
-#include "../../Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/StandardShaders.h"
+#include "StandardShaders.h"
 
 #include <unordered_map>
 #include <algorithm>
@@ -27,7 +28,7 @@
 #include <array>
 #include <cmath>
 
-namespace es_renderer::_details {
+namespace universaldevkit::openglesrenderer::details {
     constexpr int FirstAsciiGlyph = 32;
     constexpr int AsciiGlyphCount = 96;
     constexpr int FirstCyrillicGlyph = 0x0400;
@@ -40,37 +41,10 @@ namespace es_renderer::_details {
 
     // Команды runtime хранят текст в UTF-8, а stb_truetype ожидает code point.
     // Повреждённая либо неподдерживаемая последовательность заменяется на '?'.
-    uint32_t DecodeUtf8(const char*& current, const char* end) {
-        const auto lead = static_cast<unsigned char>(*current++);
-        if (lead < 0x80) {
-            return lead;
-        }
-        if ((lead & 0xE0) == 0xC0 && current < end) {
-            const auto second = static_cast<unsigned char>(*current++);
-            return static_cast<uint32_t>(lead & 0x1F) << 6
-                | static_cast<uint32_t>(second & 0x3F);
-        }
-        if ((lead & 0xF0) == 0xE0 && end - current >= 2) {
-            const auto second = static_cast<unsigned char>(*current++);
-            const auto third = static_cast<unsigned char>(*current++);
-            return static_cast<uint32_t>(lead & 0x0F) << 12
-                | static_cast<uint32_t>(second & 0x3F) << 6
-                | static_cast<uint32_t>(third & 0x3F);
-        }
-        if ((lead & 0xF8) == 0xF0 && end - current >= 3) {
-            const auto second = static_cast<unsigned char>(*current++);
-            const auto third = static_cast<unsigned char>(*current++);
-            const auto fourth = static_cast<unsigned char>(*current++);
-            return static_cast<uint32_t>(lead & 0x07) << 18
-                | static_cast<uint32_t>(second & 0x3F) << 12
-                | static_cast<uint32_t>(third & 0x3F) << 6
-                | static_cast<uint32_t>(fourth & 0x3F);
-        }
-        return '?';
-    }
+
 }
 
-namespace es_renderer {
+namespace universaldevkit::openglesrenderer {
     class OpenGlRenderer::Implementation {
     public:
         Implementation(
@@ -122,8 +96,8 @@ namespace es_renderer {
 
         struct FontAtlas {
             GLuint texture = 0;
-            stbtt_packedchar asciiGlyphs[_details::AsciiGlyphCount]{};
-            stbtt_packedchar cyrillicGlyphs[_details::CyrillicGlyphCount]{};
+            stbtt_packedchar asciiGlyphs[details::AsciiGlyphCount]{};
+            stbtt_packedchar cyrillicGlyphs[details::CyrillicGlyphCount]{};
             stbtt_packedchar settingsGlyph[1]{};
         };
 
@@ -200,16 +174,16 @@ namespace es_renderer {
         // Стандартная графика работает без программ от хоста. Явная подмена
         // по ключу роли имеет приоритет над встроенным исходником.
         shaderPrograms.try_emplace(ShaderRoles::text,
-            ShaderProgramSource{_details::TextVertexShader, _details::TextFragmentShader});
+            ShaderProgramSource{details::TextVertexShader, details::TextFragmentShader});
         shaderPrograms.try_emplace(ShaderRoles::solid,
-            ShaderProgramSource{_details::SolidVertexShader, _details::SolidFragmentShader});
+            ShaderProgramSource{details::SolidVertexShader, details::SolidFragmentShader});
         shaderPrograms.try_emplace(ShaderRoles::roundedRectangle,
             ShaderProgramSource{
-                _details::RoundedRectangleVertexShader,
-                _details::RoundedRectangleFragmentShader,
+                details::RoundedRectangleVertexShader,
+                details::RoundedRectangleFragmentShader,
             });
         shaderPrograms.try_emplace(ShaderRoles::image,
-            ShaderProgramSource{_details::ImageVertexShader, _details::ImageFragmentShader});
+            ShaderProgramSource{details::ImageVertexShader, details::ImageFragmentShader});
         for (const auto& [name, source] : shaderPrograms) {
             if (name.empty() || source.vertex.empty() || source.fragment.empty()) {
                 throw std::invalid_argument("Invalid OpenGL shader program source");
@@ -239,7 +213,7 @@ namespace es_renderer {
         this->CreateFontAtlas(regularFontData, this->regularFontAtlas);
         this->CreateFontAtlas(boldFontData, this->boldFontAtlas);
         this->CreateFontAtlas(blackFontData, this->blackFontAtlas);
-        LOG_INFO(
+        UDK_LOG_INFO(
             "OpenGlRenderer",
             "Initialized: viewport={}x{}, regularFontBytes={}, boldFontBytes={}, blackFontBytes={}",
             width,
@@ -298,7 +272,7 @@ namespace es_renderer {
             std::string log(static_cast<size_t>(std::max(1, logLength)), '\0');
             glGetShaderInfoLog(shader, logLength, nullptr, log.data());
             glDeleteShader(shader);
-            LOG_ERROR("OpenGlRenderer", "Shader compilation failed: {}", log);
+            UDK_LOG_ERROR("OpenGlRenderer", "Shader compilation failed: {}", log);
             throw std::runtime_error("ANGLE shader compilation failed: " + log);
         }
         return shader;
@@ -323,7 +297,7 @@ namespace es_renderer {
             std::string log(static_cast<size_t>(std::max(1, logLength)), '\0');
             glGetProgramInfoLog(program, logLength, nullptr, log.data());
             glDeleteProgram(program);
-            LOG_ERROR("OpenGlRenderer", "Shader program linking failed: {}", log);
+            UDK_LOG_ERROR("OpenGlRenderer", "Shader program linking failed: {}", log);
             throw std::runtime_error("ANGLE program linking failed: " + log);
         }
         return program;
@@ -333,13 +307,13 @@ namespace es_renderer {
         const unsigned char* fontData,
         FontAtlas& fontAtlas) {
         // Один atlas покрывает ASCII, кириллицу и значок настроек из тестовой разметки.
-        std::vector<unsigned char> atlas(_details::AtlasWidth * _details::AtlasHeight, 0);
+        std::vector<unsigned char> atlas(details::AtlasWidth * details::AtlasHeight, 0);
         stbtt_pack_context packingContext{};
         const int packingStarted = stbtt_PackBegin(
             &packingContext,
             atlas.data(),
-            _details::AtlasWidth,
-            _details::AtlasHeight,
+            details::AtlasWidth,
+            details::AtlasHeight,
             0,
             1,
             nullptr);
@@ -347,24 +321,24 @@ namespace es_renderer {
             &packingContext,
             fontData,
             0,
-            _details::AtlasFontSize,
-            _details::FirstAsciiGlyph,
-            _details::AsciiGlyphCount,
+            details::AtlasFontSize,
+            details::FirstAsciiGlyph,
+            details::AsciiGlyphCount,
             fontAtlas.asciiGlyphs);
         const int cyrillicPacked = asciiPacked == 0 ? 0 : stbtt_PackFontRange(
             &packingContext,
             fontData,
             0,
-            _details::AtlasFontSize,
-            _details::FirstCyrillicGlyph,
-            _details::CyrillicGlyphCount,
+            details::AtlasFontSize,
+            details::FirstCyrillicGlyph,
+            details::CyrillicGlyphCount,
             fontAtlas.cyrillicGlyphs);
         const int settingsPacked = cyrillicPacked == 0 ? 0 : stbtt_PackFontRange(
             &packingContext,
             fontData,
             0,
-            _details::AtlasFontSize,
-            _details::SettingsGlyph,
+            details::AtlasFontSize,
+            details::SettingsGlyph,
             1,
             fontAtlas.settingsGlyph);
         if (packingStarted != 0) {
@@ -381,8 +355,8 @@ namespace es_renderer {
             GL_TEXTURE_2D,
             0,
             GL_R8,
-            _details::AtlasWidth,
-            _details::AtlasHeight,
+            details::AtlasWidth,
+            details::AtlasHeight,
             0,
             GL_RED,
             GL_UNSIGNED_BYTE,
@@ -391,11 +365,11 @@ namespace es_renderer {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        LOG_DEBUG(
+        UDK_LOG_DEBUG(
             "OpenGlRenderer",
             "Font atlas created: {}x{}",
-            _details::AtlasWidth,
-            _details::AtlasHeight);
+            details::AtlasWidth,
+            details::AtlasHeight);
     }
 
     void OpenGlRenderer::Implementation::EndClip() const {
@@ -540,7 +514,7 @@ namespace es_renderer {
         std::initializer_list<xaml::ShaderUniform> uniforms) {
         const auto found = this->shaderPrograms.find(std::string(shaderName));
         if (found == this->shaderPrograms.end()) {
-            LOG_ERROR("OpenGlRenderer", "Shader program is not registered: {}", shaderName);
+            UDK_LOG_ERROR("OpenGlRenderer", "Shader program is not registered: {}", shaderName);
             return;
         }
         const GLuint program = found->second;
@@ -607,16 +581,16 @@ namespace es_renderer {
         const FontAtlas& fontAtlas = this->GetFontAtlas(fontWeight);
         // stb_truetype выдаёт метрики для размера atlas; scale переводит их
         // обратно в fontSize, заданный XAML-командой.
-        const float scale = fontSize / _details::AtlasFontSize;
+        const float scale = fontSize / details::AtlasFontSize;
         float textWidth = 0.0f;
         float minimumY = std::numeric_limits<float>::max();
         float maximumY = std::numeric_limits<float>::lowest();
         int glyphCount = 0;
         const char* current = text.data();
         const char* const end = text.data() + text.size();
-        while (current < end && glyphCount < _details::MaximumTextGlyphs) {
+        while (current < end && glyphCount < details::MaximumTextGlyphs) {
             const GlyphReference reference = this->GetGlyph(
-                _details::DecodeUtf8(current, end),
+                universaldevkit::helpers::text::Utf8::Next(current, end, '?'),
                 fontAtlas);
             const stbtt_packedchar& glyph = reference.glyphs[reference.index];
             textWidth += glyph.xadvance * scale;
@@ -642,15 +616,15 @@ namespace es_renderer {
         vertices.reserve(static_cast<size_t>(glyphCount) * 6 * 4);
         current = text.data();
         int renderedGlyphs = 0;
-        while (current < end && renderedGlyphs < _details::MaximumTextGlyphs) {
+        while (current < end && renderedGlyphs < details::MaximumTextGlyphs) {
             const GlyphReference reference = this->GetGlyph(
-                _details::DecodeUtf8(current, end),
+                universaldevkit::helpers::text::Utf8::Next(current, end, '?'),
                 fontAtlas);
             stbtt_aligned_quad quad{};
             stbtt_GetPackedQuad(
                 reference.glyphs,
-                _details::AtlasWidth,
-                _details::AtlasHeight,
+                details::AtlasWidth,
+                details::AtlasHeight,
                 reference.index,
                 &cursorX,
                 &cursorY,
@@ -717,9 +691,7 @@ namespace es_renderer {
             return {};
         }
         constexpr int maximumTextureSize = 128;
-        const float scale = std::min(
-            static_cast<float>(maximumTextureSize) / image->width,
-            static_cast<float>(maximumTextureSize) / image->height);
+        const float scale = universaldevkit::helpers::math::Geometry::FitScale({image->width, image->height}, {maximumTextureSize, maximumTextureSize});
         const int textureWidth = std::max(1, static_cast<int>(std::ceil(image->width * scale)));
         const int textureHeight = std::max(1, static_cast<int>(std::ceil(image->height * scale)));
         std::vector<unsigned char> pixels(textureWidth * textureHeight * 4, 0);
@@ -760,7 +732,7 @@ namespace es_renderer {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         const SvgTexture result{texture, textureWidth, textureHeight};
         this->imageTextures.emplace(source, result);
-        LOG_DEBUG(
+        UDK_LOG_DEBUG(
             "OpenGlRenderer",
             "SVG texture loaded: source='{}', texture={}",
             source,
@@ -786,9 +758,7 @@ namespace es_renderer {
         }
         std::vector<float> vertices;
         vertices.reserve(24);
-        const float scale = std::min(
-            bounds.width / static_cast<float>(texture.width),
-            bounds.height / static_cast<float>(texture.height));
+        const float scale = universaldevkit::helpers::math::Geometry::FitScale({static_cast<float>(texture.width), static_cast<float>(texture.height)}, {bounds.width, bounds.height});
         const float imageWidth = static_cast<float>(texture.width) * scale;
         const float imageHeight = static_cast<float>(texture.height) * scale;
         const float left = bounds.x + (bounds.width - imageWidth) / 2.0f;
@@ -819,11 +789,7 @@ namespace es_renderer {
         xaml::Rect clipped = bounds;
         if (!this->clipStack.empty()) {
             const xaml::Rect& parent = this->clipStack.back();
-            const float left = std::max(parent.x, clipped.x);
-            const float top = std::max(parent.y, clipped.y);
-            const float right = std::min(parent.x + parent.width, clipped.x + clipped.width);
-            const float bottom = std::min(parent.y + parent.height, clipped.y + clipped.height);
-            clipped = {left, top, std::max(0.0f, right - left), std::max(0.0f, bottom - top)};
+            clipped = universaldevkit::helpers::math::Geometry::Intersect(parent, clipped);
         }
         this->clipStack.push_back(clipped);
         this->ApplyClip(clipped);
@@ -839,20 +805,11 @@ namespace es_renderer {
         }
         // Координаты XAML отсчитываются сверху, тогда как glScissor — снизу.
         // Поэтому вертикальные границы инвертируются перед включением scissor.
-        const int left = std::max(0, static_cast<int>(std::floor(bounds.x)));
-        const int right = std::min(
-            this->width,
-            static_cast<int>(std::ceil(bounds.x + bounds.width)));
-        const int top = std::max(0, static_cast<int>(std::floor(bounds.y)));
-        const int bottom = std::min(
-            this->height,
-            static_cast<int>(std::ceil(bounds.y + bounds.height)));
+        const auto pixels = universaldevkit::helpers::math::Geometry::Intersect(
+            universaldevkit::helpers::math::Geometry::RoundOut(bounds),
+            universaldevkit::helpers::math::Bounds<int>{0, 0, this->width, this->height});
         glEnable(GL_SCISSOR_TEST);
-        glScissor(
-            left,
-            this->height - bottom,
-            std::max(0, right - left),
-            std::max(0, bottom - top));
+        glScissor(pixels.x, this->height - pixels.y - pixels.height, pixels.width, pixels.height);
     }
 
     void OpenGlRenderer::Implementation::AppendPosition(
@@ -899,7 +856,7 @@ namespace es_renderer {
 
     std::vector<xaml::TextGlyphMetric> OpenGlRenderer::Implementation::TextGlyphMetrics() const {
         std::vector<xaml::TextGlyphMetric> result;
-        result.reserve(3 * (_details::AsciiGlyphCount + _details::CyrillicGlyphCount + 1));
+        result.reserve(3 * (details::AsciiGlyphCount + details::CyrillicGlyphCount + 1));
         const auto append = [&result](std::string_view fontWeight, const FontAtlas& fontAtlas) {
             const auto appendRange = [&result, fontWeight](uint32_t firstCodepoint, const auto& glyphs) {
                 for (size_t index = 0; index < std::size(glyphs); ++index) {
@@ -907,14 +864,14 @@ namespace es_renderer {
                     result.push_back({
                         std::string(fontWeight),
                         firstCodepoint + static_cast<uint32_t>(index),
-                        glyph.yoff / _details::AtlasFontSize,
-                        glyph.yoff2 / _details::AtlasFontSize,
+                        glyph.yoff / details::AtlasFontSize,
+                        glyph.yoff2 / details::AtlasFontSize,
                     });
                 }
             };
-            appendRange(_details::FirstAsciiGlyph, fontAtlas.asciiGlyphs);
-            appendRange(_details::FirstCyrillicGlyph, fontAtlas.cyrillicGlyphs);
-            appendRange(_details::SettingsGlyph, fontAtlas.settingsGlyph);
+            appendRange(details::FirstAsciiGlyph, fontAtlas.asciiGlyphs);
+            appendRange(details::FirstCyrillicGlyph, fontAtlas.cyrillicGlyphs);
+            appendRange(details::SettingsGlyph, fontAtlas.settingsGlyph);
         };
         append("Normal", this->regularFontAtlas);
         append("Bold", this->boldFontAtlas);
@@ -926,24 +883,24 @@ namespace es_renderer {
     OpenGlRenderer::Implementation::GetGlyph(
         uint32_t codepoint,
         const FontAtlas& fontAtlas) const {
-        if (codepoint >= _details::FirstAsciiGlyph
-            && codepoint < _details::FirstAsciiGlyph + _details::AsciiGlyphCount) {
+        if (codepoint >= details::FirstAsciiGlyph
+            && codepoint < details::FirstAsciiGlyph + details::AsciiGlyphCount) {
             return {
                 fontAtlas.asciiGlyphs,
-                static_cast<int>(codepoint) - _details::FirstAsciiGlyph,
+                static_cast<int>(codepoint) - details::FirstAsciiGlyph,
             };
         }
-        if (codepoint >= _details::FirstCyrillicGlyph
-            && codepoint < _details::FirstCyrillicGlyph + _details::CyrillicGlyphCount) {
+        if (codepoint >= details::FirstCyrillicGlyph
+            && codepoint < details::FirstCyrillicGlyph + details::CyrillicGlyphCount) {
             return {
                 fontAtlas.cyrillicGlyphs,
-                static_cast<int>(codepoint) - _details::FirstCyrillicGlyph,
+                static_cast<int>(codepoint) - details::FirstCyrillicGlyph,
             };
         }
-        if (codepoint == _details::SettingsGlyph) {
+        if (codepoint == details::SettingsGlyph) {
             return {fontAtlas.settingsGlyph, 0};
         }
-        return {fontAtlas.asciiGlyphs, '?' - _details::FirstAsciiGlyph};
+        return {fontAtlas.asciiGlyphs, '?' - details::FirstAsciiGlyph};
     }
 
     OpenGlRenderer::OpenGlRenderer(

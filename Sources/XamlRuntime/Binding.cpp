@@ -1,6 +1,6 @@
 #include "../../Includes/XamlRuntime/UniversalDevKit/XamlRuntime/Binding.h"
 
-namespace xaml {
+namespace universaldevkit::xamlruntime {
     BindingScope::~BindingScope() {
         this->Clear();
     }
@@ -9,12 +9,12 @@ namespace xaml {
     // API
     //
     void BindingScope::Clear() {
-        for (const std::function<void()>& unsubscribe : this->unsubscriptions) {
-            unsubscribe();
-        }
+        auto unsubscriptions = std::move(this->unsubscriptions);
         this->unsubscriptions.clear();
+        for (const auto& target : this->runtimeTargets) { *target = nullptr; }
         this->sourceUpdates.clear();
         this->runtimeTargets.clear();
+        for (const auto& unsubscribe : unsubscriptions) { unsubscribe(); }
     }
 
     void BindingScope::UpdateSource(Element& element) const {

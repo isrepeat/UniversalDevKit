@@ -5,7 +5,7 @@
 #include <locale>
 #include <cmath>
 
-namespace xaml::_details {
+namespace universaldevkit::xamlruntime::details {
     float ParseStateFloat(const std::string& value) {
         std::istringstream input(value);
         input.imbue(std::locale::classic());
@@ -37,7 +37,7 @@ namespace xaml::_details {
     }
 }
 
-namespace xaml {
+namespace universaldevkit::xamlruntime {
     StateRegistry::StateRegistry() {
         this->Register<VisualTransform>();
         this->Register<EmptyState>();

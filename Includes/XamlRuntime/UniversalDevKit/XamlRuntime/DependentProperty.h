@@ -1,9 +1,11 @@
 #pragma once
+#include "Config.h"
+#include "Export.h"
 
 #include <functional>
 #include <utility>
 
-namespace xaml {
+namespace universaldevkit::xamlruntime {
     template <typename TValue>
     class DependentProperty final {
     public:

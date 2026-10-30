@@ -1,6 +1,6 @@
-#include "../../Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/StandardShaders.h"
+#include "StandardShaders.h"
 
-namespace es_renderer::_details {
+namespace universaldevkit::openglesrenderer::details {
     // Текстовый pipeline передаёт в шейдер позицию вершины и UV-координаты
     // альфа-канала glyph atlas. Геометрия уже приходит в NDC.
     const char TextVertexShader[] = R"(#version 300 es

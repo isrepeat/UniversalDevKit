@@ -1,11 +1,14 @@
 #pragma once
+#include "../Config.h"
+#include "../Export.h"
+
 #include "RuntimeBindingRegistry.h"
 
 #include <functional>
 #include <utility>
 #include <string>
 
-namespace xaml::runtime {
+namespace universaldevkit::xamlruntime::runtimemarkup {
     // Объединяет повторяющуюся механику runtime-байндинга с контрактом ViewModel:
     // получение значения, подписка на Property и отписка вместе с BindingScope.
     template <typename TViewModel>

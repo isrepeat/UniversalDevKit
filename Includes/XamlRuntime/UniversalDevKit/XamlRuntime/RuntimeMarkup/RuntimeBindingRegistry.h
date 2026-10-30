@@ -1,11 +1,13 @@
 #pragma once
 #include "../Binding.h"
+#include "../Config.h"
+#include "../Export.h"
 
-#include <map>
 #include <memory>
+#include <map>
 
-namespace xaml::runtime {
-    class RuntimeBindingRegistry;
+namespace universaldevkit::xamlruntime::runtimemarkup {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API RuntimeBindingRegistry;
     using SubscriptionFactory = std::function<std::function<void()>(std::function<void()>)>;
 
     struct RuntimeCollectionDescriptor {
@@ -15,7 +17,7 @@ namespace xaml::runtime {
         std::function<void(Element&, Element::ItemTemplate)> bind;
     };
 
-    class RuntimeBindingRegistry final {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API RuntimeBindingRegistry final {
     public:
         RuntimeBindingRegistry() = default;
         explicit RuntimeBindingRegistry(std::shared_ptr<const RuntimeBindingRegistry> fallback);

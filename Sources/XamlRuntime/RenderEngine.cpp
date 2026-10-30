@@ -5,32 +5,21 @@
 #include <vector>
 #include <cmath>
 
-namespace xaml::_details {
+namespace universaldevkit::xamlruntime::details {
     Rect Translate(Rect bounds, float offsetX, float offsetY = 0.0f) {
-        bounds.x += offsetX;
-        bounds.y += offsetY;
-        return bounds;
+        return universaldevkit::helpers::math::Geometry::Translate(bounds, offsetX, offsetY);
     }
 
     attr::Color WithOpacity(attr::Color color, float opacity) {
-        color.alpha *= opacity;
-        return color;
+        return universaldevkit::helpers::math::ColorMath::WithOpacity(color, opacity);
     }
 
     attr::Color InterpolateColor(attr::Color from, attr::Color to, float progress) {
-        return {
-            from.red + (to.red - from.red) * progress,
-            from.green + (to.green - from.green) * progress,
-            from.blue + (to.blue - from.blue) * progress,
-            from.alpha + (to.alpha - from.alpha) * progress,
-        };
+        return universaldevkit::helpers::math::ColorMath::Interpolate(from, to, progress);
     }
 
     bool AreEqual(attr::Color left, attr::Color right) {
-        return left.red == right.red
-            && left.green == right.green
-            && left.blue == right.blue
-            && left.alpha == right.alpha;
+        return left == right;
     }
 
     attr::Color ButtonColor(
@@ -189,12 +178,7 @@ namespace xaml::_details {
             bounds,
             WithOpacity(borderColor, opacity),
             element.CornerRadius());
-        const Rect innerBounds{
-            bounds.x + borderThickness.left,
-            bounds.y + borderThickness.top,
-            std::max(0.0f, bounds.width - borderThickness.left - borderThickness.right),
-            std::max(0.0f, bounds.height - borderThickness.top - borderThickness.bottom),
-        };
+        const Rect innerBounds = universaldevkit::helpers::math::Geometry::Inset(bounds, borderThickness);
         backend.DrawRoundedRect(
             innerBounds,
             WithOpacity(background, opacity),
@@ -449,7 +433,7 @@ namespace xaml::_details {
     }
 }
 
-namespace xaml {
+namespace universaldevkit::xamlruntime {
     RenderInvocation::RenderInvocation(
         IRenderBackend& backend,
         const Rect& bounds,
@@ -523,9 +507,9 @@ namespace xaml {
         if (root.layoutInvalid) {
             layout(root, root.availableSize);
         }
-        std::vector<_details::InspectionWireframe> inspectionWireframes;
-        _details::RenderElement(root, backend, nullptr, 0.0f, 0.0f, 1.0f, inspectionWireframes);
-        _details::RenderInspectionWireframes(inspectionWireframes, backend);
+        std::vector<details::InspectionWireframe> inspectionWireframes;
+        details::RenderElement(root, backend, nullptr, 0.0f, 0.0f, 1.0f, inspectionWireframes);
+        details::RenderInspectionWireframes(inspectionWireframes, backend);
     }
 
     void Render(Element& root, IRenderBackend& backend, const RendererRegistry& renderers) {
@@ -533,8 +517,8 @@ namespace xaml {
         if (root.layoutInvalid) {
             layout(root, root.availableSize);
         }
-        std::vector<_details::InspectionWireframe> inspectionWireframes;
-        _details::RenderElement(root, backend, &renderers, 0.0f, 0.0f, 1.0f, inspectionWireframes);
-        _details::RenderInspectionWireframes(inspectionWireframes, backend);
+        std::vector<details::InspectionWireframe> inspectionWireframes;
+        details::RenderElement(root, backend, &renderers, 0.0f, 0.0f, 1.0f, inspectionWireframes);
+        details::RenderInspectionWireframes(inspectionWireframes, backend);
     }
 }

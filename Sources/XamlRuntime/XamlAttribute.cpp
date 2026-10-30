@@ -1,7 +1,7 @@
 #include "../../Includes/XamlRuntime/UniversalDevKit/XamlRuntime/XamlAttribute.h"
 
-namespace xaml {
-    namespace _details {
+namespace universaldevkit::xamlruntime {
+    namespace details {
         struct AttributeMapping {
             XamlAttribute attribute;
             XamlAttributeGroup group;
@@ -63,7 +63,7 @@ namespace xaml {
     }
 
     std::optional<XamlAttribute> ParseXamlAttribute(std::string_view name) {
-        for (const _details::AttributeMapping& mapping : _details::attributeMappings) {
+        for (const details::AttributeMapping& mapping : details::attributeMappings) {
             if (mapping.name == name) {
                 return mapping.attribute;
             }
@@ -73,12 +73,12 @@ namespace xaml {
     }
 
     std::string_view XamlAttributeName(XamlAttribute attribute) {
-        const _details::AttributeMapping* mapping = _details::FindAttribute(attribute);
+        const details::AttributeMapping* mapping = details::FindAttribute(attribute);
         return mapping == nullptr ? "unknown" : mapping->name;
     }
 
     XamlAttributeGroup XamlAttributeGroupOf(XamlAttribute attribute) {
-        const _details::AttributeMapping* mapping = _details::FindAttribute(attribute);
+        const details::AttributeMapping* mapping = details::FindAttribute(attribute);
         return mapping == nullptr ? XamlAttributeGroup::identity : mapping->group;
     }
 }

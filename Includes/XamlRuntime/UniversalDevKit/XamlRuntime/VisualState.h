@@ -1,6 +1,7 @@
 #pragma once
-
 #include "Storyboard.h"
+#include "Config.h"
+#include "Export.h"
 
 #include <initializer_list>
 #include <unordered_map>
@@ -13,7 +14,7 @@
 #include <string>
 #include <vector>
 
-namespace xaml {
+namespace universaldevkit::xamlruntime {
     // Общие каналы композиции, не зависящие от конкретного эффекта.
     struct VisualTransform {
         float opacity = 1.0f;
@@ -23,10 +24,10 @@ namespace xaml {
 
     struct EmptyState {};
 
-    namespace _details {
-        float ParseStateFloat(const std::string& value);
-        int ParseStateInt(const std::string& value);
-        bool ParseStateBool(const std::string& value);
+    namespace details {
+        UNIVERSALDEVKIT_XAMLRUNTIME_API float ParseStateFloat(const std::string& value);
+        UNIVERSALDEVKIT_XAMLRUNTIME_API int ParseStateInt(const std::string& value);
+        UNIVERSALDEVKIT_XAMLRUNTIME_API bool ParseStateBool(const std::string& value);
 
         template<typename TValue>
         TValue ParseStateValue(const std::string& value) {
@@ -70,7 +71,7 @@ namespace xaml {
             : name(std::move(declaration.name))
             , apply([member = declaration.member, validate = declaration.validate](
                 TOwner& target, const std::string* text, const TOwner& defaults) {
-                const TValue value = text ? _details::ParseStateValue<TValue>(*text) : defaults.*member;
+                const TValue value = text ? details::ParseStateValue<TValue>(*text) : defaults.*member;
                 if (validate && !validate(value)) {
                     throw std::invalid_argument("Animation option is outside its allowed range");
                 }
@@ -135,7 +136,7 @@ namespace xaml {
         std::vector<OptionBinding<TState>> options;
     };
 
-    class StateRegistry final {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API StateRegistry final {
     public:
         StateRegistry();
 
@@ -159,7 +160,7 @@ namespace xaml {
     };
 
     // Принадлежит одному Element. Адреса подготовленных объектов сохраняются до вызова Clear().
-    class ElementStates final {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API ElementStates final {
     public:
         ElementStates() = default;
         ElementStates(const ElementStates&) = delete;

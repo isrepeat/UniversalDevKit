@@ -1,14 +1,15 @@
 #include "../../Includes/XamlRuntime/UniversalDevKit/XamlRuntime/ElementBuilder.h"
+
 #include "../../Includes/XamlRuntime/UniversalDevKit/XamlRuntime/XamlAttribute.h"
 
-#include <stdexcept>
 #include <algorithm>
+#include <stdexcept>
 #include <cstdint>
 #include <sstream>
 #include <string>
 #include <vector>
 
-namespace xaml::_details {
+namespace universaldevkit::xamlruntime::details {
     uint32_t AttributeGroups(ElementType type) {
         const uint32_t common = static_cast<uint32_t>(XamlAttributeGroup::identity)
             | static_cast<uint32_t>(XamlAttributeGroup::dataContext)
@@ -270,9 +271,9 @@ namespace xaml::_details {
     }
 }
 
-namespace xaml {
+namespace universaldevkit::xamlruntime {
     attr::Color ParseColor(std::string_view value) {
-        return _details::ParseColor(value);
+        return details::ParseColor(value);
     }
 
     ElementType ParseElementType(std::string_view name) {
@@ -319,7 +320,7 @@ namespace xaml {
         std::vector<std::string_view> names;
         for (uint32_t index = 0; index < static_cast<uint32_t>(XamlAttribute::count); ++index) {
             const XamlAttribute attribute = static_cast<XamlAttribute>(index);
-            if (_details::IsAttributeSupported(type, attribute)) {
+            if (details::IsAttributeSupported(type, attribute)) {
                 names.push_back(XamlAttributeName(attribute));
             }
         }
@@ -331,10 +332,10 @@ namespace xaml {
         if (!attribute.has_value()) {
             throw std::invalid_argument("unsupported XAML attribute '" + std::string(name) + "'");
         }
-        if (!_details::IsAttributeSupported(element.Type(), attribute.value())) {
+        if (!details::IsAttributeSupported(element.Type(), attribute.value())) {
             throw std::invalid_argument(
                 "attribute '" + std::string(XamlAttributeName(attribute.value())) + "' is not supported by "
-                + _details::ElementTypeName(element.Type()));
+                + details::ElementTypeName(element.Type()));
         }
         switch (attribute.value()) {
         case XamlAttribute::id:
@@ -373,7 +374,7 @@ namespace xaml {
             element.SetSource(std::string(value));
             return;
         case XamlAttribute::tint:
-            element.SetTint(_details::ParseColor(value));
+            element.SetTint(details::ParseColor(value));
             return;
         case XamlAttribute::command:
             if (value.size() > 10
@@ -384,7 +385,7 @@ namespace xaml {
             }
             throw std::invalid_argument("Command must use a Binding");
         case XamlAttribute::foreground:
-            element.SetForeground(_details::ParseColor(value));
+            element.SetForeground(details::ParseColor(value));
             return;
         case XamlAttribute::orientation:
             if (value != "Horizontal" && value != "Vertical") {
@@ -394,13 +395,13 @@ namespace xaml {
                 ? attr::Orientation::horizontal : attr::Orientation::vertical);
             return;
         case XamlAttribute::verticalAlignment:
-            element.SetVerticalAlignment(_details::ParseAlignment(value));
+            element.SetVerticalAlignment(details::ParseAlignment(value));
             return;
         case XamlAttribute::horizontalAlignment:
-            element.SetHorizontalAlignment(_details::ParseAlignment(value));
+            element.SetHorizontalAlignment(details::ParseAlignment(value));
             return;
         case XamlAttribute::contentAlignment:
-            element.SetContentAlignment(_details::ParseAlignment(value));
+            element.SetContentAlignment(details::ParseAlignment(value));
             return;
         case XamlAttribute::gridRow:
             element.SetGridRow(std::stoi(std::string(value)));
@@ -415,31 +416,31 @@ namespace xaml {
             element.SetColumns(std::string(value));
             return;
         case XamlAttribute::background:
-            element.SetBackground(_details::ParseColor(value));
+            element.SetBackground(details::ParseColor(value));
             return;
         case XamlAttribute::activeBackground:
-            element.SetActiveBackground(_details::ParseColor(value));
+            element.SetActiveBackground(details::ParseColor(value));
             return;
         case XamlAttribute::borderBrush:
-            element.SetBorderColor(_details::ParseColor(value));
+            element.SetBorderColor(details::ParseColor(value));
             return;
         case XamlAttribute::activeBorderBrush:
-            element.SetActiveBorderColor(_details::ParseColor(value));
+            element.SetActiveBorderColor(details::ParseColor(value));
             return;
         case XamlAttribute::activeForeground:
-            element.SetActiveForeground(_details::ParseColor(value));
+            element.SetActiveForeground(details::ParseColor(value));
             return;
         case XamlAttribute::margin:
-            element.SetMargin(_details::ParseThickness(value));
+            element.SetMargin(details::ParseThickness(value));
             return;
         case XamlAttribute::padding:
-            element.SetPadding(_details::ParseThickness(value));
+            element.SetPadding(details::ParseThickness(value));
             return;
         case XamlAttribute::borderThickness:
-            element.SetBorderThickness(_details::ParseThickness(value));
+            element.SetBorderThickness(details::ParseThickness(value));
             return;
         case XamlAttribute::wireframe:
-            element.SetWireframe(_details::ParseWireframe(value));
+            element.SetWireframe(details::ParseWireframe(value));
             return;
         case XamlAttribute::cornerRadius:
             element.SetCornerRadius(std::stof(std::string(value)));
@@ -451,7 +452,7 @@ namespace xaml {
             element.SetHeight(std::stof(std::string(value)));
             return;
         case XamlAttribute::isOn:
-            element.SetIsOn(_details::ParseBool(value));
+            element.SetIsOn(details::ParseBool(value));
             return;
         case XamlAttribute::visibility:
             if (value != "Collapsed" && value != "Hidden" && value != "Visible") {
@@ -461,7 +462,7 @@ namespace xaml {
                 : value == "Hidden" ? attr::Visibility::hidden : attr::Visibility::visible);
             return;
         case XamlAttribute::isEnabled:
-            element.SetIsEnabled(_details::ParseBool(value));
+            element.SetIsEnabled(details::ParseBool(value));
             return;
         case XamlAttribute::opacity:
             element.SetOpacity(std::stof(std::string(value)));
@@ -496,14 +497,14 @@ namespace xaml {
     }
 
     void ValidateChild(const Element& parent, const Element& child) {
-        if (!_details::IsChildSupported(parent.Type(), child.Type())) {
+        if (!details::IsChildSupported(parent.Type(), child.Type())) {
             throw std::invalid_argument(
-                _details::ElementTypeName(parent.Type()) + " cannot contain " + _details::ElementTypeName(child.Type()));
+                details::ElementTypeName(parent.Type()) + " cannot contain " + details::ElementTypeName(child.Type()));
         }
         if ((parent.Type() == ElementType::border || parent.Type() == ElementType::scrollViewer
             || parent.Type() == ElementType::button)
             && !parent.Children().empty()) {
-            throw std::invalid_argument(_details::ElementTypeName(parent.Type()) + " can contain only one child");
+            throw std::invalid_argument(details::ElementTypeName(parent.Type()) + " can contain only one child");
         }
     }
 }

@@ -4,7 +4,7 @@
 
 #include <stdexcept>
 
-namespace xaml {
+namespace universaldevkit::xamlruntime {
     UserControl::UserControl()
         : Element(ElementType::grid) {
     }

@@ -39,5 +39,9 @@
 #include <UniversalDevKit/Helpers/Stream/StreamHelpers.h>
 #include <UniversalDevKit/Helpers/Stream/StreamLineReader.h>
 #include <UniversalDevKit/Helpers/Stream/StreamLineViewer.h>
+#include <UniversalDevKit/Helpers/Math/Geometry.h>
+#include <UniversalDevKit/Helpers/Math/Color.h>
+#include <UniversalDevKit/Helpers/Math/Motion.h>
+#include <UniversalDevKit/Helpers/Text/Utf8.h>
 
 int main() { return 0; }

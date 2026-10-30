@@ -1,6 +1,8 @@
 #pragma once
-
 #include <UniversalDevKit/XamlRuntime/RenderEngine.h>
+
+#include "Config.h"
+#include "Export.h"
 
 #include <unordered_map>
 #include <functional>
@@ -9,8 +11,8 @@
 #include <string>
 #include <vector>
 
-namespace es_renderer {
-    class OpenGlRenderer final : public xaml::IRenderBackend {
+namespace universaldevkit::openglesrenderer {
+    class UNIVERSALDEVKIT_OPENGLESRENDERER_API OpenGlRenderer final : public xaml::IRenderBackend {
     public:
         using ResourceLoader = std::function<std::vector<unsigned char>(std::string_view)>;
 

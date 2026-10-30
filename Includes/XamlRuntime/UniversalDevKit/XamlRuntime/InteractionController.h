@@ -1,19 +1,22 @@
 #pragma once
-
 #include "GestureRecognizer.h"
+#include "Config.h"
+#include "Export.h"
 
 #include <functional>
 #include <memory>
 #include <vector>
 
-namespace xaml {
-    class AnimationController;
-    class Element;
+namespace universaldevkit::xamlruntime {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API AnimationController;
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API Element;
 
-    class InteractionController final {
+    class UNIVERSALDEVKIT_XAMLRUNTIME_API InteractionController final {
     public:
         InteractionController() = default;
         ~InteractionController() = default;
+        InteractionController(const InteractionController&) = delete;
+        InteractionController& operator=(const InteractionController&) = delete;
 
         using PanTargetPredicate = std::function<bool(const Element&)>;
 

@@ -7,7 +7,7 @@
 #include <sstream>
 #include <cmath>
 
-namespace xaml::runtime::_details {
+namespace universaldevkit::xamlruntime::runtimemarkup::details {
     void ValidateTrack(const std::string& value, const XamlSourceLocation& location) {
         if (value == "Auto" || value == "*") {
             return;
@@ -122,7 +122,7 @@ namespace xaml::runtime::_details {
     }
 }
 
-namespace xaml::runtime {
+namespace universaldevkit::xamlruntime::runtimemarkup {
     //
     // API
     //
@@ -131,6 +131,6 @@ namespace xaml::runtime {
         std::string_view xamlNamespace,
         std::string_view controlXmlNamespace,
         const std::set<std::string>& controls) {
-        _details::ValidateNode(root, xamlNamespace, controlXmlNamespace, controls);
+        details::ValidateNode(root, xamlNamespace, controlXmlNamespace, controls);
     }
 }

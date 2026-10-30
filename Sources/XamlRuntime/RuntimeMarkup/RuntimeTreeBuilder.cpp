@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace xaml::runtime::_details {
+namespace universaldevkit::xamlruntime::runtimemarkup::details {
     std::string Attribute(const XamlElementNode& node, std::string_view name, std::string fallback = {}) {
         for (const auto& attribute : node.attributes) {
             if (attribute.name == name) {
@@ -235,7 +235,7 @@ namespace xaml::runtime::_details {
     }
 }
 
-namespace xaml::runtime {
+namespace universaldevkit::xamlruntime::runtimemarkup {
     //
     // API
     //
@@ -255,7 +255,7 @@ namespace xaml::runtime {
         // с корнем, чтобы подписки старого дерева уничтожились при его замене.
         result.bindings = std::make_unique<BindingScope>();
         result.root = this->BuildElement(root, context, *result.bindings);
-        _details::ValidateStateTargets(*result.root);
+        details::ValidateStateTargets(*result.root);
         layoutInViewport(*result.root, availableSize);
         return result;
     }
@@ -283,7 +283,7 @@ namespace xaml::runtime {
                 continue;
             }
             bool twoWay = false;
-            const auto path = _details::BindingPath(attribute, twoWay);
+            const auto path = details::BindingPath(attribute, twoWay);
             const auto* entry = context.bindings->Find(path);
             if (entry == nullptr) {
                 throw RuntimeDiagnostic(attribute.location, "Binding '" + path + "' is not published by "
@@ -314,7 +314,7 @@ namespace xaml::runtime {
                 itemContext.owner += " item";
                 BindingScope probeBindings;
                 auto probe = this->BuildElement(itemNode, itemContext, probeBindings);
-                _details::ValidateStateTargets(*probe);
+                details::ValidateStateTargets(*probe);
                 descriptor.bind(*element, [descriptor, itemNode, context](const void* item, BindingScope& scope) {
                     RuntimeBindingContext itemContext = context;
                     itemContext.bindings = descriptor.itemBindings(item);
@@ -372,11 +372,11 @@ namespace xaml::runtime {
             } else if (child.name == node.name + ".Storyboards") {
                 std::vector<Storyboard> storyboards;
                 for (const auto& storyboard : child.children) {
-                    storyboards.push_back(_details::BuildStoryboard(storyboard));
+                    storyboards.push_back(details::BuildStoryboard(storyboard));
                 }
                 element->SetStoryboards(std::move(storyboards));
             } else if (child.name == "VisualStateManager.VisualStateGroups") {
-                element->SetVisualStateGroups(_details::BuildStates(child));
+                element->SetVisualStateGroups(details::BuildStates(child));
             } else if (child.name != "ListView.ItemTemplate") {
                 auto visual = this->BuildElement(child, context, bindings);
                 ValidateChild(*element, *visual);

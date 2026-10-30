@@ -2,7 +2,7 @@
 
 #include <utility>
 
-namespace xaml::runtime {
+namespace universaldevkit::xamlruntime::runtimemarkup {
     RuntimeBindingRegistry::RuntimeBindingRegistry(std::shared_ptr<const RuntimeBindingRegistry> fallback)
         : fallback(std::move(fallback)) {
     }
