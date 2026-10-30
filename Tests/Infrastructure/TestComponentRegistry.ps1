@@ -37,6 +37,13 @@ if ($shared.Count -ne 1 -or -not $shared[0].Content.Contains('UniversalDevKitTar
     throw 'Missing platform selection'
 }
 [xml]$document = $shared[0].Content
+$headers = @($document.SelectNodes('//*[local-name()="ClInclude" and @Include]') | ForEach-Object { $_.Include })
+if (-not @($headers | Where-Object { $_.EndsWith('\Sources\Example\Internal.h') }).Count) {
+    throw 'Explicit internal header is missing'
+}
+if (@($headers | Where-Object { $_.EndsWith('\Sources\Example\Unlisted.h') }).Count) {
+    throw 'Unlisted internal header was discovered implicitly'
+}
 $sources = @($document.SelectNodes('//*[local-name()="ClCompile" and @Include]'))
 if ($sources.Count -ne 2 -or -not $sources[1].HasAttribute('Condition')) {
     throw 'Invalid platform sources'

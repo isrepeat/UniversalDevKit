@@ -102,7 +102,7 @@ function GetThirdPartyEntries($Component) {
     }
 }
 
-function ValidateFilterSettings($Settings, $Component, $InternalHeaders) {
+function ValidateFilterSettings($Settings, $Component, $AdditionalFiles) {
     if ($null -eq $Settings) {
         return
     }
@@ -139,7 +139,7 @@ function ValidateFilterSettings($Settings, $Component, $InternalHeaders) {
         if ($Settings.files -isnot [pscustomobject]) {
             throw 'filters.files must be an object.'
         }
-        $knownFiles = @($Component.headers) + @($Component.sources) + @($InternalHeaders)
+        $knownFiles = @($Component.headers) + @($Component.sources) + @($AdditionalFiles)
         if ($Component.platformSources) {
             foreach ($platformEntry in $Component.platformSources.PSObject.Properties) { $knownFiles += @($platformEntry.Value) }
         }
@@ -306,17 +306,9 @@ foreach ($includePath in $manifest.includes) {
             if ([IO.Path]::GetExtension($extension.Value) -cne $expectedExtension) { throw "Invalid build extension suffix: $($extension.Value)" }
         }
     }
-    # Внутренние заголовки отображаются в IDE, но не входят в публичный реестр headers.
-    $sourceDirectory = Join-Path $repositoryPath "Sources/$name"
-    $internalHeaders = @(if (Test-Path -LiteralPath $sourceDirectory -PathType Container) {
-        Get-ChildItem -LiteralPath $sourceDirectory -Recurse -File |
-            Where-Object { $_.Extension -in @('.h', '.hh', '.hpp', '.hxx') } |
-            ForEach-Object { [IO.Path]::GetRelativePath($repositoryPath, $_.FullName).Replace('\', '/') } |
-            Sort-Object -CaseSensitive
-    })
     $thirdParty = @(GetThirdPartyEntries $component)
     $thirdPartyFiles = @($thirdParty | ForEach-Object { $entry = $_; @($entry.sources) + @($entry.headers) | ForEach-Object { $entry.root + '/' + $_ } })
-    ValidateFilterSettings $component.filters $component (@($internalHeaders) + $thirdPartyFiles)
+    ValidateFilterSettings $component.filters $component $thirdPartyFiles
     $thirdPartyIncludes = @($thirdParty | ForEach-Object { $entry = $_; $entry.includeDirectories | ForEach-Object { '$(MSBuildThisFileDirectory)..\..\..\' + $entry.root.Replace('/', '\') + '\' + $_.Replace('/', '\') } })
     $thirdPartyDefinitions = @($thirdParty | ForEach-Object { $_.compileDefinitions })
     $files = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
@@ -339,11 +331,11 @@ foreach ($includePath in $manifest.includes) {
     $lines.Add('    </ClCompile>')
     $lines.Add('  </ItemDefinitionGroup>')
     $lines.Add('  <ItemGroup>')
-    foreach ($path in (@($component.headers) + $internalHeaders)) {
+    foreach ($path in $component.headers) {
         if ($path -isnot [string]) {
             throw "${name}.headers must contain strings."
         }
-        if ($path -cin $internalHeaders) {
+        if ($path.StartsWith("Sources/$name/", [StringComparison]::Ordinal)) {
             ValidateFile $path "Sources/$name/"
         } else {
             ValidateFile $path "Includes/$name/UniversalDevKit/$name/"
@@ -756,6 +748,7 @@ foreach ($name in $componentNames) {
     $source = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Templates/HeaderCheck.cpp.in')).TrimEnd([char[]]"`r`n") + "`n"
     $definition = Get-Content -LiteralPath (Join-Path $repositoryPath "Projects/Components/$name.json") -Raw | ConvertFrom-Json
     foreach ($header in $definition.headers) {
+        if (-not $header.StartsWith("Includes/$name/", [StringComparison]::Ordinal)) { continue }
         $source += '#include <' + ($header -replace ('^Includes/' + $name + '/'), '') + '>' + "`n"
     }
     $source += "`nint main() { return 0; }"

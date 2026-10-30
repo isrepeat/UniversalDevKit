@@ -23,7 +23,8 @@
   "headers": [
     "Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/Config.h",
     "Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/Export.h",
-    "Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/OpenGlRenderer.h"
+    "Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/OpenGlRenderer.h",
+    "Sources/OpenGLESRenderer/StandardShaders.h"
   ],
   "buildExtensions": {
     "msbuildTargets": "Projects/MsBuild/OpenGLESRenderer/Build.targets",

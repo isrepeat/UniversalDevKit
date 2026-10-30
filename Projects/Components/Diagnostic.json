@@ -12,7 +12,8 @@
   },
   "msbuildGuid": "{AB97876A-F25A-4AAE-BACD-D32C776BB261}",
   "headers": [
-    "Includes/Diagnostic/UniversalDevKit/Diagnostic/Logging.h"
+    "Includes/Diagnostic/UniversalDevKit/Diagnostic/Logging.h",
+    "Sources/Diagnostic/PlatformBackend.h"
   ],
   "sources": [
     "Sources/Diagnostic/Logging.cpp",
