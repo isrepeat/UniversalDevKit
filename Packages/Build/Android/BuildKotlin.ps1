@@ -35,20 +35,12 @@ try {
         if ($properties.packageGroup -ne $delivery.groupId) { throw "Maven group mismatch for ${name}." }
         $artifact = $delivery.artifactId
         $destination = Join-Path $feed "$($delivery.groupId.Replace('.', '/'))/$artifact/$version"
-        if ((Test-Path -LiteralPath $destination) -and $name -ne $Package) {
-            foreach ($extension in @('aar', 'pom', 'module')) {
-                if (-not (Test-Path -LiteralPath (Join-Path $destination "$artifact-$version.$extension"))) {
-                    throw "Incomplete dependency publication: $destination"
-                }
-            }
-            Write-Host "Using published dependency ${name} ${version}: $destination"
-            continue
-        }
         $buildRoot = Join-Path $feed "build-gradle/$name"
+        $dependencyArguments = @(if ($name -eq 'AndroidAppKit') { '--refresh-dependencies' })
         & $toolchain.Gradle --project-dir $project --project-cache-dir "$buildRoot/cache" `
             "-PudkBuildRoot=$($buildRoot.Replace('\', '/'))" `
             "-PandroidPackagesFeedPath=$($feed.Replace('\', '/'))" `
-            ":${artifact}:publishReleasePublicationToAndroidPackagesFeedRepository" --console=plain
+            ":${artifact}:publishReleasePublicationToAndroidPackagesFeedRepository" --console=plain @dependencyArguments
         if ($LASTEXITCODE -ne 0) { throw "Gradle failed for $name with exit code $LASTEXITCODE." }
         foreach ($extension in @('aar', 'pom', 'module')) {
             if (-not (Test-Path -LiteralPath (Join-Path $destination "$artifact-$version.$extension"))) {
