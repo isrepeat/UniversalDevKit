@@ -9,269 +9,269 @@
 #include <string>
 #include <vector>
 
-namespace universaldevkit::xamlruntime::details {
-    uint32_t AttributeGroups(ElementType type) {
-        const uint32_t common = static_cast<uint32_t>(XamlAttributeGroup::identity)
-            | static_cast<uint32_t>(XamlAttributeGroup::dataContext)
-            | static_cast<uint32_t>(XamlAttributeGroup::layout)
-            | static_cast<uint32_t>(XamlAttributeGroup::size)
-            | static_cast<uint32_t>(XamlAttributeGroup::gridPosition)
-            | static_cast<uint32_t>(XamlAttributeGroup::renderer)
-            | static_cast<uint32_t>(XamlAttributeGroup::wireframe)
-            | static_cast<uint32_t>(XamlAttributeGroup::command);
-        switch (type) {
-        case ElementType::page:
-            return common
-                | static_cast<uint32_t>(XamlAttributeGroup::background)
-                | static_cast<uint32_t>(XamlAttributeGroup::border)
-                | static_cast<uint32_t>(XamlAttributeGroup::padding);
-        case ElementType::stackPanel:
-            return common
-                | static_cast<uint32_t>(XamlAttributeGroup::background)
-                | static_cast<uint32_t>(XamlAttributeGroup::border)
-                | static_cast<uint32_t>(XamlAttributeGroup::padding)
-                | static_cast<uint32_t>(XamlAttributeGroup::orientation);
-        case ElementType::textBlock:
-            return common
-                | static_cast<uint32_t>(XamlAttributeGroup::text);
-        case ElementType::button:
-            return common
-                | static_cast<uint32_t>(XamlAttributeGroup::background)
-                | static_cast<uint32_t>(XamlAttributeGroup::activeBackground)
-                | static_cast<uint32_t>(XamlAttributeGroup::border)
-                | static_cast<uint32_t>(XamlAttributeGroup::activeBorder)
-                | static_cast<uint32_t>(XamlAttributeGroup::activeForeground)
-                | static_cast<uint32_t>(XamlAttributeGroup::padding)
-                | static_cast<uint32_t>(XamlAttributeGroup::cornerRadius)
-                | static_cast<uint32_t>(XamlAttributeGroup::text)
-                | static_cast<uint32_t>(XamlAttributeGroup::contentAlignment)
-                | static_cast<uint32_t>(XamlAttributeGroup::command);
-        case ElementType::border:
-            return common
-                | static_cast<uint32_t>(XamlAttributeGroup::background)
-                | static_cast<uint32_t>(XamlAttributeGroup::border)
-                | static_cast<uint32_t>(XamlAttributeGroup::padding)
-                | static_cast<uint32_t>(XamlAttributeGroup::cornerRadius)
-                | static_cast<uint32_t>(XamlAttributeGroup::command);
-        case ElementType::toggleSwitch:
-            return common
-                | static_cast<uint32_t>(XamlAttributeGroup::background)
-                | static_cast<uint32_t>(XamlAttributeGroup::border)
-                | static_cast<uint32_t>(XamlAttributeGroup::text)
-                | static_cast<uint32_t>(XamlAttributeGroup::tint)
-                | static_cast<uint32_t>(XamlAttributeGroup::toggle)
-                | static_cast<uint32_t>(XamlAttributeGroup::command);
-        case ElementType::grid:
-            return common
-                | static_cast<uint32_t>(XamlAttributeGroup::background)
-                | static_cast<uint32_t>(XamlAttributeGroup::border)
-                | static_cast<uint32_t>(XamlAttributeGroup::padding)
-                | static_cast<uint32_t>(XamlAttributeGroup::gridDefinitions);
-        case ElementType::scrollViewer:
-            return common
-                | static_cast<uint32_t>(XamlAttributeGroup::background)
-                | static_cast<uint32_t>(XamlAttributeGroup::border)
-                | static_cast<uint32_t>(XamlAttributeGroup::padding)
-                | static_cast<uint32_t>(XamlAttributeGroup::scroll);
-        case ElementType::image:
-        case ElementType::svgImage:
-            return common
-                | static_cast<uint32_t>(XamlAttributeGroup::source)
-                | static_cast<uint32_t>(XamlAttributeGroup::tint);
-        case ElementType::iconButton:
-            return common
-                | static_cast<uint32_t>(XamlAttributeGroup::background)
-                | static_cast<uint32_t>(XamlAttributeGroup::border)
-                | static_cast<uint32_t>(XamlAttributeGroup::padding)
-                | static_cast<uint32_t>(XamlAttributeGroup::cornerRadius)
-                | static_cast<uint32_t>(XamlAttributeGroup::source)
-                | static_cast<uint32_t>(XamlAttributeGroup::tint)
-                | static_cast<uint32_t>(XamlAttributeGroup::command);
-        case ElementType::listView:
-            return common
-                | static_cast<uint32_t>(XamlAttributeGroup::background)
-                | static_cast<uint32_t>(XamlAttributeGroup::border)
-                | static_cast<uint32_t>(XamlAttributeGroup::padding)
-                | static_cast<uint32_t>(XamlAttributeGroup::itemsSource);
-        }
-
-        return 0;
-    }
-
-    bool IsAttributeSupported(ElementType type, XamlAttribute attribute) {
-        const uint32_t supportedGroups = AttributeGroups(type);
-        const uint32_t attributeGroup = static_cast<uint32_t>(XamlAttributeGroupOf(attribute));
-        return (supportedGroups & attributeGroup) != 0;
-    }
-
-    bool IsChildSupported(ElementType parent, ElementType child) {
-        switch (parent) {
-        case ElementType::page:
-        case ElementType::stackPanel:
-        case ElementType::grid:
-        case ElementType::listView:
-            return child != ElementType::page;
-        case ElementType::border:
-        case ElementType::scrollViewer:
-        case ElementType::button:
-            return child != ElementType::page;
-        case ElementType::iconButton:
-        case ElementType::textBlock:
-        case ElementType::toggleSwitch:
-        case ElementType::image:
-        case ElementType::svgImage:
-            return false;
-        }
-
-        return false;
-    }
-
-    std::string ElementTypeName(ElementType type) {
-        switch (type) {
-        case ElementType::page:
-            return "Page";
-        case ElementType::stackPanel:
-            return "StackPanel";
-        case ElementType::textBlock:
-            return "TextBlock";
-        case ElementType::button:
-            return "Button";
-        case ElementType::border:
-            return "Border";
-        case ElementType::toggleSwitch:
-            return "ToggleSwitch";
-        case ElementType::grid:
-            return "Grid";
-        case ElementType::scrollViewer:
-            return "ScrollViewer";
-        case ElementType::image:
-            return "Image";
-        case ElementType::svgImage:
-            return "SvgImage";
-        case ElementType::iconButton:
-            return "IconButton";
-        case ElementType::listView:
-            return "ListView";
-        }
-
-        return "unknown";
-    }
-
-    attr::Color ParseColor(std::string_view value) {
-        std::string normalized(value);
-        if (normalized == "black") {
-            normalized = "#000000";
-        } else if (normalized == "blue") {
-            normalized = "#0000FF";
-        } else if (normalized == "gray") {
-            normalized = "#808080";
-        } else if (normalized == "green") {
-            normalized = "#008000";
-        } else if (normalized == "red") {
-            normalized = "#FF0000";
-        } else if (normalized == "white") {
-            normalized = "#FFFFFF";
-        }
-        if ((normalized.size() != 7 && normalized.size() != 9) || normalized.front() != '#') {
-            throw std::invalid_argument("color must use #RRGGBB, #AARRGGBB or a supported name");
-        }
-        if (!std::all_of(normalized.begin() + 1, normalized.end(), [](unsigned char character) {
-            return (character >= '0' && character <= '9') || (character >= 'a' && character <= 'f')
-                || (character >= 'A' && character <= 'F');
-        })) {
-            throw std::invalid_argument("color contains invalid hexadecimal digits");
-        }
-        const unsigned long color = std::stoul(normalized.substr(1), nullptr, 16);
-        const unsigned long alpha = normalized.size() == 9 ? (color >> 24) & 0xff : 0xff;
-        return {
-            static_cast<float>((color >> 16) & 0xff) / 255.0f,
-            static_cast<float>((color >> 8) & 0xff) / 255.0f,
-            static_cast<float>(color & 0xff) / 255.0f,
-            static_cast<float>(alpha) / 255.0f,
-        };
-    }
-
-    attr::Thickness ParseThickness(std::string_view value) {
-        std::string normalized(value);
-        std::replace(normalized.begin(), normalized.end(), ',', ' ');
-        std::istringstream input(normalized);
-        std::vector<float> values;
-        float component = 0.0f;
-        while (input >> component) {
-            values.push_back(component);
-        }
-        if (values.size() == 1) {
-            values = {values[0], values[0], values[0], values[0]};
-        }
-        if (values.size() != 4) {
-            throw std::invalid_argument("thickness must contain left right top bottom");
-        }
-        return {values[0], values[1], values[2], values[3]};
-    }
-
-    attr::Alignment ParseAlignment(std::string_view value) {
-        if (value == "Stretch") {
-            return attr::Alignment::stretch;
-        }
-        if (value == "Left") {
-            return attr::Alignment::left;
-        }
-        if (value == "Right") {
-            return attr::Alignment::right;
-        }
-        if (value == "Top") {
-            return attr::Alignment::top;
-        }
-        if (value == "Bottom") {
-            return attr::Alignment::bottom;
-        }
-        if (value == "Center") {
-            return attr::Alignment::center;
-        }
-        throw std::invalid_argument("unsupported alignment");
-    }
-
-    bool ParseBool(std::string_view value) {
-        if (value == "True" || value == "true") {
-            return true;
-        }
-        if (value == "False" || value == "false") {
-            return false;
-        }
-        throw std::invalid_argument("boolean value must be True or False");
-    }
-
-    attr::Wireframe ParseWireframe(std::string_view value) {
-        std::istringstream input{std::string(value)};
-        float thickness = 0.0f;
-        std::string lineStyle;
-        std::string color;
-        if (!(input >> thickness >> lineStyle >> color) || thickness <= 0.0f) {
-            throw std::invalid_argument("wireframe must use '<thickness> <solid|dashed> <color>'");
-        }
-        if (lineStyle != "solid" && lineStyle != "dashed") {
-            throw std::invalid_argument("wireframe line style must be solid or dashed");
-        }
-        attr::Wireframe wireframe{
-            thickness,
-            lineStyle == "solid" ? attr::WireframeLineStyle::solid : attr::WireframeLineStyle::dashed,
-            ParseColor(color),
-        };
-        std::string flag;
-        while (input >> flag) {
-            if (flag.rfind("-m:", 0) == 0 && flag.size() > 3) {
-                wireframe.marginColor = ParseColor(flag.substr(3));
-            } else if (flag.rfind("-p:", 0) == 0 && flag.size() > 3) {
-                wireframe.paddingColor = ParseColor(flag.substr(3));
-            } else {
-                throw std::invalid_argument("wireframe supports only -m:<color> and -p:<color> flags");
-            }
-        }
-        return wireframe;
-    }
-}
-
 namespace universaldevkit::xamlruntime {
+    namespace details {
+        uint32_t AttributeGroups(ElementType type) {
+            const uint32_t common = static_cast<uint32_t>(XamlAttributeGroup::identity)
+                | static_cast<uint32_t>(XamlAttributeGroup::dataContext)
+                | static_cast<uint32_t>(XamlAttributeGroup::layout)
+                | static_cast<uint32_t>(XamlAttributeGroup::size)
+                | static_cast<uint32_t>(XamlAttributeGroup::gridPosition)
+                | static_cast<uint32_t>(XamlAttributeGroup::renderer)
+                | static_cast<uint32_t>(XamlAttributeGroup::wireframe)
+                | static_cast<uint32_t>(XamlAttributeGroup::command);
+            switch (type) {
+            case ElementType::page:
+                return common
+                    | static_cast<uint32_t>(XamlAttributeGroup::background)
+                    | static_cast<uint32_t>(XamlAttributeGroup::border)
+                    | static_cast<uint32_t>(XamlAttributeGroup::padding);
+            case ElementType::stackPanel:
+                return common
+                    | static_cast<uint32_t>(XamlAttributeGroup::background)
+                    | static_cast<uint32_t>(XamlAttributeGroup::border)
+                    | static_cast<uint32_t>(XamlAttributeGroup::padding)
+                    | static_cast<uint32_t>(XamlAttributeGroup::orientation);
+            case ElementType::textBlock:
+                return common
+                    | static_cast<uint32_t>(XamlAttributeGroup::text);
+            case ElementType::button:
+                return common
+                    | static_cast<uint32_t>(XamlAttributeGroup::background)
+                    | static_cast<uint32_t>(XamlAttributeGroup::activeBackground)
+                    | static_cast<uint32_t>(XamlAttributeGroup::border)
+                    | static_cast<uint32_t>(XamlAttributeGroup::activeBorder)
+                    | static_cast<uint32_t>(XamlAttributeGroup::activeForeground)
+                    | static_cast<uint32_t>(XamlAttributeGroup::padding)
+                    | static_cast<uint32_t>(XamlAttributeGroup::cornerRadius)
+                    | static_cast<uint32_t>(XamlAttributeGroup::text)
+                    | static_cast<uint32_t>(XamlAttributeGroup::contentAlignment)
+                    | static_cast<uint32_t>(XamlAttributeGroup::command);
+            case ElementType::border:
+                return common
+                    | static_cast<uint32_t>(XamlAttributeGroup::background)
+                    | static_cast<uint32_t>(XamlAttributeGroup::border)
+                    | static_cast<uint32_t>(XamlAttributeGroup::padding)
+                    | static_cast<uint32_t>(XamlAttributeGroup::cornerRadius)
+                    | static_cast<uint32_t>(XamlAttributeGroup::command);
+            case ElementType::toggleSwitch:
+                return common
+                    | static_cast<uint32_t>(XamlAttributeGroup::background)
+                    | static_cast<uint32_t>(XamlAttributeGroup::border)
+                    | static_cast<uint32_t>(XamlAttributeGroup::text)
+                    | static_cast<uint32_t>(XamlAttributeGroup::tint)
+                    | static_cast<uint32_t>(XamlAttributeGroup::toggle)
+                    | static_cast<uint32_t>(XamlAttributeGroup::command);
+            case ElementType::grid:
+                return common
+                    | static_cast<uint32_t>(XamlAttributeGroup::background)
+                    | static_cast<uint32_t>(XamlAttributeGroup::border)
+                    | static_cast<uint32_t>(XamlAttributeGroup::padding)
+                    | static_cast<uint32_t>(XamlAttributeGroup::gridDefinitions);
+            case ElementType::scrollViewer:
+                return common
+                    | static_cast<uint32_t>(XamlAttributeGroup::background)
+                    | static_cast<uint32_t>(XamlAttributeGroup::border)
+                    | static_cast<uint32_t>(XamlAttributeGroup::padding)
+                    | static_cast<uint32_t>(XamlAttributeGroup::scroll);
+            case ElementType::image:
+            case ElementType::svgImage:
+                return common
+                    | static_cast<uint32_t>(XamlAttributeGroup::source)
+                    | static_cast<uint32_t>(XamlAttributeGroup::tint);
+            case ElementType::iconButton:
+                return common
+                    | static_cast<uint32_t>(XamlAttributeGroup::background)
+                    | static_cast<uint32_t>(XamlAttributeGroup::border)
+                    | static_cast<uint32_t>(XamlAttributeGroup::padding)
+                    | static_cast<uint32_t>(XamlAttributeGroup::cornerRadius)
+                    | static_cast<uint32_t>(XamlAttributeGroup::source)
+                    | static_cast<uint32_t>(XamlAttributeGroup::tint)
+                    | static_cast<uint32_t>(XamlAttributeGroup::command);
+            case ElementType::listView:
+                return common
+                    | static_cast<uint32_t>(XamlAttributeGroup::background)
+                    | static_cast<uint32_t>(XamlAttributeGroup::border)
+                    | static_cast<uint32_t>(XamlAttributeGroup::padding)
+                    | static_cast<uint32_t>(XamlAttributeGroup::itemsSource);
+            }
+
+            return 0;
+        }
+
+        bool IsAttributeSupported(ElementType type, XamlAttribute attribute) {
+            const uint32_t supportedGroups = AttributeGroups(type);
+            const uint32_t attributeGroup = static_cast<uint32_t>(XamlAttributeGroupOf(attribute));
+            return (supportedGroups & attributeGroup) != 0;
+        }
+
+        bool IsChildSupported(ElementType parent, ElementType child) {
+            switch (parent) {
+            case ElementType::page:
+            case ElementType::stackPanel:
+            case ElementType::grid:
+            case ElementType::listView:
+                return child != ElementType::page;
+            case ElementType::border:
+            case ElementType::scrollViewer:
+            case ElementType::button:
+                return child != ElementType::page;
+            case ElementType::iconButton:
+            case ElementType::textBlock:
+            case ElementType::toggleSwitch:
+            case ElementType::image:
+            case ElementType::svgImage:
+                return false;
+            }
+
+            return false;
+        }
+
+        std::string ElementTypeName(ElementType type) {
+            switch (type) {
+            case ElementType::page:
+                return "Page";
+            case ElementType::stackPanel:
+                return "StackPanel";
+            case ElementType::textBlock:
+                return "TextBlock";
+            case ElementType::button:
+                return "Button";
+            case ElementType::border:
+                return "Border";
+            case ElementType::toggleSwitch:
+                return "ToggleSwitch";
+            case ElementType::grid:
+                return "Grid";
+            case ElementType::scrollViewer:
+                return "ScrollViewer";
+            case ElementType::image:
+                return "Image";
+            case ElementType::svgImage:
+                return "SvgImage";
+            case ElementType::iconButton:
+                return "IconButton";
+            case ElementType::listView:
+                return "ListView";
+            }
+
+            return "unknown";
+        }
+
+        attr::Color ParseColor(std::string_view value) {
+            std::string normalized(value);
+            if (normalized == "black") {
+                normalized = "#000000";
+            } else if (normalized == "blue") {
+                normalized = "#0000FF";
+            } else if (normalized == "gray") {
+                normalized = "#808080";
+            } else if (normalized == "green") {
+                normalized = "#008000";
+            } else if (normalized == "red") {
+                normalized = "#FF0000";
+            } else if (normalized == "white") {
+                normalized = "#FFFFFF";
+            }
+            if ((normalized.size() != 7 && normalized.size() != 9) || normalized.front() != '#') {
+                throw std::invalid_argument("color must use #RRGGBB, #AARRGGBB or a supported name");
+            }
+            if (!std::all_of(normalized.begin() + 1, normalized.end(), [](unsigned char character) {
+                return (character >= '0' && character <= '9') || (character >= 'a' && character <= 'f')
+                    || (character >= 'A' && character <= 'F');
+            })) {
+                throw std::invalid_argument("color contains invalid hexadecimal digits");
+            }
+            const unsigned long color = std::stoul(normalized.substr(1), nullptr, 16);
+            const unsigned long alpha = normalized.size() == 9 ? (color >> 24) & 0xff : 0xff;
+            return {
+                static_cast<float>((color >> 16) & 0xff) / 255.0f,
+                static_cast<float>((color >> 8) & 0xff) / 255.0f,
+                static_cast<float>(color & 0xff) / 255.0f,
+                static_cast<float>(alpha) / 255.0f,
+            };
+        }
+
+        attr::Thickness ParseThickness(std::string_view value) {
+            std::string normalized(value);
+            std::replace(normalized.begin(), normalized.end(), ',', ' ');
+            std::istringstream input(normalized);
+            std::vector<float> values;
+            float component = 0.0f;
+            while (input >> component) {
+                values.push_back(component);
+            }
+            if (values.size() == 1) {
+                values = {values[0], values[0], values[0], values[0]};
+            }
+            if (values.size() != 4) {
+                throw std::invalid_argument("thickness must contain left right top bottom");
+            }
+            return {values[0], values[1], values[2], values[3]};
+        }
+
+        attr::Alignment ParseAlignment(std::string_view value) {
+            if (value == "Stretch") {
+                return attr::Alignment::stretch;
+            }
+            if (value == "Left") {
+                return attr::Alignment::left;
+            }
+            if (value == "Right") {
+                return attr::Alignment::right;
+            }
+            if (value == "Top") {
+                return attr::Alignment::top;
+            }
+            if (value == "Bottom") {
+                return attr::Alignment::bottom;
+            }
+            if (value == "Center") {
+                return attr::Alignment::center;
+            }
+            throw std::invalid_argument("unsupported alignment");
+        }
+
+        bool ParseBool(std::string_view value) {
+            if (value == "True" || value == "true") {
+                return true;
+            }
+            if (value == "False" || value == "false") {
+                return false;
+            }
+            throw std::invalid_argument("boolean value must be True or False");
+        }
+
+        attr::Wireframe ParseWireframe(std::string_view value) {
+            std::istringstream input{std::string(value)};
+            float thickness = 0.0f;
+            std::string lineStyle;
+            std::string color;
+            if (!(input >> thickness >> lineStyle >> color) || thickness <= 0.0f) {
+                throw std::invalid_argument("wireframe must use '<thickness> <solid|dashed> <color>'");
+            }
+            if (lineStyle != "solid" && lineStyle != "dashed") {
+                throw std::invalid_argument("wireframe line style must be solid or dashed");
+            }
+            attr::Wireframe wireframe{
+                thickness,
+                lineStyle == "solid" ? attr::WireframeLineStyle::solid : attr::WireframeLineStyle::dashed,
+                ParseColor(color),
+            };
+            std::string flag;
+            while (input >> flag) {
+                if (flag.rfind("-m:", 0) == 0 && flag.size() > 3) {
+                    wireframe.marginColor = ParseColor(flag.substr(3));
+                } else if (flag.rfind("-p:", 0) == 0 && flag.size() > 3) {
+                    wireframe.paddingColor = ParseColor(flag.substr(3));
+                } else {
+                    throw std::invalid_argument("wireframe supports only -m:<color> and -p:<color> flags");
+                }
+            }
+            return wireframe;
+        }
+    } // namespace details
+
     attr::Color ParseColor(std::string_view value) {
         return details::ParseColor(value);
     }

@@ -57,7 +57,7 @@ foreach ($definitionFile in Get-ChildItem -LiteralPath (Join-Path $repository 'P
     if ($delivery.adapter -ne 'component' -or 'Windows' -notin $delivery.supportedPlatforms) { continue }
     if ($delivery.schemaVersion -ne 1 -or -not $definition.component -or $delivery.id -notmatch '^[A-Za-z0-9_.-]+$') { throw "Unsupported NuGet delivery: $($definitionFile.FullName)" }
     foreach ($field in $delivery.PSObject.Properties.Name) {
-        if ($field -notin @('schemaVersion', 'adapter', 'id', 'supportedPlatforms', 'supportedRuntimes', 'integration', 'nuspec', 'stagingScript')) { throw "Unknown delivery field: $field" }
+        if ($field -notin @('schemaVersion', 'adapter', 'id', 'supportedPlatforms', 'supportedRuntimes', 'integration', 'nuspec', 'stagingScript', 'preparationScript')) { throw "Unknown delivery field: $field" }
     }
     $packageVersion = (Get-Content -LiteralPath (Join-Path $definitionFile.DirectoryName $definition.versionSource) -Raw | ConvertFrom-Json).version
     if ($packageVersion -ne $version) { throw "Component package must use the UDK release version: $($definition.name)" }
@@ -85,7 +85,19 @@ foreach ($definitionFile in Get-ChildItem -LiteralPath (Join-Path $repository 'P
             throw "Invalid package staging script: $stagingScript"
         }
     }
-    $packages[$definition.component] = [pscustomobject]@{ Name = $definition.name; Id = $delivery.id; Directory = $definitionFile.DirectoryName; Integration = $integration; Nuspec = $nuspecPath; SupportedRuntimes = $supportedRuntimes; StagingScript = $stagingScript }
+    $preparationScript = $null
+    if ($delivery.PSObject.Properties['preparationScript']) {
+        if ($delivery.preparationScript -isnot [string] -or [string]::IsNullOrWhiteSpace($delivery.preparationScript) -or
+            [IO.Path]::GetExtension($delivery.preparationScript) -ine '.ps1') {
+            throw "Invalid package preparation script: $($definition.name)"
+        }
+        $preparationScript = [IO.Path]::GetFullPath((Join-Path $deliveryDirectory $delivery.preparationScript))
+        if (-not $preparationScript.StartsWith($packagePrefix, [StringComparison]::OrdinalIgnoreCase) -or
+            -not (Test-Path -LiteralPath $preparationScript -PathType Leaf)) {
+            throw "Invalid package preparation script: $preparationScript"
+        }
+    }
+    $packages[$definition.component] = [pscustomobject]@{ Name = $definition.name; Id = $delivery.id; Directory = $definitionFile.DirectoryName; Integration = $integration; Nuspec = $nuspecPath; SupportedRuntimes = $supportedRuntimes; StagingScript = $stagingScript; PreparationScript = $preparationScript }
     $packageIds[$delivery.id] = $true
 }
 foreach ($name in $selected) {
@@ -134,9 +146,33 @@ function RunCMake([string[]]$Arguments) {
 # 4. Build MD/MT in separate prefixes; install Debug/Release together for each CRT.
 $records = @()
 foreach ($runtime in @('Dynamic', 'Static')) {
+    # Подготовка зависимостей завершается до configure; рабочие каталоги сохраняются между выпусками.
+    $dependencyDefinitions = [Collections.Generic.Dictionary[string, string]]::new([StringComparer]::Ordinal)
+    foreach ($component in $selected) {
+        $package = $packages[$component]
+        if (-not $package.PreparationScript -or $runtime -notin $package.SupportedRuntimes) { continue }
+        $workDirectory = Join-Path $repository "!artifacts/Windows-x64/dependencies/nuget/$component/$runtime"
+        [void][IO.Directory]::CreateDirectory($workDirectory)
+        $prepared = @(& $package.PreparationScript -RepositoryPath $repository -WorkDirectory $workDirectory -Runtime $runtime -Configurations @('Debug', 'Release') -Generator $Generator)
+        if ($prepared.Count -ne 1 -or $prepared[0] -isnot [Collections.IDictionary]) {
+            throw "Preparation script must return one dictionary of CMake definitions: $component"
+        }
+        foreach ($key in $prepared[0].Keys) {
+            if ($key -isnot [string] -or $key -cnotmatch '^UniversalDevKit[A-Za-z0-9_]+$' -or
+                $key -in @('UniversalDevKitRuntime', 'UniversalDevKit_COMPONENTS', 'UniversalDevKit_ENFORCE_RELEASE_POLICY') -or
+                $prepared[0][$key] -isnot [string]) {
+                throw "Invalid preparation CMake definition from ${component}: $key"
+            }
+            if ($dependencyDefinitions.ContainsKey($key) -and $dependencyDefinitions[$key] -cne $prepared[0][$key]) {
+                throw "Conflicting preparation CMake definition: $key"
+            }
+            $dependencyDefinitions[$key] = $prepared[0][$key]
+        }
+    }
+    $dependencyArguments = @($dependencyDefinitions.Keys | Sort-Object -CaseSensitive | ForEach-Object { '-D' + $_ + '=' + $dependencyDefinitions[$_] })
     $build = Join-Path $output "build-$runtime"
     $install = Join-Path $output "install-$runtime"
-    RunCMake @('-S', $repository, '-B', $build, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug;Release', '-DUniversalDevKit_ENFORCE_RELEASE_POLICY=ON', "-DUniversalDevKitRuntime=$runtime", "-DCMAKE_INSTALL_PREFIX=$install", ('-DUniversalDevKit_COMPONENTS=' + ($selected -join ';')))
+    RunCMake (@('-S', $repository, '-B', $build, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug;Release', '-DUniversalDevKit_ENFORCE_RELEASE_POLICY=ON', "-DUniversalDevKitRuntime=$runtime", "-DCMAKE_INSTALL_PREFIX=$install", ('-DUniversalDevKit_COMPONENTS=' + ($selected -join ';'))) + $dependencyArguments)
     foreach ($configuration in @('Debug', 'Release')) {
         RunCMake @('--build', $build, '--config', $configuration, '--parallel', '4')
         RunCMake @('--install', $build, '--config', $configuration)

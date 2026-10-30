@@ -28,23 +28,22 @@
 #include <array>
 #include <cmath>
 
-namespace universaldevkit::openglesrenderer::details {
-    constexpr int FirstAsciiGlyph = 32;
-    constexpr int AsciiGlyphCount = 96;
-    constexpr int FirstCyrillicGlyph = 0x0400;
-    constexpr int CyrillicGlyphCount = 256;
-    constexpr int SettingsGlyph = 0x2699;
-    constexpr float AtlasFontSize = 96.0f;
-    constexpr int AtlasWidth = 2048;
-    constexpr int AtlasHeight = 1024;
-    constexpr int MaximumTextGlyphs = 256;
-
-    // Команды runtime хранят текст в UTF-8, а stb_truetype ожидает code point.
-    // Повреждённая либо неподдерживаемая последовательность заменяется на '?'.
-
-}
-
 namespace universaldevkit::openglesrenderer {
+    namespace details {
+        constexpr int FirstAsciiGlyph = 32;
+        constexpr int AsciiGlyphCount = 96;
+        constexpr int FirstCyrillicGlyph = 0x0400;
+        constexpr int CyrillicGlyphCount = 256;
+        constexpr int SettingsGlyph = 0x2699;
+        constexpr float AtlasFontSize = 96.0f;
+        constexpr int AtlasWidth = 2048;
+        constexpr int AtlasHeight = 1024;
+        constexpr int MaximumTextGlyphs = 256;
+
+        // Команды runtime хранят текст в UTF-8, а stb_truetype ожидает code point.
+        // Повреждённая либо неподдерживаемая последовательность заменяется на '?'.
+    } // namespace details
+
     class OpenGlRenderer::Implementation {
     public:
         Implementation(

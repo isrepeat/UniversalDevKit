@@ -3,32 +3,32 @@
 #include "../../../Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RuntimeMarkup/RuntimeDiagnostics.h"
 #include "../../../Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RuntimeMarkup/XamlParser.h"
 
-namespace universaldevkit::xamlruntime::runtimemarkup::details {
-    void Collect(const Element& node, std::map<std::string, const Element*>& elements) {
-        if (!node.Id().empty()) {
-            elements.emplace(node.Id(), &node);
-        }
-        for (const auto& child : node.Children()) {
-            Collect(*child, elements);
-        }
-    }
-
-    void Restore(Element& node, const std::map<std::string, const Element*>& elements) {
-        const auto found = elements.find(node.Id());
-        if (found != elements.end() && found->second->Type() == node.Type()) {
-            node.SetHorizontalOffset(found->second->HorizontalOffset());
-            node.SetVerticalOffset(found->second->VerticalOffset());
-            if (found->second->HasSelectedWireframe()) {
-                node.SetSelectedWireframe(found->second->SelectedWireframe());
+namespace universaldevkit::xamlruntime::runtimemarkup {
+    namespace details {
+        void Collect(const Element& node, std::map<std::string, const Element*>& elements) {
+            if (!node.Id().empty()) {
+                elements.emplace(node.Id(), &node);
+            }
+            for (const auto& child : node.Children()) {
+                Collect(*child, elements);
             }
         }
-        for (const auto& child : node.Children()) {
-            Restore(*child, elements);
-        }
-    }
-}
 
-namespace universaldevkit::xamlruntime::runtimemarkup {
+        void Restore(Element& node, const std::map<std::string, const Element*>& elements) {
+            const auto found = elements.find(node.Id());
+            if (found != elements.end() && found->second->Type() == node.Type()) {
+                node.SetHorizontalOffset(found->second->HorizontalOffset());
+                node.SetVerticalOffset(found->second->VerticalOffset());
+                if (found->second->HasSelectedWireframe()) {
+                    node.SetSelectedWireframe(found->second->SelectedWireframe());
+                }
+            }
+            for (const auto& child : node.Children()) {
+                Restore(*child, elements);
+            }
+        }
+    } // namespace details
+
     //
     // API
     //

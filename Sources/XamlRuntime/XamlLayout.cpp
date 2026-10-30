@@ -10,445 +10,445 @@
 #include <cctype>
 #include <limits>
 
-namespace universaldevkit::xamlruntime::details {
-    std::vector<TextGlyphMetric> textGlyphMetrics;
+namespace universaldevkit::xamlruntime {
+    namespace details {
+        std::vector<TextGlyphMetric> textGlyphMetrics;
 
-    size_t utf8Length(const std::string& text) {
-        return universaldevkit::helpers::text::Utf8::Length(text);
-    }
-
-    float textHeight(const Element& element) {
-        const std::string_view fontWeight = element.FontWeight() == "ExtraBold" || element.FontWeight() == "Black"
-            ? "Black"
-            : element.FontWeight() == "SemiBold" || element.FontWeight() == "Bold" ? "Bold" : "Normal";
-        const auto glyphFor = [fontWeight](uint32_t codepoint) -> const TextGlyphMetric* {
-            const auto found = std::find_if(textGlyphMetrics.begin(), textGlyphMetrics.end(),
-                [fontWeight, codepoint](const TextGlyphMetric& glyph) {
-                    return glyph.fontWeight == fontWeight && glyph.codepoint == codepoint;
-                });
-            return found == textGlyphMetrics.end() ? nullptr : &*found;
-        };
-
-        float top = std::numeric_limits<float>::max();
-        float bottom = std::numeric_limits<float>::lowest();
-        const char* current = element.Text().data();
-        const char* const end = current + element.Text().size();
-        while (current < end) {
-            const TextGlyphMetric* const glyph = glyphFor(universaldevkit::helpers::text::Utf8::Next(current, end, '?'));
-            if (glyph == nullptr) {
-                continue;
-            }
-            top = std::min(top, glyph->top);
-            bottom = std::max(bottom, glyph->bottom);
+        size_t utf8Length(const std::string& text) {
+            return universaldevkit::helpers::text::Utf8::Length(text);
         }
-        return bottom > top ? (bottom - top) * element.FontSize() : element.FontSize();
-    }
 
-    float lineHeight(const Element& element) {
-        return element.LineHeight() > 0.0f ? element.LineHeight() : textHeight(element);
-    }
-
-    size_t wrappedLineCount(const Element& element, float availableWidth) {
-        if (!element.TextWrapping()) {
-            return 1;
-        }
-        const float width = element.Width() > 0.0f ? element.Width() : availableWidth;
-        if (width <= 0.0f) {
-            return 1;
-        }
-        const size_t maximumCharacters = std::max(
-            static_cast<size_t>(1),
-            static_cast<size_t>(width / (element.FontSize() * 0.55f)));
-        size_t lineLength = 0;
-        size_t lineCount = 1;
-        size_t wordLength = 0;
-        const auto addWord = [&] {
-            if (wordLength == 0) {
-                return;
-            }
-            if (lineLength != 0 && lineLength + 1 + wordLength > maximumCharacters) {
-                ++lineCount;
-                lineLength = 0;
-            }
-            lineLength += lineLength == 0 ? wordLength : wordLength + 1;
-            wordLength = 0;
-        };
-        for (const unsigned char character : element.Text()) {
-            if (std::isspace(character)) {
-                addWord();
-            } else if ((character & 0xC0) != 0x80) {
-                ++wordLength;
-            }
-        }
-        addWord();
-        return lineCount;
-    }
-
-    float horizontal(const attr::Thickness& thickness) {
-        return thickness.Horizontal();
-    }
-
-    float vertical(const attr::Thickness& thickness) {
-        return thickness.Vertical();
-    }
-
-    Rect inset(Rect bounds, attr::Thickness thickness) {
-        return universaldevkit::helpers::math::Geometry::Inset(bounds, thickness);
-    }
-
-    Rect intersect(Rect first, Rect second) {
-        return universaldevkit::helpers::math::Geometry::Intersect(first, second);
-    }
-
-    void clipSubtree(Element& element) {
-        element.SetClipBounds(element.Bounds());
-        for (const std::unique_ptr<Element>& child : element.Children()) {
-            clipSubtree(*child);
-        }
-    }
-
-    Size withCommonSize(const Element& element, Size contentSize) {
-        const attr::Thickness padding = element.Padding();
-        const attr::Thickness border = element.BorderThickness();
-        const attr::Thickness margin = element.Margin();
-        contentSize.width += horizontal(padding) + horizontal(border);
-        contentSize.height += vertical(padding) + vertical(border);
-        if (element.Width() > 0.0f) {
-            contentSize.width = element.Width();
-        }
-        if (element.Height() > 0.0f) {
-            contentSize.height = element.Height();
-        }
-        contentSize.width += horizontal(margin);
-        contentSize.height += vertical(margin);
-        return contentSize;
-    }
-
-    std::vector<std::string> tracks(const std::string& definitions);
-
-    Size measure(Element& element, float availableWidth) {
-        if (!element.ParticipatesInLayout()) {
-            element.SetDesiredSize({});
-            return {};
-        }
-        const attr::Thickness decoration{
-            element.Padding().left + element.BorderThickness().left,
-            element.Padding().right + element.BorderThickness().right,
-            element.Padding().top + element.BorderThickness().top,
-            element.Padding().bottom + element.BorderThickness().bottom,
-        };
-        const float contentWidth = element.Width() > 0.0f
-            ? std::max(0.0f, element.Width() - horizontal(decoration))
-            : std::max(0.0f, availableWidth - horizontal(element.Margin()) - horizontal(decoration));
-        // Первый проход вычисляет требуемый размер снизу вверх. Ширина
-        // контейнера участвует в вычислении высоты переносимого текста.
-        if (element.Type() == ElementType::textBlock
-            || (element.Type() == ElementType::button && element.Children().empty())) {
-            Size result{
-                std::max(1.0f, static_cast<float>(utf8Length(element.Text())) * element.FontSize() * 0.55f),
-                lineHeight(element) * static_cast<float>(wrappedLineCount(element, contentWidth)),
+        float textHeight(const Element& element) {
+            const std::string_view fontWeight = element.FontWeight() == "ExtraBold" || element.FontWeight() == "Black"
+                ? "Black"
+                : element.FontWeight() == "SemiBold" || element.FontWeight() == "Bold" ? "Bold" : "Normal";
+            const auto glyphFor = [fontWeight](uint32_t codepoint) -> const TextGlyphMetric* {
+                const auto found = std::find_if(textGlyphMetrics.begin(), textGlyphMetrics.end(),
+                    [fontWeight, codepoint](const TextGlyphMetric& glyph) {
+                        return glyph.fontWeight == fontWeight && glyph.codepoint == codepoint;
+                    });
+                return found == textGlyphMetrics.end() ? nullptr : &*found;
             };
-            if (element.TextWrapping() && contentWidth > 0.0f) {
-                result.width = std::min(result.width, contentWidth);
+
+            float top = std::numeric_limits<float>::max();
+            float bottom = std::numeric_limits<float>::lowest();
+            const char* current = element.Text().data();
+            const char* const end = current + element.Text().size();
+            while (current < end) {
+                const TextGlyphMetric* const glyph = glyphFor(universaldevkit::helpers::text::Utf8::Next(current, end, '?'));
+                if (glyph == nullptr) {
+                    continue;
+                }
+                top = std::min(top, glyph->top);
+                bottom = std::max(bottom, glyph->bottom);
             }
-            if (element.Type() == ElementType::button) {
-                result.width += 48.0f;
-                result.height += 24.0f;
-            }
-            result = withCommonSize(element, result);
-            element.SetDesiredSize(result);
-            return result;
+            return bottom > top ? (bottom - top) * element.FontSize() : element.FontSize();
         }
 
-        if (element.Type() == ElementType::toggleSwitch) {
-            Size result{
-                element.Width() > 0.0f ? element.Width() : 56.0f,
-                element.Height() > 0.0f ? element.Height() : 32.0f,
+        float lineHeight(const Element& element) {
+            return element.LineHeight() > 0.0f ? element.LineHeight() : textHeight(element);
+        }
+
+        size_t wrappedLineCount(const Element& element, float availableWidth) {
+            if (!element.TextWrapping()) {
+                return 1;
+            }
+            const float width = element.Width() > 0.0f ? element.Width() : availableWidth;
+            if (width <= 0.0f) {
+                return 1;
+            }
+            const size_t maximumCharacters = std::max(
+                static_cast<size_t>(1),
+                static_cast<size_t>(width / (element.FontSize() * 0.55f)));
+            size_t lineLength = 0;
+            size_t lineCount = 1;
+            size_t wordLength = 0;
+            const auto addWord = [&] {
+                if (wordLength == 0) {
+                    return;
+                }
+                if (lineLength != 0 && lineLength + 1 + wordLength > maximumCharacters) {
+                    ++lineCount;
+                    lineLength = 0;
+                }
+                lineLength += lineLength == 0 ? wordLength : wordLength + 1;
+                wordLength = 0;
             };
-            result = withCommonSize(element, result);
-            element.SetDesiredSize(result);
-            return result;
-        }
-
-        if (element.Type() == ElementType::grid) {
-            const std::vector<std::string> columns = tracks(element.Columns());
-            const std::vector<std::string> rows = tracks(element.Rows());
-            std::vector<float> columnSizes(columns.size());
-            std::vector<float> rowSizes(rows.size());
-
-            for (size_t index = 0; index < columns.size(); ++index) {
-                const std::string& definition = columns[index];
-                if (definition != "*" && definition != "Auto" && definition.back() != '%') {
-                    columnSizes[index] = std::stof(definition);
+            for (const unsigned char character : element.Text()) {
+                if (std::isspace(character)) {
+                    addWord();
+                } else if ((character & 0xC0) != 0x80) {
+                    ++wordLength;
                 }
             }
-            for (size_t index = 0; index < rows.size(); ++index) {
-                const std::string& definition = rows[index];
-                if (definition != "*" && definition != "Auto" && definition.back() != '%') {
-                    rowSizes[index] = std::stof(definition);
-                }
+            addWord();
+            return lineCount;
+        }
+
+        float horizontal(const attr::Thickness& thickness) {
+            return thickness.Horizontal();
+        }
+
+        float vertical(const attr::Thickness& thickness) {
+            return thickness.Vertical();
+        }
+
+        Rect inset(Rect bounds, attr::Thickness thickness) {
+            return universaldevkit::helpers::math::Geometry::Inset(bounds, thickness);
+        }
+
+        Rect intersect(Rect first, Rect second) {
+            return universaldevkit::helpers::math::Geometry::Intersect(first, second);
+        }
+
+        void clipSubtree(Element& element) {
+            element.SetClipBounds(element.Bounds());
+            for (const std::unique_ptr<Element>& child : element.Children()) {
+                clipSubtree(*child);
             }
+        }
+
+        Size withCommonSize(const Element& element, Size contentSize) {
+            const attr::Thickness padding = element.Padding();
+            const attr::Thickness border = element.BorderThickness();
+            const attr::Thickness margin = element.Margin();
+            contentSize.width += horizontal(padding) + horizontal(border);
+            contentSize.height += vertical(padding) + vertical(border);
+            if (element.Width() > 0.0f) {
+                contentSize.width = element.Width();
+            }
+            if (element.Height() > 0.0f) {
+                contentSize.height = element.Height();
+            }
+            contentSize.width += horizontal(margin);
+            contentSize.height += vertical(margin);
+            return contentSize;
+        }
+
+        std::vector<std::string> tracks(const std::string& definitions);
+
+        Size measure(Element& element, float availableWidth) {
+            if (!element.ParticipatesInLayout()) {
+                element.SetDesiredSize({});
+                return {};
+            }
+            const attr::Thickness decoration{
+                element.Padding().left + element.BorderThickness().left,
+                element.Padding().right + element.BorderThickness().right,
+                element.Padding().top + element.BorderThickness().top,
+                element.Padding().bottom + element.BorderThickness().bottom,
+            };
+            const float contentWidth = element.Width() > 0.0f
+                ? std::max(0.0f, element.Width() - horizontal(decoration))
+                : std::max(0.0f, availableWidth - horizontal(element.Margin()) - horizontal(decoration));
+            // Первый проход вычисляет требуемый размер снизу вверх. Ширина
+            // контейнера участвует в вычислении высоты переносимого текста.
+            if (element.Type() == ElementType::textBlock
+                || (element.Type() == ElementType::button && element.Children().empty())) {
+                Size result{
+                    std::max(1.0f, static_cast<float>(utf8Length(element.Text())) * element.FontSize() * 0.55f),
+                    lineHeight(element) * static_cast<float>(wrappedLineCount(element, contentWidth)),
+                };
+                if (element.TextWrapping() && contentWidth > 0.0f) {
+                    result.width = std::min(result.width, contentWidth);
+                }
+                if (element.Type() == ElementType::button) {
+                    result.width += 48.0f;
+                    result.height += 24.0f;
+                }
+                result = withCommonSize(element, result);
+                element.SetDesiredSize(result);
+                return result;
+            }
+
+            if (element.Type() == ElementType::toggleSwitch) {
+                Size result{
+                    element.Width() > 0.0f ? element.Width() : 56.0f,
+                    element.Height() > 0.0f ? element.Height() : 32.0f,
+                };
+                result = withCommonSize(element, result);
+                element.SetDesiredSize(result);
+                return result;
+            }
+
+            if (element.Type() == ElementType::grid) {
+                const std::vector<std::string> columns = tracks(element.Columns());
+                const std::vector<std::string> rows = tracks(element.Rows());
+                std::vector<float> columnSizes(columns.size());
+                std::vector<float> rowSizes(rows.size());
+
+                for (size_t index = 0; index < columns.size(); ++index) {
+                    const std::string& definition = columns[index];
+                    if (definition != "*" && definition != "Auto" && definition.back() != '%') {
+                        columnSizes[index] = std::stof(definition);
+                    }
+                }
+                for (size_t index = 0; index < rows.size(); ++index) {
+                    const std::string& definition = rows[index];
+                    if (definition != "*" && definition != "Auto" && definition.back() != '%') {
+                        rowSizes[index] = std::stof(definition);
+                    }
+                }
+                for (const auto& child : element.Children()) {
+                    const Size childSize = measure(*child, contentWidth);
+                    const size_t column = std::min(
+                        static_cast<size_t>(std::max(0, child->GridColumn())), columns.size() - 1);
+                    const size_t row = std::min(
+                        static_cast<size_t>(std::max(0, child->GridRow())), rows.size() - 1);
+                    if (columns[column] == "Auto" || columns[column] == "*" || columns[column].back() == '%') {
+                        columnSizes[column] = std::max(columnSizes[column], childSize.width);
+                    }
+                    if (rows[row] == "Auto" || rows[row] == "*" || rows[row].back() == '%') {
+                        rowSizes[row] = std::max(rowSizes[row], childSize.height);
+                    }
+                }
+
+                const auto desiredTrackSize = [](const std::vector<std::string>& definitions,
+                                                 const std::vector<float>& sizes) {
+                    float nonPercentageSize = 0.0f;
+                    float percentage = 0.0f;
+                    float percentageMinimumSize = 0.0f;
+                    for (size_t index = 0; index < definitions.size(); ++index) {
+                        const std::string& definition = definitions[index];
+                        if (!definition.empty() && definition.back() == '%') {
+                            const float trackPercentage = std::stof(
+                                definition.substr(0, definition.size() - 1)) / 100.0f;
+                            percentage += trackPercentage;
+                            if (trackPercentage > 0.0f) {
+                                percentageMinimumSize = std::max(
+                                    percentageMinimumSize,
+                                    sizes[index] / trackPercentage);
+                            }
+                        } else {
+                            nonPercentageSize += sizes[index];
+                        }
+                    }
+                    if (percentage >= 1.0f) {
+                        return nonPercentageSize + percentageMinimumSize;
+                    }
+                    return std::max(
+                        nonPercentageSize / (1.0f - percentage),
+                        percentageMinimumSize);
+                };
+                Size result{
+                    desiredTrackSize(columns, columnSizes),
+                    desiredTrackSize(rows, rowSizes),
+                };
+                result = withCommonSize(element, result);
+                element.SetDesiredSize(result);
+                return result;
+            }
+
+            if (element.Type() == ElementType::border || element.Type() == ElementType::button) {
+                Size result{};
+                if (!element.Children().empty()) {
+                    result = measure(*element.Children().front(), contentWidth);
+                }
+                result = withCommonSize(element, result);
+                element.SetDesiredSize(result);
+                return result;
+            }
+
+            if (element.Type() == ElementType::scrollViewer) {
+                Size result{};
+                if (!element.Children().empty()) {
+                    result = measure(*element.Children().front(), contentWidth);
+                }
+                result = withCommonSize(element, result);
+                element.SetDesiredSize(result);
+                return result;
+            }
+
+            Size result{};
             for (const auto& child : element.Children()) {
                 const Size childSize = measure(*child, contentWidth);
-                const size_t column = std::min(
-                    static_cast<size_t>(std::max(0, child->GridColumn())), columns.size() - 1);
-                const size_t row = std::min(
-                    static_cast<size_t>(std::max(0, child->GridRow())), rows.size() - 1);
-                if (columns[column] == "Auto" || columns[column] == "*" || columns[column].back() == '%') {
-                    columnSizes[column] = std::max(columnSizes[column], childSize.width);
-                }
-                if (rows[row] == "Auto" || rows[row] == "*" || rows[row].back() == '%') {
-                    rowSizes[row] = std::max(rowSizes[row], childSize.height);
+                if (element.OrientationValue() == attr::Orientation::vertical) {
+                    result.width = std::max(result.width, childSize.width);
+                    result.height += childSize.height;
+                } else {
+                    result.width += childSize.width;
+                    result.height = std::max(result.height, childSize.height);
                 }
             }
+            result = withCommonSize(element, result);
+            element.SetDesiredSize(result);
+            return result;
+        }
 
-            const auto desiredTrackSize = [](const std::vector<std::string>& definitions,
-                                             const std::vector<float>& sizes) {
-                float nonPercentageSize = 0.0f;
-                float percentage = 0.0f;
-                float percentageMinimumSize = 0.0f;
-                for (size_t index = 0; index < definitions.size(); ++index) {
-                    const std::string& definition = definitions[index];
-                    if (!definition.empty() && definition.back() == '%') {
-                        const float trackPercentage = std::stof(
-                            definition.substr(0, definition.size() - 1)) / 100.0f;
-                        percentage += trackPercentage;
-                        if (trackPercentage > 0.0f) {
-                            percentageMinimumSize = std::max(
-                                percentageMinimumSize,
-                                sizes[index] / trackPercentage);
+        float alignedOffset(attr::Alignment alignment, float available, float desired) {
+            if (alignment == attr::Alignment::right || alignment == attr::Alignment::bottom) {
+                return available - desired;
+            }
+            if (alignment == attr::Alignment::center) {
+                return (available - desired) / 2.0f;
+            }
+            return 0.0f;
+        }
+
+        float alignedSize(attr::Alignment alignment, float available, float desired, float explicitSize) {
+            return alignment == attr::Alignment::stretch && explicitSize <= 0.0f ? available : desired;
+        }
+
+        std::vector<std::string> tracks(const std::string& definitions) {
+            std::vector<std::string> result;
+            std::istringstream input(definitions);
+            std::string track;
+            while (std::getline(input, track, ',')) {
+                result.push_back(track.empty() ? "*" : track);
+            }
+            if (result.empty()) {
+                result.push_back("*");
+            }
+            return result;
+        }
+
+        std::vector<float> trackSizes(
+            const std::vector<std::string>& definitions,
+            float available,
+            const Element& grid,
+            bool columns) {
+            std::vector<float> sizes(definitions.size());
+            float used = 0.0f;
+            size_t starCount = 0;
+            for (size_t index = 0; index < definitions.size(); ++index) {
+                const std::string& definition = definitions[index];
+                if (definition == "*") {
+                    ++starCount;
+                } else if (!definition.empty() && definition.back() == '%') {
+                    sizes[index] = available * std::stof(definition.substr(0, definition.size() - 1)) / 100.0f;
+                    used += sizes[index];
+                } else if (definition == "Auto") {
+                    for (const auto& child : grid.Children()) {
+                        const int track = columns ? child->GridColumn() : child->GridRow();
+                        if (track == static_cast<int>(index)) {
+                            sizes[index] = std::max(sizes[index], columns
+                                ? child->DesiredSize().width : child->DesiredSize().height);
                         }
-                    } else {
-                        nonPercentageSize += sizes[index];
                     }
+                    used += sizes[index];
+                } else {
+                    sizes[index] = std::stof(definition);
+                    used += sizes[index];
                 }
-                if (percentage >= 1.0f) {
-                    return nonPercentageSize + percentageMinimumSize;
+            }
+            const float starSize = starCount == 0 ? 0.0f : std::max(0.0f, available - used) / starCount;
+            for (size_t index = 0; index < definitions.size(); ++index) {
+                if (definitions[index] == "*") {
+                    sizes[index] = starSize;
                 }
-                return std::max(
-                    nonPercentageSize / (1.0f - percentage),
-                    percentageMinimumSize);
+            }
+            return sizes;
+        }
+
+        void arrange(Element& element, Rect bounds, Rect parentClipBounds) {
+            // Второй проход выдаёт каждому элементу конечный прямоугольник
+            // сверху вниз. StackPanel центрирует детей по поперечной оси.
+            const Rect elementBounds = inset(bounds, element.Margin());
+            element.SetBounds(elementBounds);
+            element.SetClipBounds(intersect(elementBounds, parentClipBounds));
+            const attr::Thickness paddingAndBorder{
+                element.Padding().left + element.BorderThickness().left,
+                element.Padding().right + element.BorderThickness().right,
+                element.Padding().top + element.BorderThickness().top,
+                element.Padding().bottom + element.BorderThickness().bottom,
             };
-            Size result{
-                desiredTrackSize(columns, columnSizes),
-                desiredTrackSize(rows, rowSizes),
-            };
-            result = withCommonSize(element, result);
-            element.SetDesiredSize(result);
-            return result;
-        }
-
-        if (element.Type() == ElementType::border || element.Type() == ElementType::button) {
-            Size result{};
-            if (!element.Children().empty()) {
-                result = measure(*element.Children().front(), contentWidth);
-            }
-            result = withCommonSize(element, result);
-            element.SetDesiredSize(result);
-            return result;
-        }
-
-        if (element.Type() == ElementType::scrollViewer) {
-            Size result{};
-            if (!element.Children().empty()) {
-                result = measure(*element.Children().front(), contentWidth);
-            }
-            result = withCommonSize(element, result);
-            element.SetDesiredSize(result);
-            return result;
-        }
-
-        Size result{};
-        for (const auto& child : element.Children()) {
-            const Size childSize = measure(*child, contentWidth);
-            if (element.OrientationValue() == attr::Orientation::vertical) {
-                result.width = std::max(result.width, childSize.width);
-                result.height += childSize.height;
-            } else {
-                result.width += childSize.width;
-                result.height = std::max(result.height, childSize.height);
-            }
-        }
-        result = withCommonSize(element, result);
-        element.SetDesiredSize(result);
-        return result;
-    }
-
-    float alignedOffset(attr::Alignment alignment, float available, float desired) {
-        if (alignment == attr::Alignment::right || alignment == attr::Alignment::bottom) {
-            return available - desired;
-        }
-        if (alignment == attr::Alignment::center) {
-            return (available - desired) / 2.0f;
-        }
-        return 0.0f;
-    }
-
-    float alignedSize(attr::Alignment alignment, float available, float desired, float explicitSize) {
-        return alignment == attr::Alignment::stretch && explicitSize <= 0.0f ? available : desired;
-    }
-
-    std::vector<std::string> tracks(const std::string& definitions) {
-        std::vector<std::string> result;
-        std::istringstream input(definitions);
-        std::string track;
-        while (std::getline(input, track, ',')) {
-            result.push_back(track.empty() ? "*" : track);
-        }
-        if (result.empty()) {
-            result.push_back("*");
-        }
-        return result;
-    }
-
-    std::vector<float> trackSizes(
-        const std::vector<std::string>& definitions,
-        float available,
-        const Element& grid,
-        bool columns) {
-        std::vector<float> sizes(definitions.size());
-        float used = 0.0f;
-        size_t starCount = 0;
-        for (size_t index = 0; index < definitions.size(); ++index) {
-            const std::string& definition = definitions[index];
-            if (definition == "*") {
-                ++starCount;
-            } else if (!definition.empty() && definition.back() == '%') {
-                sizes[index] = available * std::stof(definition.substr(0, definition.size() - 1)) / 100.0f;
-                used += sizes[index];
-            } else if (definition == "Auto") {
-                for (const auto& child : grid.Children()) {
-                    const int track = columns ? child->GridColumn() : child->GridRow();
-                    if (track == static_cast<int>(index)) {
-                        sizes[index] = std::max(sizes[index], columns
-                            ? child->DesiredSize().width : child->DesiredSize().height);
-                    }
+            const Rect contentBounds = inset(elementBounds, paddingAndBorder);
+            if (element.Type() == ElementType::page) {
+                for (const auto& child : element.Children()) {
+                    const Size childSize = child->DesiredSize();
+                    arrange(*child, {
+                        contentBounds.x + alignedOffset(
+                            child->HorizontalAlignmentValue(), contentBounds.width, childSize.width),
+                        contentBounds.y + alignedOffset(
+                            child->VerticalAlignmentValue(), contentBounds.height, childSize.height),
+                        alignedSize(child->HorizontalAlignmentValue(), contentBounds.width, childSize.width, child->Width()),
+                        alignedSize(child->VerticalAlignmentValue(), contentBounds.height, childSize.height, child->Height()),
+                    }, element.ClipBounds());
                 }
-                used += sizes[index];
-            } else {
-                sizes[index] = std::stof(definition);
-                used += sizes[index];
-            }
-        }
-        const float starSize = starCount == 0 ? 0.0f : std::max(0.0f, available - used) / starCount;
-        for (size_t index = 0; index < definitions.size(); ++index) {
-            if (definitions[index] == "*") {
-                sizes[index] = starSize;
-            }
-        }
-        return sizes;
-    }
-
-    void arrange(Element& element, Rect bounds, Rect parentClipBounds) {
-        // Второй проход выдаёт каждому элементу конечный прямоугольник
-        // сверху вниз. StackPanel центрирует детей по поперечной оси.
-        const Rect elementBounds = inset(bounds, element.Margin());
-        element.SetBounds(elementBounds);
-        element.SetClipBounds(intersect(elementBounds, parentClipBounds));
-        const attr::Thickness paddingAndBorder{
-            element.Padding().left + element.BorderThickness().left,
-            element.Padding().right + element.BorderThickness().right,
-            element.Padding().top + element.BorderThickness().top,
-            element.Padding().bottom + element.BorderThickness().bottom,
-        };
-        const Rect contentBounds = inset(elementBounds, paddingAndBorder);
-        if (element.Type() == ElementType::page) {
-            for (const auto& child : element.Children()) {
-                const Size childSize = child->DesiredSize();
-                arrange(*child, {
-                    contentBounds.x + alignedOffset(
-                        child->HorizontalAlignmentValue(), contentBounds.width, childSize.width),
-                    contentBounds.y + alignedOffset(
-                        child->VerticalAlignmentValue(), contentBounds.height, childSize.height),
-                    alignedSize(child->HorizontalAlignmentValue(), contentBounds.width, childSize.width, child->Width()),
-                    alignedSize(child->VerticalAlignmentValue(), contentBounds.height, childSize.height, child->Height()),
-                }, element.ClipBounds());
-            }
-            return;
-        }
-        if (element.Type() == ElementType::grid) {
-            const std::vector<std::string> columns = tracks(element.Columns());
-            const std::vector<std::string> rows = tracks(element.Rows());
-            const std::vector<float> columnSizes = trackSizes(columns, contentBounds.width, element, true);
-            const std::vector<float> rowSizes = trackSizes(rows, contentBounds.height, element, false);
-            for (const auto& child : element.Children()) {
-                const size_t column = std::min(static_cast<size_t>(std::max(0, child->GridColumn())), columns.size() - 1);
-                const size_t row = std::min(static_cast<size_t>(std::max(0, child->GridRow())), rows.size() - 1);
-                float x = contentBounds.x;
-                for (size_t index = 0; index < column; ++index) {
-                    x += columnSizes[index];
-                }
-                float y = contentBounds.y;
-                for (size_t index = 0; index < row; ++index) {
-                    y += rowSizes[index];
-                }
-                const Size childSize = child->DesiredSize();
-                arrange(*child, {
-                    x + alignedOffset(child->HorizontalAlignmentValue(), columnSizes[column], childSize.width),
-                    y + alignedOffset(child->VerticalAlignmentValue(), rowSizes[row], childSize.height),
-                    alignedSize(child->HorizontalAlignmentValue(), columnSizes[column], childSize.width, child->Width()),
-                    alignedSize(child->VerticalAlignmentValue(), rowSizes[row], childSize.height, child->Height()),
-                }, element.ClipBounds());
-            }
-            return;
-        }
-        if (element.Type() == ElementType::border || element.Type() == ElementType::button) {
-            if (!element.Children().empty()) {
-                Element& child = *element.Children().front();
-                const Size childSize = child.DesiredSize();
-                arrange(child, {
-                    contentBounds.x + alignedOffset(
-                        child.HorizontalAlignmentValue(), contentBounds.width, childSize.width),
-                    contentBounds.y + alignedOffset(
-                        child.VerticalAlignmentValue(), contentBounds.height, childSize.height),
-                    alignedSize(child.HorizontalAlignmentValue(), contentBounds.width, childSize.width, child.Width()),
-                    alignedSize(child.VerticalAlignmentValue(), contentBounds.height, childSize.height, child.Height()),
-                }, element.ClipBounds());
-            }
-            return;
-        }
-        if (element.Type() == ElementType::scrollViewer) {
-            if (element.Children().empty()) {
-                element.SetScrollMetrics({}, {contentBounds.width, contentBounds.height});
-                element.SetHorizontalOffset(0.0f);
-                element.SetVerticalOffset(0.0f);
                 return;
             }
-            Element& child = *element.Children().front();
-            const Size desired = child.DesiredSize();
-            element.SetScrollMetrics(
-                {std::max(contentBounds.width, desired.width), std::max(contentBounds.height, desired.height)},
-                {contentBounds.width, contentBounds.height});
-            element.SetHorizontalOffset(std::clamp(element.HorizontalOffset(), 0.0f,
-                std::max(0.0f, element.Extent().width - element.Viewport().width)));
-            element.SetVerticalOffset(std::clamp(element.VerticalOffset(), 0.0f,
-                std::max(0.0f, element.Extent().height - element.Viewport().height)));
-            arrange(child, {
-                contentBounds.x,
-                contentBounds.y,
-                element.Extent().width,
-                element.Extent().height,
-            }, element.ClipBounds());
-            clipSubtree(child);
-            return;
-        }
-        float cursor = element.OrientationValue() == attr::Orientation::vertical ? contentBounds.y : contentBounds.x;
-        for (const auto& child : element.Children()) {
-            const Size size = child->DesiredSize();
-            Rect childBounds;
-            if (element.OrientationValue() == attr::Orientation::vertical) {
-                childBounds = {contentBounds.x + alignedOffset(child->HorizontalAlignmentValue(), contentBounds.width, size.width), cursor, alignedSize(child->HorizontalAlignmentValue(), contentBounds.width, size.width, child->Width()), size.height};
-                cursor += size.height;
-            } else {
-                childBounds = {cursor, contentBounds.y + alignedOffset(child->VerticalAlignmentValue(), contentBounds.height, size.height), size.width, alignedSize(child->VerticalAlignmentValue(), contentBounds.height, size.height, child->Height())};
-                cursor += size.width;
+            if (element.Type() == ElementType::grid) {
+                const std::vector<std::string> columns = tracks(element.Columns());
+                const std::vector<std::string> rows = tracks(element.Rows());
+                const std::vector<float> columnSizes = trackSizes(columns, contentBounds.width, element, true);
+                const std::vector<float> rowSizes = trackSizes(rows, contentBounds.height, element, false);
+                for (const auto& child : element.Children()) {
+                    const size_t column = std::min(static_cast<size_t>(std::max(0, child->GridColumn())), columns.size() - 1);
+                    const size_t row = std::min(static_cast<size_t>(std::max(0, child->GridRow())), rows.size() - 1);
+                    float x = contentBounds.x;
+                    for (size_t index = 0; index < column; ++index) {
+                        x += columnSizes[index];
+                    }
+                    float y = contentBounds.y;
+                    for (size_t index = 0; index < row; ++index) {
+                        y += rowSizes[index];
+                    }
+                    const Size childSize = child->DesiredSize();
+                    arrange(*child, {
+                        x + alignedOffset(child->HorizontalAlignmentValue(), columnSizes[column], childSize.width),
+                        y + alignedOffset(child->VerticalAlignmentValue(), rowSizes[row], childSize.height),
+                        alignedSize(child->HorizontalAlignmentValue(), columnSizes[column], childSize.width, child->Width()),
+                        alignedSize(child->VerticalAlignmentValue(), rowSizes[row], childSize.height, child->Height()),
+                    }, element.ClipBounds());
+                }
+                return;
             }
-            arrange(*child, childBounds, element.ClipBounds());
+            if (element.Type() == ElementType::border || element.Type() == ElementType::button) {
+                if (!element.Children().empty()) {
+                    Element& child = *element.Children().front();
+                    const Size childSize = child.DesiredSize();
+                    arrange(child, {
+                        contentBounds.x + alignedOffset(
+                            child.HorizontalAlignmentValue(), contentBounds.width, childSize.width),
+                        contentBounds.y + alignedOffset(
+                            child.VerticalAlignmentValue(), contentBounds.height, childSize.height),
+                        alignedSize(child.HorizontalAlignmentValue(), contentBounds.width, childSize.width, child.Width()),
+                        alignedSize(child.VerticalAlignmentValue(), contentBounds.height, childSize.height, child.Height()),
+                    }, element.ClipBounds());
+                }
+                return;
+            }
+            if (element.Type() == ElementType::scrollViewer) {
+                if (element.Children().empty()) {
+                    element.SetScrollMetrics({}, {contentBounds.width, contentBounds.height});
+                    element.SetHorizontalOffset(0.0f);
+                    element.SetVerticalOffset(0.0f);
+                    return;
+                }
+                Element& child = *element.Children().front();
+                const Size desired = child.DesiredSize();
+                element.SetScrollMetrics(
+                    {std::max(contentBounds.width, desired.width), std::max(contentBounds.height, desired.height)},
+                    {contentBounds.width, contentBounds.height});
+                element.SetHorizontalOffset(std::clamp(element.HorizontalOffset(), 0.0f,
+                    std::max(0.0f, element.Extent().width - element.Viewport().width)));
+                element.SetVerticalOffset(std::clamp(element.VerticalOffset(), 0.0f,
+                    std::max(0.0f, element.Extent().height - element.Viewport().height)));
+                arrange(child, {
+                    contentBounds.x,
+                    contentBounds.y,
+                    element.Extent().width,
+                    element.Extent().height,
+                }, element.ClipBounds());
+                clipSubtree(child);
+                return;
+            }
+            float cursor = element.OrientationValue() == attr::Orientation::vertical ? contentBounds.y : contentBounds.x;
+            for (const auto& child : element.Children()) {
+                const Size size = child->DesiredSize();
+                Rect childBounds;
+                if (element.OrientationValue() == attr::Orientation::vertical) {
+                    childBounds = {contentBounds.x + alignedOffset(child->HorizontalAlignmentValue(), contentBounds.width, size.width), cursor, alignedSize(child->HorizontalAlignmentValue(), contentBounds.width, size.width, child->Width()), size.height};
+                    cursor += size.height;
+                } else {
+                    childBounds = {cursor, contentBounds.y + alignedOffset(child->VerticalAlignmentValue(), contentBounds.height, size.height), size.width, alignedSize(child->VerticalAlignmentValue(), contentBounds.height, size.height, child->Height())};
+                    cursor += size.width;
+                }
+                arrange(*child, childBounds, element.ClipBounds());
+            }
         }
-    }
-}
+    } // namespace details
 
-namespace universaldevkit::xamlruntime {
     Element::Element(ElementType type)
         : type(type) {
     }

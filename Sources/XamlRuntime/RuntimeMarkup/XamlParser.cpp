@@ -5,26 +5,26 @@
 #include <cctype>
 #include <set>
 
-namespace universaldevkit::xamlruntime::runtimemarkup::details {
-    std::string Resolve(std::string& name, const std::map<std::string, std::string>& namespaces,
-        const XamlSourceLocation& location, bool attribute) {
-        const auto colon = name.find(':');
-        const std::string prefix = colon == std::string::npos ? "" : name.substr(0, colon);
-        if (colon == std::string::npos && attribute) {
-            return {};
-        }
-        const auto found = namespaces.find(prefix);
-        if (found == namespaces.end()) {
-            throw RuntimeDiagnostic(location, "Undeclared XML namespace '" + prefix + "'");
-        }
-        if (colon != std::string::npos) {
-            name.erase(0, colon + 1);
-        }
-        return found->second;
-    }
-}
-
 namespace universaldevkit::xamlruntime::runtimemarkup {
+    namespace details {
+        std::string Resolve(std::string& name, const std::map<std::string, std::string>& namespaces,
+            const XamlSourceLocation& location, bool attribute) {
+            const auto colon = name.find(':');
+            const std::string prefix = colon == std::string::npos ? "" : name.substr(0, colon);
+            if (colon == std::string::npos && attribute) {
+                return {};
+            }
+            const auto found = namespaces.find(prefix);
+            if (found == namespaces.end()) {
+                throw RuntimeDiagnostic(location, "Undeclared XML namespace '" + prefix + "'");
+            }
+            if (colon != std::string::npos) {
+                name.erase(0, colon + 1);
+            }
+            return found->second;
+        }
+    } // namespace details
+
     RuntimeDiagnostic::RuntimeDiagnostic(const XamlSourceLocation& location, const std::string& message)
         : std::runtime_error(location.path + ":" + std::to_string(location.line) + ":"
             + std::to_string(location.column) + ": " + message) {

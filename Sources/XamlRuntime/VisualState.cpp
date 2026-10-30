@@ -5,39 +5,39 @@
 #include <locale>
 #include <cmath>
 
-namespace universaldevkit::xamlruntime::details {
-    float ParseStateFloat(const std::string& value) {
-        std::istringstream input(value);
-        input.imbue(std::locale::classic());
-        input >> std::noskipws;
-        float result = 0.0f;
-        if (!(input >> result) || input.peek() != std::char_traits<char>::eof() || !std::isfinite(result)) {
-            throw std::invalid_argument("Expected a finite float: " + value);
-        }
-        return result;
-    }
-
-    int ParseStateInt(const std::string& value) {
-        int result = 0;
-        const auto parsed = std::from_chars(value.data(), value.data() + value.size(), result);
-        if (parsed.ec != std::errc{} || parsed.ptr != value.data() + value.size()) {
-            throw std::invalid_argument("Expected an integer: " + value);
-        }
-        return result;
-    }
-
-    bool ParseStateBool(const std::string& value) {
-        if (value == "true") {
-            return true;
-        }
-        if (value == "false") {
-            return false;
-        }
-        throw std::invalid_argument("Expected true or false: " + value);
-    }
-}
-
 namespace universaldevkit::xamlruntime {
+    namespace details {
+        float ParseStateFloat(const std::string& value) {
+            std::istringstream input(value);
+            input.imbue(std::locale::classic());
+            input >> std::noskipws;
+            float result = 0.0f;
+            if (!(input >> result) || input.peek() != std::char_traits<char>::eof() || !std::isfinite(result)) {
+                throw std::invalid_argument("Expected a finite float: " + value);
+            }
+            return result;
+        }
+
+        int ParseStateInt(const std::string& value) {
+            int result = 0;
+            const auto parsed = std::from_chars(value.data(), value.data() + value.size(), result);
+            if (parsed.ec != std::errc{} || parsed.ptr != value.data() + value.size()) {
+                throw std::invalid_argument("Expected an integer: " + value);
+            }
+            return result;
+        }
+
+        bool ParseStateBool(const std::string& value) {
+            if (value == "true") {
+                return true;
+            }
+            if (value == "false") {
+                return false;
+            }
+            throw std::invalid_argument("Expected true or false: " + value);
+        }
+    } // namespace details
+
     StateRegistry::StateRegistry() {
         this->Register<VisualTransform>();
         this->Register<EmptyState>();

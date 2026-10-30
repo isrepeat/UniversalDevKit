@@ -12,7 +12,7 @@ namespace universaldevkit::xamlruntime {
         constexpr float stopVelocity = 5.0f;
         constexpr float deceleration = 4.0f;
         constexpr float maximumFrameDuration = 1.0f / 30.0f;
-    }
+    } // namespace details
 
     void ScrollController::Begin(Element& scrollViewer) {
         this->target = &scrollViewer;

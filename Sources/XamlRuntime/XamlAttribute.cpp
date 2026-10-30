@@ -60,7 +60,7 @@ namespace universaldevkit::xamlruntime {
 
             return nullptr;
         }
-    }
+    } // namespace details
 
     std::optional<XamlAttribute> ParseXamlAttribute(std::string_view name) {
         for (const details::AttributeMapping& mapping : details::attributeMappings) {

@@ -7,235 +7,235 @@
 #include <algorithm>
 #include <cmath>
 
-namespace universaldevkit::xamlruntime::runtimemarkup::details {
-    std::string Attribute(const XamlElementNode& node, std::string_view name, std::string fallback = {}) {
-        for (const auto& attribute : node.attributes) {
-            if (attribute.name == name) {
-                return attribute.value;
+namespace universaldevkit::xamlruntime::runtimemarkup {
+    namespace details {
+        std::string Attribute(const XamlElementNode& node, std::string_view name, std::string fallback = {}) {
+            for (const auto& attribute : node.attributes) {
+                if (attribute.name == name) {
+                    return attribute.value;
+                }
+            }
+            return fallback;
+        }
+
+        std::string Trim(std::string value) {
+            const auto first = value.find_first_not_of(" \t\r\n");
+            if (first == std::string::npos) {
+                return {};
+            }
+            return value.substr(first, value.find_last_not_of(" \t\r\n") - first + 1);
+        }
+
+        std::string BindingPath(const XamlAttributeNode& attribute, bool& twoWay) {
+            const auto& value = attribute.value;
+            if (value.rfind("{Binding ", 0) != 0 || value.back() != '}') {
+                throw RuntimeDiagnostic(attribute.location, "Expected {Binding Path} or {Binding Path, Mode=TwoWay}");
+            }
+            auto path = Trim(value.substr(9, value.size() - 10));
+            const auto comma = path.find(',');
+            if (comma != std::string::npos) {
+                const auto mode = Trim(path.substr(comma + 1));
+                if (mode != "Mode=TwoWay" && mode != "Mode=OneWay") {
+                    throw RuntimeDiagnostic(attribute.location, "Unsupported binding mode");
+                }
+                twoWay = mode == "Mode=TwoWay";
+                path = Trim(path.substr(0, comma));
+            }
+            if (path.rfind("Path=", 0) == 0) {
+                path.erase(0, 5);
+            }
+            return path;
+        }
+
+        float Number(const XamlElementNode& node, std::string_view name, std::string fallback = "0") {
+            const auto value = Attribute(node, name, fallback);
+            try {
+                size_t count = 0;
+                const float result = std::stof(value, &count);
+                if (count != value.size() || !std::isfinite(result)) {
+                    throw std::invalid_argument("number");
+                }
+                return result;
+            } catch (const std::exception&) {
+                throw RuntimeDiagnostic(node.location, "Invalid numeric animation attribute '" + std::string(name) + "'");
             }
         }
-        return fallback;
-    }
 
-    std::string Trim(std::string value) {
-        const auto first = value.find_first_not_of(" \t\r\n");
-        if (first == std::string::npos) {
-            return {};
-        }
-        return value.substr(first, value.find_last_not_of(" \t\r\n") - first + 1);
-    }
-
-    std::string BindingPath(const XamlAttributeNode& attribute, bool& twoWay) {
-        const auto& value = attribute.value;
-        if (value.rfind("{Binding ", 0) != 0 || value.back() != '}') {
-            throw RuntimeDiagnostic(attribute.location, "Expected {Binding Path} or {Binding Path, Mode=TwoWay}");
-        }
-        auto path = Trim(value.substr(9, value.size() - 10));
-        const auto comma = path.find(',');
-        if (comma != std::string::npos) {
-            const auto mode = Trim(path.substr(comma + 1));
-            if (mode != "Mode=TwoWay" && mode != "Mode=OneWay") {
-                throw RuntimeDiagnostic(attribute.location, "Unsupported binding mode");
+        AnimationTrack Track(const XamlElementNode& node) {
+            if (node.name != "Animation" && node.name != "FloatAnimation" && node.name != "ColorAnimation") {
+                throw RuntimeDiagnostic(node.location, "Expected Animation, FloatAnimation or ColorAnimation");
             }
-            twoWay = mode == "Mode=TwoWay";
-            path = Trim(path.substr(0, comma));
-        }
-        if (path.rfind("Path=", 0) == 0) {
-            path.erase(0, 5);
-        }
-        return path;
-    }
-
-    float Number(const XamlElementNode& node, std::string_view name, std::string fallback = "0") {
-        const auto value = Attribute(node, name, fallback);
-        try {
-            size_t count = 0;
-            const float result = std::stof(value, &count);
-            if (count != value.size() || !std::isfinite(result)) {
-                throw std::invalid_argument("number");
+            if (!node.children.empty()) {
+                throw RuntimeDiagnostic(node.location, "Animation cannot contain children");
+            }
+            AnimationTrack result;
+            if (node.name == "ColorAnimation") {
+                const std::map<std::string, AnimatedProperty> colors{{"background", AnimatedProperty::background},
+                    {"foreground", AnimatedProperty::foreground}, {"borderBrush", AnimatedProperty::borderColor},
+                    {"tint", AnimatedProperty::tint}};
+                const auto property = colors.find(Attribute(node, "property"));
+                const auto from = Attribute(node, "from");
+                const auto to = Attribute(node, "to");
+                if (property == colors.end() || from.empty() || to.empty() || Attribute(node, "duration").empty()) {
+                    throw RuntimeDiagnostic(node.location, "ColorAnimation requires supported property, from, to and duration");
+                }
+                try {
+                    result = AnimationTrack::Color(property->second, from == "Current" ? attr::Color{} : ParseColor(from),
+                        ParseColor(to), std::chrono::milliseconds(0), Easing::linear, from == "Current");
+                } catch (const std::exception& error) {
+                    throw RuntimeDiagnostic(node.location, error.what());
+                }
+            }
+            if (!result.isColor) {
+                const std::map<std::string, AnimatedProperty> properties{{"opacity", AnimatedProperty::opacity},
+                    {"height", AnimatedProperty::height}, {"renderOffsetX", AnimatedProperty::renderOffsetX},
+                    {"renderOffsetY", AnimatedProperty::renderOffsetY}, {"toggleProgress", AnimatedProperty::toggleProgress},
+                    {"pressProgress", AnimatedProperty::pressProgress}};
+                result.name = Attribute(node, "name");
+                const auto property = Attribute(node, "property", "opacity");
+                const auto found = properties.find(property);
+                if (found == properties.end() || (node.name == "Animation" && result.name.empty())) {
+                    throw RuntimeDiagnostic(node.location, "Unknown animated property or missing animation name");
+                }
+                result.property = found->second;
+                result.fromCurrent = Attribute(node, "from") == "Current";
+                result.toToggleState = Attribute(node, "to") == "ToggleState";
+                result.from = result.fromCurrent ? 0.0f : Number(node, "from");
+                result.to = result.toToggleState ? 0.0f : Number(node, "to");
+            }
+            const float duration = Number(node, "duration");
+            if (duration < 0 || duration > 86400000) {
+                throw RuntimeDiagnostic(node.location, "Animation duration is out of range");
+            }
+            result.duration = std::chrono::milliseconds(static_cast<long long>(duration));
+            const auto easing = Attribute(node, "easing", "Linear");
+            if (easing != "Linear" && easing != "CubicOut") {
+                throw RuntimeDiagnostic(node.location, "Unsupported easing '" + easing + "'");
+            }
+            result.easing = easing == "Linear" ? Easing::linear : Easing::cubicOut;
+            for (const auto& attribute : node.attributes) {
+                if (attribute.name != "name" && attribute.name != "property" && attribute.name != "targetName") {
+                    result.settings.Set(attribute.name, attribute.value);
+                }
             }
             return result;
-        } catch (const std::exception&) {
-            throw RuntimeDiagnostic(node.location, "Invalid numeric animation attribute '" + std::string(name) + "'");
         }
-    }
 
-    AnimationTrack Track(const XamlElementNode& node) {
-        if (node.name != "Animation" && node.name != "FloatAnimation" && node.name != "ColorAnimation") {
-            throw RuntimeDiagnostic(node.location, "Expected Animation, FloatAnimation or ColorAnimation");
-        }
-        if (!node.children.empty()) {
-            throw RuntimeDiagnostic(node.location, "Animation cannot contain children");
-        }
-        AnimationTrack result;
-        if (node.name == "ColorAnimation") {
-            const std::map<std::string, AnimatedProperty> colors{{"background", AnimatedProperty::background},
-                {"foreground", AnimatedProperty::foreground}, {"borderBrush", AnimatedProperty::borderColor},
-                {"tint", AnimatedProperty::tint}};
-            const auto property = colors.find(Attribute(node, "property"));
-            const auto from = Attribute(node, "from");
-            const auto to = Attribute(node, "to");
-            if (property == colors.end() || from.empty() || to.empty() || Attribute(node, "duration").empty()) {
-                throw RuntimeDiagnostic(node.location, "ColorAnimation requires supported property, from, to and duration");
+        Storyboard BuildStoryboard(const XamlElementNode& node) {
+            if (node.name != "Storyboard") {
+                throw RuntimeDiagnostic(node.location, "Expected Storyboard");
             }
-            try {
-                result = AnimationTrack::Color(property->second, from == "Current" ? attr::Color{} : ParseColor(from),
-                    ParseColor(to), std::chrono::milliseconds(0), Easing::linear, from == "Current");
-            } catch (const std::exception& error) {
-                throw RuntimeDiagnostic(node.location, error.what());
+            Storyboard result;
+            const std::map<std::string, AnimationTrigger> triggers{{"PointerDown", AnimationTrigger::pointerDown},
+                {"PointerUp", AnimationTrigger::pointerUp}, {"Toggled", AnimationTrigger::toggled},
+                {"Show", AnimationTrigger::show}, {"Hide", AnimationTrigger::hide},
+                {"ParentShow", AnimationTrigger::parentShow}, {"ParentHide", AnimationTrigger::parentHide}};
+            const auto trigger = triggers.find(Attribute(node, "trigger"));
+            if (trigger == triggers.end()) {
+                throw RuntimeDiagnostic(node.location, "Unknown storyboard trigger");
             }
-        }
-        if (!result.isColor) {
-            const std::map<std::string, AnimatedProperty> properties{{"opacity", AnimatedProperty::opacity},
-                {"height", AnimatedProperty::height}, {"renderOffsetX", AnimatedProperty::renderOffsetX},
-                {"renderOffsetY", AnimatedProperty::renderOffsetY}, {"toggleProgress", AnimatedProperty::toggleProgress},
-                {"pressProgress", AnimatedProperty::pressProgress}};
-            result.name = Attribute(node, "name");
-            const auto property = Attribute(node, "property", "opacity");
-            const auto found = properties.find(property);
-            if (found == properties.end() || (node.name == "Animation" && result.name.empty())) {
-                throw RuntimeDiagnostic(node.location, "Unknown animated property or missing animation name");
+            result.trigger = trigger->second;
+            for (const auto& child : node.children) {
+                result.tracks.push_back(Track(child));
             }
-            result.property = found->second;
-            result.fromCurrent = Attribute(node, "from") == "Current";
-            result.toToggleState = Attribute(node, "to") == "ToggleState";
-            result.from = result.fromCurrent ? 0.0f : Number(node, "from");
-            result.to = result.toToggleState ? 0.0f : Number(node, "to");
+            return result;
         }
-        const float duration = Number(node, "duration");
-        if (duration < 0 || duration > 86400000) {
-            throw RuntimeDiagnostic(node.location, "Animation duration is out of range");
-        }
-        result.duration = std::chrono::milliseconds(static_cast<long long>(duration));
-        const auto easing = Attribute(node, "easing", "Linear");
-        if (easing != "Linear" && easing != "CubicOut") {
-            throw RuntimeDiagnostic(node.location, "Unsupported easing '" + easing + "'");
-        }
-        result.easing = easing == "Linear" ? Easing::linear : Easing::cubicOut;
-        for (const auto& attribute : node.attributes) {
-            if (attribute.name != "name" && attribute.name != "property" && attribute.name != "targetName") {
-                result.settings.Set(attribute.name, attribute.value);
-            }
-        }
-        return result;
-    }
 
-    Storyboard BuildStoryboard(const XamlElementNode& node) {
-        if (node.name != "Storyboard") {
-            throw RuntimeDiagnostic(node.location, "Expected Storyboard");
-        }
-        Storyboard result;
-        const std::map<std::string, AnimationTrigger> triggers{{"PointerDown", AnimationTrigger::pointerDown},
-            {"PointerUp", AnimationTrigger::pointerUp}, {"Toggled", AnimationTrigger::toggled},
-            {"Show", AnimationTrigger::show}, {"Hide", AnimationTrigger::hide},
-            {"ParentShow", AnimationTrigger::parentShow}, {"ParentHide", AnimationTrigger::parentHide}};
-        const auto trigger = triggers.find(Attribute(node, "trigger"));
-        if (trigger == triggers.end()) {
-            throw RuntimeDiagnostic(node.location, "Unknown storyboard trigger");
-        }
-        result.trigger = trigger->second;
-        for (const auto& child : node.children) {
-            result.tracks.push_back(Track(child));
-        }
-        return result;
-    }
-
-    std::vector<VisualStateGroup> BuildStates(const XamlElementNode& node) {
-        std::vector<VisualStateGroup> result;
-        for (const auto& group : node.children) {
-            if (group.name != "VisualStateGroup" || Attribute(group, "name").empty()) {
-                throw RuntimeDiagnostic(group.location, "Expected named VisualStateGroup");
-            }
-            VisualStateGroup value;
-            value.name = Attribute(group, "name");
-            for (const auto& state : group.children) {
-                if (state.name != "VisualState" || Attribute(state, "name").empty()) {
-                    throw RuntimeDiagnostic(state.location, "Expected named VisualState");
+        std::vector<VisualStateGroup> BuildStates(const XamlElementNode& node) {
+            std::vector<VisualStateGroup> result;
+            for (const auto& group : node.children) {
+                if (group.name != "VisualStateGroup" || Attribute(group, "name").empty()) {
+                    throw RuntimeDiagnostic(group.location, "Expected named VisualStateGroup");
                 }
-                VisualState item;
-                item.name = Attribute(state, "name");
-                for (const auto& child : state.children) {
-                    if (child.name == "Setters") {
-                        for (const auto& setter : child.children) {
-                            const auto targetName = Attribute(setter, "targetName");
-                            const auto property = Attribute(setter, "property");
-                            const auto value = Attribute(setter, "value");
-                            if (setter.name != "Setter" || !setter.children.empty()
-                                || targetName.empty() || property.empty() || value.empty()) {
-                                throw RuntimeDiagnostic(setter.location,
-                                    "Setter requires targetName, property and value");
-                            }
-                            if (property != "width" && property != "height"
-                                && property != "horizontalAlignment" && property != "verticalAlignment"
-                                && property != "background") {
-                                throw RuntimeDiagnostic(setter.location, "Unsupported VisualState Setter property");
-                            }
-                            if ((property == "width" || property == "height") && value == "Auto") {
-                                if (property == "height") {
-                                    throw RuntimeDiagnostic(setter.location, "height Auto is not supported");
+                VisualStateGroup value;
+                value.name = Attribute(group, "name");
+                for (const auto& state : group.children) {
+                    if (state.name != "VisualState" || Attribute(state, "name").empty()) {
+                        throw RuntimeDiagnostic(state.location, "Expected named VisualState");
+                    }
+                    VisualState item;
+                    item.name = Attribute(state, "name");
+                    for (const auto& child : state.children) {
+                        if (child.name == "Setters") {
+                            for (const auto& setter : child.children) {
+                                const auto targetName = Attribute(setter, "targetName");
+                                const auto property = Attribute(setter, "property");
+                                const auto value = Attribute(setter, "value");
+                                if (setter.name != "Setter" || !setter.children.empty()
+                                    || targetName.empty() || property.empty() || value.empty()) {
+                                    throw RuntimeDiagnostic(setter.location,
+                                        "Setter requires targetName, property and value");
                                 }
+                                if (property != "width" && property != "height"
+                                    && property != "horizontalAlignment" && property != "verticalAlignment"
+                                    && property != "background") {
+                                    throw RuntimeDiagnostic(setter.location, "Unsupported VisualState Setter property");
+                                }
+                                if ((property == "width" || property == "height") && value == "Auto") {
+                                    if (property == "height") {
+                                        throw RuntimeDiagnostic(setter.location, "height Auto is not supported");
+                                    }
+                                }
+                                item.setters.push_back({targetName, property, value});
                             }
-                            item.setters.push_back({targetName, property, value});
+                            continue;
                         }
-                        continue;
+                        if (child.name != "Storyboard") {
+                            throw RuntimeDiagnostic(child.location, "Expected Setters or Storyboard");
+                        }
+                        for (const auto& track : child.children) {
+                            item.tracks.push_back({Attribute(track, "targetName"), Track(track)});
+                        }
                     }
-                    if (child.name != "Storyboard") {
-                        throw RuntimeDiagnostic(child.location, "Expected Setters or Storyboard");
-                    }
-                    for (const auto& track : child.children) {
-                        item.tracks.push_back({Attribute(track, "targetName"), Track(track)});
-                    }
+                    value.states.push_back(std::move(item));
                 }
-                value.states.push_back(std::move(item));
+                result.push_back(std::move(value));
             }
-            result.push_back(std::move(value));
+            return result;
         }
-        return result;
-    }
 
-    void ValidateStateTargets(const Element& element) {
-        const auto contains = [](auto&& self, const Element& node, const std::string& id) -> bool {
-            if (node.Id() == id) {
-                return true;
-            }
-            for (const auto& child : node.Children()) {
-                if (self(self, *child, id)) {
+        void ValidateStateTargets(const Element& element) {
+            const auto contains = [](auto&& self, const Element& node, const std::string& id) -> bool {
+                if (node.Id() == id) {
                     return true;
                 }
-            }
-            return false;
-        };
-        std::set<std::string> groups;
-        for (const auto& group : element.VisualStateGroups()) {
-            if (!groups.insert(group.name).second) {
-                throw RuntimeDiagnostic({element.SourcePath(), element.SourceLine(), element.SourceColumn()}, "Duplicate VisualStateGroup");
-            }
-            std::set<std::string> states;
-            for (const auto& state : group.states) {
-                if (!states.insert(state.name).second) {
-                    throw RuntimeDiagnostic({element.SourcePath(), element.SourceLine(), element.SourceColumn()}, "Duplicate VisualState");
-                }
-                for (const auto& track : state.tracks) {
-                    if (track.targetName.empty() || !contains(contains, element, track.targetName)) {
-                        throw RuntimeDiagnostic({element.SourcePath(), element.SourceLine(), element.SourceColumn()},
-                            "VisualState target '" + track.targetName + "' was not found");
+                for (const auto& child : node.Children()) {
+                    if (self(self, *child, id)) {
+                        return true;
                     }
                 }
-                for (const auto& setter : state.setters) {
-                    if (setter.targetName.empty() || !contains(contains, element, setter.targetName)) {
-                        throw RuntimeDiagnostic({element.SourcePath(), element.SourceLine(), element.SourceColumn()},
-                            "VisualState target '" + setter.targetName + "' was not found");
+                return false;
+            };
+            std::set<std::string> groups;
+            for (const auto& group : element.VisualStateGroups()) {
+                if (!groups.insert(group.name).second) {
+                    throw RuntimeDiagnostic({element.SourcePath(), element.SourceLine(), element.SourceColumn()}, "Duplicate VisualStateGroup");
+                }
+                std::set<std::string> states;
+                for (const auto& state : group.states) {
+                    if (!states.insert(state.name).second) {
+                        throw RuntimeDiagnostic({element.SourcePath(), element.SourceLine(), element.SourceColumn()}, "Duplicate VisualState");
+                    }
+                    for (const auto& track : state.tracks) {
+                        if (track.targetName.empty() || !contains(contains, element, track.targetName)) {
+                            throw RuntimeDiagnostic({element.SourcePath(), element.SourceLine(), element.SourceColumn()},
+                                "VisualState target '" + track.targetName + "' was not found");
+                        }
+                    }
+                    for (const auto& setter : state.setters) {
+                        if (setter.targetName.empty() || !contains(contains, element, setter.targetName)) {
+                            throw RuntimeDiagnostic({element.SourcePath(), element.SourceLine(), element.SourceColumn()},
+                                "VisualState target '" + setter.targetName + "' was not found");
+                        }
                     }
                 }
             }
+            for (const auto& child : element.Children()) {
+                ValidateStateTargets(*child);
+            }
         }
-        for (const auto& child : element.Children()) {
-            ValidateStateTargets(*child);
-        }
-    }
-}
+    } // namespace details
 
-namespace universaldevkit::xamlruntime::runtimemarkup {
     //
     // API
     //

@@ -13,7 +13,7 @@ namespace universaldevkit::xamlruntime {
     namespace details {
         constexpr float GestureThreshold = 8.0f;
         constexpr float PanCompletionThreshold = 180.0f;
-    }
+    } // namespace details
 
     bool TapGestureRecognizer::Update(const GestureContext& context) {
         static_cast<void>(context);

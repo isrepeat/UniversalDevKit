@@ -1,5 +1,17 @@
 # Native NuGet для Windows
 
+## Подготовка внешних зависимостей
+
+Необязательное поле `preparationScript` в `Delivery/NuGet/Delivery.json` задаёт путь к `.ps1` относительно этого delivery. Скрипт должен находиться внутри каталога своего пакета. Он выполняется для выбранного компонента и его транзитивных зависимостей перед CMake configure, отдельно для поддерживаемых CRT-профилей `Dynamic` (MD/MDd) и `Static` (MT/MTd).
+
+Подготовщик получает параметры `RepositoryPath`, `WorkDirectory`, `Runtime`, `Configurations` (Debug и Release) и `Generator`. Целевая платформа этого адаптера — Windows x64. Постоянный `WorkDirectory` находится в `!artifacts/Windows-x64/dependencies/nuget/<компонент>/<Runtime>` и не очищается упаковщиком. Проверка актуальности результатов, применение патчей и использование кеша относятся к реализации подготовщика; само наличие рабочего каталога не означает попадание в кеш.
+
+Единственный результат в success stream — словарь строковых CMake-параметров, например `@{ UniversalDevKitExampleRoot = $preparedRoot }`; при отсутствии параметров возвращается пустой словарь `@{}`. Сообщения выводятся через `Write-Host`/`Write-Verbose`, вывод внешних утилит направляется в `Out-Host`. При ошибке скрипт обязан вызвать `throw`, в том числе после проверки кода завершения внешней утилиты. Подготовщик не должен менять глобальное окружение процесса.
+
+Ключи словаря начинаются с `UniversalDevKit` и содержат только ASCII-буквы, цифры и `_`. Изменение параметров выбора компонентов, CRT и release policy запрещено. Результаты объединяются и передаются текущему CMake configure через `-D`; несовпадающие значения одного ключа отклоняются до configure. Результаты разных CRT-профилей не смешиваются.
+
+`preparationScript` подготавливает зависимости до сборки, а существующий `stagingScript` дополняет содержимое `payload` после сборки, перед NuGet pack. Ни один пакет пока не подключает подготовщик; сборка ANGLE будет добавлена отдельно.
+
 Diagnostic выпускается командой `Scripts/Packages/CrossPlatform/Pack.Diagnostic.cmd` либо `Build.ps1 -Components Diagnostic -LicenseFile ./LICENSE`. Пакет `UniversalDevKit.Diagnostic` содержит только Dynamic-вариант логгера (DLL/import library), Debug/Release, MD/MDd; Helpers восстанавливается как private-зависимость. Потребитель задаёт `UniversalDevKitComponents=Diagnostic`; `UniversalDevKitDiagnosticLinkage` по умолчанию Dynamic, Static/Shared отклоняются. DLL копируется рядом с приложением штатным targets. Проверка отдельного пакета: `Tests/Integration/Packages/NuGet.PackageReference.Tests.ps1 -Components Diagnostic -Feed <local-feed>`. Необязательное поле supportedRuntimes в Delivery.json ограничивает состав CRT-профилей пакета; для Diagnostic разрешён только Dynamic. MT запрещён из-за передачи C++-объектов с динамической памятью через границу DLL.
 
 Собственные nuspec, props и targets находятся непосредственно в Delivery/NuGet каждого пакета. Nuspec может использовать плейсхолдеры версии и зависимостей `{{VERSION}}` и `{{DEPENDENCIES}}`; props/targets копируются без подстановок. Выражения MSBuild `$(Property)` и `%(Metadata)` вычисляются у consumer. Штатные CMake-шаблоны не изменяются.

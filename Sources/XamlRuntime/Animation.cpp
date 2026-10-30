@@ -7,74 +7,74 @@
 #include <stdexcept>
 #include <cmath>
 
-namespace universaldevkit::xamlruntime::details {
-    attr::Color AnimatedColor(const Element& target, AnimatedProperty property) {
-        switch (property) {
-        case AnimatedProperty::background: return target.Background();
-        case AnimatedProperty::foreground: return target.Foreground();
-        case AnimatedProperty::borderColor: return target.BorderColor();
-        case AnimatedProperty::tint: return target.Tint();
-        default: throw std::invalid_argument("Unsupported animated color property");
-        }
-    }
-
-    std::array<float, 4> ColorChannels(const attr::Color& color) {
-        return {color.red, color.green, color.blue, color.alpha};
-    }
-
-    void SetAnimatedColor(Element& target, AnimatedProperty property, const std::array<float, 4>& channels) {
-        const attr::Color color{channels[0], channels[1], channels[2], channels[3]};
-        switch (property) {
-        case AnimatedProperty::background: target.SetBackground(color); break;
-        case AnimatedProperty::foreground: target.SetForeground(color); break;
-        case AnimatedProperty::borderColor: target.SetBorderColor(color); break;
-        case AnimatedProperty::tint: target.SetTint(color); break;
-        default: throw std::invalid_argument("Unsupported animated color property");
-        }
-    }
-
-    void SetAnimatedValue(Element& target, AnimatedProperty property, float value) {
-        if (property == AnimatedProperty::opacity) {
-            target.SetOpacity(value);
-        } else if (property == AnimatedProperty::renderOffsetX) {
-            target.SetRenderOffsetX(value);
-        } else if (property == AnimatedProperty::renderOffsetY) {
-            target.SetRenderOffsetY(value);
-        } else if (property == AnimatedProperty::height) {
-            target.SetHeight(value);
-        } else if (property == AnimatedProperty::toggleProgress) {
-            target.SetToggleProgress(value);
-        } else {
-            target.SetPressProgress(value);
-        }
-    }
-
-    float AnimatedValue(const Element& target, AnimatedProperty property, AnimationTrigger trigger) {
-        if (property == AnimatedProperty::opacity) {
-            return target.Opacity();
-        }
-        if (property == AnimatedProperty::renderOffsetX) {
-            return target.RenderOffsetX();
-        }
-        if (property == AnimatedProperty::renderOffsetY) {
-            return target.RenderOffsetY();
-        }
-        if (property == AnimatedProperty::height) {
-            return target.Height();
-        }
-        if (property == AnimatedProperty::toggleProgress) {
-            if (target.ToggleProgress() < 0.0f && trigger == AnimationTrigger::toggled) {
-                // HandleTap already changed IsOn; the first animation starts at the previous state.
-                return target.IsOn() ? 0.0f : 1.0f;
-            }
-            return target.ToggleProgress() < 0.0f
-                ? (target.IsOn() ? 1.0f : 0.0f) : target.ToggleProgress();
-        }
-        return target.PressProgress();
-    }
-}
-
 namespace universaldevkit::xamlruntime {
+    namespace details {
+        attr::Color AnimatedColor(const Element& target, AnimatedProperty property) {
+            switch (property) {
+            case AnimatedProperty::background: return target.Background();
+            case AnimatedProperty::foreground: return target.Foreground();
+            case AnimatedProperty::borderColor: return target.BorderColor();
+            case AnimatedProperty::tint: return target.Tint();
+            default: throw std::invalid_argument("Unsupported animated color property");
+            }
+        }
+
+        std::array<float, 4> ColorChannels(const attr::Color& color) {
+            return {color.red, color.green, color.blue, color.alpha};
+        }
+
+        void SetAnimatedColor(Element& target, AnimatedProperty property, const std::array<float, 4>& channels) {
+            const attr::Color color{channels[0], channels[1], channels[2], channels[3]};
+            switch (property) {
+            case AnimatedProperty::background: target.SetBackground(color); break;
+            case AnimatedProperty::foreground: target.SetForeground(color); break;
+            case AnimatedProperty::borderColor: target.SetBorderColor(color); break;
+            case AnimatedProperty::tint: target.SetTint(color); break;
+            default: throw std::invalid_argument("Unsupported animated color property");
+            }
+        }
+
+        void SetAnimatedValue(Element& target, AnimatedProperty property, float value) {
+            if (property == AnimatedProperty::opacity) {
+                target.SetOpacity(value);
+            } else if (property == AnimatedProperty::renderOffsetX) {
+                target.SetRenderOffsetX(value);
+            } else if (property == AnimatedProperty::renderOffsetY) {
+                target.SetRenderOffsetY(value);
+            } else if (property == AnimatedProperty::height) {
+                target.SetHeight(value);
+            } else if (property == AnimatedProperty::toggleProgress) {
+                target.SetToggleProgress(value);
+            } else {
+                target.SetPressProgress(value);
+            }
+        }
+
+        float AnimatedValue(const Element& target, AnimatedProperty property, AnimationTrigger trigger) {
+            if (property == AnimatedProperty::opacity) {
+                return target.Opacity();
+            }
+            if (property == AnimatedProperty::renderOffsetX) {
+                return target.RenderOffsetX();
+            }
+            if (property == AnimatedProperty::renderOffsetY) {
+                return target.RenderOffsetY();
+            }
+            if (property == AnimatedProperty::height) {
+                return target.Height();
+            }
+            if (property == AnimatedProperty::toggleProgress) {
+                if (target.ToggleProgress() < 0.0f && trigger == AnimationTrigger::toggled) {
+                    // HandleTap already changed IsOn; the first animation starts at the previous state.
+                    return target.IsOn() ? 0.0f : 1.0f;
+                }
+                return target.ToggleProgress() < 0.0f
+                    ? (target.IsOn() ? 1.0f : 0.0f) : target.ToggleProgress();
+            }
+            return target.PressProgress();
+        }
+    } // namespace details
+
     AnimationTrack AnimationTrack::Color(AnimatedProperty property, const attr::Color& from, const attr::Color& to,
         std::chrono::milliseconds duration, Easing easing, bool fromCurrent) {
         if (property != AnimatedProperty::background && property != AnimatedProperty::foreground
