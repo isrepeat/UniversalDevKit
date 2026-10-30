@@ -1,5 +1,9 @@
 # Пакеты UniversalDevKit
 
+Android Kotlin AAR: [AndroidCoreSdk](Android/AndroidCoreSdk/README.md) и [AndroidAppKit](Android/AndroidAppKit/README.md). Они сохраняют Maven-координаты com.isrepeat и собственные версии в gradle.properties. Отдельный адаптер Packages/Build/Android/BuildKotlin.ps1 использует общий toolchain UDK без NDK; выпуск AppKit предварительно собирает CoreSdk. Это самостоятельные Kotlin-пакеты, не компоненты C++/Prefab.
+
+Проверка Kotlin-поставки: `./Tests/Integration/Packages/AndroidKotlin.Tests.ps1`. Тест публикует оба пакета в новый feed под !artifacts, копирует независимый consumer и компилирует его через Maven-зависимость AppKit, включая транзитивный API CoreSdk. Запуск на устройстве этим тестом не проверяется.
+
 Реальные компонентные поставки: [Windows native NuGet](Build/NuGet/README.md) и [Android Maven AAR/Prefab](Build/Android/README.md). Обе используют общие исходники HeleprsTest/DiagnosticTest и Version.json. Для Android подтверждены NDK-сборка и сборка APK; запуск на устройстве остаётся отдельной проверкой.
 
 Тестовые заглушки разных способов доставки находятся в Tests/Fixtures/Packages. Команда Tests/Infrastructure/BuildTestPackages.ps1 выпускает их в явно указанный временный каталог; Android Maven собирается отдельным Gradle-сценарием теста. Это не новые продуктовые записи Package.json. Матрица покрытия существующих NugetProjects и Android AAR описана в [проверках доставки](../Tests/Integration/Packages/README.md).

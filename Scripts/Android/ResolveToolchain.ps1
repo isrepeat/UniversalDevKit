@@ -1,5 +1,5 @@
 function Resolve-UdkAndroidToolchain {
-    param([string]$AndroidNdk, [string]$AndroidSdk, [string]$JavaHome, [string]$Gradle, [switch]$ForConsumer)
+    param([string]$AndroidNdk, [string]$AndroidSdk, [string]$JavaHome, [string]$Gradle, [switch]$ForConsumer, [switch]$WithoutNdk)
     $profile = Get-Content (Join-Path $PSScriptRoot 'Toolchain.json') -Raw | ConvertFrom-Json
     function Find-Installation([string]$Explicit, [object[]]$Candidates, [string]$Marker, [string]$Name) {
         if ($Explicit) {
@@ -13,20 +13,22 @@ function Resolve-UdkAndroidToolchain {
     }
     $sdkCandidates = @($env:ANDROID_HOME, $env:ANDROID_SDK_ROOT, "$env:LOCALAPPDATA/Android/Sdk", "${env:ProgramFiles(x86)}/Android/android-sdk", "$env:ProgramFiles/Android/Sdk")
     if ($ForConsumer -or $AndroidSdk) { $AndroidSdk = Find-Installation $AndroidSdk $sdkCandidates 'platform-tools/adb.exe' 'Android SDK' }
-    $ndkCandidates = @($env:ANDROID_NDK_HOME, $env:ANDROID_NDK_ROOT)
-    foreach ($sdk in @($AndroidSdk) + $sdkCandidates) {
-        if ($sdk) { $ndkCandidates += Join-Path $sdk "ndk/$($profile.ndkVersion)" }
+    if (-not $WithoutNdk) {
+        $ndkCandidates = @($env:ANDROID_NDK_HOME, $env:ANDROID_NDK_ROOT)
+        foreach ($sdk in @($AndroidSdk) + $sdkCandidates) {
+            if ($sdk) { $ndkCandidates += Join-Path $sdk "ndk/$($profile.ndkVersion)" }
+        }
+        $ndkCandidates += "${env:ProgramFiles(x86)}/Android/AndroidNDK/android-ndk-r27c"
+        if (-not $AndroidNdk) {
+            $AndroidNdk = @($ndkCandidates | Where-Object {
+                $_ -and (Test-Path -LiteralPath (Join-Path $_ 'source.properties')) -and
+                ((Get-Content (Join-Path $_ 'source.properties') -Raw) -match ('(?m)^Pkg.Revision\s*=\s*' + [regex]::Escape($profile.ndkVersion) + '\s*$'))
+            } | Select-Object -First 1)[0]
+        }
+        $AndroidNdk = Find-Installation $AndroidNdk @() 'build/cmake/android.toolchain.cmake' 'Android NDK'
+        $revision = ((Get-Content (Join-Path $AndroidNdk 'source.properties') | Where-Object { $_ -match '^Pkg.Revision\s*=' }) -split '=')[1].Trim()
+        if ($revision -ne $profile.ndkVersion) { throw "UDK requires NDK $($profile.ndkVersion); found $revision at $AndroidNdk." }
     }
-    $ndkCandidates += "${env:ProgramFiles(x86)}/Android/AndroidNDK/android-ndk-r27c"
-    if (-not $AndroidNdk) {
-        $AndroidNdk = @($ndkCandidates | Where-Object {
-            $_ -and (Test-Path -LiteralPath (Join-Path $_ 'source.properties')) -and
-            ((Get-Content (Join-Path $_ 'source.properties') -Raw) -match ('(?m)^Pkg.Revision\s*=\s*' + [regex]::Escape($profile.ndkVersion) + '\s*$'))
-        } | Select-Object -First 1)[0]
-    }
-    $AndroidNdk = Find-Installation $AndroidNdk @() 'build/cmake/android.toolchain.cmake' 'Android NDK'
-    $revision = ((Get-Content (Join-Path $AndroidNdk 'source.properties') | Where-Object { $_ -match '^Pkg.Revision\s*=' }) -split '=')[1].Trim()
-    if ($revision -ne $profile.ndkVersion) { throw "UDK requires NDK $($profile.ndkVersion); found $revision at $AndroidNdk." }
     if ($ForConsumer) {
         $javaCandidates = @($env:JAVA_HOME, $env:JDK_HOME)
         foreach ($root in @("$env:ProgramFiles/Android/openjdk", "$env:ProgramFiles/Java", "$env:ProgramFiles/Eclipse Adoptium")) {

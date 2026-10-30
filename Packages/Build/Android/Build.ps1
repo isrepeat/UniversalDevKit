@@ -55,7 +55,7 @@ $registry = Get-UdkComponentRegistry $repository
 $deliveries = @{}
 foreach ($file in Get-ChildItem (Join-Path $repository 'Packages') -Filter 'Package.json' -Recurse -File) {
     $package = Get-Content -LiteralPath $file.FullName -Raw | ConvertFrom-Json
-    if (-not $package.deliveries.Android) {
+    if (-not $package.deliveries.Android -or -not $package.component) {
         continue
     }
     if ($deliveries.ContainsKey($package.component)) {

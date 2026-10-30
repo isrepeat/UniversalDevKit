@@ -2,6 +2,8 @@
 
 ## Реальные компоненты UDK
 
+Kotlin-пакеты AndroidCoreSdk и AndroidAppKit перенесены в Packages/Android. Реальная поставка проверяется AndroidKotlin.Tests.ps1: публикация обоих AAR в отдельный Maven feed, точная зависимость CoreSdk и компиляция независимого Kotlin-потребителя. AndroidMaven в таблице ниже остаётся тестовой заглушкой инфраструктуры.
+
 - [Windows native NuGet](../../../Packages/Build/NuGet/README.md): NuGet.Tests.ps1, NuGet.Registry.Tests.ps1 и NuGet.PackageReference.Tests.ps1.
 - [Android AAR/Prefab](../../../Packages/Build/Android/README.md#проверка): [AndroidPrefab.Tests.ps1](AndroidPrefab.Tests.ps1), независимый [APK-потребитель](../../Fixtures/Consumers/AndroidPrefab), Static/Dynamic HeleprsTest/DiagnosticTest, состав SO и отрицательные проверки совместимости.
 

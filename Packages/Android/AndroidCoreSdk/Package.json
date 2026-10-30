@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "name": "AndroidCoreSdk",
+  "versionSource": "Projects/Gradle/gradle.properties",
+  "deliveries": {
+    "Android": "Delivery/Android/Delivery.json"
+  }
+}
