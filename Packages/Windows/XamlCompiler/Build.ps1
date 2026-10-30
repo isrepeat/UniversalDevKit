@@ -13,10 +13,23 @@ if (-not $CMake) {
     $CMake = @(& $vswhere -latest -products '*' -find 'Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe')[0]
 }
 if (-not $OutputDirectory) { $OutputDirectory = Join-Path $root '!artifacts/packages/nuget' }
-$output = [IO.Path]::GetFullPath($OutputDirectory)
+$output = Join-Path ([IO.Path]::GetFullPath($OutputDirectory)) 'XamlCompiler'
 $version = (Get-Content (Join-Path $root 'Version.json') -Raw | ConvertFrom-Json).version
-$archive = Join-Path $output "UniversalDevKit.XamlCompiler.$version.nupkg"
-$build = Join-Path $output 'build-XamlCompiler'
+[void][IO.Directory]::CreateDirectory($output)
+$buildLock = $null
+$artifactDrive = $null
+$transcriptStarted = $false
+try {
+try {
+    $buildLock = [IO.File]::Open((Join-Path $output '.build.lock'), [IO.FileMode]::OpenOrCreate, [IO.FileAccess]::ReadWrite, [IO.FileShare]::None)
+} catch { throw "Another build owns the component directory: $output" }
+Start-Transcript -Path (Join-Path $output 'build.log') -Force | Out-Null
+$transcriptStarted = $true
+$artifactDrive = New-UdkArtifactDrive -Path $output
+$physicalOutput = $output
+$output = $artifactDrive.Path
+$archive = Join-Path $physicalOutput "UniversalDevKit.XamlCompiler.$version.nupkg"
+$build = Join-Path $output 'build'
 & $CMake -S (Join-Path $root 'Projects/Cmake/XamlCompiler') -B $build -G 'Visual Studio 18 2026' -A x64
 if ($LASTEXITCODE -ne 0) { throw 'Host compiler configuration failed.' }
 & $CMake --build $build --config Release
@@ -31,3 +44,8 @@ $spec = (Get-Content (Join-Path $PSScriptRoot 'Delivery/NuGet/UniversalDevKit.Xa
 & $NuGet pack (Join-Path $stage 'XamlCompiler.nuspec') -BasePath $stage -OutputDirectory $output -NonInteractive -ForceEnglishOutput -Properties 'NoWarn=NU5100'
 if ($LASTEXITCODE -ne 0) { throw 'Host compiler packing failed.' }
 Write-Host "Host compiler package: $archive"
+} finally {
+    if ($artifactDrive) { Remove-UdkArtifactDrive $artifactDrive }
+    if ($transcriptStarted) { Stop-Transcript | Out-Null }
+    if ($buildLock) { $buildLock.Dispose() }
+}

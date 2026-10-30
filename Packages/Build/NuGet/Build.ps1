@@ -5,7 +5,7 @@ param(
     [string]$OutputDirectory,
     [string[]]$Components,
     [string]$Generator = 'Visual Studio 18 2026',
-    [string]$RepositoryPath = (Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)))
+    [string]$RepositoryPath
 )
 
 $env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
@@ -13,6 +13,9 @@ $env:VSLANG = '1033'
 
 . (Join-Path $PSScriptRoot '../../../Scripts/PowerShell/ArtifactDirectories.ps1')
 $ErrorActionPreference = 'Stop'
+if (-not $RepositoryPath) {
+    $RepositoryPath = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../../..'))
+}
 
 # Align console and native pipeline encodings in Windows PowerShell 5.1.
 $utf8Encoding = [Text.UTF8Encoding]::new($false)
@@ -41,7 +44,27 @@ $connection = Join-Path $repository 'Scripts/PowerShell/Modules/Module.Udk.Conne
 . (Join-Path $connection 'ConnectionPlan.ps1')
 $registry = Get-UdkComponentRegistry $repository
 if (-not $Components) { $Components = @($registry.Keys | Sort-Object) }
+if ($Components.Count -gt 1) {
+    foreach ($rootComponent in ($Components | Sort-Object -Unique)) {
+        & $PSCommandPath -CMake $CMake -NuGet $NuGet -LicenseFile $license -OutputDirectory $output -Components $rootComponent -Generator $Generator -RepositoryPath $repository
+    }
+    return
+}
 $selected = @(Resolve-UdkComponents $Components $registry)
+$output = Join-Path $output $Components[0]
+[void][IO.Directory]::CreateDirectory($output)
+$buildLock = $null
+$artifactDrive = $null
+$transcriptStarted = $false
+try {
+try {
+    $buildLock = [IO.File]::Open((Join-Path $output '.build.lock'), [IO.FileMode]::OpenOrCreate, [IO.FileAccess]::ReadWrite, [IO.FileShare]::None)
+} catch { throw "Another build owns the component directory: $output" }
+$physicalOutput = $output
+Start-Transcript -Path (Join-Path $output 'build.log') -Force | Out-Null
+$transcriptStarted = $true
+$artifactDrive = New-UdkArtifactDrive -Path $output
+$output = $artifactDrive.Path
 $hasBinaries = @($selected | Where-Object { $registry[$_].Kind -ne 'headerOnly' }).Count -gt 0
 
 # Package definitions explicitly reference components through the component adapter.
@@ -176,13 +199,13 @@ foreach ($runtime in @('Dynamic', 'Static')) {
         }
     }
     $dependencyArguments = @($dependencyDefinitions.Keys | Sort-Object -CaseSensitive | ForEach-Object { '-D' + $_ + '=' + $dependencyDefinitions[$_] })
-    $build = Join-Path $output "build-$runtime"
-    $install = Reset-UdkArtifactDirectory -Root $output -Path (Join-Path $output "install-$runtime")
+    $build = Join-Path $output "build/$runtime"
+    $install = Reset-UdkArtifactDirectory -Root $output -Path (Join-Path $output "install/$runtime")
     RunCMake (@('-S', $repository, '-B', $build, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug;Release', '-DUniversalDevKit_ENFORCE_RELEASE_POLICY=ON', "-DUniversalDevKitRuntime=$runtime", "-DCMAKE_INSTALL_PREFIX=$install", ('-DUniversalDevKit_COMPONENTS=' + ($runtimeComponents -join ';'))) + $dependencyArguments)
     foreach ($configuration in @('Debug', 'Release')) {
         RunCMake @('--build', $build, '--config', $configuration, '--parallel', '4')
         RunCMake @('--install', $build, '--config', $configuration)
-        $metadata = if ($hasBinaries) {
+        $metadata = if (@($runtimeComponents | Where-Object { $registry[$_].Kind -ne 'headerOnly' }).Count -gt 0) {
             Get-Content (Join-Path $install "lib/cmake/UniversalDevKit/UniversalDevKit.Build-$configuration.json") -Raw | ConvertFrom-Json
         } else {
             # Header-only releases have no binary manifest or CRT/ABI restrictions.
@@ -197,10 +220,11 @@ foreach ($runtime in @('Dynamic', 'Static')) {
 # 5. Verify compiler/toolset consistency; tools and cl.exe versions may differ.
 $toolset = $records[0].Metadata.toolset
 $compiler = $records[0].Metadata.compilerVersion
-$cache = Get-Content (Join-Path $output 'build-Dynamic/CMakeCache.txt') -Raw
+$cache = Get-Content (Join-Path $output 'build/Dynamic/CMakeCache.txt') -Raw
 $vcTools = [regex]::Match($cache, '/MSVC/([^/]+)/bin/').Groups[1].Value
 if ($hasBinaries -and -not $vcTools) { throw 'Cannot determine actual VCToolsVersion.' }
 foreach ($record in $records) {
+    if (-not @($record.Metadata.components).Count) { continue }
     if ($record.Metadata.toolset -ne $toolset -or $record.Metadata.compilerVersion -ne $compiler) { throw 'Cannot combine compilers in one NuGet release.' }
 }
 
@@ -384,4 +408,9 @@ foreach ($component in $selected) {
     & $NuGet pack (Join-Path $stage "$component.nuspec") -BasePath $stage -OutputDirectory $output -NonInteractive -ForceEnglishOutput -Properties 'NoWarn=NU5100;NU5128' | Out-Host
     if ($LASTEXITCODE -ne 0) { throw "NuGet pack failed for $component" }
 }
-Write-Host "NuGet feed: $output"
+Write-Host "NuGet feed: $physicalOutput"
+} finally {
+    if ($artifactDrive) { Remove-UdkArtifactDrive $artifactDrive }
+    if ($transcriptStarted) { Stop-Transcript | Out-Null }
+    if ($buildLock) { $buildLock.Dispose() }
+}

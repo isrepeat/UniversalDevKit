@@ -94,6 +94,20 @@ if (-not $work.StartsWith((Join-Path $repository '!artifacts/'), [StringComparis
 }
 [void][IO.Directory]::CreateDirectory($work)
 
+$artifactDrive = New-UdkArtifactDrive -Path $output
+$workDrive = $null
+try {
+$physicalOutput = $output
+$output = $artifactDrive.Path
+if ($work.StartsWith($physicalOutput.TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
+    $work = Join-Path $output $work.Substring($physicalOutput.TrimEnd('\', '/').Length + 1)
+} elseif ($work -ieq $physicalOutput.TrimEnd('\', '/')) {
+    $work = $output
+} else {
+    $workDrive = New-UdkArtifactDrive -Path $work
+    $work = $workDrive.Path
+}
+
 # Вспомогательные функции сохраняют метаданные без завершающих переводов строк.
 function WriteText([string]$Path, [string]$Text) {
     [void][IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($Path))
@@ -326,4 +340,8 @@ foreach ($component in $Components) {
 }
 
 # 7. Выводим путь к готовому локальному feed; внешняя публикация не выполняется.
-Write-Host "Android Maven feed: $output"
+Write-Host "Android Maven feed: $physicalOutput"
+} finally {
+    if ($workDrive) { Remove-UdkArtifactDrive $workDrive }
+    Remove-UdkArtifactDrive $artifactDrive
+}

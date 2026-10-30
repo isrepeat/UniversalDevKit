@@ -6,7 +6,7 @@
 
 Необязательное поле `preparationScript` в `Delivery/NuGet/Delivery.json` задаёт путь к `.ps1` относительно этого delivery. Скрипт должен находиться внутри каталога своего пакета. Он выполняется для выбранного компонента и его транзитивных зависимостей перед CMake configure, отдельно для поддерживаемых CRT-профилей `Dynamic` (MD/MDd) и `Static` (MT/MTd).
 
-Подготовщик получает параметры `RepositoryPath`, `WorkDirectory`, `Runtime`, `Configurations` (Debug и Release) и `Generator`. Целевая платформа этого адаптера — Windows x64. Постоянный `WorkDirectory` находится в `!artifacts/packages/nuget/dependencies/<component>/<runtime>` и не очищается упаковщиком. Проверка актуальности результатов, применение патчей и использование кеша относятся к реализации подготовщика; само наличие рабочего каталога не означает попадание в кеш.
+Подготовщик получает параметры `RepositoryPath`, `WorkDirectory`, `Runtime`, `Configurations` (Debug и Release) и `Generator`. Целевая платформа этого адаптера — Windows x64. Постоянный `WorkDirectory` находится в `!artifacts/packages/nuget/<root-component>/dependencies/<component>/<runtime>` и не очищается упаковщиком. Проверка актуальности результатов, применение патчей и использование кеша относятся к реализации подготовщика; само наличие рабочего каталога не означает попадание в кеш.
 
 Единственный результат в success stream — словарь строковых CMake-параметров, например `@{ UniversalDevKitExampleRoot = $preparedRoot }`; при отсутствии параметров возвращается пустой словарь `@{}`. Сообщения выводятся через `Write-Host`/`Write-Verbose`, вывод внешних утилит направляется в `Out-Host`. При ошибке скрипт обязан вызвать `throw`, в том числе после проверки кода завершения внешней утилиты. Подготовщик не должен менять глобальное окружение процесса.
 
@@ -35,7 +35,7 @@ Build.ps1 создаёт build/native/Generated/Settings.props с версией
 ./Tests/Integration/Packages/NuGet.Registry.Tests.ps1
 ```
 
-Поддерживаются Windows x64, текущий MSVC compiler/toolset, Debug/Release, MD/MDd. Пакеты compiled содержат библиотеки Static/Dynamic согласно доступным вариантам; process-компоненты требуют Dynamic. Header-only компоненты подключаются в режиме Shared без компиляции исходников и искусственных бинарников. Пакеты не публикуются, локальный feed сохраняется под !artifacts/packages/nuget.
+Поддерживаются Windows x64, текущий MSVC compiler/toolset, Debug/Release, MD/MDd. Пакеты compiled содержат библиотеки Static/Dynamic согласно доступным вариантам; process-компоненты требуют Dynamic. Header-only компоненты подключаются в режиме Shared без компиляции исходников и искусственных бинарников. Пакеты не публикуются, локальный feed каждого корня сохраняется под `!artifacts/packages/nuget/<root-component>`. Здесь находятся пакеты корня и зависимостей, `build/<runtime>`, `install/<runtime>`, `staging/<component>` и `build.log`. Разные корни допускают параллельный запуск; повторный запуск одного корня блокируется. При передаче `OutputDirectory` к нему также добавляется имя корня.
 
 LicenseFile обязателен, его текст включается как LICENSE.txt. CMake обнаруживается в Visual Studio либо задаётся параметром CMake. RepositoryPath позволяет тестировать другой реестр в изолированной копии. Повторная упаковка создаёт новый staging, чтобы исключить устаревшие файлы.
 
