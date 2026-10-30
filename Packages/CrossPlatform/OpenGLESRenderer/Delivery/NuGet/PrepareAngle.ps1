@@ -69,8 +69,7 @@ try {
         "--x-manifest-root=$recipe",
         "--overlay-ports=$workingOverlay",
         "--x-install-root=$drive\installed",
-        # virtualenv раскрывает subst; короткое имя сокращает также физический путь.
-        "--x-buildtrees-root=$drive\b",
+        "--x-buildtrees-root=$drive\buildtrees",
         "--x-packages-root=$drive\packages",
         "--downloads-root=$downloadCache",
         '--triplet=x64-windows',

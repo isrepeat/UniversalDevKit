@@ -82,7 +82,7 @@ foreach ($definitionFile in Get-ChildItem -LiteralPath (Join-Path $repository 'P
     if ($delivery.adapter -ne 'component' -or 'Windows' -notin $delivery.supportedPlatforms) { continue }
     if ($delivery.schemaVersion -ne 1 -or -not $definition.component -or $delivery.id -notmatch '^[A-Za-z0-9_.-]+$') { throw "Unsupported NuGet delivery: $($definitionFile.FullName)" }
     foreach ($field in $delivery.PSObject.Properties.Name) {
-        if ($field -notin @('schemaVersion', 'adapter', 'id', 'supportedPlatforms', 'supportedRuntimes', 'integration', 'nuspec', 'stagingScript', 'preparationScript')) { throw "Unknown delivery field: $field" }
+        if ($field -notin @('schemaVersion', 'adapter', 'id', 'supportedPlatforms', 'supportedRuntimes', 'integration', 'nuspec', 'stagingScript', 'preparationScript', 'dependencyName')) { throw "Unknown delivery field: $field" }
     }
     $packageVersion = (Get-Content -LiteralPath (Join-Path $definitionFile.DirectoryName $definition.versionSource) -Raw | ConvertFrom-Json).version
     if ($packageVersion -ne $version) { throw "Component package must use the UDK release version: $($definition.name)" }
@@ -122,7 +122,14 @@ foreach ($definitionFile in Get-ChildItem -LiteralPath (Join-Path $repository 'P
             throw "Invalid package preparation script: $preparationScript"
         }
     }
-    $packages[$definition.component] = [pscustomobject]@{ Name = $definition.name; Id = $delivery.id; Directory = $definitionFile.DirectoryName; Integration = $integration; Nuspec = $nuspecPath; SupportedRuntimes = $supportedRuntimes; StagingScript = $stagingScript; PreparationScript = $preparationScript }
+    $dependencyName = $definition.component
+    if ($delivery.PSObject.Properties['dependencyName']) {
+        if (-not $preparationScript -or $delivery.dependencyName -isnot [string] -or $delivery.dependencyName -cnotmatch '^[A-Za-z][A-Za-z0-9_-]*$') {
+            throw "Invalid dependency name: $($definition.name)"
+        }
+        $dependencyName = $delivery.dependencyName
+    }
+    $packages[$definition.component] = [pscustomobject]@{ Name = $definition.name; Id = $delivery.id; Directory = $definitionFile.DirectoryName; Integration = $integration; Nuspec = $nuspecPath; SupportedRuntimes = $supportedRuntimes; StagingScript = $stagingScript; PreparationScript = $preparationScript; DependencyName = $dependencyName }
     $packageIds[$delivery.id] = $true
 }
 foreach ($name in $selected) {
@@ -179,7 +186,7 @@ foreach ($runtime in @('Dynamic', 'Static')) {
     foreach ($component in $selected) {
         $package = $packages[$component]
         if (-not $package.PreparationScript -or $runtime -notin $package.SupportedRuntimes) { continue }
-        $workDirectory = Join-Path $output "dependencies/$component/$runtime"
+        $workDirectory = Join-Path $output "dependencies/$($package.DependencyName)/$runtime"
         [void][IO.Directory]::CreateDirectory($workDirectory)
         $prepared = @(& $package.PreparationScript -RepositoryPath $repository -WorkDirectory $workDirectory -Runtime $runtime -Configurations @('Debug', 'Release') -Generator $Generator)
         if ($prepared.Count -ne 1 -or $prepared[0] -isnot [Collections.IDictionary]) {
@@ -199,6 +206,10 @@ foreach ($runtime in @('Dynamic', 'Static')) {
         }
     }
     $dependencyArguments = @($dependencyDefinitions.Keys | Sort-Object -CaseSensitive | ForEach-Object { '-D' + $_ + '=' + $dependencyDefinitions[$_] })
+    if ($dependencyDefinitions.ContainsKey('UniversalDevKitAngleRoot')) {
+        # Обновляем результаты find при переносе установки ANGLE.
+        $dependencyArguments += '-UudkAngle*'
+    }
     $build = Join-Path $output "build/$runtime"
     $install = Reset-UdkArtifactDirectory -Root $output -Path (Join-Path $output "install/$runtime")
     RunCMake (@('-S', $repository, '-B', $build, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug;Release', '-DUniversalDevKit_ENFORCE_RELEASE_POLICY=ON', "-DUniversalDevKitRuntime=$runtime", "-DCMAKE_INSTALL_PREFIX=$install", ('-DUniversalDevKit_COMPONENTS=' + ($runtimeComponents -join ';'))) + $dependencyArguments)

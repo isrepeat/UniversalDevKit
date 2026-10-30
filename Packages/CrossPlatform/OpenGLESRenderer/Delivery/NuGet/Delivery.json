@@ -6,6 +6,7 @@
   "supportedRuntimes": ["Dynamic"],
   "nuspec": "UniversalDevKit.OpenGLESRenderer.nuspec",
   "preparationScript": "PrepareAngle.ps1",
+  "dependencyName": "ANGLE",
   "stagingScript": "StageAngle.ps1",
   "integration": {
     "props": "UniversalDevKit.OpenGLESRenderer.props",
