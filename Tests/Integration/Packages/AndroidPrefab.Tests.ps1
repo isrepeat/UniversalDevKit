@@ -8,7 +8,7 @@ param(
     [string]$Feed,
     [string]$Serial,
     [ValidateSet('arm64-v8a', 'x86_64')][string]$Abi = 'arm64-v8a',
-    [string[]]$Components = @('Helpers', 'HeleprsTest', 'DiagnosticTest'),
+    [string[]]$Components = @('Helpers', 'HeleprsTest', 'DiagnosticTest', 'Diagnostic'),
     [ValidateSet('Static', 'Dynamic')][string[]]$Mode = @('Static', 'Dynamic'),
     [switch]$SkipDevice
 )
@@ -70,7 +70,7 @@ try {
     }
     foreach ($component in $Components) {
         $registry = Get-Content (Join-Path $repository "Projects/Components/$component.json") -Raw | ConvertFrom-Json
-        $componentModes = if ($registry.kind -eq 'headerOnly') { @('Shared') } else { $Mode }
+        $componentModes = if ($registry.kind -eq 'headerOnly') { @('Shared') } elseif ($registry.stateScope -eq 'process') { @('Dynamic') } else { $Mode }
         foreach ($linkage in $componentModes) {
             $name = "$component-$linkage"
             if ($registry.kind -eq 'headerOnly') {

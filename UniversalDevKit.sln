@@ -155,6 +155,26 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{BE41E66B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatform", "{907E880C-10F6-4C85-9DF8-5C73F54646DB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{B690A596-AD03-40E3-B875-6722D2397011}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\Diagnostic\Package.json = Packages\CrossPlatform\Diagnostic\Package.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{1833675A-E63B-4FD3-8C8E-B7732DA73438}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{2AE8945D-4EE8-4892-8D2D-D00485AF3079}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\Delivery.json
+		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.nuspec = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.nuspec
+		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.props = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.props
+		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.targets = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{941FD4A9-CB23-4415-8DC3-67D60AEC425D}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\Diagnostic\Delivery\Android\Delivery.json = Packages\CrossPlatform\Diagnostic\Delivery\Android\Delivery.json
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DiagnosticTest", "DiagnosticTest", "{072E1208-58D6-471D-B494-5D5670688291}"
 	ProjectSection(SolutionItems) = preProject
 		Packages\CrossPlatform\DiagnosticTest\Package.json = Packages\CrossPlatform\DiagnosticTest\Package.json
@@ -192,6 +212,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatform", "{CA7AB659-38EB-4E98-99A7-95A777DCD074}"
 	ProjectSection(SolutionItems) = preProject
 		Scripts\Packages\CrossPlatform\Pack.DiagnosticTest.cmd = Scripts\Packages\CrossPlatform\Pack.DiagnosticTest.cmd
+		Scripts\Packages\CrossPlatform\Pack.Diagnostic.cmd = Scripts\Packages\CrossPlatform\Pack.Diagnostic.cmd
 		Scripts\Packages\CrossPlatform\Pack.HeleprsTest.cmd = Scripts\Packages\CrossPlatform\Pack.HeleprsTest.cmd
 	EndProjectSection
 EndProject
@@ -278,6 +299,10 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{B690A596-AD03-40E3-B875-6722D2397011} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{1833675A-E63B-4FD3-8C8E-B7732DA73438} = {B690A596-AD03-40E3-B875-6722D2397011}
+		{2AE8945D-4EE8-4892-8D2D-D00485AF3079} = {1833675A-E63B-4FD3-8C8E-B7732DA73438}
+		{941FD4A9-CB23-4415-8DC3-67D60AEC425D} = {1833675A-E63B-4FD3-8C8E-B7732DA73438}
 		{A7CE4335-D8E6-4E53-B810-7D932E87BA59} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
 		{D832A37F-03A2-4EBD-9FF9-BC27D415378B} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
 		{C6B94069-54C2-4B96-880D-4C058A605C56} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}

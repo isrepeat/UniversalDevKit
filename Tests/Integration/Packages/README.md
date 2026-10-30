@@ -1,5 +1,7 @@
 # Проверки доставки пакетов
 
+Diagnostic включён в проверки настоящих пакетов: `NuGet.PackageReference.Tests.ps1 -Components Diagnostic` проверяет восстановление Helpers, запись файла через DLL, доставку ровно одной DLL, отсутствие private include-путей, запрет Static linkage и отклонение MT до компиляции. `AndroidPrefab.Tests.ps1 -Components Diagnostic -Mode Dynamic -Feed <feed> -SkipDevice` собирает APK через Maven/Prefab, проверяет состав SO и отсутствие private заголовков; запуск на устройстве требует отдельного прогона без SkipDevice. Feed Android создаётся упаковщиком с `-Components Diagnostic,Helpers` из PowerShell. Тесты не добавляют Examples.
+
 ## Реальные компоненты UDK
 
 Kotlin-пакеты AndroidCoreSdk и AndroidAppKit перенесены в Packages/Android. Реальная поставка проверяется AndroidKotlin.Tests.ps1: публикация обоих AAR в отдельный Maven feed, точная зависимость CoreSdk и компиляция независимого Kotlin-потребителя. AndroidMaven в таблице ниже остаётся тестовой заглушкой инфраструктуры.

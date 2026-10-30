@@ -1,4 +1,12 @@
-#if defined(UDK_TEST_HEADER_HELPERS)
+#if defined(UDK_TEST_DIAGNOSTIC)
+#include <UniversalDevKit/Diagnostic/Logging.h>
+#if !defined(UNIVERSALDEVKIT_DIAGNOSTIC_DYNAMIC)
+#error Diagnostic dynamic import definition is missing
+#endif
+#if __has_include(<UniversalDevKit/Helpers/System/Thread.h>) || __has_include(<spdlog/spdlog.h>)
+#error Private logger dependencies leaked into consumer
+#endif
+#elif defined(UDK_TEST_HEADER_HELPERS)
 #include <UniversalDevKit/Helpers/Math/Tensor.h>
 #include <UniversalDevKit/Helpers/Meta/Utilities/ValueExtractor.h>
 #elif !defined(UDK_TEST_HELEPRSTEST_ONLY)
@@ -17,9 +25,25 @@
 #endif
 
 #include <iostream>
+#if defined(UDK_TEST_DIAGNOSTIC)
+#include <fstream>
+#include <string>
+#endif
 
 int main() {
-#if defined(UDK_TEST_HEADER_HELPERS)
+#if defined(UDK_TEST_DIAGNOSTIC)
+    using universaldevkit::diagnostic::Logger;
+    universaldevkit::diagnostic::LoggerOptions loggerOptions;
+    loggerOptions.filePath = "diagnostic-package.log";
+    loggerOptions.fileMode = universaldevkit::diagnostic::FileMode::Truncate;
+    loggerOptions.appendNewSession = false;
+    if (!Logger::Initialize(loggerOptions)) { return 1; }
+    Logger::Write(universaldevkit::diagnostic::Level::Info, "Package", "Diagnostic package passed");
+    Logger::Shutdown();
+    std::ifstream stream(loggerOptions.filePath);
+    std::string line;
+    if (!std::getline(stream, line) || line.find("Diagnostic package passed") == std::string::npos) { return 2; }
+#elif defined(UDK_TEST_HEADER_HELPERS)
     universaldevkit::helpers::math::Mat2x2f matrix;
     matrix[1][1] = 42.0f;
     float* value = &matrix[1][1];

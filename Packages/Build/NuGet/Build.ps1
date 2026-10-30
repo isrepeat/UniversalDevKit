@@ -57,7 +57,7 @@ foreach ($definitionFile in Get-ChildItem -LiteralPath (Join-Path $repository 'P
     if ($delivery.adapter -ne 'component' -or 'Windows' -notin $delivery.supportedPlatforms) { continue }
     if ($delivery.schemaVersion -ne 1 -or -not $definition.component -or $delivery.id -notmatch '^[A-Za-z0-9_.-]+$') { throw "Unsupported NuGet delivery: $($definitionFile.FullName)" }
     foreach ($field in $delivery.PSObject.Properties.Name) {
-        if ($field -notin @('schemaVersion', 'adapter', 'id', 'supportedPlatforms', 'integration', 'nuspec')) { throw "Unknown delivery field: $field" }
+        if ($field -notin @('schemaVersion', 'adapter', 'id', 'supportedPlatforms', 'supportedRuntimes', 'integration', 'nuspec')) { throw "Unknown delivery field: $field" }
     }
     $packageVersion = (Get-Content -LiteralPath (Join-Path $definitionFile.DirectoryName $definition.versionSource) -Raw | ConvertFrom-Json).version
     if ($packageVersion -ne $version) { throw "Component package must use the UDK release version: $($definition.name)" }
@@ -76,7 +76,9 @@ foreach ($definitionFile in Get-ChildItem -LiteralPath (Join-Path $repository 'P
         if (-not $integrationPath.StartsWith($packagePrefix, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path -LiteralPath $integrationPath -PathType Leaf)) { throw "Invalid package integration file: $integrationPath" }
         $integration[$kind] = $integrationPath
     }
-    $packages[$definition.component] = [pscustomobject]@{ Name = $definition.name; Id = $delivery.id; Directory = $definitionFile.DirectoryName; Integration = $integration; Nuspec = $nuspecPath }
+    $supportedRuntimes = if ($delivery.PSObject.Properties['supportedRuntimes']) { @($delivery.supportedRuntimes) } else { @('Dynamic', 'Static') }
+    if (-not $supportedRuntimes.Count -or @($supportedRuntimes | Where-Object { $_ -notin @('Dynamic', 'Static') }).Count) { throw "Invalid supportedRuntimes: $($definition.name)" }
+    $packages[$definition.component] = [pscustomobject]@{ Name = $definition.name; Id = $delivery.id; Directory = $definitionFile.DirectoryName; Integration = $integration; Nuspec = $nuspecPath; SupportedRuntimes = $supportedRuntimes }
     $packageIds[$delivery.id] = $true
 }
 foreach ($name in $selected) {
@@ -178,6 +180,7 @@ foreach ($component in $selected) {
     $componentGraphs = @($graphs.Keys | Where-Object { $_.StartsWith($component + '.', [StringComparison]::Ordinal) } | Sort-Object)
     foreach ($record in $records) {
         $runtime = $record.Runtime
+        if ($runtime -notin $package.SupportedRuntimes) { continue }
         $configuration = $record.Configuration
         $destination = Join-Path $payload "binaries/$runtime/$configuration"
         [void][IO.Directory]::CreateDirectory($destination)

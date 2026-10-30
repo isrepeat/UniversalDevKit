@@ -14,6 +14,8 @@ Scripts/Android/Toolchain.json закрепляет NDK и JDK. Общий Resol
 
 ## Сборка
 
+Логгер Diagnostic поставляется только как SO: `./Packages/Build/Android/Build.ps1 -Components Diagnostic,Helpers`. Для Release используются координаты `org.universaldevkit:universaldevkit-diagnostic-dynamic-release:<version>` и Prefab target `udk_diagnostic_dynamic::Diagnostic`. Helpers является private-зависимостью; его заголовки не раскрываются через Diagnostic. spdlog включён в SO. Все native-модули процесса должны использовать один Dynamic-вариант логгера. Проверка только этого потребителя: `./Tests/Integration/Packages/AndroidPrefab.Tests.ps1 -Components Diagnostic -Mode Dynamic -Feed <feed> -SkipDevice`.
+
 ```powershell
 ./Packages/Build/Android/Build.ps1 -AndroidNdk <ndk> -CMake <cmake.exe> -Ninja <ninja.exe> -OutputDirectory <new-local-feed>
 ```

@@ -1,6 +1,14 @@
 #include <jni.h>
 
-#if defined(UDK_TEST_HELPERS)
+#if defined(UDK_TEST_DIAGNOSTIC)
+#include <UniversalDevKit/Diagnostic/Logging.h>
+#if !defined(UNIVERSALDEVKIT_DIAGNOSTIC_DYNAMIC)
+#error Diagnostic dynamic import definition is missing
+#endif
+#if __has_include(<UniversalDevKit/Helpers/System/Thread.h>) || __has_include(<spdlog/spdlog.h>)
+#error Private logger dependencies leaked into consumer
+#endif
+#elif defined(UDK_TEST_HELPERS)
 #include <UniversalDevKit/Helpers/Meta/Utilities/ValueExtractor.h>
 #include <UniversalDevKit/Helpers/Meta/FunctionTraits.h>
 #include <UniversalDevKit/Helpers/Math/Differentiation.h>
@@ -20,7 +28,14 @@ static_assert(universaldevkit::helpers::meta::FunctionTraits<Callback>::IsNoexce
 #endif
 
 extern "C" JNIEXPORT jint JNICALL Java_org_universaldevkit_packageconsumer_NativeBridge_verify(JNIEnv*, jclass) {
-#if defined(UDK_TEST_HELPERS)
+#if defined(UDK_TEST_DIAGNOSTIC)
+    using universaldevkit::diagnostic::Logger;
+    if (!Logger::Initialize()) { return 1; }
+    const bool enabled = Logger::ShouldLog(universaldevkit::diagnostic::Level::Info);
+    Logger::Write(universaldevkit::diagnostic::Level::Info, "Package", "Android Diagnostic package passed");
+    Logger::Shutdown();
+    return enabled ? 0 : 2;
+#elif defined(UDK_TEST_HELPERS)
     universaldevkit::helpers::math::Mat2x2f matrix;
     matrix[1][1] = 7.0f;
     matrix[1][1] += 1.0f;

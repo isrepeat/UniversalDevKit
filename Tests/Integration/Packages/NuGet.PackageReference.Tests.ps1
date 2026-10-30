@@ -1,4 +1,10 @@
-param([string]$Feed, [string]$CMake, [string]$NuGet = 'nuget.exe')
+param(
+    [string]$Feed,
+    [string]$CMake,
+    [string]$NuGet = 'nuget.exe',
+    [ValidateSet('DiagnosticTest', 'HeleprsTest', 'Helpers', 'Diagnostic')]
+    [string[]]$Components = @('DiagnosticTest', 'HeleprsTest', 'Helpers', 'Diagnostic')
+)
 $env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
 $env:VSLANG = '1033'
 [Console]::InputEncoding = [Text.UTF8Encoding]::new($false)
@@ -28,7 +34,7 @@ function InvokeChecked([string[]]$Arguments, [string]$Log, [string]$ExpectedErro
 try {
     if (-not $Feed) {
         $Feed = Join-Path $run 'feed'
-        $packArguments = @{ LicenseFile = (Join-Path $repository 'LICENSE'); OutputDirectory = $Feed; NuGet = $NuGet }
+        $packArguments = @{ LicenseFile = (Join-Path $repository 'LICENSE'); OutputDirectory = $Feed; NuGet = $NuGet; Components = $Components }
         if ($CMake) { $packArguments.CMake = $CMake }
         & (Join-Path $repository 'Packages/Build/NuGet/Build.ps1') @packArguments | Out-Host
     }
@@ -36,8 +42,8 @@ try {
     $version = (Get-Content (Join-Path $repository 'Version.json') -Raw | ConvertFrom-Json).version
     $fixture = Join-Path $repository 'Tests/Fixtures/Consumers/NuGet'
     foreach ($runtime in @('Dynamic', 'Static')) {
-        foreach ($component in @('DiagnosticTest', 'HeleprsTest', 'Helpers')) {
-            $linkages = if ($component -eq 'Helpers') { @('Shared') } else { @('Static', 'Dynamic') }
+        foreach ($component in $Components) {
+            $linkages = if ($component -eq 'Helpers') { @('Shared') } elseif ($component -eq 'Diagnostic') { @('Dynamic') } else { @('Static', 'Dynamic') }
             foreach ($linkage in $linkages) {
                 $name = "$runtime-$component-$linkage"
                 $consumer = Join-Path $run $name
@@ -46,6 +52,7 @@ try {
                 Copy-Item -LiteralPath (Join-Path $fixture 'PackageReference.Main.cpp') -Destination (Join-Path $consumer 'Main.cpp')
                 $definitions = if ($component -eq 'HeleprsTest') { 'UDK_TEST_HELEPRSTEST_ONLY=1;' } else { '' }
                 if ($component -eq 'Helpers') { $definitions = 'UDK_TEST_HEADER_HELPERS=1;' }
+                if ($component -eq 'Diagnostic') { $definitions = 'UDK_TEST_DIAGNOSTIC=1;' }
                 if ($linkage -eq 'Dynamic') { $definitions += 'UDK_TEST_DYNAMIC=1;' }
                 $text = [IO.File]::ReadAllText((Join-Path $fixture 'PackageReference.vcxproj.in')).Replace('{{VERSION}}', $version).Replace('{{COMPONENT}}', $component).Replace('{{RUNTIME}}', $runtime).Replace('{{LINKAGE}}', $linkage).Replace('{{DEFINITIONS}}', $definitions)
                 $project = Join-Path $consumer 'Consumer.vcxproj'
@@ -59,9 +66,15 @@ try {
                 $assetsPath = Join-Path $consumer 'obj/project.assets.json'
                 if (-not (Test-Path -LiteralPath $assetsPath)) { throw 'Native PackageReference restore did not produce project.assets.json. A supporting Visual Studio is required.' }
                 $assets = Get-Content -LiteralPath $assetsPath -Raw | ConvertFrom-Json
-                $expectedPackages = if ($component -eq 'DiagnosticTest') { @('DiagnosticTest', 'HeleprsTest') } else { @($component) }
+                $expectedPackages = if ($component -eq 'DiagnosticTest') { @('DiagnosticTest', 'HeleprsTest') } elseif ($component -eq 'Diagnostic') { @('Diagnostic', 'Helpers') } else { @($component) }
                 foreach ($package in $expectedPackages) {
                     if (-not $assets.libraries.PSObject.Properties["UniversalDevKit.$package/$version"]) { throw "Missing restored dependency: $package" }
+                }
+                if ($component -eq 'Diagnostic' -and $runtime -eq 'Static') {
+                    InvokeChecked ($common + @('/t:Rebuild', '/p:Configuration=Debug')) (Join-Path $consumer 'unsupported-crt.log') 'Diagnostic requires Dynamic CRT'
+                    $results += [pscustomobject]@{ Runtime = $runtime; Component = $component; Linkage = $linkage; Configuration = 'Debug'; Status = 'RejectedUnsupportedCrt' }
+                    Write-Host "PASS: Diagnostic rejects static CRT before compilation"
+                    continue
                 }
                 foreach ($configuration in @('Debug', 'Release')) {
                     InvokeChecked ($common + @('/t:Rebuild', "/p:Configuration=$configuration")) (Join-Path $consumer "$configuration.log")
@@ -90,6 +103,9 @@ try {
                 }
                 if ($component -eq 'Helpers') {
                     InvokeChecked ($common + @('/t:Rebuild', '/p:Configuration=Release', '/p:UniversalDevKitHelpersLinkage=Dynamic')) (Join-Path $consumer 'wrong-linkage.log') 'unsupported linkage'
+                }
+                if ($component -eq 'Diagnostic') {
+                    InvokeChecked ($common + @('/t:Rebuild', '/p:Configuration=Release', '/p:UniversalDevKitDiagnosticLinkage=Static')) (Join-Path $consumer 'wrong-linkage.log') 'unsupported linkage'
                 }
                 Write-Host "PASS: $name Debug/Release"
             }

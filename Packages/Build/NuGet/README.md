@@ -1,5 +1,7 @@
 # Native NuGet для Windows
 
+Diagnostic выпускается командой `Scripts/Packages/CrossPlatform/Pack.Diagnostic.cmd` либо `Build.ps1 -Components Diagnostic -LicenseFile ./LICENSE`. Пакет `UniversalDevKit.Diagnostic` содержит только Dynamic-вариант логгера (DLL/import library), Debug/Release, MD/MDd; Helpers восстанавливается как private-зависимость. Потребитель задаёт `UniversalDevKitComponents=Diagnostic`; `UniversalDevKitDiagnosticLinkage` по умолчанию Dynamic, Static/Shared отклоняются. DLL копируется рядом с приложением штатным targets. Проверка отдельного пакета: `Tests/Integration/Packages/NuGet.PackageReference.Tests.ps1 -Components Diagnostic -Feed <local-feed>`. Необязательное поле supportedRuntimes в Delivery.json ограничивает состав CRT-профилей пакета; для Diagnostic разрешён только Dynamic. MT запрещён из-за передачи C++-объектов с динамической памятью через границу DLL.
+
 Собственные nuspec, props и targets находятся непосредственно в Delivery/NuGet каждого пакета. Nuspec может использовать плейсхолдеры версии и зависимостей `{{VERSION}}` и `{{DEPENDENCIES}}`; props/targets копируются без подстановок. Выражения MSBuild `$(Property)` и `%(Metadata)` вычисляются у consumer. Штатные CMake-шаблоны не изменяются.
 
 Build.ps1 читает Components.json и выпускает пакет UniversalDevKit.<компонент> для каждого выбранного компонента и его транзитивных зависимостей. Без Components выбирается весь реестр. Версия берётся из Version.json, NuGet-зависимости требуют точную версию выпуска. Имена компонентов и связи не зашиты в упаковщик.
@@ -17,7 +19,7 @@ Build.ps1 создаёт build/native/Generated/Settings.props с версией
 ./Tests/Integration/Packages/NuGet.Registry.Tests.ps1
 ```
 
-Поддерживаются Windows x64, текущий MSVC compiler/toolset, Debug/Release, MD/MT. Пакеты compiled содержат библиотеки Static/Dynamic согласно доступным вариантам; process-компоненты требуют Dynamic. Header-only компоненты подключаются в режиме Shared без компиляции исходников и искусственных бинарников. Пакеты не публикуются, локальный feed сохраняется под !artifacts/packages/nuget.
+Поддерживаются Windows x64, текущий MSVC compiler/toolset, Debug/Release, MD/MDd. Пакеты compiled содержат библиотеки Static/Dynamic согласно доступным вариантам; process-компоненты требуют Dynamic. Header-only компоненты подключаются в режиме Shared без компиляции исходников и искусственных бинарников. Пакеты не публикуются, локальный feed сохраняется под !artifacts/packages/nuget.
 
 LicenseFile обязателен, его текст включается как LICENSE.txt. CMake обнаруживается в Visual Studio либо задаётся параметром CMake. RepositoryPath позволяет тестировать другой реестр в изолированной копии. Повторная упаковка создаёт новый staging, чтобы исключить устаревшие файлы.
 
