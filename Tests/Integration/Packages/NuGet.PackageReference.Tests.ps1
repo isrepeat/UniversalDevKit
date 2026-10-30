@@ -12,6 +12,7 @@ $env:VSLANG = '1033'
 $OutputEncoding = [Text.UTF8Encoding]::new($false)
 $ErrorActionPreference = 'Stop'
 $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
+$NuGet = & (Join-Path $repository 'Scripts/PowerShell/GetNuGet.ps1') -LocalPath $NuGet
 . (Join-Path $repository 'Tests/Infrastructure/BuildTools.ps1')
 $msbuild = Get-TestMSBuild
 $run = Join-Path $repository ('!artifacts/tests/pr-' + [Guid]::NewGuid().ToString('N').Substring(0, 8))

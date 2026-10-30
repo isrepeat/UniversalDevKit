@@ -18,6 +18,7 @@ if (-not $CMake -and 'WinRt' -in $Family) {
     $CMake = @(& $vswhere -latest -products '*' -find 'Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe')[0]
 }
 $repository = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$NuGet = & (Join-Path $repository 'Scripts/PowerShell/GetNuGet.ps1') -LocalPath $NuGet
 $fixtures = Join-Path $repository 'Tests/Fixtures/Packages'
 $output = [IO.Path]::GetFullPath($OutputDirectory)
 [void][IO.Directory]::CreateDirectory($output)

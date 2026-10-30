@@ -21,6 +21,7 @@ $OutputEncoding = $utf8Encoding
 
 # 1. Locate tools and the release directory; read the shared version.
 $repository = (Resolve-Path -LiteralPath $RepositoryPath).Path
+$NuGet = & (Join-Path $repository 'Scripts/PowerShell/GetNuGet.ps1') -LocalPath $NuGet
 if (-not $CMake) {
     $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
     $CMake = @(& $vswhere -latest -products '*' -find 'Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe')[0]

@@ -11,6 +11,7 @@ $utf8Encoding = [Text.UTF8Encoding]::new($false)
 [Console]::OutputEncoding = $utf8Encoding
 $OutputEncoding = $utf8Encoding
 $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
+$NuGet = & (Join-Path $repository 'Scripts/PowerShell/GetNuGet.ps1') -LocalPath $NuGet
 . (Join-Path $repository 'Tests/Infrastructure/TestWorkspace.ps1')
 . (Join-Path $repository 'Tests/Infrastructure/BuildTools.ps1')
 $workspace = New-TestWorkspace $repository WorkingTree HEAD
