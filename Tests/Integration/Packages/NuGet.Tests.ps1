@@ -19,7 +19,8 @@ $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScri
 $NuGet = & (Join-Path $repository 'Scripts/PowerShell/GetNuGet.ps1') -LocalPath $NuGet
 . (Join-Path $repository 'Tests/Infrastructure/BuildTools.ps1')
 $msbuild = Get-TestMSBuild
-$run = Join-Path $repository ('!artifacts/tests/nuget-' + [Guid]::NewGuid().ToString('N'))
+. (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
+$run = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/NuGet.Tests')
 if (-not $Feed) {
     $Feed = Join-Path $run 'feed'
     & (Join-Path $repository 'Packages/Build/NuGet/Build.ps1') -LicenseFile $LicenseFile -CMake $CMake -NuGet $NuGet -OutputDirectory $Feed

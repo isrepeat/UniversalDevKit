@@ -29,7 +29,8 @@ $AndroidNdk = $tools.AndroidNdk
 $AndroidSdk = $tools.AndroidSdk
 $JavaHome = $tools.JavaHome
 $Gradle = $tools.Gradle
-$run = Join-Path $repository ('!artifacts/Android/tests/' + [Guid]::NewGuid().ToString('N').Substring(0, 8))
+. (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
+$run = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/AndroidPrefab.Tests')
 [void][IO.Directory]::CreateDirectory($run)
 $oldJava = $env:JAVA_HOME
 $oldSdk = $env:ANDROID_HOME

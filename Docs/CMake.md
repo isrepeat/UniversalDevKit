@@ -82,7 +82,7 @@ HeleprsTest.Static всё равно создаётся, поскольку JSON
 После сборки выбранной конфигурации:
 
 ```powershell
-cmake --install "!artifacts/Windows-x64/cmake/msvc-$env:VCToolsVersion-md/UniversalDevKit" --config Release
+cmake --install "!artifacts/projects/Windows-x64/cmake/UniversalDevKit/msvc-$env:VCToolsVersion-md" --config Release
 ```
 
 Preset задаёт prefix установки внутри этого дерева, в install/. Для другой цели используйте --prefix. Пакет содержит include/, библиотеки и конфигурацию в `<libdir>/cmake/UniversalDevKit/`; libdir выбирается GNUInstallDirs. На Windows DLL находятся в bin/.

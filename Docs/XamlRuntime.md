@@ -15,9 +15,9 @@ UTF-8 объединён в Helpers/Text/Utf8.h. Unicode использует с
 ## Проверка исходников
 
 ```powershell
-cmake -S Tests/XamlRuntime -B !artifacts/Windows-x64/cmake/XamlRefactor -G "Visual Studio 18 2026" -A x64
-cmake --build !artifacts/Windows-x64/cmake/XamlRefactor --config Debug
-ctest --test-dir !artifacts/Windows-x64/cmake/XamlRefactor -C Debug --output-on-failure
+cmake -S Tests/XamlRuntime -B !artifacts/tests/XamlRuntime -G "Visual Studio 18 2026" -A x64
+cmake --build !artifacts/tests/XamlRuntime --config Debug
+ctest --test-dir !artifacts/tests/XamlRuntime -C Debug --output-on-failure
 ```
 
 ColorAnimation сравнивает скомпилированную страницу и runtime-дерево, RGBA, Current, opacity и отказ при неверной разметке. Release проверяется той же командой с другой конфигурацией.

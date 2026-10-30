@@ -1,5 +1,6 @@
 param([string]$OutputDirectory, [string]$CMake, [string]$NuGet = 'nuget.exe')
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot '../../../Scripts/PowerShell/ArtifactDirectories.ps1')
 $env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
 $env:VSLANG = '1033'
 [Console]::InputEncoding = [Text.UTF8Encoding]::new($false)
@@ -11,17 +12,16 @@ if (-not $CMake) {
     $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
     $CMake = @(& $vswhere -latest -products '*' -find 'Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe')[0]
 }
-if (-not $OutputDirectory) { $OutputDirectory = Join-Path $root '!artifacts/packages/xaml-compiler' }
+if (-not $OutputDirectory) { $OutputDirectory = Join-Path $root '!artifacts/packages/nuget' }
 $output = [IO.Path]::GetFullPath($OutputDirectory)
 $version = (Get-Content (Join-Path $root 'Version.json') -Raw | ConvertFrom-Json).version
 $archive = Join-Path $output "UniversalDevKit.XamlCompiler.$version.nupkg"
-if (Test-Path -LiteralPath $archive) { throw "Package version already exists: $archive" }
-$build = Join-Path $root '!artifacts/Windows-x64/cmake/XamlCompilerPackage'
+$build = Join-Path $output 'build-XamlCompiler'
 & $CMake -S (Join-Path $root 'Projects/Cmake/XamlCompiler') -B $build -G 'Visual Studio 18 2026' -A x64
 if ($LASTEXITCODE -ne 0) { throw 'Host compiler configuration failed.' }
 & $CMake --build $build --config Release
 if ($LASTEXITCODE -ne 0) { throw 'Host compiler build failed.' }
-$stage = Join-Path $output ('staging/' + [guid]::NewGuid().ToString('N'))
+$stage = Reset-UdkArtifactDirectory -Root $output -Path (Join-Path $output 'staging/XamlCompiler')
 $tools = Join-Path $stage 'payload/tools/win-x64'
 New-Item -ItemType Directory -Path $tools -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $build 'Release/XamlCompiler.exe') -Destination $tools

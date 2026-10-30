@@ -15,7 +15,8 @@ $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScri
 $NuGet = & (Join-Path $repository 'Scripts/PowerShell/GetNuGet.ps1') -LocalPath $NuGet
 . (Join-Path $repository 'Tests/Infrastructure/BuildTools.ps1')
 $msbuild = Get-TestMSBuild
-$run = Join-Path $repository ('!artifacts/tests/pr-' + [Guid]::NewGuid().ToString('N').Substring(0, 8))
+. (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
+$run = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/NuGet.PackageReference.Tests')
 [void][IO.Directory]::CreateDirectory($run)
 $results = @()
 function InvokeChecked([string[]]$Arguments, [string]$Log, [string]$ExpectedError = '') {

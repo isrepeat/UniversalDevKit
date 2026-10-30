@@ -25,7 +25,7 @@ $sharedPath = Join-Path $workspace.Library 'Projects/MsBuild/CompileProbe/Univer
 [xml]$shared = Get-Content -LiteralPath $sharedPath -Raw
 $items = @($shared.SelectNodes('//*[local-name()="ClCompile" and @Include]'))
 if ($items.Count -ne 2) { throw 'Incorrect source count.' }
-$build = Join-Path $workspace.Library '!artifacts/c'
+$build = Join-Path $workspace.Library '!artifacts/tests/c'
 & $CMake -S $workspace.Library -B $build -G 'Visual Studio 18 2026' -A x64
 if ($LASTEXITCODE -ne 0) { throw 'CMake configure failed.' }
 & $CMake --build $build --config Debug --parallel 4

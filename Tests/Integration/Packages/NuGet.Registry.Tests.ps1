@@ -19,10 +19,10 @@ $fixture = Join-Path $repository 'Tests/Fixtures/Libraries/HeaderOnly'
 Get-ChildItem -LiteralPath $fixture -Force | Copy-Item -Destination $workspace.Library -Recurse -Force
 & (Join-Path $workspace.Library 'Scripts/PowerShell/GenerateComponentProjects.ps1') -RepositoryRoot $workspace.Library
 # Короткий путь предотвращает превышение MAX_PATH у CompilerId MSBuild.
-$shortLibrary = Join-Path $repository ('!artifacts/nr-' + [Guid]::NewGuid().ToString('N').Substring(0, 8))
+$shortLibrary = Join-Path $workspace.Root 'L'
 Copy-Item -LiteralPath $workspace.Library -Destination $shortLibrary -Recurse
 $workspace.Library = $shortLibrary
-$feed = Join-Path $workspace.Library '!artifacts/nuget-registry'
+$feed = Join-Path $workspace.Library '!artifacts/packages/nuget'
 # Другой реестр и header-only цепочка обнаруживают привязку к рабочим компонентам.
 & (Join-Path $repository 'Packages/Build/NuGet/Build.ps1') -RepositoryPath $workspace.Library -Components HeaderProbe -CMake $CMake -NuGet $NuGet -LicenseFile (Join-Path $repository 'LICENSE') -OutputDirectory $feed
 $version = (Get-Content (Join-Path $workspace.Library 'Version.json') -Raw | ConvertFrom-Json).version

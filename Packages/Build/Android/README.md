@@ -24,7 +24,7 @@ Scripts/Android/Toolchain.json закрепляет NDK и JDK. Общий Resol
 
 Header-only компоненты выпускаются в единственном варианте Shared, например org.universaldevkit:universaldevkit-helpers-shared-release:<version>. AAR содержит публичные заголовки корня и его header-only зависимостей, Prefab module.json и контракт UDK; libs, .a и .so отсутствуют. При выборе только header-only корней NDK-сборка не запускается. Подключение Helpers: find_package(udk_helpers_shared CONFIG REQUIRED), затем штатный Consumer.cmake и udk_android_link(MyNativeTarget udk_helpers_shared::Helpers). Контракт пока сохраняет общий профиль NDK/API/STL/configuration; отсутствие бинарников не отменяет эти проверки. Проверка независимого APK: RunAndroidPrefabTests.cmd -Components Helpers -SkipDevice.
 
-Каталоги NDK-сборок изолированы по ABI в !artifacts/Android/cmake. Параметр BuildRoot разрешает повторно использовать свой каталог внутри !artifacts; CMake повторно конфигурирует и собирает изменённые исходники. Пакетный staging всегда новый. Существующий AAR по тому же адресу не перезаписывается: для повторной проверки используйте новый feed. Внешняя публикация не выполняется.
+Каталоги NDK-сборок изолированы по ABI в !artifacts/packages/maven/build-native. Параметр BuildRoot разрешает повторно использовать свой каталог внутри !artifacts; CMake повторно конфигурирует и собирает изменённые исходники. Staging соответствующего артефакта очищается перед упаковкой. Существующий AAR заменяется при повторной сборке. Внешняя публикация не выполняется.
 
 На компонент выпускаются независимые Maven-артефакты:
 
@@ -62,7 +62,7 @@ NDK libc++_shared.so не копируется в каждый AAR: её еди�
 ./Tests/Integration/Packages/AndroidPrefab.Tests.ps1 -AndroidSdk <sdk> -AndroidNdk <ndk> -JavaHome <jdk> -Gradle <gradle.bat> -CMake <cmake.exe> -Ninja <ninja.exe> -Feed <feed> -Abi arm64-v8a -SkipDevice
 ```
 
-Скрипт копирует только независимый consumer, восстанавливает AAR из Maven, компилирует JNI и собирает APK, проверяет точный набор SO, отсутствие утечки private HeleprsTest headers, отказы при static STL и конфликтующих вариантах. Код UDK/производитель не подключается через add_subdirectory к consumer. Сборки и логи остаются под !artifacts/Android/tests. SkipDevice означает BuildPassed-DeviceNotRun и не подтверждает работу на Android.
+Скрипт копирует только независимый consumer, восстанавливает AAR из Maven, компилирует JNI и собирает APK, проверяет точный набор SO, отсутствие утечки private HeleprsTest headers, отказы при static STL и конфликтующих вариантах. Код UDK/производитель не подключается через add_subdirectory к consumer. Сборки и логи остаются под !artifacts/tests/AndroidPrefab.Tests. SkipDevice означает BuildPassed-DeviceNotRun и не подтверждает работу на Android.
 
 Для реального запуска уберите SkipDevice и передайте Serial из adb devices. Устанавливается только org.universaldevkit.packageconsumer; instrumentation вызывает настоящий C++ API через JNI и требует UDK_RESULT=PASS. Тестовое приложение остаётся на выбранном устройстве для диагностики. JNI здесь — тестовый мост; продуктовый Java/Kotlin API не добавлен.
 

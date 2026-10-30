@@ -5,5 +5,5 @@ ColorAnimationTests.cpp сравнивает скомпилированную с
 Проект Tests/XamlRuntime автоматически собирает host-компилятор, генерирует страницу и линкует тест с перенесённым runtime и Diagnostic DLL. Команды конфигурации приведены в [описании переноса](../../Docs/XamlRuntime.md). После сборки запускайте:
 
 ```text
-ctest --test-dir !artifacts/Windows-x64/cmake/XamlRefactor -C Debug --output-on-failure
+ctest --test-dir !artifacts/tests/XamlRuntime -C Debug --output-on-failure
 ```

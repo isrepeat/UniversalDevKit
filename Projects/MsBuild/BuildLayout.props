@@ -6,7 +6,7 @@
        Поэтому этот файл там не подключается, чтобы не менять пути сборки приложения. -->
   <PropertyGroup>
     <!-- Путь относительно этого файла не зависит от рабочего каталога или расположения solution. -->
-    <UniversalDevKitArtifactsRoot>$(MSBuildThisFileDirectory)..\..\!artifacts\</UniversalDevKitArtifactsRoot>
+    <UniversalDevKitArtifactsRoot>$(MSBuildThisFileDirectory)..\..\!artifacts\projects\</UniversalDevKitArtifactsRoot>
     <!-- По умолчанию ОС и архитектура образуют Windows-x64; платформу можно задать заранее. -->
     <UniversalDevKitTargetPlatform Condition="'$(UniversalDevKitTargetPlatform)' == ''">Windows-$(Platform)</UniversalDevKitTargetPlatform>
     <!-- Вид CRT независим от Static/Dynamic компонента; Debug выбирает отладочный CRT. -->
@@ -22,8 +22,8 @@
 
 		<!-- Разделяем платформу, систему сборки, проект и конфигурацию.
          bin содержит результат сборки, obj — промежуточные файлы компиляции. -->
-    <OutDir>$(UniversalDevKitArtifactsRoot)$(UniversalDevKitTargetPlatform)\msbuild\$(PlatformToolset)\$(VCToolsVersion)\$(__UniversalDevKitRuntimeDirectory)\$(__UniversalDevKitArtifactProject)\$(Configuration)\bin\</OutDir>
-    <IntDir>$(UniversalDevKitArtifactsRoot)$(UniversalDevKitTargetPlatform)\msbuild\$(PlatformToolset)\$(VCToolsVersion)\$(__UniversalDevKitRuntimeDirectory)\$(__UniversalDevKitArtifactProject)\$(Configuration)\obj\</IntDir>
+    <OutDir>$(UniversalDevKitArtifactsRoot)$(UniversalDevKitTargetPlatform)\msbuild\$(__UniversalDevKitArtifactProject)\$(PlatformToolset)\$(VCToolsVersion)\$(__UniversalDevKitRuntimeDirectory)\$(Configuration)\bin\</OutDir>
+    <IntDir>$(UniversalDevKitArtifactsRoot)$(UniversalDevKitTargetPlatform)\msbuild\$(__UniversalDevKitArtifactProject)\$(PlatformToolset)\$(VCToolsVersion)\$(__UniversalDevKitRuntimeDirectory)\$(Configuration)\obj\</IntDir>
     <TLogLocation>$(IntDir)tlog\</TLogLocation>
   </PropertyGroup>
   <ItemDefinitionGroup>

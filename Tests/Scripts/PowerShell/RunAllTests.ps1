@@ -62,7 +62,8 @@ foreach ($name in $Test) {
 $selected = @($cases | Where-Object { ($Group -eq 'All' -or $_.Group -eq $Group) -and (-not $Test -or $_.Name -in $Test) })
 if (-not $selected.Count) { throw 'No tests selected.' }
 if ($ListOnly) { $selected | ForEach-Object { Write-Output "$($_.Group): $($_.Name)" }; exit 0 }
-$report = Join-Path $repository ('!artifacts/tests/all-' + [Guid]::NewGuid().ToString('N').Substring(0, 12))
+. (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
+$report = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/RunAllTests')
 [void][IO.Directory]::CreateDirectory($report)
 $results = @($cases | ForEach-Object {
     [pscustomobject]@{ Test = $_.Name; Status = if ($_ -in $selected) { 'NotRun' } else { 'NotSelected' }; ExitCode = ''; Log = ''; Error = '' }

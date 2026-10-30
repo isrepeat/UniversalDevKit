@@ -24,7 +24,7 @@
 
 Первая команда проверяет актуальность генерируемых проектов, зависимостей, solution и фильтров. Вторая проверяет расчёт вариантов, графы зависимостей и части меню. Третья рассчитывает добавление нового компонента без записи и проверяет платформенные элементы MSBuild. Эти проверки не заменяют сборку реального consumer.
 
-Tests/Fixtures/Libraries/Registry также является отдельным CMake-проектом с общим и Windows-исходником. Его можно конфигурировать через `cmake -S Tests/Fixtures/Libraries/Registry -B !artifacts/Windows-x64/cmake/RegistryFixture` с подходящим генератором.
+Tests/Fixtures/Libraries/Registry также является отдельным CMake-проектом с общим и Windows-исходником. Его можно конфигурировать через `cmake -S Tests/Fixtures/Libraries/Registry -B !artifacts/tests/RegistryFixture` с подходящим генератором.
 
 ## Проверить установленный CMake-пакет
 
@@ -32,7 +32,7 @@ Tests/Fixtures/Libraries/Registry также является отдельным
 ./Tests/Integration/Cmake/TestCMakePackage.ps1 -CMake 'C:/Path/To/cmake.exe'
 ```
 
-По умолчанию скрипт использует Visual Studio 18 2026 x64. Он создаёт уникальное дерево !artifacts, собирает и устанавливает Debug/Release, переносит установленный prefix и собирает отдельный consumer. CTest запускает Static и Dynamic в обеих конфигурациях; неизвестный обязательный компонент проверяется ожидаемой ошибкой конфигурации.
+По умолчанию скрипт использует Visual Studio 18 2026 x64. Он использует постоянный стенд в !artifacts/tests/TestCMakePackage, собирает и устанавливает Debug/Release, переносит установленный prefix и собирает отдельный consumer. CTest запускает Static и Dynamic в обеих конфигурациях; неизвестный обязательный компонент проверяется ожидаемой ошибкой конфигурации.
 
 Исходный prefix после переноса отсутствует. Проверка показывает, что установленный экспорт работает после смены пути; исходники самого тестового приложения берутся из Tests/Fixtures/Consumers/CmakePackage. Результаты сохраняются в !artifacts для анализа.
 

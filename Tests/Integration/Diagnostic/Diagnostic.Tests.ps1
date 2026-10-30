@@ -18,7 +18,8 @@ $env:VSLANG = '1033'
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
 $OutputEncoding = [Text.UTF8Encoding]::new($false)
 $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
-$run = Join-Path $repository ('!artifacts/tests/diagnostic-' + [Guid]::NewGuid().ToString('N'))
+. (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
+$run = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/Diagnostic.Tests')
 [void][IO.Directory]::CreateDirectory($run)
 $records = @(foreach ($config in ($Configuration | Select-Object -Unique)) {
     foreach ($scenario in @('contract', 'threads', 'modules')) {

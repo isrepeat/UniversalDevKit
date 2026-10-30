@@ -14,10 +14,19 @@ $ErrorActionPreference = 'Stop'
 $repositoryPath = [IO.Path]::GetFullPath($RepositoryRoot)
 $prefix = $repositoryPath.TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar
 $updates = [Collections.Generic.List[object]]::new()
-$projects = Get-ChildItem -LiteralPath $repositoryPath -Recurse -File |
-    Where-Object { $_.Extension -in @('.vcxproj', '.vcxitems') } |
-    Where-Object { $_.FullName -notmatch '[\\/](!artifacts|build|\.git|\.vs)[\\/]' } |
-    Sort-Object FullName
+function GetProjectFiles([string]$Directory) {
+    foreach ($entry in Get-ChildItem -LiteralPath $Directory) {
+        if ($entry.PSIsContainer) {
+            if ($entry.Name -notin @('!artifacts', '!tools', 'build', '.git', '.vs') -and
+                -not ($entry.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+                GetProjectFiles $entry.FullName
+            }
+        } elseif ($entry.Extension -in @('.vcxproj', '.vcxitems')) {
+            $entry
+        }
+    }
+}
+$projects = GetProjectFiles $repositoryPath | Sort-Object FullName
 
 function EscapeXml([string]$Value) {
     return [Security.SecurityElement]::Escape($Value)

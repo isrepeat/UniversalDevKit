@@ -1,6 +1,6 @@
 param(
     [ValidateSet('AndroidCoreSdk', 'AndroidAppKit')][string]$Package = 'AndroidCoreSdk',
-    [Parameter(Mandatory)][string]$OutputDirectory,
+    [string]$OutputDirectory,
     [string]$AndroidSdk,
     [string]$JavaHome,
     [string]$Gradle
@@ -13,6 +13,7 @@ $OutputEncoding = [Text.UTF8Encoding]::new($false)
 $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '../../..')).Path
 . (Join-Path $repositoryRoot 'Scripts/Android/ResolveToolchain.ps1')
 $toolchain = Resolve-UdkAndroidToolchain -AndroidSdk $AndroidSdk -JavaHome $JavaHome -Gradle $Gradle -ForConsumer -WithoutNdk
+if (-not $OutputDirectory) { $OutputDirectory = Join-Path $repositoryRoot '!artifacts/packages/maven' }
 $feed = [IO.Path]::GetFullPath($OutputDirectory)
 $savedEnvironment = @{}
 foreach ($name in @('JAVA_HOME', 'ANDROID_HOME', 'ANDROID_SDK_ROOT')) {
@@ -34,8 +35,7 @@ try {
         if ($properties.packageGroup -ne $delivery.groupId) { throw "Maven group mismatch for ${name}." }
         $artifact = $delivery.artifactId
         $destination = Join-Path $feed "$($delivery.groupId.Replace('.', '/'))/$artifact/$version"
-        if (Test-Path -LiteralPath $destination) {
-            if ($name -eq $Package) { throw "Package version already exists: $destination" }
+        if ((Test-Path -LiteralPath $destination) -and $name -ne $Package) {
             foreach ($extension in @('aar', 'pom', 'module')) {
                 if (-not (Test-Path -LiteralPath (Join-Path $destination "$artifact-$version.$extension"))) {
                     throw "Incomplete dependency publication: $destination"
@@ -44,7 +44,7 @@ try {
             Write-Host "Using published dependency ${name} ${version}: $destination"
             continue
         }
-        $buildRoot = Join-Path $repositoryRoot "!artifacts/Android/gradle/$name"
+        $buildRoot = Join-Path $feed "build-gradle/$name"
         & $toolchain.Gradle --project-dir $project --project-cache-dir "$buildRoot/cache" `
             "-PudkBuildRoot=$($buildRoot.Replace('\', '/'))" `
             "-PandroidPackagesFeedPath=$($feed.Replace('\', '/'))" `

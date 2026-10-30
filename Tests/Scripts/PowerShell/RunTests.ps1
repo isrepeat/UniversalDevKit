@@ -16,7 +16,8 @@ $OutputEncoding = [Text.UTF8Encoding]::new($false)
 $ErrorActionPreference = 'Stop'
 $testsPath = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $repositoryPath = Split-Path -Parent $testsPath
-$reportDirectory = Join-Path $repositoryPath ('!artifacts/tests/reports/' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + [Guid]::NewGuid().ToString('N'))
+. (Join-Path $repositoryPath 'Scripts/PowerShell/ArtifactDirectories.ps1')
+$reportDirectory = Reset-UdkArtifactDirectory -Root (Join-Path $repositoryPath '!artifacts/tests') -Path (Join-Path $repositoryPath '!artifacts/tests/RunTests')
 [void][IO.Directory]::CreateDirectory($reportDirectory)
 $transcriptPath = Join-Path $reportDirectory 'console.log'
 $summaryPath = Join-Path $reportDirectory 'summary.csv'
@@ -69,7 +70,7 @@ try {
     foreach ($name in $selectedScenarios) {
         $currentRecord = Start-TestRecord $name
         $workspace = $null
-        $workspace = New-TestWorkspace $repositoryPath $Mode $Revision
+        $workspace = New-TestWorkspace $repositoryPath $Mode $Revision -Name $name
         $currentRecord.Workspace = $workspace.Root
         Save-TestReport
         Write-Host "Scenario: $name; workspace: $($workspace.Root)"

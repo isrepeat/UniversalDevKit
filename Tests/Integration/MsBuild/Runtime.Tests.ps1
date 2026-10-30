@@ -25,7 +25,7 @@ foreach ($configuration in @('Debug', 'Release')) {
         $outDir = Join-Path $Workspace.Consumer "!artifacts/x64/$configuration/$app/bin"
         Invoke-TestApplication (Join-Path $outDir "$app.exe") "$app passed"
         $runtimeDirectory = if ($app -eq 'App1') { 'md' } else { 'mt' }
-        $expected = @(Get-ChildItem (Join-Path $Workspace.Library '!artifacts/Windows-x64/msbuild') -Recurse -Filter 'UniversalDevKit.DiagnosticTest.Dynamic.dll' |
+        $expected = @(Get-ChildItem (Join-Path $Workspace.Library '!artifacts/projects/Windows-x64/msbuild') -Recurse -Filter 'UniversalDevKit.DiagnosticTest.Dynamic.dll' |
             Where-Object { $_.FullName -match "[\\/]$runtimeDirectory[\\/]DiagnosticTest.Dynamic[\\/]$configuration[\\/]bin[\\/]" })
         if ($expected.Count -ne 1) { throw "Missing unique DLL for $app/$configuration/$runtimeDirectory" }
         $actual = Join-Path $outDir 'UniversalDevKit.DiagnosticTest.Dynamic.dll'
@@ -48,7 +48,7 @@ foreach ($configuration in @('Debug', 'Release')) {
 }
 
 # Both variants must coexist without overwriting each other.
-$artifacts = Join-Path $Workspace.Library '!artifacts/Windows-x64/msbuild'
+$artifacts = Join-Path $Workspace.Library '!artifacts/projects/Windows-x64/msbuild'
 foreach ($runtimeDirectory in @('md', 'mt')) {
     $binaries = @(Get-ChildItem $artifacts -Recurse -Filter 'UniversalDevKit.DiagnosticTest.Dynamic.dll' |
         Where-Object { $_.FullName -match "[\\/]$runtimeDirectory[\\/]" })

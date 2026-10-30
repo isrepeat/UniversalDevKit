@@ -7,7 +7,8 @@ $ErrorActionPreference = 'Stop'
 $repository = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 Import-Module (Join-Path $repository 'Scripts/PowerShell/Modules/Module.Udk.Connection/Module.Udk.Connection.psm1') -Force
 $module = Get-Module Module.Udk.Connection
-$workspace = Join-Path $repository ('!artifacts/tests/transaction-' + [Guid]::NewGuid().ToString('N'))
+. (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
+$workspace = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/TestConnectionTransaction')
 [void][IO.Directory]::CreateDirectory($workspace)
 $project = Join-Path $workspace 'Consumer.vcxproj'
 $solution = Join-Path $workspace 'Consumer.sln'

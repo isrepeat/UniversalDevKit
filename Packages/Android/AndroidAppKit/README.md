@@ -12,7 +12,7 @@ Kotlin AAR, перенесённый из UtilityHelpersLib. Публичные 
 
 Сначала собирается AndroidCoreSdk 1.0.10, затем AndroidAppKit. Зависимость CoreSdk закреплена в gradle.properties; уже имеющаяся в feed версия CoreSdk используется повторно.
 
-Версия задаётся packageVersion в Projects/Gradle/gradle.properties и не меняется при сборке. Существующая версия целевого пакета не перезаписывается. JDK 21 и Android SDK определяются общим resolver UDK; NDK не требуется. Артефакты и Gradle project cache находятся в !artifacts/Android/gradle. Параметры AndroidSdk, JavaHome и Gradle позволяют явно выбрать инструменты.
+Версия задаётся packageVersion в Projects/Gradle/gradle.properties и не меняется при сборке. Повторная сборка обновляет целевой пакет. JDK 21 и Android SDK определяются общим resolver UDK; NDK не требуется. Артефакты и Gradle project cache находятся в !artifacts/packages/maven/build-gradle. Параметры AndroidSdk, JavaHome и Gradle позволяют явно выбрать инструменты.
 
 Прямая команда без паузы: Packages/Build/Android/BuildKotlin.ps1 -Package AndroidAppKit -OutputDirectory <feed>.
 

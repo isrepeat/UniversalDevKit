@@ -8,7 +8,8 @@ $OutputEncoding = [Text.UTF8Encoding]::new($false)
 
 $ErrorActionPreference = 'Stop'
 $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
-$run = Join-Path $repository ('!artifacts/package-compatibility/' + [Guid]::NewGuid().ToString('N'))
+. (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
+$run = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/TestBinaryCompatibility')
 $source = Join-Path $repository 'Tests/Fixtures/Consumers/BinaryCompatibility'
 function InvokeCMake([string[]]$Arguments) {
     & $CMake @Arguments | Out-Host

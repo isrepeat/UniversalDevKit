@@ -12,7 +12,8 @@ if (-not (Get-Command $CMake -ErrorAction SilentlyContinue)) {
     $installation = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
     $CMake = Join-Path $installation 'Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe'
 }
-$build = Join-Path $RepositoryPath ('!artifacts/tests/PublicHeaders-' + [Guid]::NewGuid().ToString('N'))
+. (Join-Path $RepositoryPath 'Scripts/PowerShell/ArtifactDirectories.ps1')
+$build = Reset-UdkArtifactDirectory -Root (Join-Path $RepositoryPath '!artifacts/tests') -Path (Join-Path $RepositoryPath '!artifacts/tests/TestPublicHeaders')
 $source = Join-Path $PSScriptRoot '../Integration/Cmake/PublicHeaders'
 & $CMake -S $source -B $build -G 'Visual Studio 18 2026' -A x64 "-DUDK_REPOSITORY=$RepositoryPath"
 if ($LASTEXITCODE -ne 0) { throw 'Public header configuration failed.' }

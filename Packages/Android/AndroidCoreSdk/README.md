@@ -12,7 +12,7 @@ Kotlin AAR, перенесённый из UtilityHelpersLib. Публичные 
 
 Публикуются release AAR, sources JAR, POM и Gradle Module Metadata.
 
-Версия задаётся packageVersion в Projects/Gradle/gradle.properties и не меняется при сборке. Существующая версия целевого пакета не перезаписывается. JDK 21 и Android SDK определяются общим resolver UDK; NDK не требуется. Артефакты и Gradle project cache находятся в !artifacts/Android/gradle. Параметры AndroidSdk, JavaHome и Gradle позволяют явно выбрать инструменты.
+Версия задаётся packageVersion в Projects/Gradle/gradle.properties и не меняется при сборке. Повторная сборка обновляет целевой пакет. JDK 21 и Android SDK определяются общим resolver UDK; NDK не требуется. Артефакты и Gradle project cache находятся в !artifacts/packages/maven/build-gradle. Параметры AndroidSdk, JavaHome и Gradle позволяют явно выбрать инструменты.
 
 Прямая команда без паузы: Packages/Build/Android/BuildKotlin.ps1 -Package AndroidCoreSdk -OutputDirectory <feed>.
 

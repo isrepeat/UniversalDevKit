@@ -6,7 +6,7 @@
 
 WinRT-пакет проверяется через RunWinRtPackageTests.cmd: native Desktop и C# CsWinRT consumer восстанавливают WinMD/DLL из NuGet, генерируют проекции и выполняют штатную активацию через манифест EXE. Изолированные запуски без DLL должны завершаться отказом; системная регистрация не изменяется. Подробности — [проверки пакетов](Integration/Packages/README.md).
 
-Общий локальный запуск: `Tests/Scripts/RunAllTests.cmd` (Windows), `RunAllTests.cmd -Group Android` или `-Group All`. Android требует параметров `-AndroidNdk`, `-Gradle`, `-JavaHome`, `-AndroidSdk`; CMake определяется автоматически либо задаётся через `-CMake`. Для Android native нужен Ninja в PATH. Нужен PowerShell 7 (pwsh), а группа Connect запускается через Windows PowerShell 5.1. Каждый сценарий выполняется отдельным процессом; ошибки не останавливают остальные проверки. Логи и summary.csv сохраняются под !artifacts/tests/all-*. Отсутствующие инструменты означают Failed и итоговый код 1. Android-группа включает заглушки доставки и сборку реального AAR/Prefab consumer; запуск instrumentation выполняется отдельно.
+Общий локальный запуск: `Tests/Scripts/RunAllTests.cmd` (Windows), `RunAllTests.cmd -Group Android` или `-Group All`. Android требует параметров `-AndroidNdk`, `-Gradle`, `-JavaHome`, `-AndroidSdk`; CMake определяется автоматически либо задаётся через `-CMake`. Для Android native нужен Ninja в PATH. Нужен PowerShell 7 (pwsh), а группа Connect запускается через Windows PowerShell 5.1. Каждый сценарий выполняется отдельным процессом; ошибки не останавливают остальные проверки. Логи и summary.csv сохраняются под !artifacts/tests/RunAllTests. Отсутствующие инструменты означают Failed и итоговый код 1. Android-группа включает заглушки доставки и сборку реального AAR/Prefab consumer; запуск instrumentation выполняется отдельно.
 
 Список без запуска: `RunAllTests.cmd -Group All -ListOnly`. Выбор отдельных проверок: `RunAllTests.cmd -Test ScriptEncoding` или в PowerShell `./Tests/Scripts/PowerShell/RunAllTests.ps1 -Test ScriptEncoding,ComponentGeneration`. Прямой PS1-запуск не делает паузу. CI для этой команды пока не настраивался.
 
@@ -20,7 +20,7 @@ Diamond с автоматическими транзитивными импор�
 
 Полная Windows x64 матрица Diamond для CMake и native NuGet: `Tests/Scripts/RunDiamondMatrixTests.cmd`. Общий runner включает её как `DiamondMatrix`; выбор отдельно: `RunAllTests.cmd -Test DiamondMatrix`. Прямой запуск без паузы: `Tests/Integration/Cmake/Diamond.Tests.ps1`. Для сокращённого запуска доступны `-Delivery Checkout`, `Installed` или `NuGet` и `-Variant Static`, `Dynamic`, `PrivateAllStatic`, `PrivateDynamic`, `PrivateStatic` или `PublicStaticDynamic`. CMake из Visual Studio определяется автоматически; доступны параметры `-CMake` и `-NuGet`.
 
-Используется существующая библиотека `Fixtures/Libraries/Diamond`: A → B/C → D, App1 → A и App2 → C. Изменения реестра, генерация проектов, сборки и восстановление выполняются только в отдельной копии под `!artifacts/dm-*`.
+Используется существующая библиотека `Fixtures/Libraries/Diamond`: A → B/C → D, App1 → A и App2 → C. Изменения реестра, генерация проектов, сборки и восстановление выполняются только в отдельной копии под `!artifacts/tests/Diamond.Tests`.
 
 | Вариант | A → B | A → C | B/C → D | DLL App1 / App2 |
 | --- | --- | --- | --- | --- |
@@ -41,9 +41,9 @@ Diamond с автоматическими транзитивными импор�
 
 `Tests/Integration/Packages/NuGet.Registry.Tests.ps1` проверяет тот же упаковщик с другим реестром: HeaderProbe → HeaderLeaf. Оба пакета формируются из header-only fixture и используются отдельным MSBuild-consumer в Debug/Release. Это проверяет отсутствие зависимости упаковщика от рабочих имён HeleprsTest/DiagnosticTest.
 
-Каждый RunTests сохраняет полный вывод консоли в `!artifacts/tests/reports/<дата-время-id>/console.log` и таблицу `summary.csv`. Статусы: Passed — пройден, Failed — ошибка, NotRun — не достигнут после остановки, NotSelected — не выбран, Running — начат без зафиксированного завершения. Таблица обновляется во время запуска; при принудительном закрытии консоли текущий тест может остаться Running. Сценарий Diamond отражён одной строкой, подробности его вариантов находятся в console.log. Отчёты сохраняются и при CleanOnSuccess; отдельные MSBuild log/binlog остаются в каталогах сценариев без этого параметра.
+Каждый RunTests сохраняет полный вывод консоли в `!artifacts/tests/RunTests/console.log` и таблицу `summary.csv`. Статусы: Passed — пройден, Failed — ошибка, NotRun — не достигнут после остановки, NotSelected — не выбран, Running — начат без зафиксированного завершения. Таблица обновляется во время запуска; при принудительном закрытии консоли текущий тест может остаться Running. Сценарий Diamond отражён одной строкой, подробности его вариантов находятся в console.log. Отчёты сохраняются и при CleanOnSuccess; отдельные MSBuild log/binlog остаются в каталогах сценариев без этого параметра.
 
-Общий RunTests сначала проверяет самостоятельность публичных заголовков: для каждого .h в include-корнях компонентов реестра и Core создаётся отдельный .cpp с единственным include. Компиляция проходит без PCH и unity build в Debug/Release x64, без линковки приложения. Отдельный запуск: `powershell.exe -NoProfile -File Tests/Infrastructure/TestPublicHeaders.ps1`. Нужен CMake из PATH либо Visual Studio 2026 с компонентом CMake tools. Результаты остаются в !artifacts/tests/PublicHeaders-<id>.
+Общий RunTests сначала проверяет самостоятельность публичных заголовков: для каждого .h в include-корнях компонентов реестра и Core создаётся отдельный .cpp с единственным include. Компиляция проходит без PCH и unity build в Debug/Release x64, без линковки приложения. Отдельный запуск: `powershell.exe -NoProfile -File Tests/Infrastructure/TestPublicHeaders.ps1`. Нужен CMake из PATH либо Visual Studio 2026 с компонентом CMake tools. Результаты остаются в !artifacts/tests/TestPublicHeaders.
 
 Контракт реестра и header-only компоненты: `pwsh -NoProfile -File Tests/Infrastructure/TestRegistryContract.ps1`. Общие JSON fixtures отклоняются CMake и PowerShell; корректная цепочка заголовков собирается через Shared MSBuild и установленный CMake-пакет без бинарников компонентов.
 
@@ -122,7 +122,7 @@ powershell.exe -NoProfile -File Tests/Integration/Cmake/TestCMakePackage.ps1 -CM
 
 RunTests.ps1 выводит PASS для каждого успешно завершённого сценария. Полный MSBuild-набор прошёл, если все семь выбранных по умолчанию сценариев получили PASS и процесс завершился с кодом 0. FAIL и код 1 означают ошибку проверки или окружения; читайте причину после FAIL. NOTE о форматировании solution сам по себе не означает провал теста. Успех MSBuild-набора не подтверждает отдельные CMake-проверки.
 
-Каждый MSBuild-сценарий получает собственный Git-репозиторий consumer и копию UDK под !artifacts/tests/<yyyy.MM.dd-guid>/. Рабочий UDK и внешние consumer не изменяются. Каталог сохраняется по умолчанию, а при ошибке его путь выводится как Preserved workspace. В logs/ находятся текстовые логи MSBuild и .binlog; они позволяют увидеть команду сборки и причину ошибки. Параметр -CleanOnSuccess удаляет только успешно проверенные окружения.
+Каждый MSBuild-сценарий получает собственный Git-репозиторий consumer и копию UDK под !artifacts/tests/<test-name>-<mode>/. Рабочий UDK и внешние consumer не изменяются. Каталог сохраняется по умолчанию, а при ошибке его путь выводится как Preserved workspace. В logs/ находятся текстовые логи MSBuild и .binlog; они позволяют увидеть команду сборки и причину ошибки. Параметр -CleanOnSuccess удаляет только успешно проверенные окружения.
 
 Ожидаемые отказы, например конфликт вариантов в Diamond или несовместимая архитектура CMake-пакета, являются частью проверки. Сам сценарий проходит только если отказ произошёл ожидаемым способом.
 
@@ -168,7 +168,7 @@ powershell.exe -NoProfile -File Tests/Scripts/PowerShell/RunTests.ps1 -Scenario 
 
 `Fixtures/Consumers/MsBuild` содержит неподключённое решение с двумя приложениями. Шаблон напрямую не собирается: App1 требует подключения UDK. App2 независимо от UDK проверяет сохранность соседнего проекта. Не изменяйте шаблоны в процессе теста.
 
-Каждый запуск создаёт отдельный Git-репозиторий Consumer под `!artifacts/tests/<yyyy.MM.dd-guid>/`. WorkingTree копирует tracked и untracked файлы UDK, включая текущие изменения; ignored-файлы, удалённые файлы и Tests исключаются. Submodule добавляет настоящий локальный Git submodule на выбранной ревизии; незакоммиченные изменения UDK в этот режим не попадают. Ревизия должна содержать проверяемые инструменты подключения.
+Каждый запуск создаёт отдельный Git-репозиторий Consumer под `!artifacts/tests/<test-name>-<mode>/`. WorkingTree копирует tracked и untracked файлы UDK, включая текущие изменения; ignored-файлы, удалённые файлы и Tests исключаются. Submodule добавляет настоящий локальный Git submodule на выбранной ревизии; незакоммиченные изменения UDK в этот режим не попадают. Ревизия должна содержать проверяемые инструменты подключения.
 
 Первый сценарий запускает существующие проверки графа и меню, подключает HeleprsTest/DiagnosticTest Shared через настоящий Connect, повторяет Apply и проверяет неизменность настроек consumer, состава проектов и Shared-связей solution, отсутствие повторных Shared imports. Изменение форматирования или папок solution выводится отдельно как NOTE. Затем собирает всё решение в Debug/Release x64 и запускает оба приложения. MSBuild text logs и binlogs сохраняются в `logs/` окружения.
 

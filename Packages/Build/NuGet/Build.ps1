@@ -11,6 +11,7 @@ param(
 $env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
 $env:VSLANG = '1033'
 
+. (Join-Path $PSScriptRoot '../../../Scripts/PowerShell/ArtifactDirectories.ps1')
 $ErrorActionPreference = 'Stop'
 
 # Align console and native pipeline encodings in Windows PowerShell 5.1.
@@ -28,7 +29,7 @@ if (-not $CMake) {
 }
 if (-not $CMake -or -not (Get-Command $CMake -ErrorAction SilentlyContinue)) { throw 'CMake is required.' }
 $license = (Resolve-Path -LiteralPath $LicenseFile).Path
-if (-not $OutputDirectory) { $OutputDirectory = Join-Path $repository ('!artifacts/packages/nuget/' + [Guid]::NewGuid().ToString('N')) }
+if (-not $OutputDirectory) { $OutputDirectory = Join-Path $repository '!artifacts/packages/nuget' }
 $output = [IO.Path]::GetFullPath($OutputDirectory)
 [void][IO.Directory]::CreateDirectory($output)
 $version = (Get-Content (Join-Path $repository 'Version.json') -Raw | ConvertFrom-Json).version
@@ -146,18 +147,22 @@ function RunCMake([string[]]$Arguments) {
 
 # 4. Build MD/MT in separate prefixes; install Debug/Release together for each CRT.
 $records = @()
+$preparations = @{}
 foreach ($runtime in @('Dynamic', 'Static')) {
+    $runtimeComponents = @($selected | Where-Object { $runtime -in $packages[$_].SupportedRuntimes })
+    if (-not $runtimeComponents.Count) { continue }
     # Подготовка зависимостей завершается до configure; рабочие каталоги сохраняются между выпусками.
     $dependencyDefinitions = [Collections.Generic.Dictionary[string, string]]::new([StringComparer]::Ordinal)
     foreach ($component in $selected) {
         $package = $packages[$component]
         if (-not $package.PreparationScript -or $runtime -notin $package.SupportedRuntimes) { continue }
-        $workDirectory = Join-Path $repository "!artifacts/Windows-x64/dependencies/nuget/$component/$runtime"
+        $workDirectory = Join-Path $output "dependencies/$component/$runtime"
         [void][IO.Directory]::CreateDirectory($workDirectory)
         $prepared = @(& $package.PreparationScript -RepositoryPath $repository -WorkDirectory $workDirectory -Runtime $runtime -Configurations @('Debug', 'Release') -Generator $Generator)
         if ($prepared.Count -ne 1 -or $prepared[0] -isnot [Collections.IDictionary]) {
             throw "Preparation script must return one dictionary of CMake definitions: $component"
         }
+        $preparations["$component/$runtime"] = $prepared[0]
         foreach ($key in $prepared[0].Keys) {
             if ($key -isnot [string] -or $key -cnotmatch '^UniversalDevKit[A-Za-z0-9_]+$' -or
                 $key -in @('UniversalDevKitRuntime', 'UniversalDevKit_COMPONENTS', 'UniversalDevKit_ENFORCE_RELEASE_POLICY') -or
@@ -172,8 +177,8 @@ foreach ($runtime in @('Dynamic', 'Static')) {
     }
     $dependencyArguments = @($dependencyDefinitions.Keys | Sort-Object -CaseSensitive | ForEach-Object { '-D' + $_ + '=' + $dependencyDefinitions[$_] })
     $build = Join-Path $output "build-$runtime"
-    $install = Join-Path $output "install-$runtime"
-    RunCMake (@('-S', $repository, '-B', $build, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug;Release', '-DUniversalDevKit_ENFORCE_RELEASE_POLICY=ON', "-DUniversalDevKitRuntime=$runtime", "-DCMAKE_INSTALL_PREFIX=$install", ('-DUniversalDevKit_COMPONENTS=' + ($selected -join ';'))) + $dependencyArguments)
+    $install = Reset-UdkArtifactDirectory -Root $output -Path (Join-Path $output "install-$runtime")
+    RunCMake (@('-S', $repository, '-B', $build, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug;Release', '-DUniversalDevKit_ENFORCE_RELEASE_POLICY=ON', "-DUniversalDevKitRuntime=$runtime", "-DCMAKE_INSTALL_PREFIX=$install", ('-DUniversalDevKit_COMPONENTS=' + ($runtimeComponents -join ';'))) + $dependencyArguments)
     foreach ($configuration in @('Debug', 'Release')) {
         RunCMake @('--build', $build, '--config', $configuration, '--parallel', '4')
         RunCMake @('--install', $build, '--config', $configuration)
@@ -204,7 +209,7 @@ foreach ($component in $selected) {
     $componentHasBinaries = $registry[$component].Kind -ne 'headerOnly'
     $package = $packages[$component]
     # Use fresh staging to avoid carrying stale files into a new release.
-    $stage = Join-Path $output ('staging/' + $component + '-' + [Guid]::NewGuid().ToString('N'))
+    $stage = Reset-UdkArtifactDirectory -Root $output -Path (Join-Path $output "staging/$component")
     $payload = Join-Path $stage 'payload'
     [void][IO.Directory]::CreateDirectory((Join-Path $payload 'include'))
     Copy-Item -LiteralPath $license -Destination (Join-Path $payload 'LICENSE.txt')
@@ -364,7 +369,13 @@ foreach ($component in $selected) {
             '  <Import Project="$(MSBuildThisFileDirectory)..\..\build\native\' + $package.Id + '.' + $kind + '" />' + "`n" + '</Project>'
         WriteGenerated (Join-Path $payload "buildTransitive/native/$($package.Id).$kind") $wrapper
     }
-    if ($package.StagingScript) { & $package.StagingScript -Payload $payload -RepositoryPath $repository }
+    if ($package.StagingScript) {
+        $componentPreparations = @{}
+        foreach ($runtime in $package.SupportedRuntimes) {
+            if ($preparations.ContainsKey("$component/$runtime")) { $componentPreparations[$runtime] = $preparations["$component/$runtime"] }
+        }
+        & $package.StagingScript -Payload $payload -RepositoryPath $repository -Preparations $componentPreparations
+    }
     $spec = Get-Content -LiteralPath $package.Nuspec -Raw
     WriteGenerated (Join-Path $stage "$component.nuspec") ($spec.Replace('{{COMPONENT}}', $component).Replace('{{PACKAGE_ID}}', $package.Id).Replace('{{VERSION}}', $version).Replace('{{DEPENDENCIES}}', $dependencies))
 

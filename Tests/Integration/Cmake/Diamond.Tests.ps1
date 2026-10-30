@@ -20,7 +20,8 @@ if (-not $CMake) {
     $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
     $CMake = @(& $vswhere -latest -products '*' -find 'Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe')[0]
 }
-$run = Join-Path $repository ('!artifacts/dm-' + [Guid]::NewGuid().ToString('N').Substring(0, 8))
+. (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
+$run = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/Diamond.Tests')
 [void][IO.Directory]::CreateDirectory($run)
 $fixture = Join-Path $repository 'Tests/Fixtures/Libraries/Diamond'
 $results = @()
@@ -107,7 +108,7 @@ try {
             if ($caseName -eq 'PublicStaticDynamic') { $args += '-DDIAMOND_PUBLIC_STATIC=ON' }
             if ($deliveryName -eq 'Checkout') { $args += "-DDIAMOND_CHECKOUT=$library" }
             else {
-                $packageBuild = Join-Path $library '!artifacts/package'
+                $packageBuild = Join-Path $library '!artifacts/packages/cmake'
                 $install = Join-Path $case 'install'
                 InvokeChecked $CMake @('-S', $library, '-B', $packageBuild, '-G', 'Visual Studio 18 2026', '-A', 'x64', "-DCMAKE_INSTALL_PREFIX=$install") (Join-Path $case 'package-configure.log')
                 foreach ($configuration in @('Debug', 'Release')) {
@@ -147,7 +148,7 @@ try {
                     [IO.File]::WriteAllText($destination, $text, [Text.UTF8Encoding]::new($false))
                 }
             }
-            $feed = Join-Path $library '!artifacts/nuget'
+            $feed = Join-Path $library '!artifacts/packages/nuget'
             & (Join-Path $repository 'Packages/Build/NuGet/Build.ps1') -RepositoryPath $library -Components A -LicenseFile (Join-Path $repository 'LICENSE') -OutputDirectory $feed -CMake $CMake -NuGet $NuGet | Out-Host
             foreach ($runtime in @('Dynamic','Static')) {
                 foreach ($app in @('App1','App2')) {

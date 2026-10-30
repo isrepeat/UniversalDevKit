@@ -28,8 +28,8 @@ function InvokeChecked([string]$Tool, [string[]]$Arguments) {
 }
 foreach ($name in $Family) {
     # Каждая сборка использует отдельную копию: исходные fixtures не получают obj/bin.
-    $work = Join-Path $output ("w-" + $name + '-' + [Guid]::NewGuid().ToString('N').Substring(0, 8))
-    [void][IO.Directory]::CreateDirectory($work)
+    . (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
+    $work = Reset-UdkArtifactDirectory -Root $output -Path (Join-Path $output "build-$name")
     Copy-Item -Path (Join-Path $fixtures "$name/*") -Destination $work -Recurse
     Copy-Item -LiteralPath (Join-Path $repository 'LICENSE') -Destination (Join-Path $work 'LICENSE.txt')
     if ($name -eq 'Managed') {

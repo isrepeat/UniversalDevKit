@@ -6,7 +6,8 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path (Join-Path $PSScriptRoot '../../..')).Path
-$testRoot = Join-Path $root ("!artifacts/Android/kotlin-tests/" + [guid]::NewGuid().ToString('N'))
+. (Join-Path $root 'Scripts/PowerShell/ArtifactDirectories.ps1')
+$testRoot = Reset-UdkArtifactDirectory -Root (Join-Path $root '!artifacts/tests') -Path (Join-Path $root '!artifacts/tests/AndroidKotlin.Tests')
 $feed = Join-Path $testRoot 'feed'
 & (Join-Path $root 'Packages/Build/Android/BuildKotlin.ps1') -Package AndroidAppKit -OutputDirectory $feed -AndroidSdk $AndroidSdk -JavaHome $JavaHome -Gradle $Gradle
 . (Join-Path $root 'Scripts/Android/ResolveToolchain.ps1')

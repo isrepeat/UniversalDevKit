@@ -18,6 +18,7 @@ $env:VSLANG = '1033'
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
 $OutputEncoding = [Text.UTF8Encoding]::new($false)
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot '../../../Scripts/PowerShell/ArtifactDirectories.ps1')
 
 # 2. Находим репозиторий и проверяем Android NDK, CMake и Ninja.
 if (-not $RepositoryPath) {
@@ -81,12 +82,12 @@ $version = (Get-Content (Join-Path $repository 'Version.json') -Raw | ConvertFro
 $output = if ($OutputDirectory) {
     [IO.Path]::GetFullPath($OutputDirectory)
 } else {
-    Join-Path $repository '!artifacts/Android/packages'
+    Join-Path $repository '!artifacts/packages/maven'
 }
 $work = if ($BuildRoot) {
     [IO.Path]::GetFullPath($BuildRoot)
 } else {
-    Join-Path $repository ('!artifacts/Android/cmake/pack-' + [Guid]::NewGuid().ToString('N').Substring(0, 8))
+    Join-Path $output 'build-native'
 }
 if (-not $work.StartsWith((Join-Path $repository '!artifacts/'), [StringComparison]::OrdinalIgnoreCase)) {
     throw 'BuildRoot must be inside the repository artifacts directory.'
@@ -174,7 +175,7 @@ foreach ($component in $Components) {
         $packageName = 'udk_' + (ModuleName $component $mode)
         $delivery = $deliveries[$component]
         $artifact = $delivery.artifactPrefix + '-' + $mode.ToLowerInvariant() + '-' + $Configuration.ToLowerInvariant()
-        $stage = Join-Path $work ('stage-' + [Guid]::NewGuid().ToString('N').Substring(0, 8) + '/' + $artifact)
+        $stage = Reset-UdkArtifactDirectory -Root $output -Path (Join-Path $output "staging/$artifact")
 
         # 6.2. Записываем Android/Prefab-манифесты и собираем только публичные заголовки.
         WriteText (Join-Path $stage 'AndroidManifest.xml') ('<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.universaldevkit.' + $packageName + '"><uses-sdk android:minSdkVersion="' + $ApiLevel + '"/></manifest>')
@@ -304,12 +305,9 @@ foreach ($component in $Components) {
         $destination = Join-Path $output "$groupPath/$artifact/$version"
         [void][IO.Directory]::CreateDirectory($destination)
         $aar = Join-Path $destination "$artifact-$version.aar"
-        if (Test-Path -LiteralPath $aar) {
-            throw "Refusing to overwrite a release: $aar. Use a fresh output directory."
-        }
 
         # .NET Framework создаёт обратные слеши в ZIP; для Android нужны обычные ZIP-пути.
-        $stream = [IO.File]::Open($aar, [IO.FileMode]::CreateNew)
+        $stream = [IO.File]::Open($aar, [IO.FileMode]::Create)
         $archive = [IO.Compression.ZipArchive]::new($stream, [IO.Compression.ZipArchiveMode]::Create)
         try {
             foreach ($file in Get-ChildItem -LiteralPath $stage -Recurse -File) {

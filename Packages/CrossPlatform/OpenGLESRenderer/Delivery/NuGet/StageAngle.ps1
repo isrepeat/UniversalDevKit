@@ -1,7 +1,8 @@
-param([Parameter(Mandatory)][string]$Payload, [Parameter(Mandatory)][string]$RepositoryPath)
+param([Parameter(Mandatory)][string]$Payload, [Parameter(Mandatory)][string]$RepositoryPath, [Collections.IDictionary]$Preparations)
 $ErrorActionPreference = 'Stop'
-if (-not $env:UDK_ANGLE_ROOT) { throw 'Set UDK_ANGLE_ROOT to the pinned ANGLE installation or extracted legacy package.' }
-$angleRoot = (Resolve-Path -LiteralPath $env:UDK_ANGLE_ROOT).Path
+$preparedRoot = if ($Preparations -and $Preparations.Contains('Dynamic')) { $Preparations['Dynamic']['UniversalDevKitAngleRoot'] } else { $env:UDK_ANGLE_ROOT }
+if (-not $preparedRoot) { throw 'Prepare ANGLE first or set UDK_ANGLE_ROOT to its installation.' }
+$angleRoot = (Resolve-Path -LiteralPath $preparedRoot).Path
 foreach ($configuration in @('Debug', 'Release')) {
     $source = Join-Path $angleRoot "runtimes/win-x64/native/$configuration"
     if (-not (Test-Path -LiteralPath $source)) {
