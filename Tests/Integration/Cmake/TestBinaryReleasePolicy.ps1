@@ -11,7 +11,8 @@ if (-not $CMake) {
     $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
     $CMake = @(& $vswhere -latest -products '*' -find 'Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe')[0]
 }
-$run = Join-Path $repository ('!artifacts/tests/release-policy-' + [Guid]::NewGuid().ToString('N').Substring(0, 8))
+. (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
+$run = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/TestBinaryReleasePolicy')
 $fixture = Join-Path $repository 'Tests/Fixtures/BinaryReleasePolicy/Check.cmake'
 function CheckCase([string[]]$Options, [string]$ExpectedError) {
     $ErrorActionPreference = 'Continue'

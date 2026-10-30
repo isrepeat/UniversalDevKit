@@ -1,7 +1,11 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "includes": [
+    "Projects/Components/Diagnostic.json",
     "Projects/Components/Helpers.json",
-    "Projects/Components/Diagnostic.json"
+    "Projects/Components/HeleprsTest.json",
+    "Projects/Components/DiagnosticTest.json",
+    "Projects/Components/XamlRuntime.json",
+    "Projects/Components/OpenGLESRenderer.json"
   ]
 }

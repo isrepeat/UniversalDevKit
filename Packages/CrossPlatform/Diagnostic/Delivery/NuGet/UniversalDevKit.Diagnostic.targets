@@ -5,7 +5,7 @@
     <UniversalDevKitRuntime Condition="'$(UniversalDevKitRuntime)' == ''">Dynamic</UniversalDevKitRuntime>
     <__UniversalDevKitDiagnosticPackageRoot>$(MSBuildThisFileDirectory)..\..\</__UniversalDevKitDiagnosticPackageRoot>
     <__UniversalDevKitDiagnosticPackageVersion>$(__UniversalDevKitDiagnosticPackageVersion)</__UniversalDevKitDiagnosticPackageVersion>
-    <UniversalDevKitDiagnosticLinkage Condition="'$(UniversalDevKitDiagnosticLinkage)' == ''">Static</UniversalDevKitDiagnosticLinkage>
+    <UniversalDevKitDiagnosticLinkage Condition="'$(UniversalDevKitDiagnosticLinkage)' == ''">Dynamic</UniversalDevKitDiagnosticLinkage>
   </PropertyGroup>
   <Import Project="Generated\Settings.targets" />
   <ItemGroup>
@@ -17,6 +17,7 @@
     <Error Condition="'$(UniversalDevKitComponents)' == ''" Text="Set UniversalDevKitComponents to explicitly selected root components." />
     <Error Condition="!$([System.String]::Copy(';$(__UniversalDevKitDiagnosticValidModes);').Contains(';$(UniversalDevKitDiagnosticLinkage);'))" Text="UniversalDevKit.Diagnostic: unsupported linkage." />
     <Error Condition="'$(UniversalDevKitRuntime)' != 'Static' and '$(UniversalDevKitRuntime)' != 'Dynamic'" Text="UniversalDevKitRuntime must be Static (MT) or Dynamic (MD)." />
+    <Error Condition="'$(UniversalDevKitRuntime)' != 'Dynamic'" Text="UniversalDevKit.Diagnostic requires Dynamic CRT (MD/MDd); its C++ API shares allocated objects across the DLL boundary." />
     <Error Condition="'$(__UniversalDevKitDiagnosticHasBinaries)' == 'true' and '$(PlatformToolset)' != '$(__UniversalDevKitDiagnosticExpectedToolset)'" Text="UniversalDevKit.Diagnostic: package requires toolset $(__UniversalDevKitDiagnosticExpectedToolset)." />
     <Error Condition="'$(__UniversalDevKitDiagnosticHasBinaries)' == 'true' and '$(VCToolsVersion)' != '$(__UniversalDevKitDiagnosticExpectedTools)'" Text="UniversalDevKit.Diagnostic: package requires MSVC tools $(__UniversalDevKitDiagnosticExpectedTools)." />
     <Error Condition="'$(__UniversalDevKitDiagnosticPackageRoot)' == ''" Text="UniversalDevKit package import is missing." />

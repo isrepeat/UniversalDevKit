@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Package-specific integration. Edit this file directly. -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <UniversalDevKitRuntime Condition="'$(UniversalDevKitRuntime)' == ''">Dynamic</UniversalDevKitRuntime>
+    <__UniversalDevKitDiagnosticTestPackageRoot>$(MSBuildThisFileDirectory)..\..\</__UniversalDevKitDiagnosticTestPackageRoot>
+    <__UniversalDevKitDiagnosticTestPackageVersion>$(__UniversalDevKitDiagnosticTestPackageVersion)</__UniversalDevKitDiagnosticTestPackageVersion>
+    <UniversalDevKitDiagnosticTestLinkage Condition="'$(UniversalDevKitDiagnosticTestLinkage)' == ''">Static</UniversalDevKitDiagnosticTestLinkage>
+  </PropertyGroup>
+  <Import Project="Generated\Settings.targets" />
+  <ItemGroup>
+    <__UniversalDevKitNuGetRoot Include="$(UniversalDevKitComponents)" />
+  </ItemGroup>
+  <Target Name="__UniversalDevKitDiagnosticTestValidateNuGet" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(Platform)' != 'x64'" Text="UniversalDevKit.DiagnosticTest: only Windows x64 is packaged." />
+    <Error Condition="'$(Configuration)' != 'Debug' and '$(Configuration)' != 'Release'" Text="UniversalDevKit.DiagnosticTest: select Debug or Release." />
+    <Error Condition="'$(UniversalDevKitComponents)' == ''" Text="Set UniversalDevKitComponents to explicitly selected root components." />
+    <Error Condition="!$([System.String]::Copy(';$(__UniversalDevKitDiagnosticTestValidModes);').Contains(';$(UniversalDevKitDiagnosticTestLinkage);'))" Text="UniversalDevKit.DiagnosticTest: unsupported linkage." />
+    <Error Condition="'$(UniversalDevKitRuntime)' != 'Static' and '$(UniversalDevKitRuntime)' != 'Dynamic'" Text="UniversalDevKitRuntime must be Static (MT) or Dynamic (MD)." />
+    <Error Condition="'$(__UniversalDevKitDiagnosticTestHasBinaries)' == 'true' and '$(PlatformToolset)' != '$(__UniversalDevKitDiagnosticTestExpectedToolset)'" Text="UniversalDevKit.DiagnosticTest: package requires toolset $(__UniversalDevKitDiagnosticTestExpectedToolset)." />
+    <Error Condition="'$(__UniversalDevKitDiagnosticTestHasBinaries)' == 'true' and '$(VCToolsVersion)' != '$(__UniversalDevKitDiagnosticTestExpectedTools)'" Text="UniversalDevKit.DiagnosticTest: package requires MSVC tools $(__UniversalDevKitDiagnosticTestExpectedTools)." />
+    <Error Condition="'$(__UniversalDevKitDiagnosticTestPackageRoot)' == ''" Text="UniversalDevKit package import is missing." />
+
+  </Target>
+  <Target Name="__UniversalDevKitDiagnosticTestCopyNuGetRuntime" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Copy SourceFiles="@(__UniversalDevKitDiagnosticTestNuGetRuntime)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

@@ -8,8 +8,8 @@ function Test-ComponentConnection {
     $arguments = @{
         SolutionPath = Join-Path $consumer 'Consumer.sln'
         ProjectPath = $project
-        Components = @('Helpers', 'Diagnostic')
-        ComponentModes = @{ Diagnostic = $Linkage; Helpers = $(if ($Linkage -eq 'Dynamic') { 'Static' } else { $Linkage }) }
+        Components = @('HeleprsTest', 'DiagnosticTest')
+        ComponentModes = @{ DiagnosticTest = $Linkage; HeleprsTest = $(if ($Linkage -eq 'Dynamic') { 'Static' } else { $Linkage }) }
     }
     if ($SolutionInjectorPath) { $arguments.SolutionInjectorPath = $SolutionInjectorPath }
     & $connect @arguments | Out-Host
@@ -28,7 +28,7 @@ function Test-ComponentConnection {
     if ($before -cne [IO.File]::ReadAllText($project) -or $solutionBefore -cne $solutionAfter) {
         Write-Host 'NOTE: repeated Apply rewrote formatting or solution folders; effective references are unchanged.'
     }
-    $imports = @($xml.SelectNodes('//*[local-name()="Import"]') | Where-Object { $_.GetAttribute('Project') -match 'UniversalDevKit\.(Helpers|Diagnostic)\.Shared\.vcxitems$' })
+    $imports = @($xml.SelectNodes('//*[local-name()="Import"]') | Where-Object { $_.GetAttribute('Project') -match 'UniversalDevKit\.(HeleprsTest|DiagnosticTest)\.Shared\.vcxitems$' })
     if ($Linkage -eq 'Shared') {
         if ($imports.Count -ne 2 -or @($imports | ForEach-Object { $_.GetAttribute('Project') } | Sort-Object -Unique).Count -ne 2) {
             throw 'Expected exactly one Shared import per component.'
@@ -47,8 +47,8 @@ function Test-ComponentConnection {
         foreach ($app in @('App1', 'App2')) {
             Invoke-TestApplication (Join-Path $consumer "!artifacts/x64/$configuration/$app/bin/$app.exe") "$app passed"
         }
-        if ($Linkage -eq 'Dynamic' -and -not (Test-Path -LiteralPath (Join-Path $consumer "!artifacts/x64/$configuration/App1/bin/UniversalDevKit.Diagnostic.Dynamic.dll"))) {
-            throw 'Diagnostic runtime DLL was not delivered.'
+        if ($Linkage -eq 'Dynamic' -and -not (Test-Path -LiteralPath (Join-Path $consumer "!artifacts/x64/$configuration/App1/bin/UniversalDevKit.DiagnosticTest.Dynamic.dll"))) {
+            throw 'DiagnosticTest runtime DLL was not delivered.'
         }
     }
 }

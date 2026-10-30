@@ -17,7 +17,7 @@
     <UseDebugLibraries Condition="'$(Configuration)' != 'Debug'">false</UseDebugLibraries>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <Import Project="packages\UniversalDevKit.Helpers.{{VERSION}}\build\native\UniversalDevKit.Helpers.props" />
+  <Import Project="packages\UniversalDevKit.HeleprsTest.{{VERSION}}\build\native\UniversalDevKit.HeleprsTest.props" />
 {{DIAGNOSTIC_PROPS}}
   <PropertyGroup>
     <UniversalDevKitComponents>{{ROOTS}}</UniversalDevKitComponents>
@@ -26,7 +26,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>
       <PreprocessorDefinitions>{{TEST_DEFINITIONS}};%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary Condition="'$(UniversalDevKitRuntime)' == 'Dynamic' and '$(Configuration)' == 'Debug'">MultiThreadedDebugDLL</RuntimeLibrary>
@@ -39,7 +39,7 @@
     <Link><SubSystem>Console</SubSystem></Link>
   </ItemDefinitionGroup>
   <ItemGroup><ClCompile Include="Main.cpp" /><None Include="packages.config" /></ItemGroup>
-  <Import Project="packages\UniversalDevKit.Helpers.{{VERSION}}\build\native\UniversalDevKit.Helpers.targets" />
+  <Import Project="packages\UniversalDevKit.HeleprsTest.{{VERSION}}\build\native\UniversalDevKit.HeleprsTest.targets" />
 {{DIAGNOSTIC_IMPORT}}
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

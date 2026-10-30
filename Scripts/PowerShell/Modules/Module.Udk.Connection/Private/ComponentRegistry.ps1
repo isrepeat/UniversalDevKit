@@ -15,7 +15,7 @@ function Get-UdkComponentRegistry {
     param([string]$RepositoryPath)
     [void](GetAvailableComponents -RepositoryPath $RepositoryPath)
     $manifest = Get-Content -LiteralPath (Join-Path $repositoryPath 'Components.json') -Raw -Encoding UTF8 | ConvertFrom-Json
-    if ($manifest.schemaVersion -ne 1 -or -not $manifest.includes) {
+    if ($manifest.schemaVersion -ne 2 -or -not $manifest.includes) {
         throw 'Unsupported Components.json schema.'
     }
     $componentRegistry = @{}

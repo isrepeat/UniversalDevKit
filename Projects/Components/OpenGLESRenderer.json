@@ -1,0 +1,56 @@
+{
+  "name": "OpenGLESRenderer",
+  "dependencies": [
+    {
+      "component": "Helpers",
+      "visibility": "public",
+      "linkage": "same"
+    },
+    {
+      "component": "Diagnostic",
+      "visibility": "private",
+      "linkage": "dynamic"
+    },
+    {
+      "component": "XamlRuntime",
+      "visibility": "public",
+      "linkage": "same"
+    }
+  ],
+  "requirements": {
+    "cxxStandard": 20
+  },
+  "supportedPlatforms": [
+    "Windows",
+    "Android"
+  ],
+  "platformRequirements": {
+    "Android": {
+      "linkLibraries": [
+        "GLESv3"
+      ]
+    }
+  },
+  "msbuildGuid": "{364E96CB-9D8A-40B0-8455-6A31A15A36B0}",
+  "headers": [
+    "Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/Config.h",
+    "Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/Export.h",
+    "Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/OpenGlRenderer.h",
+    "Sources/OpenGLESRenderer/StandardShaders.h"
+  ],
+  "sources": [
+    "Sources/OpenGLESRenderer/OpenGlRenderer.cpp",
+    "Sources/OpenGLESRenderer/StandardShaders.cpp"
+  ],
+  "buildExtensions": {
+    "cmake": "Projects/Cmake/OpenGLESRenderer/Build.cmake",
+    "msbuildTargets": "Projects/MsBuild/OpenGLESRenderer/Build.targets"
+  },
+  "filters": {
+    "roots": [
+      { "path": "Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer", "filter": "" },
+      { "path": "Sources/OpenGLESRenderer", "filter": "" }
+    ],
+    "files": {}
+  }
+}

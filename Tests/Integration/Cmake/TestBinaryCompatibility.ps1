@@ -8,7 +8,8 @@ $OutputEncoding = [Text.UTF8Encoding]::new($false)
 
 $ErrorActionPreference = 'Stop'
 $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
-$run = Join-Path $repository ('!artifacts/package-compatibility/' + [Guid]::NewGuid().ToString('N'))
+. (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
+$run = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/TestBinaryCompatibility')
 $source = Join-Path $repository 'Tests/Fixtures/Consumers/BinaryCompatibility'
 function InvokeCMake([string[]]$Arguments) {
     & $CMake @Arguments | Out-Host
@@ -57,9 +58,9 @@ foreach ($runtime in @('Dynamic', 'Static')) {
 
 # Stop incompatible installation before overwriting binaries.
 $mdPrefix = Join-Path $run 'install-Dynamic'
-$before = (Get-FileHash (Join-Path $mdPrefix 'bin/universaldevkit_diagnostic_dynamic.dll')).Hash
+$before = (Get-FileHash (Join-Path $mdPrefix 'bin/universaldevkit_diagnostictest_dynamic.dll')).Hash
 AssertFails @('--install', (Join-Path $run 'build-Static'), '--config', 'Release', '--prefix', $mdPrefix) 'incompatible package'
-if ((Get-FileHash (Join-Path $mdPrefix 'bin/universaldevkit_diagnostic_dynamic.dll')).Hash -ne $before) { throw 'Rejected install changed binary' }
+if ((Get-FileHash (Join-Path $mdPrefix 'bin/universaldevkit_diagnostictest_dynamic.dll')).Hash -ne $before) { throw 'Rejected install changed binary' }
 
 foreach ($case in @('CRT', 'Iterator')) {
     $consumer = Join-Path $run "rejected-$case"

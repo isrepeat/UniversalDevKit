@@ -1,0 +1,16 @@
+<Page id="colorPage" background="#801E1E1E" xmlns="urn:xaml">
+    <Page.Storyboards>
+        <Storyboard trigger="Show">
+            <ColorAnimation property="background" from="#FF1E1E1E" to="#801E1E1E" duration="1000" easing="Linear"/>
+        </Storyboard>
+    </Page.Storyboards>
+    <VisualStateManager.VisualStateGroups>
+        <VisualStateGroup name="Color">
+            <VisualState name="Blue">
+                <Storyboard>
+                    <ColorAnimation targetName="colorPage" property="background" from="Current" to="blue" duration="1000"/>
+                </Storyboard>
+            </VisualState>
+        </VisualStateGroup>
+    </VisualStateManager.VisualStateGroups>
+</Page>

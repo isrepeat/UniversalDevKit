@@ -23,7 +23,7 @@
 msbuild UniversalDevKit.sln /m /p:Configuration=Release /p:Platform=x64
 ```
 
-Результаты собственных проектов направляются через BuildLayout.props в `!artifacts/Windows-x64/msbuild/<toolset>/<версия компилятора>/<md или mt>/<компонент.вариант>/<конфигурация>/bin/`, промежуточные файлы — в obj/. Публичный UniversalDevKit.props не меняет каталоги consumer.
+Результаты собственных проектов направляются через BuildLayout.props в `!artifacts/projects/Windows-x64/msbuild/<project>/<toolset>/<compiler-version>/<runtime>/<configuration>/bin/`, промежуточные файлы — в obj/. Публичный UniversalDevKit.props не меняет каталоги consumer.
 
 UniversalDevKitRuntime выбирает CRT независимо от Static/Dynamic компонента. При бинарном подключении без явного значения CRT определяется по RuntimeLibrary consumer: /MD(d) выбирает Dynamic, /MT(d) — Static. Явное значение должно совпадать с consumer и его Debug/Release-конфигурацией. CRT, PlatformToolset и VCToolsVersion передаются библиотечным ссылкам и запросам TargetPath. Два consumer одного solution могут использовать разные CRT; импортированные библиотеки собираются через consumer, а не отдельно с настройками solution. Shared сохраняет CRT consumer. Разные toolset, версии компилятора и CRT получают отдельные каталоги; произвольные сочетания toolset не считаются проверенными.
 
@@ -37,13 +37,13 @@ Scripts/Connect.cmd позволяет выбрать solution, проект и 
 
 Connect добавляет импорты выбранных Shared.vcxitems и транзитивных компонентов. MSBuild добавляет их ClCompile в проект consumer. Они компилируются с настройками consumer, с отключённым PCH и отдельными объектными путями в `$(IntDir)UniversalDevKit/`.
 
-Заголовки подключаются через UniversalDevKit.props. Стандарт C++17 или выше consumer задаёт сам. Shared References в solution нужны также для отображения связи в Visual Studio.
+Заголовки подключаются через UniversalDevKit.props. Стандарт C++20 или выше consumer задаёт сам. Shared References в solution нужны также для отображения связи в Visual Studio.
 
 ## Как собирается Static
 
 Connect добавляет ProjectReference на библиотечные проекты. MSBuild строит зависимости и передаёт требуемые .lib финальному линкеру. Сгенерированные Dependencies.props описывают межкомпонентные связи.
 
-Статические архивы UDK не объединяются автоматически в один архив. Например, Diagnostic.Static содержит свою реализацию, а consumer должен получить также Helpers.Static. Connect рассчитывает этот набор; у библиотечных ссылок различается LinkLibraryDependencies в зависимости от роли проекта.
+Статические архивы UDK не объединяются автоматически в один архив. Например, DiagnosticTest.Static содержит свою реализацию, а consumer должен получить также HeleprsTest.Static. Connect рассчитывает этот набор; у библиотечных ссылок различается LinkLibraryDependencies в зависимости от роли проекта.
 
 ## Как собирается Dynamic
 
@@ -54,7 +54,7 @@ Consumer линкуется с импортной .lib, а реализация 
 ## Режим ProjectOnly
 
 ```powershell
-./Scripts/PowerShell/Connect.ps1 -ProjectOnly -ProjectPath C:/Projects/App/App.vcxproj -Components Diagnostic
+./Scripts/PowerShell/Connect.ps1 -ProjectOnly -ProjectPath C:/Projects/App/App.vcxproj -Components DiagnosticTest
 ```
 
 Этот режим изменяет только .vcxproj и поддерживает Shared. Sources.targets раскрывает зависимости во время вычисления проекта. Static/Dynamic через ProjectOnly сейчас не поддерживаются.

@@ -1,33 +1,49 @@
 {
   "name": "Diagnostic",
-  "requirements": {
-    "cxxStandard": 17,
-    "threads": true
-  },
+  "stateScope": "process",
   "dependencies": [
     {
       "component": "Helpers",
       "visibility": "private",
-      "linkage": "static"
+      "linkage": "same"
     }
   ],
-  "msbuildGuid": "{28F717C7-A2EF-405E-96F1-538329030ACF}",
+  "requirements": {
+    "cxxStandard": 20,
+    "threads": true
+  },
+  "msbuildGuid": "{AB97876A-F25A-4AAE-BACD-D32C776BB261}",
   "headers": [
-    "Includes/Diagnostic/UniversalDevKit/Diagnostic/Logging.h"
+    "Includes/Diagnostic/UniversalDevKit/Diagnostic/Logging.h",
+    "Sources/Diagnostic/PlatformBackend.h"
   ],
   "sources": [
-    "Sources/Diagnostic/Logging.cpp"
+    "Sources/Diagnostic/Logging.cpp",
+    "Sources/Diagnostic/platform/windows/PlatformBackendWindows.cpp",
+    "Sources/Diagnostic/platform/android/PlatformBackendAndroid.cpp",
+    "Sources/Diagnostic/platform/linux/PlatformBackendLinux.cpp",
+    "ThirdParty/spdlog/src/spdlog.cpp",
+    "ThirdParty/spdlog/src/stdout_sinks.cpp",
+    "ThirdParty/spdlog/src/color_sinks.cpp",
+    "ThirdParty/spdlog/src/file_sinks.cpp",
+    "ThirdParty/spdlog/src/async.cpp",
+    "ThirdParty/spdlog/src/cfg.cpp",
+    "ThirdParty/spdlog/src/bundled_fmtlib_format.cpp"
   ],
+  "compile": {
+    "includeDirectories": ["ThirdParty/spdlog/include"],
+    "preprocessorDefinitions": ["SPDLOG_COMPILED_LIB", "SPDLOG_WCHAR_FILENAMES"],
+    "precompiledHeader": "notUsing"
+  },
+  "buildExtensions": {
+    "cmake": "Projects/Cmake/Diagnostic/Spdlog.cmake",
+    "msbuildTargets": "Projects/MsBuild/Diagnostic/Spdlog.targets"
+  },
   "filters": {
     "roots": [
-      {
-        "path": "Includes/Diagnostic/UniversalDevKit/Diagnostic",
-        "filter": ""
-      },
-      {
-        "path": "Sources/Diagnostic",
-        "filter": ""
-      }
+      { "path": "Includes/Diagnostic/UniversalDevKit/Diagnostic", "filter": "" },
+      { "path": "Sources/Diagnostic", "filter": "" },
+      { "path": "ThirdParty/spdlog", "filter": "ThirdParty/spdlog" }
     ],
     "files": {}
   }

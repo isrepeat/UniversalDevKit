@@ -14,17 +14,17 @@
 
 ## Один экземпляр кода
 
-Публичные заголовки находятся в Includes/<компонент>/UniversalDevKit/<компонент>, реализации и внутренние заголовки — в Sources/<компонент>. Публичный namespace — universaldevkit. Потребитель получает include-путь Includes/<компонент> и пишет, например, `<UniversalDevKit/Diagnostic/Logging.h>`. Общие Export.h и Version.h находятся в Includes/Core/UniversalDevKit; UniversalDevKit::Headers предоставляет только Core. Targets UniversalDevKit::<компонент>.Headers предоставляют заголовки компонента и публичных зависимостей без компилируемой реализации. При установке выбранные корни объединяются в include/UniversalDevKit.
+Публичные заголовки находятся в Includes/<компонент>/UniversalDevKit/<компонент>, реализации и внутренние заголовки — в Sources/<компонент>. Публичный namespace — universaldevkit. Потребитель получает include-путь Includes/<компонент> и пишет, например, `<UniversalDevKit/DiagnosticTest/Logging.h>`. Общие Export.h и Version.h находятся в Includes/Core/UniversalDevKit; UniversalDevKit::Headers предоставляет только Core. Targets UniversalDevKit::<компонент>.Headers предоставляют заголовки компонента и публичных зависимостей без компилируемой реализации. При установке выбранные корни объединяются в include/UniversalDevKit.
 
 Шаблоны реализуются в публичных заголовках. Обычные функции реализуются в .cpp и требуют компиляции или подключения библиотеки. Исходники не копируются в consumer, MSBuild и CMake используют одни физические файлы.
 
 ## Компонент и вариант сборки
 
-Компонент — логическая единица подключения, например Helpers или Diagnostic. Подкаталоги внутри него не обязаны становиться отдельными библиотеками.
+Компонент — логическая единица подключения, например HeleprsTest или DiagnosticTest. Подкаталоги внутри него не обязаны становиться отдельными библиотеками.
 
 Shared — MSBuild Shared Project: .vcxitems добавляет файлы в импортирующий проект, сам библиотеку не собирает. Static и Dynamic компилируют те же файлы в отдельные библиотеки. DLL использует импортную .lib для линковки; наличие .lib не означает, что реализация включена в EXE.
 
-В CMake варианты представлены targets UniversalDevKit::<компонент>.Static и .Dynamic. UniversalDevKit::Headers передаёт корень заголовков и требование C++17 без компилируемой реализации. Это не заменяет библиотеку для вызовов Log или IsPowerOfTwo.
+В CMake варианты представлены targets UniversalDevKit::<компонент>.Static и .Dynamic. UniversalDevKit::Headers передаёт корень заголовков и требование C++20 без компилируемой реализации. Это не заменяет библиотеку для вызовов Log или IsPowerOfTwo.
 
 ## Реестр и зависимости
 
@@ -32,7 +32,7 @@ Components.json перечисляет описания Projects/Components/*.js
 
 Зависимость содержит component, visibility и linkage. visibility=public передаёт публичные требования, private оставляет их внутренними. linkage=static требует статический вариант; same наследует вариант бинарного родителя; dynamic требует Dynamic. При Shared зависимости same/static компилируются исходниками, dynamic подключается библиотекой. stateScope=process ограничивает компонент режимом Dynamic; подробнее — [общее состояние](StateScope.md).
 
-Текущая связь Diagnostic → Helpers имеет private/static: Diagnostic вызывает EndsWithLineBreak из Helpers. Diagnostic.Dynamic включает необходимую реализацию Helpers.Static в DLL; Diagnostic.Static оставляет разрешение этих символов финальному линкеру.
+Текущая связь DiagnosticTest → HeleprsTest имеет private/static: DiagnosticTest вызывает EndsWithLineBreak из HeleprsTest. DiagnosticTest.Dynamic включает необходимую реализацию HeleprsTest.Static в DLL; DiagnosticTest.Static оставляет разрешение этих символов финальному линкеру.
 
 Важно различать граф сборки, набор библиотек для финальной линковки и набор DLL для запуска. Внутренняя DLL может требоваться при запуске, хотя consumer напрямую с ней не линкуется. Подробнее — [Connect](Connect.md).
 

@@ -1,0 +1,5 @@
+function(udk_extend_Diagnostic target variant outputRoot)
+    if(MSVC)
+        target_compile_options(${target} PRIVATE /utf-8)
+    endif()
+endfunction()

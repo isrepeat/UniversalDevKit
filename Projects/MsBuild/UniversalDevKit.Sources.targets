@@ -13,35 +13,90 @@
   <Import Project="UniversalDevKit.props"
           Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
   <ItemGroup>
-    <__UniversalDevKitAvailableComponent Include="Diagnostic;Helpers" />
+    <__UniversalDevKitAvailableComponent Include="Diagnostic;DiagnosticTest;HeleprsTest;Helpers;OpenGLESRenderer;XamlRuntime" />
     <__UniversalDevKitComponent Include="$(UniversalDevKitComponents)" />
   </ItemGroup>
   <PropertyGroup>
     <__HasUniversalDevKitDiagnostic>false</__HasUniversalDevKitDiagnostic>
-    <__HasUniversalDevKitDiagnostic Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;'))">true</__HasUniversalDevKitDiagnostic>
+    <__HasUniversalDevKitDiagnosticTest>false</__HasUniversalDevKitDiagnosticTest>
+    <__HasUniversalDevKitDiagnosticTest Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';DiagnosticTest;'))">true</__HasUniversalDevKitDiagnosticTest>
+    <__HasUniversalDevKitHeleprsTest>false</__HasUniversalDevKitHeleprsTest>
+    <__HasUniversalDevKitHeleprsTest Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';DiagnosticTest;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';HeleprsTest;'))">true</__HasUniversalDevKitHeleprsTest>
     <__HasUniversalDevKitHelpers>false</__HasUniversalDevKitHelpers>
-    <__HasUniversalDevKitHelpers Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;'))">true</__HasUniversalDevKitHelpers>
+    <__HasUniversalDevKitHelpers Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">true</__HasUniversalDevKitHelpers>
+    <__HasUniversalDevKitOpenGLESRenderer>false</__HasUniversalDevKitOpenGLESRenderer>
+    <__HasUniversalDevKitOpenGLESRenderer Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;'))">true</__HasUniversalDevKitOpenGLESRenderer>
+    <__HasUniversalDevKitXamlRuntime>false</__HasUniversalDevKitXamlRuntime>
+    <__HasUniversalDevKitXamlRuntime Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">true</__HasUniversalDevKitXamlRuntime>
   </PropertyGroup>
-  <Import Project="Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems"
-          Condition="'$(__HasUniversalDevKitDiagnostic)' == 'true'"
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
+    <ProjectReference Include="$(MSBuildThisFileDirectory)Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj">
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+      <LinkLibraryDependencies Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">true</LinkLibraryDependencies>
+    </ProjectReference>
+    <__UniversalDevKitRuntimeProject Include="$(MSBuildThisFileDirectory)Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj" />
+  </ItemGroup>
+  <ItemDefinitionGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
+    <ClCompile><AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\Includes\Diagnostic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile>
+    <ClCompile><PreprocessorDefinitions>UNIVERSALDEVKIT_DIAGNOSTIC_DYNAMIC;%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile>
+  </ItemDefinitionGroup>
+  <Import Project="DiagnosticTest\UniversalDevKit.DiagnosticTest.Shared.vcxitems"
+          Condition="'$(__HasUniversalDevKitDiagnosticTest)' == 'true'"
+          Label="Shared" />
+  <Import Project="HeleprsTest\UniversalDevKit.HeleprsTest.Shared.vcxitems"
+          Condition="'$(__HasUniversalDevKitHeleprsTest)' == 'true'"
           Label="Shared" />
   <Import Project="Helpers\UniversalDevKit.Helpers.Shared.vcxitems"
           Condition="'$(__HasUniversalDevKitHelpers)' == 'true'"
           Label="Shared" />
+  <Import Project="OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems"
+          Condition="'$(__HasUniversalDevKitOpenGLESRenderer)' == 'true'"
+          Label="Shared" />
+  <Import Project="XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems"
+          Condition="'$(__HasUniversalDevKitXamlRuntime)' == 'true'"
+          Label="Shared" />
   <Import Project="UniversalDevKit.Runtime.targets" />
-  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;'))">
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
     <__UniversalDevKitCompileRequirement Include="Diagnostic">
-      <MinimumStandard>17</MinimumStandard>
+      <MinimumStandard>20</MinimumStandard>
     </__UniversalDevKitCompileRequirement>
   </ItemGroup>
-  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;'))">
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';DiagnosticTest;'))">
+    <__UniversalDevKitCompileRequirement Include="DiagnosticTest">
+      <MinimumStandard>20</MinimumStandard>
+    </__UniversalDevKitCompileRequirement>
   </ItemGroup>
-  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;'))">
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';DiagnosticTest;'))">
+  </ItemGroup>
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';DiagnosticTest;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';HeleprsTest;'))">
+    <__UniversalDevKitCompileRequirement Include="HeleprsTest">
+      <MinimumStandard>20</MinimumStandard>
+    </__UniversalDevKitCompileRequirement>
+  </ItemGroup>
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';DiagnosticTest;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';HeleprsTest;'))">
+  </ItemGroup>
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
     <__UniversalDevKitCompileRequirement Include="Helpers">
-      <MinimumStandard>17</MinimumStandard>
+      <MinimumStandard>20</MinimumStandard>
     </__UniversalDevKitCompileRequirement>
   </ItemGroup>
-  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;'))">
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
+  </ItemGroup>
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;'))">
+    <__UniversalDevKitCompileRequirement Include="OpenGLESRenderer">
+      <MinimumStandard>20</MinimumStandard>
+    </__UniversalDevKitCompileRequirement>
+  </ItemGroup>
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;'))">
+    <__UniversalDevKitUnsupportedSystemRequirement Include="OpenGLESRenderer"
+                                                   Condition="'$(UniversalDevKitTargetOS)' == 'Android'" />
+  </ItemGroup>
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
+    <__UniversalDevKitCompileRequirement Include="XamlRuntime">
+      <MinimumStandard>20</MinimumStandard>
+    </__UniversalDevKitCompileRequirement>
+  </ItemGroup>
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
   </ItemGroup>
   <Import Project="UniversalDevKit.Requirements.targets"
           Condition="'$(__IsUniversalDevKitRequirementsImported)' != 'true'" />
@@ -49,7 +104,9 @@
           BeforeTargets="PrepareForBuild">
     <Error Condition="'$(UniversalDevKitComponents)' == ''"
            Text="UniversalDevKitComponents must be specified." />
-    <Error Condition="'%(__UniversalDevKitComponent.Identity)' != 'Diagnostic' and '%(__UniversalDevKitComponent.Identity)' != 'Helpers'"
+    <Error Condition="'%(__UniversalDevKitComponent.Identity)' != 'Diagnostic' and '%(__UniversalDevKitComponent.Identity)' != 'DiagnosticTest' and '%(__UniversalDevKitComponent.Identity)' != 'HeleprsTest' and '%(__UniversalDevKitComponent.Identity)' != 'Helpers' and '%(__UniversalDevKitComponent.Identity)' != 'OpenGLESRenderer' and '%(__UniversalDevKitComponent.Identity)' != 'XamlRuntime'"
            Text="Unsupported UniversalDevKit component: %(__UniversalDevKitComponent.Identity)" />
+    <Error Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;'))"
+           Text="Process-state component requires Dynamic: Diagnostic. Use Connect with a solution." />
   </Target>
 </Project>

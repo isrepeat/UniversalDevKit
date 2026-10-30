@@ -16,9 +16,11 @@ $utf8Encoding = [Text.UTF8Encoding]::new($false)
 [Console]::OutputEncoding = $utf8Encoding
 $OutputEncoding = $utf8Encoding
 $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
+$NuGet = & (Join-Path $repository 'Scripts/PowerShell/GetNuGet.ps1') -LocalPath $NuGet
 . (Join-Path $repository 'Tests/Infrastructure/BuildTools.ps1')
 $msbuild = Get-TestMSBuild
-$run = Join-Path $repository ('!artifacts/tests/nuget-' + [Guid]::NewGuid().ToString('N'))
+. (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
+$run = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/NuGet.Tests')
 if (-not $Feed) {
     $Feed = Join-Path $run 'feed'
     & (Join-Path $repository 'Packages/Build/NuGet/Build.ps1') -LicenseFile $LicenseFile -CMake $CMake -NuGet $NuGet -OutputDirectory $Feed
@@ -26,18 +28,18 @@ if (-not $Feed) {
 $version = (Get-Content (Join-Path $repository 'Version.json') -Raw | ConvertFrom-Json).version
 $fixture = Join-Path $repository 'Tests/Fixtures/Consumers/NuGet'
 foreach ($runtime in @('Dynamic', 'Static')) {
-    foreach ($scenario in @('BothStatic', 'DiagnosticDynamic', 'HelpersDynamic')) {
+    foreach ($scenario in @('BothStatic', 'DiagnosticTestDynamic', 'HelpersDynamic')) {
         $linkage = if ($scenario -eq 'BothStatic') { 'Static' } else { 'Dynamic' }
         $helperLinkage = if ($scenario -eq 'HelpersDynamic') { 'Dynamic' } else { 'Static' }
-        $roots = if ($scenario -eq 'HelpersDynamic') { 'Helpers' } else { 'Diagnostic;Helpers' }
+        $roots = if ($scenario -eq 'HelpersDynamic') { 'HeleprsTest' } else { 'DiagnosticTest;HeleprsTest' }
         $consumer = Join-Path $run "consumer-$runtime-$scenario"
         [void][IO.Directory]::CreateDirectory($consumer)
         Copy-Item -LiteralPath (Join-Path $fixture 'Main.cpp') -Destination $consumer
         foreach ($file in @('Consumer.vcxproj', 'packages.config')) {
             $text = (Get-Content (Join-Path $fixture "$file.in") -Raw).Replace('{{VERSION}}', $version)
-            $import = if ($scenario -ne 'HelpersDynamic') { '  <Import Project="packages\UniversalDevKit.Diagnostic.' + $version + '\build\native\UniversalDevKit.Diagnostic.targets" />' } else { '' }
+            $import = if ($scenario -ne 'HelpersDynamic') { '  <Import Project="packages\UniversalDevKit.DiagnosticTest.' + $version + '\build\native\UniversalDevKit.DiagnosticTest.targets" />' } else { '' }
             $props = $import.Replace('.targets', '.props')
-            $define = if ($scenario -eq 'HelpersDynamic') { 'UDK_TEST_HELPERS_ONLY' } else { '' }
+            $define = if ($scenario -eq 'HelpersDynamic') { 'UDK_TEST_HELEPRSTEST_ONLY' } else { '' }
             $text = $text.Replace('{{DIAGNOSTIC_IMPORT}}', $import).Replace('{{DIAGNOSTIC_PROPS}}', $props).Replace('{{TEST_DEFINITIONS}}', $define).Replace('{{ROOTS}}', $roots)
             [IO.File]::WriteAllText((Join-Path $consumer $file), $text.TrimEnd([char[]]"`r`n"), [Text.UTF8Encoding]::new($false))
         }
@@ -46,7 +48,7 @@ foreach ($runtime in @('Dynamic', 'Static')) {
         if ($LASTEXITCODE -ne 0) { throw 'NuGet restore failed.' }
         foreach ($configuration in @('Debug', 'Release')) {
             $project = Join-Path $consumer 'Consumer.vcxproj'
-            & $msbuild $project /nologo /v:minimal /t:Rebuild /p:Platform=x64 "/p:Configuration=$configuration" "/p:UniversalDevKitRuntime=$runtime" "/p:UniversalDevKitDiagnosticLinkage=$linkage" "/p:UniversalDevKitHelpersLinkage=$helperLinkage" "/bl:$consumer/$configuration.binlog" | Out-Host
+            & $msbuild $project /nologo /v:minimal /t:Rebuild /p:Platform=x64 "/p:Configuration=$configuration" "/p:UniversalDevKitRuntime=$runtime" "/p:UniversalDevKitDiagnosticTestLinkage=$linkage" "/p:UniversalDevKitHeleprsTestLinkage=$helperLinkage" "/bl:$consumer/$configuration.binlog" | Out-Host
             if ($LASTEXITCODE -ne 0) { throw "NuGet consumer failed: $runtime/$linkage/$configuration" }
             $expectedOutput = if ($scenario -eq 'HelpersDynamic') { '' } else { 'NuGet consumer passed' }
             Invoke-TestApplication (Join-Path $consumer "out/$configuration/Consumer.exe") $expectedOutput
@@ -60,7 +62,7 @@ foreach ($runtime in @('Dynamic', 'Static')) {
         foreach ($negative in @(
             @{ Argument = '/p:Platform=Win32'; Message = 'only Windows x64' },
             @{ Argument = '/p:UniversalDevKitRuntime=Unknown'; Message = 'UniversalDevKitRuntime must be' },
-            @{ Argument = '/p:UniversalDevKitHelpersLinkage=Shared'; Message = 'unsupported linkage' }
+            @{ Argument = '/p:UniversalDevKitHeleprsTestLinkage=Shared'; Message = 'unsupported linkage' }
         )) {
             $failure = & $msbuild (Join-Path $consumer 'Consumer.vcxproj') /nologo /v:minimal /t:Rebuild /p:Configuration=Release /p:Platform=x64 $negative.Argument 2>&1
             if ($LASTEXITCODE -eq 0 -or ($failure -join "`n") -notmatch $negative.Message) { throw "Expected NuGet rejection: $($negative.Argument)" }
@@ -70,12 +72,12 @@ foreach ($runtime in @('Dynamic', 'Static')) {
             if ($LASTEXITCODE -eq 0 -or ($failure -join "`n") -notmatch 'CRT mismatch') { throw 'Actual incompatible CRT was not rejected.' }
         }
         if ($scenario -ne 'HelpersDynamic') {
-            $failure = & $msbuild (Join-Path $consumer 'Consumer.vcxproj') /nologo /v:minimal /t:Rebuild /p:Platform=x64 /p:Configuration=Release /p:UniversalDevKitHelpersLinkage=Dynamic 2>&1
+            $failure = & $msbuild (Join-Path $consumer 'Consumer.vcxproj') /nologo /v:minimal /t:Rebuild /p:Platform=x64 /p:Configuration=Release /p:UniversalDevKitHeleprsTestLinkage=Dynamic 2>&1
             if ($LASTEXITCODE -eq 0 -or ($failure -join "`n") -notmatch 'Conflicting NuGet linkage') { throw 'Conflicting component linkage was not rejected.' }
         }
     }
 }
 # Проверяем разрешение точной зависимости из одного корневого пакета.
-& $NuGet install UniversalDevKit.Diagnostic -Version $version -Source $Feed -OutputDirectory (Join-Path $run 'dependency-restore') -NoCache -DirectDownload -NonInteractive -ForceEnglishOutput | Out-Host
-if ($LASTEXITCODE -ne 0 -or -not (Test-Path (Join-Path $run "dependency-restore/UniversalDevKit.Helpers.$version"))) { throw 'Diagnostic did not restore its Helpers dependency.' }
+& $NuGet install UniversalDevKit.DiagnosticTest -Version $version -Source $Feed -OutputDirectory (Join-Path $run 'dependency-restore') -NoCache -DirectDownload -NonInteractive -ForceEnglishOutput | Out-Host
+if ($LASTEXITCODE -ne 0 -or -not (Test-Path (Join-Path $run "dependency-restore/UniversalDevKit.HeleprsTest.$version"))) { throw 'DiagnosticTest did not restore its HeleprsTest dependency.' }
 Write-Host "PASS: NuGet Windows x64 MD/MT Static/Dynamic Debug/Release. Workspace: $run"

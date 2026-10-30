@@ -1,0 +1,20 @@
+{
+  "name": "HeleprsTest",
+  "dependencies": [],
+  "msbuildGuid": "{F27F4562-11C4-42EF-AC5A-26101FD26F46}",
+  "headers": [
+    "Includes/HeleprsTest/UniversalDevKit/HeleprsTest/Math.h",
+    "Includes/HeleprsTest/UniversalDevKit/HeleprsTest/Text.h"
+  ],
+  "sources": [
+    "Sources/HeleprsTest/Math.cpp",
+    "Sources/HeleprsTest/Text.cpp"
+  ],
+  "filters": {
+    "roots": [
+      { "path": "Includes/HeleprsTest/UniversalDevKit/HeleprsTest", "filter": "" },
+      { "path": "Sources/HeleprsTest", "filter": "" }
+    ],
+    "files": {}
+  }
+}

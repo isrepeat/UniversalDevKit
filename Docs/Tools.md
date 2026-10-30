@@ -1,10 +1,19 @@
-# SolutionInjector
+# Инструменты репозитория
 
 **Навигация:** [Главная](../README.md) → [Документация](README.md) → Инструменты
 
 ## Содержание
 
+- [Подготовка инструментов](#подготовка-инструментов)
 - [Модули Connect](#модули-connect)
+
+## Подготовка инструментов
+
+После клонирования запустите `Scripts/Setup.cmd` или `pwsh -File Scripts/PowerShell/Setup.ps1`. Скрипт подготавливает SolutionInjector и NuGet в игнорируемом `!tools/`; EXE не включаются в Git. Версии, URL и SHA-256 закреплены в `Scripts/Tools/SolutionInjector.json` и `Scripts/Tools/NuGet.json`. Visual Studio, CMake и SDK этот скрипт не устанавливает.
+
+SolutionInjector хранится в `!tools/SolutionInjector/<версия>/`, NuGet — в `!tools/NuGet/<версия>/nuget.exe`. Готовый NuGet проверяется и используется повторно без загрузки или перезаписи. Новый файл сначала скачивается во временный файл и переносится на итоговый путь только после проверки SHA-256. Несовпадение хеша останавливает операцию.
+
+Setup необязателен: Connect вызывает существующий загрузчик SolutionInjector перед изменением solution; упаковка NuGet, упаковка XamlCompiler и пакетные тесты вызывают `GetNuGet.ps1` перед использованием NuGet. `-NuGet` с явным путём или другим именем команды позволяет использовать собственный инструмент без проверки закреплённого хеша. Значение по умолчанию `nuget.exe` выбирает инструмент репозитория. Старый файл `!tools/nuget.exe` больше не используется автоматически; удаление или перенос старых файлов Setup не выполняет.
 
 ## Модули Connect
 
@@ -23,7 +32,7 @@
 Пример запуска из корня UniversalDevKit:
 
 ```powershell
-./Scripts/PowerShell/Connect.ps1 -ProjectPath C:/WORK/Windows/Projects/UniversalDevKit.ConsumerTest/UniversalDevKit.ConsumerTest.vcxproj -Components Helpers,Diagnostic -SolutionPath C:/WORK/Windows/Projects/UniversalDevKit.ConsumerTest/UniversalDevKit.ConsumerTest.sln
+./Scripts/PowerShell/Connect.ps1 -ProjectPath C:/WORK/Windows/Projects/UniversalDevKit.ConsumerTest/UniversalDevKit.ConsumerTest.vcxproj -Components HeleprsTest,DiagnosticTest -SolutionPath C:/WORK/Windows/Projects/UniversalDevKit.ConsumerTest/UniversalDevKit.ConsumerTest.sln
 ```
 
 Для локального EXE добавьте `-SolutionInjectorPath C:/WORK/SolutionInjector/bin/SolutionInjector.exe`.
@@ -35,16 +44,16 @@ SolutionPath вставляет всю папку MsBuild из UniversalDevKit.s
 Специальный режим без изменения solution включается только флагом ProjectOnly:
 
 ```powershell
-./Scripts/PowerShell/Connect.ps1 -ProjectOnly -ProjectPath C:/WORK/Windows/Projects/UniversalDevKit.ConsumerTest/UniversalDevKit.ConsumerTest.vcxproj -Components Helpers,Diagnostic
+./Scripts/PowerShell/Connect.ps1 -ProjectOnly -ProjectPath C:/WORK/Windows/Projects/UniversalDevKit.ConsumerTest/UniversalDevKit.ConsumerTest.vcxproj -Components HeleprsTest,DiagnosticTest
 ```
 
 Этот режим использует Sources.targets. ProjectOnly и SolutionPath нельзя комбинировать.
 
 Повторный запуск с тем же SolutionPath добавляет выбранные компоненты к уже подключённым и восстанавливает удалённые очисткой компоненты через повторную вставку без дубликатов. В меню Connect стрелки вверх/вниз выбирают компонент, влево/вправо — Shared, Static или Dynamic. Space отмечает режим; повторное нажатие снимает отметку, выбор другого режима переносит её. На компонент допускается одна отметка. Уже подключённые компоненты показывают текущий режим; снятая отметка оставляет прежнее подключение без изменений. Enter на Apply применяет выбор, Esc отменяет операцию.
 
-Для скриптов доступен параметр `-ComponentModes @{ Helpers = 'Static'; Diagnostic = 'Dynamic' }`. Если Components не указан, имена берутся из ComponentModes. Shared остаётся режимом по умолчанию. Static добавляет ProjectReference, Dynamic дополнительно задаёт import-макрос API и копирует DLL из стандартного каталога артефактов UDK в OutDir consumer. Публичный UniversalDevKit.props импортируется отдельно. Переключение удаляет предыдущие управляемые ссылки и очищает неиспользуемые проекты решения. Режимы сохраняются в свойствах UniversalDevKit<Имя>Linkage. ProjectOnly поддерживает только Shared. Static/Dynamic-компоненты с зависимостями пока блокируются до записи: их библиотечные проекты ещё не описывают зависимости. Конфликт режимов для общей Shared-зависимости также блокирует операцию.
+Для скриптов доступен параметр `-ComponentModes @{ HeleprsTest = 'Static'; DiagnosticTest = 'Dynamic' }`. Если Components не указан, имена берутся из ComponentModes. Shared остаётся режимом по умолчанию. Static добавляет ProjectReference, Dynamic дополнительно задаёт import-макрос API и копирует DLL из стандартного каталога артефактов UDK в OutDir consumer. Публичный UniversalDevKit.props импортируется отдельно. Переключение удаляет предыдущие управляемые ссылки и очищает неиспользуемые проекты решения. Режимы сохраняются в свойствах UniversalDevKit<Имя>Linkage. ProjectOnly поддерживает только Shared. Static/Dynamic-компоненты с зависимостями пока блокируются до записи: их библиотечные проекты ещё не описывают зависимости. Конфликт режимов для общей Shared-зависимости также блокирует операцию.
 
-Для выборочного отключения передайте `-Disconnect -Components Diagnostic` или несколько имён через запятую. Удаляются только выбранные явные компоненты; режимы и зависимости оставшихся сохраняются. Без Components в обычной консоли открывается список: Space отмечает компоненты, Enter на Apply применяет выбор. В неинтерактивном запуске Disconnect без Components отключает все компоненты проекта.
+Для выборочного отключения передайте `-Disconnect -Components DiagnosticTest` или несколько имён через запятую. Удаляются только выбранные явные компоненты; режимы и зависимости оставшихся сохраняются. Без Components в обычной консоли открывается список: Space отмечает компоненты, Enter на Apply применяет выбор. В неинтерактивном запуске Disconnect без Components отключает все компоненты проекта.
 
 Backspace возвращает к предыдущему этапу: компоненты → действие → проект → решение → ввод пути. Автоматически выбранный единственный проект пропускается при возврате. Для запуска с явным Disconnect этап выбора действия также пропускается. Выбор компонентов при возврате сбрасывается; файлы изменяются только после Apply. Esc отменяет всю операцию.
 

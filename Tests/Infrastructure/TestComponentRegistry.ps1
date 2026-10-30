@@ -20,10 +20,30 @@ foreach ($mode in @('Shared', 'Static', 'Dynamic')) {
     }
 }
 $shared = @($updates | Where-Object RelativePath -like '*Example.Shared.vcxitems')
+$solutionText = $solution[0].Content
+foreach ($folder in @('Projects', 'MsBuild', 'Example', 'Service')) {
+    if ($solutionText -notmatch ('Project\("\{2150E333-8FDC-42A3-9474-1A3956D46DE8\}"\) = "' + $folder + '"')) {
+        throw "Missing generated solution folder: $folder"
+    }
+}
+$exampleFolder = [regex]::Match($solutionText, '= "Example", "Example", "(\{[^}]+\})"').Groups[1].Value
+foreach ($mode in @('Shared', 'Static', 'Dynamic')) {
+    $projectGuid = [regex]::Match($solutionText, ('= "UniversalDevKit.Example.' + $mode + '", "[^"]+", "(\{[^}]+\})"')).Groups[1].Value
+    if (-not $projectGuid -or $solutionText -notmatch ([regex]::Escape($projectGuid) + '\s*=\s*' + [regex]::Escape($exampleFolder))) {
+        throw "Incorrect solution nesting: Example.$mode"
+    }
+}
 if ($shared.Count -ne 1 -or -not $shared[0].Content.Contains('UniversalDevKitTargetOS')) {
     throw 'Missing platform selection'
 }
 [xml]$document = $shared[0].Content
+$headers = @($document.SelectNodes('//*[local-name()="ClInclude" and @Include]') | ForEach-Object { $_.Include })
+if (-not @($headers | Where-Object { $_.EndsWith('\Sources\Example\Internal.h') }).Count) {
+    throw 'Explicit internal header is missing'
+}
+if (@($headers | Where-Object { $_.EndsWith('\Sources\Example\Unlisted.h') }).Count) {
+    throw 'Unlisted internal header was discovered implicitly'
+}
 $sources = @($document.SelectNodes('//*[local-name()="ClCompile" and @Include]'))
 if ($sources.Count -ne 2 -or -not $sources[1].HasAttribute('Condition')) {
     throw 'Invalid platform sources'
@@ -33,7 +53,10 @@ Write-Output 'New component, solution entries and conditional platform sources p
 if (@($updates | Where-Object RelativePath -like '*Service.Static.vcxproj').Count) {
     throw 'Process-state Static project was generated'
 }
-if ($solution[0].Content.Contains('UniversalDevKit.Service.Shared') -or $solution[0].Content.Contains('UniversalDevKit.Service.Static')) {
+if (-not $solution[0].Content.Contains('UniversalDevKit.Service.Shared')) {
+    throw 'Missing process-state Shared project for source browsing'
+}
+if ($solution[0].Content.Contains('UniversalDevKit.Service.Static')) {
     throw 'Forbidden process-state projects were added to solution'
 }
 $sourceTargets = @($updates | Where-Object RelativePath -eq 'Projects/MsBuild/UniversalDevKit.Sources.targets')[0].Content
@@ -49,7 +72,9 @@ if (-not $staticProject.Contains('<LanguageStandard>stdcpp20</LanguageStandard>'
     throw 'New library project did not select the required standard'
 }
 . (Join-Path $repository 'Scripts/PowerShell/Modules/Module.Udk.Connection/Private/Requirements.ps1')
-foreach ($json in @('{"requirements":{"unknown":true}}', '{"requirements":{"cxxStandard":16}}', '{"requirements":{"threads":"true"}}')) {
+$defaults = Get-UdkRequirementDefinition ([pscustomobject]@{})
+if ($defaults.CxxStandard -ne 20) { throw 'Default language standard must be C++20' }
+foreach ($json in @('{"requirements":{"unknown":true}}', '{"requirements":{"cxxStandard":17}}', '{"requirements":{"cxxStandard":16}}', '{"requirements":{"threads":"true"}}')) {
     $rejected = $false
     try {
         Get-UdkRequirementDefinition ($json | ConvertFrom-Json) | Out-Null

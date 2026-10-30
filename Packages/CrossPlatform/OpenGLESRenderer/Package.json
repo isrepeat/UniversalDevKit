@@ -1,0 +1,10 @@
+{
+  "deliveries": {
+    "Android": "Delivery/Android/Delivery.json",
+    "NuGet": "Delivery/NuGet/Delivery.json"
+  },
+  "component": "OpenGLESRenderer",
+  "schemaVersion": 1,
+  "name": "OpenGLESRenderer",
+  "versionSource": "../../../Version.json"
+}

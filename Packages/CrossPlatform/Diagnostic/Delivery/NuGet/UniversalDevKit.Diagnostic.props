@@ -6,6 +6,6 @@
     <__UniversalDevKitDiagnosticPackageRoot>$(MSBuildThisFileDirectory)..\..\</__UniversalDevKitDiagnosticPackageRoot>
 
     <UniversalDevKitRuntime Condition="'$(UniversalDevKitRuntime)' == ''">Dynamic</UniversalDevKitRuntime>
-    <UniversalDevKitDiagnosticLinkage Condition="'$(UniversalDevKitDiagnosticLinkage)' == ''">Static</UniversalDevKitDiagnosticLinkage>
+    <UniversalDevKitDiagnosticLinkage Condition="'$(UniversalDevKitDiagnosticLinkage)' == ''">Dynamic</UniversalDevKitDiagnosticLinkage>
   </PropertyGroup>
 </Project>

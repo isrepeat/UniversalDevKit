@@ -8,7 +8,8 @@ $OutputEncoding = [Text.UTF8Encoding]::new($false)
 
 $ErrorActionPreference = 'Stop'
 $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
-$run = Join-Path $repository ('!artifacts/Windows-x64/cmake/PackageTest-' + [Guid]::NewGuid().ToString('N'))
+. (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
+$run = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/TestCMakePackage')
 $build = Join-Path $run 'build'
 $install = Join-Path $run 'install'
 $relocated = Join-Path $run 'relocated'
@@ -79,19 +80,19 @@ AssertConfigurationFails 'Invalid runtime choice' @('-S', $repository, '-B', (Jo
 $contractArguments = @('-S', $contractSource, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Release')
 
 # Verify direct and transitive conflicts in the installed package.
-AssertConfigurationFails 'Installed variant conflict' ($contractArguments + @('-B', (Join-Path $run 'conflict'), "-DCMAKE_PREFIX_PATH=$relocated", '-DTEST_CONFLICT=Helpers.Dynamic')) 'UDK_COMPONENT_VARIANT_Helpers'
-AssertConfigurationFails 'Direct variant conflict' ($contractArguments + @('-B', (Join-Path $run 'direct-conflict'), "-DCMAKE_PREFIX_PATH=$relocated", '-DTEST_CHECK=DirectConflict', '-DTEST_CONFLICT=Helpers.Dynamic')) 'UDK_COMPONENT_VARIANT_Helpers'
-AssertConfigurationFails 'Private DLL dependency conflict' ($contractArguments + @('-B', (Join-Path $run 'private-conflict'), "-DCMAKE_PREFIX_PATH=$relocated", '-DTEST_TARGET=Diagnostic.Dynamic', '-DTEST_CONFLICT=Helpers.Dynamic')) 'UDK_COMPONENT_VARIANT_Helpers'
-AssertConfigurationFails 'Source variant conflict' ($contractArguments + @('-B', (Join-Path $run 'source-conflict'), '-DTEST_CHECK=SourceConflict', '-DTEST_CONFLICT=Helpers.Dynamic')) 'UDK_COMPONENT_VARIANT_Helpers'
+AssertConfigurationFails 'Installed variant conflict' ($contractArguments + @('-B', (Join-Path $run 'conflict'), "-DCMAKE_PREFIX_PATH=$relocated", '-DTEST_CONFLICT=HeleprsTest.Dynamic')) 'UDK_COMPONENT_VARIANT_HeleprsTest'
+AssertConfigurationFails 'Direct variant conflict' ($contractArguments + @('-B', (Join-Path $run 'direct-conflict'), "-DCMAKE_PREFIX_PATH=$relocated", '-DTEST_CHECK=DirectConflict', '-DTEST_CONFLICT=HeleprsTest.Dynamic')) 'UDK_COMPONENT_VARIANT_HeleprsTest'
+AssertConfigurationFails 'Private DLL dependency conflict' ($contractArguments + @('-B', (Join-Path $run 'private-conflict'), "-DCMAKE_PREFIX_PATH=$relocated", '-DTEST_TARGET=DiagnosticTest.Dynamic', '-DTEST_CONFLICT=HeleprsTest.Dynamic')) 'UDK_COMPONENT_VARIANT_HeleprsTest'
+AssertConfigurationFails 'Source variant conflict' ($contractArguments + @('-B', (Join-Path $run 'source-conflict'), '-DTEST_CHECK=SourceConflict', '-DTEST_CONFLICT=HeleprsTest.Dynamic')) 'UDK_COMPONENT_VARIANT_HeleprsTest'
 
-# Create a separate Release-only package containing Helpers.Static.
+# Create a separate Release-only package containing HeleprsTest.Static.
 $limitedBuild = Join-Path $run 'limited-build'
 $limitedInstall = Join-Path $run 'limited-install'
-InvokeCMake @('-S', $repository, '-B', $limitedBuild, '-G', $Generator, '-A', 'x64', '-DUniversalDevKit_COMPONENTS=Helpers', '-DUniversalDevKit_BUILD_DYNAMIC=OFF', "-DCMAKE_INSTALL_PREFIX=$limitedInstall")
+InvokeCMake @('-S', $repository, '-B', $limitedBuild, '-G', $Generator, '-A', 'x64', '-DUniversalDevKit_COMPONENTS=HeleprsTest', '-DUniversalDevKit_BUILD_DYNAMIC=OFF', "-DCMAKE_INSTALL_PREFIX=$limitedInstall")
 InvokeCMake @('--build', $limitedBuild, '--config', 'Release')
 InvokeCMake @('--install', $limitedBuild, '--config', 'Release')
-if (Test-Path -LiteralPath (Join-Path $limitedInstall 'include/UniversalDevKit/Diagnostic')) {
-    throw 'Limited package contains excluded Diagnostic headers.'
+if (Test-Path -LiteralPath (Join-Path $limitedInstall 'include/UniversalDevKit/DiagnosticTest')) {
+    throw 'Limited package contains excluded DiagnosticTest headers.'
 }
 $limitedConsumer = Join-Path $run 'limited-consumer'
 InvokeCMake ($contractArguments + @('-B', $limitedConsumer, "-DCMAKE_PREFIX_PATH=$limitedInstall"))
@@ -100,8 +101,8 @@ InvokeCMake @('--build', $limitedConsumer, '--config', 'Release')
 if ($LASTEXITCODE -ne 0) {
     throw 'Limited package consumer failed.'
 }
-AssertConfigurationFails 'Excluded component' ($contractArguments + @('-B', (Join-Path $run 'excluded'), "-DCMAKE_PREFIX_PATH=$limitedInstall", '-DTEST_COMPONENT=Diagnostic')) 'NOT FOUND|not FOUND'
-AssertConfigurationFails 'Unavailable Dynamic variant' ($contractArguments + @('-B', (Join-Path $run 'missing-variant'), "-DCMAKE_PREFIX_PATH=$limitedInstall", '-DTEST_TARGET=Helpers.Dynamic')) 'Helpers.Dynamic'
+AssertConfigurationFails 'Excluded component' ($contractArguments + @('-B', (Join-Path $run 'excluded'), "-DCMAKE_PREFIX_PATH=$limitedInstall", '-DTEST_COMPONENT=DiagnosticTest')) 'NOT FOUND|not FOUND'
+AssertConfigurationFails 'Unavailable Dynamic variant' ($contractArguments + @('-B', (Join-Path $run 'missing-variant'), "-DCMAKE_PREFIX_PATH=$limitedInstall", '-DTEST_TARGET=HeleprsTest.Dynamic')) 'HeleprsTest.Dynamic'
 AssertConfigurationFails 'Missing Debug configuration' (@('-S', $contractSource, '-B', (Join-Path $run 'missing-debug'), '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug', "-DCMAKE_PREFIX_PATH=$limitedInstall")) 'IMPORTED_LOCATION|IMPORTED_IMPLIB'
 AssertConfigurationFails 'Incompatible x86 architecture' (@('-S', $contractSource, '-B', (Join-Path $run 'wrong-architecture'), '-G', $Generator, '-A', 'Win32', '-DCMAKE_CONFIGURATION_TYPES=Release', "-DCMAKE_PREFIX_PATH=$limitedInstall")) '64bit|not compatible|not accepted'
 Write-Output 'Package contract checks passed.'

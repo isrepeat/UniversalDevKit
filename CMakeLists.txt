@@ -4,9 +4,34 @@ cmake_minimum_required(VERSION 3.22)
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     file(TO_CMAKE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/!artifacts/" artifacts_prefix)
     file(TO_CMAKE_PATH "${CMAKE_BINARY_DIR}/" binary_prefix)
+    if(CMAKE_HOST_WIN32)
+        # Проверяем физический каталог, сохраняя короткие пути самой сборки.
+        execute_process(COMMAND subst OUTPUT_VARIABLE udk_subst_mappings RESULT_VARIABLE udk_subst_result)
+        if(NOT udk_subst_result EQUAL 0)
+            message(FATAL_ERROR "Cannot inspect substituted build drives")
+        endif()
+        string(SUBSTRING "${binary_prefix}" 0 2 udk_binary_drive)
+        string(TOUPPER "${udk_binary_drive}" udk_binary_drive)
+        string(REPLACE "\n" ";" udk_subst_mappings "${udk_subst_mappings}")
+        foreach(udk_mapping IN LISTS udk_subst_mappings)
+            string(FIND "${udk_mapping}" "${udk_binary_drive}\\: => " udk_mapping_position)
+            if(udk_mapping_position EQUAL 0)
+                string(SUBSTRING "${udk_mapping}" 8 -1 udk_physical_root)
+                string(STRIP "${udk_physical_root}" udk_physical_root)
+                string(SUBSTRING "${binary_prefix}" 2 -1 udk_binary_suffix)
+                file(TO_CMAKE_PATH "${udk_physical_root}${udk_binary_suffix}" binary_prefix)
+                break()
+            endif()
+        endforeach()
+    endif()
     string(FIND "${binary_prefix}" "${artifacts_prefix}" artifacts_position)
     if(NOT artifacts_position EQUAL 0)
-        message(FATAL_ERROR "Configure UniversalDevKit inside !artifacts: use a preset or -B !artifacts/<platform>/cmake/<project>")
+        message(FATAL_ERROR "Configure UniversalDevKit inside !artifacts: use a preset or -B !artifacts/projects/<platform>/cmake/<project>")
+    endif()
+    string(LENGTH "${artifacts_prefix}" artifacts_prefix_length)
+    string(SUBSTRING "${binary_prefix}" ${artifacts_prefix_length} -1 artifact_relative_path)
+    if(NOT artifact_relative_path MATCHES "^/?(projects|packages|tests)/")
+        message(FATAL_ERROR "Build inside !artifacts/projects, !artifacts/packages or !artifacts/tests")
     endif()
 endif()
 
@@ -48,7 +73,7 @@ target_include_directories(universaldevkit_headers INTERFACE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Includes/Core>"
     "$<INSTALL_INTERFACE:include>"
 )
-target_compile_features(universaldevkit_headers INTERFACE cxx_std_17)
+target_compile_features(universaldevkit_headers INTERFACE cxx_std_20)
 
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
@@ -82,7 +107,7 @@ install(DIRECTORY "Includes/Core/" DESTINATION "include")
 foreach(componentName IN LISTS availablePackageComponents)
     install(DIRECTORY "Includes/${componentName}/" DESTINATION "include")
 endforeach()
-# Namespace + EXPORT_NAME дают, например, UniversalDevKit::Helpers.Static.
+# Namespace + EXPORT_NAME дают, например, UniversalDevKit::HeleprsTest.Static.
 install(EXPORT UniversalDevKitTargets
     NAMESPACE UniversalDevKit::
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/UniversalDevKit"

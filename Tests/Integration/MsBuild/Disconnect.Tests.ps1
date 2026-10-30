@@ -9,13 +9,13 @@ Test-ComponentConnection $Workspace $MSBuild $SolutionInjectorPath Shared
 $arguments = @{
     SolutionPath = Join-Path $Workspace.Consumer 'Consumer.sln'
     ProjectPath = Join-Path $Workspace.Consumer 'App1/App1.vcxproj'
-    Components = @('Helpers', 'Diagnostic')
+    Components = @('HeleprsTest', 'DiagnosticTest')
     Disconnect = $true
 }
 if ($SolutionInjectorPath) { $arguments.SolutionInjectorPath = $SolutionInjectorPath }
 & (Join-Path $Workspace.Library 'Scripts/PowerShell/Connect.ps1') @arguments | Out-Host
 [xml]$project = [IO.File]::ReadAllText($arguments.ProjectPath)
-if ($project.SelectNodes('//*[@Label="UniversalDevKit"]').Count -or $project.OuterXml -match 'UniversalDevKit\.(Helpers|Diagnostic)\.(Shared|Static|Dynamic)') {
+if ($project.SelectNodes('//*[@Label="UniversalDevKit"]').Count -or $project.OuterXml -match 'UniversalDevKit\.(HeleprsTest|DiagnosticTest)\.(Shared|Static|Dynamic)') {
     throw 'Disconnect left UDK integration in App1.'
 }
 # Disconnected App1 requires UDK and must fail to build; App2 remains independent.

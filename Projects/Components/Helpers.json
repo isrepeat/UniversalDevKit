@@ -1,25 +1,57 @@
 {
   "name": "Helpers",
-  "dependencies": [],
-  "msbuildGuid": "{F27F4562-11C4-42EF-AC5A-26101FD26F46}",
+  "kind": "headerOnly",
+  "msbuildGuid": "{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}",
   "headers": [
-    "Includes/Helpers/UniversalDevKit/Helpers/Math.h",
-    "Includes/Helpers/UniversalDevKit/Helpers/Text.h"
+    "Includes/Helpers/UniversalDevKit/Helpers/Text/Unicode.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/System/ApplicationPaths.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/System/Thread.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Preprocessor.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Collection/Algorithms.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Collection/fixed_container.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Collection/iter_to_last.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Collection/iterable_queue.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Event/IEvent.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Event/Signal.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Math/Differentiation.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Math/Function1D.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Math/Rect.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Math/Size.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Math/Tensor.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/Concepts.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/Diagnostics.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/FunctionTraits.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/Logic.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/Tags.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/TypeTraits.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/Utilities/PointerGetter.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/Utilities/TypeErasedDeleter.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Meta/Utilities/ValueExtractor.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Patterns/Singleton.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Config.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Extensions/fstreamEx.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Extensions/memoryEx.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Extensions/optional_ref.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Extensions/rangesEx.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Extensions/rangesEx/Tools.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Extensions/rangesEx/ranges_concat.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Extensions/rangesEx/ranges_drop_last.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Extensions/rangesEx/ranges_flatten_tree.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/StdExt/Extensions/rangesEx/ranges_to.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/StdExt/FormatSpecializations.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Regex/Regex.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Stream/StreamHelpers.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Stream/StreamLineReader.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Stream/StreamLineViewer.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Math/Geometry.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Math/Color.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Math/Motion.h",
+    "Includes/Helpers/UniversalDevKit/Helpers/Text/Utf8.h"
   ],
-  "sources": [
-    "Sources/Helpers/Math.cpp",
-    "Sources/Helpers/Text.cpp"
-  ],
+  "sources": [],
   "filters": {
     "roots": [
-      {
-        "path": "Includes/Helpers/UniversalDevKit/Helpers",
-        "filter": ""
-      },
-      {
-        "path": "Sources/Helpers",
-        "filter": ""
-      }
+      { "path": "Includes/Helpers/UniversalDevKit/Helpers", "filter": "" }
     ],
     "files": {}
   }

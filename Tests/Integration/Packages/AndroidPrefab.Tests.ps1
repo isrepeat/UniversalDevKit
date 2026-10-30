@@ -8,7 +8,7 @@ param(
     [string]$Feed,
     [string]$Serial,
     [ValidateSet('arm64-v8a', 'x86_64')][string]$Abi = 'arm64-v8a',
-    [string[]]$Components = @('Helpers', 'Diagnostic'),
+    [string[]]$Components = @('Helpers', 'HeleprsTest', 'DiagnosticTest', 'Diagnostic'),
     [ValidateSet('Static', 'Dynamic')][string[]]$Mode = @('Static', 'Dynamic'),
     [switch]$SkipDevice
 )
@@ -20,12 +20,17 @@ $OutputEncoding = [Text.UTF8Encoding]::new($false)
 $ErrorActionPreference = 'Stop'
 $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
 . (Join-Path $repository 'Scripts/Android/ResolveToolchain.ps1')
+. (Join-Path $repository 'Scripts/PowerShell/Modules/Module.Udk.Connection/Private/Requirements.ps1')
+. (Join-Path $repository 'Scripts/PowerShell/Modules/Module.Udk.Connection/Private/ComponentRegistry.ps1')
+. (Join-Path $repository 'Scripts/PowerShell/Modules/Module.Udk.Connection/Private/ConnectionPlan.ps1')
+$componentRegistry = Get-UdkComponentRegistry $repository
 $tools = Resolve-UdkAndroidToolchain -AndroidNdk $AndroidNdk -AndroidSdk $AndroidSdk -JavaHome $JavaHome -Gradle $Gradle -ForConsumer
 $AndroidNdk = $tools.AndroidNdk
 $AndroidSdk = $tools.AndroidSdk
 $JavaHome = $tools.JavaHome
 $Gradle = $tools.Gradle
-$run = Join-Path $repository ('!artifacts/Android/tests/' + [Guid]::NewGuid().ToString('N').Substring(0, 8))
+. (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
+$run = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/AndroidPrefab.Tests')
 [void][IO.Directory]::CreateDirectory($run)
 $oldJava = $env:JAVA_HOME
 $oldSdk = $env:ANDROID_HOME
@@ -58,7 +63,7 @@ try {
     $Feed = (Resolve-Path -LiteralPath $Feed).Path
     $version = (Get-Content (Join-Path $repository 'Version.json') -Raw | ConvertFrom-Json).version
     $ndkVersion = ((Get-Content (Join-Path $AndroidNdk 'source.properties') | Where-Object { $_ -match '^Pkg.Revision\s*=' }) -split '=')[1].Trim()
-    # Gradle получает самостоятельный CMake/Ninja, не меняя установку SDK.
+    # Provide standalone CMake/Ninja to Gradle without modifying the SDK installation.
     $cmakeRoot = Join-Path $run 'cmake'
     Copy-Item -LiteralPath (Split-Path (Split-Path $CMake -Parent) -Parent) -Destination $cmakeRoot -Recurse
     Copy-Item -LiteralPath $Ninja -Destination (Join-Path $cmakeRoot 'bin/ninja.exe')
@@ -69,8 +74,22 @@ try {
         if ($Abi -notin $deviceAbi.Split(',')) { throw "Device does not support $Abi" }
     }
     foreach ($component in $Components) {
-        foreach ($linkage in $Mode) {
+        $registry = Get-Content (Join-Path $repository "Projects/Components/$component.json") -Raw | ConvertFrom-Json
+        $componentModes = if ($registry.kind -eq 'headerOnly') { @('Shared') } elseif ($registry.stateScope -eq 'process') { @('Dynamic') } else { $Mode }
+        foreach ($linkage in $componentModes) {
             $name = "$component-$linkage"
+            if ($registry.kind -eq 'headerOnly') {
+                $aarPath = Join-Path $Feed "org/universaldevkit/universaldevkit-$($component.ToLowerInvariant())-shared-release/$version/universaldevkit-$($component.ToLowerInvariant())-shared-release-$version.aar"
+                Add-Type -AssemblyName System.IO.Compression.FileSystem
+                $archive = [IO.Compression.ZipFile]::OpenRead($aarPath)
+                try {
+                    if (@($archive.Entries | Where-Object { $_.FullName -match '/libs/|\.(a|so)$' }).Count) { throw 'Header-only AAR contains binaries.' }
+                    foreach ($header in $registry.headers) {
+                        $publicPath = '/include/' + ($header -replace ('^Includes/' + $component + '/'), '')
+                        if (-not @($archive.Entries | Where-Object { $_.FullName.EndsWith($publicPath) }).Count) { throw "Header-only AAR is missing public header: $header" }
+                    }
+                } finally { $archive.Dispose() }
+            }
             $consumer = Join-Path $run $name
             Copy-Item -LiteralPath (Join-Path $repository 'Tests/Fixtures/Consumers/AndroidPrefab') -Destination $consumer -Recurse
             $properties = 'sdk.dir=' + $AndroidSdk.Replace('\', '/') + "`ncmake.dir=" + $cmakeRoot.Replace('\', '/')
@@ -84,7 +103,10 @@ try {
             try {
                 $libraries = @($zip.Entries.FullName | Where-Object { $_ -match "^lib/$Abi/.*\.so$" } | ForEach-Object { ($_ -split '/')[-1] } | Sort-Object)
                 $expected = @('libc++_shared.so', 'libudk_android_consumer.so')
-                if ($linkage -eq 'Dynamic') { $expected += 'libuniversaldevkit_' + $component.ToLowerInvariant() + '_dynamic.so' }
+                $graph = Resolve-UdkLinkageGraph @($component) @{ $component = $linkage } $componentRegistry
+                foreach ($dependencyName in $graph.ResolvedModes.Keys) {
+                    if ($graph.ResolvedModes[$dependencyName] -eq 'Dynamic') { $expected += 'libuniversaldevkit_' + $dependencyName.ToLowerInvariant() + '_dynamic.so' }
+                }
                 if (Compare-Object @($expected | Sort-Object) $libraries) { throw "Unexpected APK runtime libraries: $libraries" }
             } finally { $zip.Dispose() }
             $status = 'BuildPassed-DeviceNotRun'
@@ -95,7 +117,7 @@ try {
                 $status = 'Passed'
             }
             $results += [pscustomobject]@{ Component = $component; Linkage = $linkage; Abi = $Abi; Status = $status }
-            if ($component -eq 'Diagnostic' -and $linkage -eq 'Dynamic') {
+            if ($component -eq 'DiagnosticTest' -and $linkage -eq 'Dynamic') {
                 [void](RunTool $Gradle ($arguments + '-PudkStl=c++_static') (Join-Path $run 'wrong-stl.log') 'UDK requires c\+\+_shared|static STL|STL.*incompatib|No compatible librar')
                 [void](RunTool $Gradle ($arguments + '-PudkConflict=ON') (Join-Path $run 'conflicting-variants.log') 'Conflicting UDK Android variant')
             }

@@ -1,9 +1,15 @@
 # Проверки доставки пакетов
 
+Diagnostic включён в проверки настоящих пакетов: `NuGet.PackageReference.Tests.ps1 -Components Diagnostic` проверяет восстановление Helpers, запись файла через DLL, доставку ровно одной DLL, отсутствие private include-путей, запрет Static linkage и отклонение MT до компиляции. `AndroidPrefab.Tests.ps1 -Components Diagnostic -Mode Dynamic -Feed <feed> -SkipDevice` собирает APK через Maven/Prefab, проверяет состав SO и отсутствие private заголовков; запуск на устройстве требует отдельного прогона без SkipDevice. Feed Android создаётся упаковщиком с `-Components Diagnostic,Helpers` из PowerShell. Тесты не добавляют Examples.
+
 ## Реальные компоненты UDK
 
+XamlRuntime/OpenGLESRenderer включаются параметром Components в общие NuGet.PackageReference.Tests.ps1 и AndroidPrefab.Tests.ps1. Проверяются реальные пакеты и существующие независимые потребители; новых узких тестовых проектов не создаётся.
+
+Kotlin-пакеты AndroidCoreSdk и AndroidAppKit перенесены в Packages/Android. Реальная поставка проверяется AndroidKotlin.Tests.ps1: публикация обоих AAR в отдельный Maven feed, точная зависимость CoreSdk и компиляция независимого Kotlin-потребителя. AndroidMaven в таблице ниже остаётся тестовой заглушкой инфраструктуры.
+
 - [Windows native NuGet](../../../Packages/Build/NuGet/README.md): NuGet.Tests.ps1, NuGet.Registry.Tests.ps1 и NuGet.PackageReference.Tests.ps1.
-- [Android AAR/Prefab](../../../Packages/Build/Android/README.md#проверка): [AndroidPrefab.Tests.ps1](AndroidPrefab.Tests.ps1), независимый [APK-потребитель](../../Fixtures/Consumers/AndroidPrefab), Static/Dynamic Helpers/Diagnostic, состав SO и отрицательные проверки совместимости.
+- [Android AAR/Prefab](../../../Packages/Build/Android/README.md#проверка): [AndroidPrefab.Tests.ps1](AndroidPrefab.Tests.ps1), независимый [APK-потребитель](../../Fixtures/Consumers/AndroidPrefab), Static/Dynamic HeleprsTest/DiagnosticTest, состав SO и отрицательные проверки совместимости.
 
 Для Android `RunAndroidPrefabTests.cmd -SkipDevice` проверяет сборку без устройства. Запуск instrumentation выполняется без SkipDevice с выбранным Serial; только UDK_RESULT=PASS подтверждает вызов API на Android. Существующие отчёты BuildPassed-DeviceNotRun подтверждают сборку APK, но не runtime.
 
@@ -13,7 +19,7 @@
 
 | Семейство | Покрываемые существующие пакеты | Проверка |
 |---|---|---|
-| NativeWindows | Native-часть CppFeatures, CrashHandling, XamlRuntime | Существующий NuGet.Tests.ps1: Helpers/Diagnostic, CRT, Static/Dynamic, Debug/Release |
+| NativeWindows | Native-часть CppFeatures, CrashHandling, XamlRuntime | Существующий NuGet.Tests.ps1: HeleprsTest/DiagnosticTest, CRT, Static/Dynamic, Debug/Release |
 | Managed | Managed-доставка PluginSDK и проекций | net8.0 DLL, PackageReference, сборка и вызов |
 | WinRt | WinRT ABI CppFeatures/CrashHandling и host-инструмент XamlRuntime | DLL из NuGet, IActivationFactory/IInspectable, создание объекта и вызов интерфейса; запуск EXE из tools/win-x64 |
 | BuildTools | AndroidBuildTools | Инструмент из NuGet выполняется через buildTransitive и генерирует файл consumer |

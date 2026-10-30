@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "adapter": "kotlin-aar",
+  "groupId": "com.isrepeat",
+  "artifactId": "androidappkit",
+  "project": "../../Projects/Gradle"
+}

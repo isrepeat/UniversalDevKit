@@ -5,7 +5,7 @@
     <id>UniversalDevKit.Diagnostic</id>
     <version>{{VERSION}}</version>
     <authors>UniversalDevKit</authors>
-    <description>UniversalDevKit Diagnostic native Windows x64 library.</description>
+    <description>UniversalDevKit Diagnostic native Windows x64 logging DLL backed by spdlog.</description>
     <tags>native C++ Windows UniversalDevKit</tags>
     <license type="file">LICENSE.txt</license>
     <readme>README.md</readme>

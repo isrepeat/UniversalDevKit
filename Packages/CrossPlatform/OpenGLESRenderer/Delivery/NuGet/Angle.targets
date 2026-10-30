@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup><__UniversalDevKitOpenGLESRendererAngleRoot>$(__UniversalDevKitOpenGLESRendererPackageRoot)assets\ANGLE\$(Configuration)\</__UniversalDevKitOpenGLESRendererAngleRoot></PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(UniversalDevKitOpenGLESRendererLinkage)' == 'Static'">
+    <Link><AdditionalDependencies>$(__UniversalDevKitOpenGLESRendererAngleRoot)libEGL.lib;$(__UniversalDevKitOpenGLESRendererAngleRoot)libGLESv2.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
+  </ItemDefinitionGroup>
+  <ItemGroup><__UniversalDevKitOpenGLESRendererAngleRuntime Include="$(__UniversalDevKitOpenGLESRendererAngleRoot)*.dll" /></ItemGroup>
+  <Target Name="__UniversalDevKitCopyPackagedAngle" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Copy SourceFiles="@(__UniversalDevKitOpenGLESRendererAngleRuntime)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

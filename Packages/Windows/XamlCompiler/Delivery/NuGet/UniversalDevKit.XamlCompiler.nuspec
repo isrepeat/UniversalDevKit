@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>UniversalDevKit.XamlCompiler</id>
+    <version>{{VERSION}}</version>
+    <authors>UniversalDevKit</authors>
+    <description>Windows x64 host compiler for UniversalDevKit XAML markup.</description>
+    <license type="file">LICENSE.txt</license>
+  </metadata>
+  <files><file src="payload\**\*" target="" /></files>
+</package>

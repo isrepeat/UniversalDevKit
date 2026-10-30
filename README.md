@@ -1,5 +1,7 @@
 # UniversalDevKit
 
+[XamlRuntime и OpenGLESRenderer](Docs/XamlRuntime.md) используют общий реестр компонентов, Helpers/Math, Helpers/Event, Helpers/Text и Diagnostic. XamlCompiler собирается отдельно для host-платформы.
+
 **Навигация:** Главная
 
 ## Содержание
@@ -9,11 +11,19 @@
 - [Как устроен репозиторий](#как-устроен-репозиторий)
 - [Разделы репозитория](#разделы-репозитория)
 
-UniversalDevKit (UDK) — расширяемый набор C++-библиотек, из которого приложение подключает нужные компоненты. Поддерживаются MSBuild и CMake. Минимальный стандарт языка — C++17.
+UniversalDevKit (UDK) — расширяемый набор C++-библиотек, из которого приложение подключает нужные компоненты. Поддерживаются MSBuild и CMake. Минимальный стандарт языка — C++20.
 
-Проверена сборка Windows x64 в Debug/Release и подключение [native NuGet](Packages/Build/NuGet/README.md). Для Android реализованы реальные [AAR/Prefab Helpers/Diagnostic](Packages/Build/Android/README.md): NDK-сборка и сборка APK проверены, запуск на устройстве ещё не подтверждён. Linux остаётся отдельным этапом.
+Helpers — единый header-only компонент с папками Meta, Math, Patterns, StdExt, Stream, Regex, Collection и Event. Подключение CMake: UniversalDevKit::Helpers.Headers; namespace: universaldevkit::helpers::meta, universaldevkit::helpers::math и universaldevkit::helpers::patterns. StdExt сохраняет структуру расширений и предоставляет alias stdEx для universaldevkit::helpers::stdext::extensions, см. [ограничения переноса](Docs/Std.md). Бывший compiled Helpers переименован в HeleprsTest и сохраняется для проверки Static/Dynamic, транзитивных зависимостей и доставки DLL. Независимые компоненты и пакеты Meta/Math удалены.
+
+Проверена сборка Windows x64 в Debug/Release и подключение [native NuGet](Packages/Build/NuGet/README.md). Для Android реализованы реальные [AAR/Prefab HeleprsTest/DiagnosticTest](Packages/Build/Android/README.md): NDK-сборка и сборка APK проверены, запуск на устройстве ещё не подтверждён. Linux остаётся отдельным этапом.
+
+Прямое подключение к C++/CX с /ZW не поддерживается: этот режим MSVC несовместим с C++20. Для WinRT используйте C++/WinRT; старому C++/CX-приложению потребуется отдельный совместимый ABI-мост.
 
 ## Подключение к приложению
+
+Перед первым использованием запустите [Scripts/Setup.cmd](Scripts/Setup.cmd) либо `pwsh -File Scripts/PowerShell/Setup.ps1`: закреплённые версии SolutionInjector и NuGet будут загружены и проверены в `!tools/`. Setup можно пропустить: Connect подготовит SolutionInjector при работе с solution, а упаковка и пакетные тесты подготовят NuGet при запуске. Visual Studio, CMake и SDK устанавливаются отдельно. Подробнее — [инструменты](Docs/Tools.md).
+
+[Diagnostic](Docs/Diagnostic.md) — сервис логирования в общей DLL/SO (`stateScope=process`): stderr или файлы по ID, append/truncate, ротация и маркеры сессий. Для его сборки получите закреплённый spdlog: `git submodule update --init ThirdParty/spdlog`. Публичный API не требует заголовков spdlog.
 
 **Visual Studio / MSBuild:** запустите [Scripts/Connect.cmd](Scripts/Connect.cmd), выберите solution, проект, компоненты и способ подключения. Нажмите Apply, перезагрузите solution и соберите приложение. Connect настроит ссылки и необходимые зависимости.
 
@@ -58,3 +68,5 @@ ComponentA — условное имя: замените его именем н�
 - [Тесты](Tests/README.md) — запуск, покрытие и разбор результатов.
 - [План работ](TODO.md) — выполненные и оставшиеся задачи.
 - [Правила репозитория](AGENTS.md) — требования к изменениям.
+
+Схема каталогов сборки, пакетов, тестов и кеша: [Артефакты](Docs/Artifacts.md).

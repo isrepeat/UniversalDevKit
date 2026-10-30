@@ -1,5 +1,5 @@
-#include <UniversalDevKit/Diagnostic/Logging.h>
+#include <UniversalDevKit/DiagnosticTest/Logging.h>
 
 int main() {
-    return universaldevkit::diagnostic::TryLog("Binary compatibility consumer") ? 0 : 1;
+    return universaldevkit::diagnostictest::TryLog("Binary compatibility consumer") ? 0 : 1;
 }

@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "includes": [
     "Projects/Components/A.json",
     "Projects/Components/B.json",

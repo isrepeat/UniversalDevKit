@@ -1,5 +1,5 @@
 plugins { id("com.android.application") }
-val component = providers.gradleProperty("udkComponent").getOrElse("Diagnostic")
+val component = providers.gradleProperty("udkComponent").getOrElse("DiagnosticTest")
 val mode = providers.gradleProperty("udkMode").getOrElse("Dynamic")
 android {
     namespace = "org.universaldevkit.packageconsumer"
@@ -30,6 +30,6 @@ android {
 dependencies {
     implementation("org.universaldevkit:universaldevkit-${component.lowercase()}-${mode.lowercase()}-release:${providers.gradleProperty("udkVersion").get()}")
     if (providers.gradleProperty("udkConflict").isPresent) {
-        implementation("org.universaldevkit:universaldevkit-helpers-dynamic-release:${providers.gradleProperty("udkVersion").get()}")
+        implementation("org.universaldevkit:universaldevkit-heleprstest-dynamic-release:${providers.gradleProperty("udkVersion").get()}")
     }
 }

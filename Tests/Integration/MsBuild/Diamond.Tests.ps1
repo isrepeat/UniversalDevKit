@@ -8,7 +8,7 @@ $OutputEncoding = [Text.UTF8Encoding]::new($false)
 
 $fixture = Join-Path $repositoryPath 'Tests/Fixtures/Libraries/Diamond'
 foreach ($variant in @('Shared', 'Static', 'Dynamic', 'PrivateStatic')) {
-    $case = New-TestWorkspace $repositoryPath $Workspace.Mode $Revision
+    $case = New-TestWorkspace $repositoryPath $Workspace.Mode $Revision -Name "Diamond-$variant"
     Write-Host "Diamond $variant workspace: $($case.Root)"
     # Install the registry and sources only in the UDK copy; preserve the consumer project template.
     foreach ($directory in @('Includes', 'Sources', 'Projects')) {

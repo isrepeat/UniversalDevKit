@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.10.12224.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Static", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Static.vcxproj", "{A7CE4335-D8E6-4E53-B810-7D932E87BA59}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.HeleprsTest.Static", "Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Static.vcxproj", "{A7CE4335-D8E6-4E53-B810-7D932E87BA59}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}"
 	ProjectSection(SolutionItems) = preProject
@@ -12,21 +12,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{B1F5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{D832A37F-03A2-4EBD-9FF9-BC27D415378B}"
 	ProjectSection(SolutionItems) = preProject
-		Scripts\PowerShell\Connect.ps1 = Scripts\PowerShell\Connect.ps1
 		Scripts\PowerShell\AutoPrMerge.ps1 = Scripts\PowerShell\AutoPrMerge.ps1
+		Scripts\PowerShell\Connect.ps1 = Scripts\PowerShell\Connect.ps1
+		Scripts\PowerShell\Connect.Tests.ps1 = Scripts\PowerShell\Connect.Tests.ps1
 		Scripts\PowerShell\ConnectConsole.ps1 = Scripts\PowerShell\ConnectConsole.ps1
 		Scripts\PowerShell\FormatXmlAttributes.ps1 = Scripts\PowerShell\FormatXmlAttributes.ps1
 		Scripts\PowerShell\GenerateComponentProjects.ps1 = Scripts\PowerShell\GenerateComponentProjects.ps1
 		Scripts\PowerShell\GetSolutionInjector.ps1 = Scripts\PowerShell\GetSolutionInjector.ps1
+		Scripts\PowerShell\SyncRuntimeLibraries.ps1 = Scripts\PowerShell\SyncRuntimeLibraries.ps1
 		Scripts\PowerShell\UpdateProjectFilters.ps1 = Scripts\PowerShell\UpdateProjectFilters.ps1
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Static", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Static.vcxproj", "{C6B94069-54C2-4B96-880D-4C058A605C56}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.DiagnosticTest.Static", "Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Static.vcxproj", "{C6B94069-54C2-4B96-880D-4C058A605C56}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{13DA8639-4234-4E82-9423-056A19840860}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4-1E80-4386-ACBA-A8B9D984FC44}"
 	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\BinaryReleasePolicy.cmake = Projects\Cmake\BinaryReleasePolicy.cmake
+		Projects\Cmake\BuildIdentity.cmake = Projects\Cmake\BuildIdentity.cmake
 		Projects\Cmake\BuildIdentity.txt.in = Projects\Cmake\BuildIdentity.txt.in
 		Projects\Cmake\ComponentDependencies.cmake = Projects\Cmake\ComponentDependencies.cmake
 		Projects\Cmake\ComponentRequirements.cmake = Projects\Cmake\ComponentRequirements.cmake
@@ -35,13 +39,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4
 		Projects\Cmake\PackageCompatibility.cmake.in = Projects\Cmake\PackageCompatibility.cmake.in
 		Projects\Cmake\PackageMetadata.cmake = Projects\Cmake\PackageMetadata.cmake
 		Projects\Cmake\RegistryContract.cmake = Projects\Cmake\RegistryContract.cmake
+		Projects\Cmake\ThirdParty.cmake = Projects\Cmake\ThirdParty.cmake
 		Projects\Cmake\UniversalDevKitConfig.cmake.in = Projects\Cmake\UniversalDevKitConfig.cmake.in
+		Projects\Cmake\Version.cmake = Projects\Cmake\Version.cmake
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{8CB5D103-21B9-4651-A4A1-671107F28847}"
 	ProjectSection(SolutionItems) = preProject
 		Projects\Components\Diagnostic.json = Projects\Components\Diagnostic.json
+		Projects\Components\DiagnosticTest.json = Projects\Components\DiagnosticTest.json
+		Projects\Components\HeleprsTest.json = Projects\Components\HeleprsTest.json
 		Projects\Components\Helpers.json = Projects\Components\Helpers.json
+		Projects\Components\OpenGLESRenderer.json = Projects\Components\OpenGLESRenderer.json
+		Projects\Components\XamlRuntime.json = Projects\Components\XamlRuntime.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}"
@@ -51,24 +61,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{08C8
 		Projects\MsBuild\UniversalDevKit.Requirements.targets = Projects\MsBuild\UniversalDevKit.Requirements.targets
 		Projects\MsBuild\UniversalDevKit.Runtime.targets = Projects\MsBuild\UniversalDevKit.Runtime.targets
 		Projects\MsBuild\UniversalDevKit.Sources.targets = Projects\MsBuild\UniversalDevKit.Sources.targets
+		Projects\MsBuild\UniversalDevKit.Version.props = Projects\MsBuild\UniversalDevKit.Version.props
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Shared", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems", "{F27F4562-11C4-42EF-AC5A-26101FD26F46}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.HeleprsTest.Shared", "Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Shared.vcxitems", "{F27F4562-11C4-42EF-AC5A-26101FD26F46}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Dynamic", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Dynamic.vcxproj", "{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.HeleprsTest.Dynamic", "Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Dynamic.vcxproj", "{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Shared", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems", "{28F717C7-A2EF-405E-96F1-538329030ACF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.DiagnosticTest.Shared", "Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Shared.vcxitems", "{28F717C7-A2EF-405E-96F1-538329030ACF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Dynamic", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj", "{88573491-8330-4D25-A3C2-FAAB1D69E589}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.DiagnosticTest.Dynamic", "Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Dynamic.vcxproj", "{88573491-8330-4D25-A3C2-FAAB1D69E589}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{8B6DD9E6-3057-45B9-80F6-B813601BE33B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeleprsTest", "HeleprsTest", "{8B6DD9E6-3057-45B9-80F6-B813601BE33B}"
 	ProjectSection(SolutionItems) = preProject
-		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Dependencies.props = Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Dependencies.props
+		Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Dependencies.props = Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Dependencies.props
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DiagnosticTest", "DiagnosticTest", "{5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}"
 	ProjectSection(SolutionItems) = preProject
-		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dependencies.props = Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dependencies.props
+		Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Dependencies.props = Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Dependencies.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{066DAD5F-063F-43BF-8ADC-0E76A36CA54D}"
@@ -88,8 +99,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{BB41
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ComponentRegistry.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ComponentRegistry.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionPlan.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionPlan.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionState.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionState.ps1
-		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ProjectIntegration.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ProjectIntegration.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionTransaction.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionTransaction.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ProjectIntegration.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ProjectIntegration.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\Requirements.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\Requirements.ps1
 		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\SolutionIntegration.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\SolutionIntegration.ps1
 	EndProjectSection
@@ -114,18 +125,27 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{CB7EEAB5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{0458F395-ECF0-44BA-9C83-38D6F7E56AF3}"
 	ProjectSection(SolutionItems) = preProject
+		Docs\Abi.md = Docs\Abi.md
 		Docs\Architecture.md = Docs\Architecture.md
 		Docs\AutoPrMerge.md = Docs\AutoPrMerge.md
+		Docs\BinaryReleasePolicy.md = Docs\BinaryReleasePolicy.md
 		Docs\BuildExtensions.md = Docs\BuildExtensions.md
 		Docs\CMake.md = Docs\CMake.md
 		Docs\Components.md = Docs\Components.md
 		Docs\Connect.md = Docs\Connect.md
+		Docs\Diagnostic.md = Docs\Diagnostic.md
+		Docs\Helpers.md = Docs\Helpers.md
+		Docs\Math.md = Docs\Math.md
+		Docs\Meta.md = Docs\Meta.md
 		Docs\MSBuild.md = Docs\MSBuild.md
+		Docs\README.md = Docs\README.md
 		Docs\RegistryContract.md = Docs\RegistryContract.md
 		Docs\Requirements.md = Docs\Requirements.md
 		Docs\StateScope.md = Docs\StateScope.md
+		Docs\Std.md = Docs\Std.md
 		Docs\Tools.md = Docs\Tools.md
 		Docs\Validation.md = Docs\Validation.md
+		Docs\XamlRuntime.md = Docs\XamlRuntime.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Repository", "!Repository", "{01643071-A00B-441F-B890-826B2408BC9D}"
@@ -145,6 +165,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{A2BAABAE-02D4-4685-9081-F599C5AF7D30}"
 	ProjectSection(SolutionItems) = preProject
 		Scripts\PowerShell\Templates\Component.vcxproj.in = Scripts\PowerShell\Templates\Component.vcxproj.in
+		Scripts\PowerShell\Templates\ComponentExport.h.in = Scripts\PowerShell\Templates\ComponentExport.h.in
+		Scripts\PowerShell\Templates\Export.h.in = Scripts\PowerShell\Templates\Export.h.in
+		Scripts\PowerShell\Templates\HeaderCheck.cpp.in = Scripts\PowerShell\Templates\HeaderCheck.cpp.in
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{BE41E66B-A170-480D-9D80-1C69E83390BA}"
@@ -155,34 +178,54 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{BE41E66B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatform", "{907E880C-10F6-4C85-9DF8-5C73F54646DB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{072E1208-58D6-471D-B494-5D5670688291}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{B690A596-AD03-40E3-B875-6722D2397011}"
 	ProjectSection(SolutionItems) = preProject
 		Packages\CrossPlatform\Diagnostic\Package.json = Packages\CrossPlatform\Diagnostic\Package.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{1833675A-E63B-4FD3-8C8E-B7732DA73438}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{2AE8945D-4EE8-4892-8D2D-D00485AF3079}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\Delivery.json
+		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.nuspec = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.nuspec
+		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.props = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.props
+		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.targets = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{941FD4A9-CB23-4415-8DC3-67D60AEC425D}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\Diagnostic\Delivery\Android\Delivery.json = Packages\CrossPlatform\Diagnostic\Delivery\Android\Delivery.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DiagnosticTest", "DiagnosticTest", "{072E1208-58D6-471D-B494-5D5670688291}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\DiagnosticTest\Package.json = Packages\CrossPlatform\DiagnosticTest\Package.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{3F409C4A-6700-4061-AA77-627289E619E9}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\Delivery.json
-		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.props = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.props
-		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.targets = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.targets
-		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.nuspec = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.nuspec
+		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\Delivery.json
+		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.nuspec = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.nuspec
+		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.props = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.props
+		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.targets = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.targets
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeleprsTest", "HeleprsTest", "{BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\Helpers\Package.json = Packages\CrossPlatform\Helpers\Package.json
+		Packages\CrossPlatform\HeleprsTest\Package.json = Packages\CrossPlatform\HeleprsTest\Package.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{521E2788-845C-4B8F-B742-DB0FDF5271D3}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\Helpers\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\Helpers\Delivery\NuGet\Delivery.json
-		Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.props = Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.props
-		Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.targets = Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.targets
-		Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.nuspec = Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.nuspec
+		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\Delivery.json
+		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.nuspec = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.nuspec
+		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.props = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.props
+		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.targets = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.targets
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}"
@@ -191,8 +234,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{DC
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatform", "{CA7AB659-38EB-4E98-99A7-95A777DCD074}"
 	ProjectSection(SolutionItems) = preProject
-		Scripts\Packages\CrossPlatform\Pack.Helpers.cmd = Scripts\Packages\CrossPlatform\Pack.Helpers.cmd
 		Scripts\Packages\CrossPlatform\Pack.Diagnostic.cmd = Scripts\Packages\CrossPlatform\Pack.Diagnostic.cmd
+		Scripts\Packages\CrossPlatform\Pack.DiagnosticTest.cmd = Scripts\Packages\CrossPlatform\Pack.DiagnosticTest.cmd
+		Scripts\Packages\CrossPlatform\Pack.HeleprsTest.cmd = Scripts\Packages\CrossPlatform\Pack.HeleprsTest.cmd
+		Scripts\Packages\CrossPlatform\Pack.Helpers.cmd = Scripts\Packages\CrossPlatform\Pack.Helpers.cmd
+		Scripts\Packages\CrossPlatform\Pack.OpenGLESRenderer.cmd = Scripts\Packages\CrossPlatform\Pack.OpenGLESRenderer.cmd
+		Scripts\Packages\CrossPlatform\Pack.XamlRuntime.cmd = Scripts\Packages\CrossPlatform\Pack.XamlRuntime.cmd
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MessagingModule", "MessagingModule", "{BC0651B9-7642-4436-BF89-5D8B8BD4F4A0}"
@@ -203,32 +250,338 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000100}"
 	ProjectSection(SolutionItems) = preProject
 		Packages\Build\Android\Build.ps1 = Packages\Build\Android\Build.ps1
+		Packages\Build\Android\BuildKotlin.ps1 = Packages\Build\Android\BuildKotlin.ps1
 		Packages\Build\Android\Consumer.cmake = Packages\Build\Android\Consumer.cmake
 		Packages\Build\Android\README.md = Packages\Build\Android\README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000101}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\Diagnostic\Delivery\Android\Delivery.json = Packages\CrossPlatform\Diagnostic\Delivery\Android\Delivery.json
+		Packages\CrossPlatform\DiagnosticTest\Delivery\Android\Delivery.json = Packages\CrossPlatform\DiagnosticTest\Delivery\Android\Delivery.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000102}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\Helpers\Delivery\Android\Delivery.json = Packages\CrossPlatform\Helpers\Delivery\Android\Delivery.json
+		Packages\CrossPlatform\HeleprsTest\Delivery\Android\Delivery.json = Packages\CrossPlatform\HeleprsTest\Delivery\Android\Delivery.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000300}"
 	ProjectSection(SolutionItems) = preProject
-		Scripts\Android\Toolchain.json = Scripts\Android\Toolchain.json
 		Scripts\Android\ResolveToolchain.ps1 = Scripts\Android\ResolveToolchain.ps1
+		Scripts\Android\Toolchain.json = Scripts\Android\Toolchain.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{A63D24B8-5B7A-45B8-9C11-000000000301}"
 	ProjectSection(SolutionItems) = preProject
-		Scripts\Android\Gradle\gradlew = Scripts\Android\Gradle\gradlew
-		Scripts\Android\Gradle\gradlew.bat = Scripts\Android\Gradle\gradlew.bat
 		Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.jar = Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.jar
 		Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.properties = Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.properties
+		Scripts\Android\Gradle\gradlew = Scripts\Android\Gradle\gradlew
+		Scripts\Android\Gradle\gradlew.bat = Scripts\Android\Gradle\gradlew.bat
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Shared", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems", "{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{50CDBD24-894E-0FD6-7C08-442980AADBB7}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\MsBuild\Helpers\HeaderCheck.cpp = Projects\MsBuild\Helpers\HeaderCheck.cpp
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.HeaderCheck", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj", "{E21B97A1-D847-2938-4E29-760523C97389}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\MsBuild\Diagnostic\Spdlog.targets = Projects\MsBuild\Diagnostic\Spdlog.targets
+		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dependencies.props = Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dependencies.props
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Dynamic", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj", "{F104C833-785D-E25F-5F10-B46284462A11}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Shared", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems", "{AB97876A-F25A-4AAE-BACD-D32C776BB261}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLESRenderer", "{1C920419-6FCA-97AA-DE2F-11C8037C1EF6}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\MsBuild\OpenGLESRenderer\Build.targets = Projects\MsBuild\OpenGLESRenderer\Build.targets
+		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dependencies.props = Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dependencies.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlRuntime", "XamlRuntime", "{A62B830A-BE58-54F9-6766-E95D2B04A2A8}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\MsBuild\XamlRuntime\Build.targets = Projects\MsBuild\XamlRuntime\Build.targets
+		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dependencies.props = Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dependencies.props
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Shared", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems", "{364E96CB-9D8A-40B0-8455-6A31A15A36B0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Static", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Static.vcxproj", "{220B0789-1F04-54D3-18E5-5DB99E91172F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Dynamic", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dynamic.vcxproj", "{77311056-84A3-4B57-AEF1-7A76F17C500C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Shared", "Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems", "{3E00A02D-46F3-432B-91C8-5D459F70C525}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Static", "Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Static.vcxproj", "{6CBDC266-9B42-F741-03EB-F610AB72E1B1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Dynamic", "Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dynamic.vcxproj", "{FA67D7FD-393A-E9BC-F2A4-2570B2929973}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{D299E483-C236-42DA-9F90-8447C3B007D1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppKit", "AndroidAppKit", "{C45C681B-A5F9-4F56-8DBE-70193C735CAB}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidAppKit\Package.json = Packages\Android\AndroidAppKit\Package.json
+		Packages\Android\AndroidAppKit\README.md = Packages\Android\AndroidAppKit\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{DE87C8F7-02CD-48E0-8FB9-916978A13394}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{E2ADF44C-9D50-4B96-BA2B-1A97992C5C8E}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidAppKit\Delivery\Android\Delivery.json = Packages\Android\AndroidAppKit\Delivery\Android\Delivery.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{62F82629-78A8-425A-91D5-05BF2D154AC6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{4C284617-5214-41F0-8ADB-0949EF31DAB0}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidAppKit\Projects\Gradle\build.gradle.kts = Packages\Android\AndroidAppKit\Projects\Gradle\build.gradle.kts
+		Packages\Android\AndroidAppKit\Projects\Gradle\gradle.properties = Packages\Android\AndroidAppKit\Projects\Gradle\gradle.properties
+		Packages\Android\AndroidAppKit\Projects\Gradle\settings.gradle.kts = Packages\Android\AndroidAppKit\Projects\Gradle\settings.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidappkit", "androidappkit", "{EB1C9B7A-2C21-47C9-ABBF-7EF51B8C5E94}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidAppKit\Projects\Gradle\androidappkit\build.gradle.kts = Packages\Android\AndroidAppKit\Projects\Gradle\androidappkit\build.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{663532D9-E567-4F71-BF9F-BD70A02859CF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4D4A5494-4A91-4A5F-8B83-D72DBF1EBD5D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "main", "main", "{037D3408-496C-4584-8D0F-0EBA4D850D25}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidAppKit\Sources\src\main\AndroidManifest.xml = Packages\Android\AndroidAppKit\Sources\src\main\AndroidManifest.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kotlin", "kotlin", "{D59FF827-EF1B-47EF-B813-3B042DA22F96}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "com", "com", "{BDB3D62E-A6A5-480A-BCE4-933431F6883B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "isrepeat", "isrepeat", "{AEAA0561-8781-4068-BDDD-F0E3C14DF6F8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidappkit", "androidappkit", "{4FA74990-CFC8-415A-99C0-28369A5D959A}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\androidappkit.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\androidappkit.kt
+		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\AppKit.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\AppKit.kt
+		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\NativeOpenGlActivity.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\NativeOpenGlActivity.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "diagnostics", "diagnostics", "{947B8735-57D0-4A23-920F-F4BA810F364B}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppDiagnostics.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppDiagnostics.kt
+		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppKitLogger.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppKitLogger.kt
+		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\NativeSessionLog.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\NativeSessionLog.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "drive", "drive", "{6E4DBCF2-76DD-4549-A8B8-4FE1B0E8C4CB}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\drive\GoogleDriveUploader.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\drive\GoogleDriveUploader.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "media", "media", "{2CB79288-C18E-423E-9571-3CAB0BA3E12D}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\media\SurfaceScreenshotCapture.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\media\SurfaceScreenshotCapture.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "update", "update", "{F9EA05A5-CC30-4AD2-A652-F51F549E36F2}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\update\ApkUpdaterProtocol.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\update\ApkUpdaterProtocol.kt
+		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\update\GoogleDriveUpdateConfiguration.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\update\GoogleDriveUpdateConfiguration.kt
+		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\update\GoogleDriveUpdateController.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\update\GoogleDriveUpdateController.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidCoreSdk", "AndroidCoreSdk", "{59895D38-CDF4-4147-9A04-43A9272774B2}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidCoreSdk\Package.json = Packages\Android\AndroidCoreSdk\Package.json
+		Packages\Android\AndroidCoreSdk\README.md = Packages\Android\AndroidCoreSdk\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{99D94B10-047C-480C-9CF4-3C47E7925870}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{80A2525D-699A-419F-82E8-B26BBFDFBFB8}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidCoreSdk\Delivery\Android\Delivery.json = Packages\Android\AndroidCoreSdk\Delivery\Android\Delivery.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{241F0F89-1863-490F-9BA5-BA1C06CEB6B3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{7AF82E00-9C22-44F6-BF94-C7437524959E}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidCoreSdk\Projects\Gradle\build.gradle.kts = Packages\Android\AndroidCoreSdk\Projects\Gradle\build.gradle.kts
+		Packages\Android\AndroidCoreSdk\Projects\Gradle\gradle.properties = Packages\Android\AndroidCoreSdk\Projects\Gradle\gradle.properties
+		Packages\Android\AndroidCoreSdk\Projects\Gradle\settings.gradle.kts = Packages\Android\AndroidCoreSdk\Projects\Gradle\settings.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidcoresdk", "androidcoresdk", "{1478D372-2DC3-4D62-B0EF-5958CCFBF5E4}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidCoreSdk\Projects\Gradle\androidcoresdk\build.gradle.kts = Packages\Android\AndroidCoreSdk\Projects\Gradle\androidcoresdk\build.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{164813F8-F8DB-455B-B05A-7D212BEAED76}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6A4E4031-4CDE-4198-933D-ACEF1457C793}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "main", "main", "{9B6F5696-CE54-4C62-80AD-FA0C6E4DDE3D}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidCoreSdk\Sources\src\main\AndroidManifest.xml = Packages\Android\AndroidCoreSdk\Sources\src\main\AndroidManifest.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kotlin", "kotlin", "{5680DD88-5A2B-4274-9A8B-F93BAE452874}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "com", "com", "{B4A2F3E8-0E0E-4CFC-980F-08131EEFAB4C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "isrepeat", "isrepeat", "{4453881B-9A4C-4848-B8AB-0343FD6EB34E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidcoresdk", "androidcoresdk", "{3F8A5660-D4C0-48B3-80AE-A62844AE5528}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\androidcoresdk.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\androidcoresdk.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "coroutines", "coroutines", "{AF7FED61-01B6-4E80-BF8E-9E02C4D61795}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\coroutines\CancellableContinuationCompletion.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\coroutines\CancellableContinuationCompletion.kt
+		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\coroutines\LifecycleCoroutineRunner.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\coroutines\LifecycleCoroutineRunner.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "diagnostics", "diagnostics", "{F74A4F83-3687-4681-A308-C7513CC34E62}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\diagnostics\MediaStoreSessionLog.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\diagnostics\MediaStoreSessionLog.kt
+		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\diagnostics\SdkLogger.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\diagnostics\SdkLogger.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "drive", "drive", "{147ADE8A-3422-4B90-BCC7-3BCB506CB8D9}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\drive\GoogleDriveClient.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\drive\GoogleDriveClient.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "media", "media", "{B100E0F8-1516-41D6-B37C-0D8435FF5B96}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\media\ScreenshotCapture.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\media\ScreenshotCapture.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nativeui", "nativeui", "{820FAE63-6800-4C67-99C8-76048DE8D106}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeMessageDispatcher.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeMessageDispatcher.kt
+		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeRenderHost.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeRenderHost.kt
+		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeRenderSurfaceView.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeRenderSurfaceView.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{878DA696-AD56-4739-84BB-D9A8E4BC5A48}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\Helpers\Package.json = Packages\CrossPlatform\Helpers\Package.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{2E147DA9-AE28-4EEF-A4FF-AAE6F92E322B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{4845DF03-5C01-4E8B-842A-4EC0A9C0D15D}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\Helpers\Delivery\Android\Delivery.json = Packages\CrossPlatform\Helpers\Delivery\Android\Delivery.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{6886A40C-C0AA-4E2C-B04C-640DE620DDB6}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\Helpers\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\Helpers\Delivery\NuGet\Delivery.json
+		Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.nuspec = Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.nuspec
+		Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.props = Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.props
+		Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.targets = Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLESRenderer", "{299A0CF7-250D-4E08-B628-B84DABF5ABF8}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\OpenGLESRenderer\Package.json = Packages\CrossPlatform\OpenGLESRenderer\Package.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{B7214789-B7E7-4F88-A6DE-F367B65F9BDF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{861E01E1-D689-40B3-BE1D-E0F7FF11DD73}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\OpenGLESRenderer\Delivery\Android\Delivery.json = Packages\CrossPlatform\OpenGLESRenderer\Delivery\Android\Delivery.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{BF01194B-04FD-4A07-B85F-2781C7237D5D}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\Angle.targets = Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\Angle.targets
+		Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\Delivery.json
+		Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\StageAngle.ps1 = Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\StageAngle.ps1
+		Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\UniversalDevKit.OpenGLESRenderer.nuspec = Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\UniversalDevKit.OpenGLESRenderer.nuspec
+		Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\UniversalDevKit.OpenGLESRenderer.props = Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\UniversalDevKit.OpenGLESRenderer.props
+		Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\UniversalDevKit.OpenGLESRenderer.targets = Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\UniversalDevKit.OpenGLESRenderer.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlRuntime", "XamlRuntime", "{42F9EF9D-C14A-41EB-9DB4-E80213A4DF7B}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\XamlRuntime\Package.json = Packages\CrossPlatform\XamlRuntime\Package.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{0CF0E8F4-117A-457B-8BE3-40FEEC842EEB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{9FE6730F-C6F4-44B7-981B-BDC489FF202C}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\XamlRuntime\Delivery\Android\Delivery.json = Packages\CrossPlatform\XamlRuntime\Delivery\Android\Delivery.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{59FB48FD-1E1A-499E-BAD5-B16AE1E29194}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\XamlRuntime\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\XamlRuntime\Delivery\NuGet\Delivery.json
+		Packages\CrossPlatform\XamlRuntime\Delivery\NuGet\UniversalDevKit.XamlRuntime.nuspec = Packages\CrossPlatform\XamlRuntime\Delivery\NuGet\UniversalDevKit.XamlRuntime.nuspec
+		Packages\CrossPlatform\XamlRuntime\Delivery\NuGet\UniversalDevKit.XamlRuntime.props = Packages\CrossPlatform\XamlRuntime\Delivery\NuGet\UniversalDevKit.XamlRuntime.props
+		Packages\CrossPlatform\XamlRuntime\Delivery\NuGet\UniversalDevKit.XamlRuntime.targets = Packages\CrossPlatform\XamlRuntime\Delivery\NuGet\UniversalDevKit.XamlRuntime.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{45569702-BF11-421C-A43A-03D1364E3C95}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{C25B8C43-91C7-4F23-B186-05E37C145720}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Windows\XamlCompiler\Build.ps1 = Packages\Windows\XamlCompiler\Build.ps1
+		Packages\Windows\XamlCompiler\Package.json = Packages\Windows\XamlCompiler\Package.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{6332D45B-9105-4EA4-BB61-65D494AF4CE0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{B398F253-412C-49AA-B2EF-D5F164B8ACF2}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Windows\XamlCompiler\Delivery\NuGet\Delivery.json = Packages\Windows\XamlCompiler\Delivery\NuGet\Delivery.json
+		Packages\Windows\XamlCompiler\Delivery\NuGet\UniversalDevKit.XamlCompiler.nuspec = Packages\Windows\XamlCompiler\Delivery\NuGet\UniversalDevKit.XamlCompiler.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{03C0B81C-6B57-4791-B5F3-9D2D48CE2544}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\Diagnostic\Spdlog.cmake = Projects\Cmake\Diagnostic\Spdlog.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLESRenderer", "{A82C4E93-051E-4C0B-B705-5875F748742C}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\OpenGLESRenderer\AngleConfig.cmake.in = Projects\Cmake\OpenGLESRenderer\AngleConfig.cmake.in
+		Projects\Cmake\OpenGLESRenderer\Build.cmake = Projects\Cmake\OpenGLESRenderer\Build.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{923F42D8-57A1-4A1B-8FB9-35B5D73A7F8A}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\XamlCompiler\CMakeLists.txt = Projects\Cmake\XamlCompiler\CMakeLists.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlRuntime", "XamlRuntime", "{189A1B26-8EB9-4D78-A955-CF1E45F39257}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\XamlRuntime\Build.cmake = Projects\Cmake\XamlRuntime\Build.cmake
+		Projects\Cmake\XamlRuntime\Consumer.cmake = Projects\Cmake\XamlRuntime\Consumer.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{5E16CA24-F8A2-436C-86B6-6511A703FB82}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Packages\Android\Pack.AndroidAppKit.cmd = Scripts\Packages\Android\Pack.AndroidAppKit.cmd
+		Scripts\Packages\Android\Pack.AndroidCoreSdk.cmd = Scripts\Packages\Android\Pack.AndroidCoreSdk.cmd
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{1B943F80-0EB6-4134-A02A-2F1FF121CFEC}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Packages\Windows\Pack.XamlCompiler.cmd = Scripts\Packages\Windows\Pack.XamlCompiler.cmd
 	EndProjectSection
 EndProject
 Global
@@ -253,19 +606,35 @@ Global
 		{88573491-8330-4D25-A3C2-FAAB1D69E589}.Debug|x64.Build.0 = Debug|x64
 		{88573491-8330-4D25-A3C2-FAAB1D69E589}.Release|x64.ActiveCfg = Release|x64
 		{88573491-8330-4D25-A3C2-FAAB1D69E589}.Release|x64.Build.0 = Release|x64
+		{E21B97A1-D847-2938-4E29-760523C97389}.Debug|x64.ActiveCfg = Debug|x64
+		{E21B97A1-D847-2938-4E29-760523C97389}.Debug|x64.Build.0 = Debug|x64
+		{E21B97A1-D847-2938-4E29-760523C97389}.Release|x64.ActiveCfg = Release|x64
+		{E21B97A1-D847-2938-4E29-760523C97389}.Release|x64.Build.0 = Release|x64
+		{F104C833-785D-E25F-5F10-B46284462A11}.Debug|x64.ActiveCfg = Debug|x64
+		{F104C833-785D-E25F-5F10-B46284462A11}.Debug|x64.Build.0 = Debug|x64
+		{F104C833-785D-E25F-5F10-B46284462A11}.Release|x64.ActiveCfg = Release|x64
+		{F104C833-785D-E25F-5F10-B46284462A11}.Release|x64.Build.0 = Release|x64
+		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Debug|x64.ActiveCfg = Debug|x64
+		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Debug|x64.Build.0 = Debug|x64
+		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Release|x64.ActiveCfg = Release|x64
+		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Release|x64.Build.0 = Release|x64
+		{77311056-84A3-4B57-AEF1-7A76F17C500C}.Debug|x64.ActiveCfg = Debug|x64
+		{77311056-84A3-4B57-AEF1-7A76F17C500C}.Debug|x64.Build.0 = Debug|x64
+		{77311056-84A3-4B57-AEF1-7A76F17C500C}.Release|x64.ActiveCfg = Release|x64
+		{77311056-84A3-4B57-AEF1-7A76F17C500C}.Release|x64.Build.0 = Release|x64
+		{6CBDC266-9B42-F741-03EB-F610AB72E1B1}.Debug|x64.ActiveCfg = Debug|x64
+		{6CBDC266-9B42-F741-03EB-F610AB72E1B1}.Debug|x64.Build.0 = Debug|x64
+		{6CBDC266-9B42-F741-03EB-F610AB72E1B1}.Release|x64.ActiveCfg = Release|x64
+		{6CBDC266-9B42-F741-03EB-F610AB72E1B1}.Release|x64.Build.0 = Release|x64
+		{FA67D7FD-393A-E9BC-F2A4-2570B2929973}.Debug|x64.ActiveCfg = Debug|x64
+		{FA67D7FD-393A-E9BC-F2A4-2570B2929973}.Debug|x64.Build.0 = Debug|x64
+		{FA67D7FD-393A-E9BC-F2A4-2570B2929973}.Release|x64.ActiveCfg = Release|x64
+		{FA67D7FD-393A-E9BC-F2A4-2570B2929973}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{A63D24B8-5B7A-45B8-9C11-000000000300} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
-		{A63D24B8-5B7A-45B8-9C11-000000000301} = {A63D24B8-5B7A-45B8-9C11-000000000300}
-		{A63D24B8-5B7A-45B8-9C11-000000000100} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
-		{A63D24B8-5B7A-45B8-9C11-000000000101} = {6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7}
-		{A63D24B8-5B7A-45B8-9C11-000000000102} = {AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD}
-		{BC0651B9-7642-4436-BF89-5D8B8BD4F4A0} = {8B6A058C-7402-4392-8956-6B1489D9E118}
-		{DC091494-5AC6-46E6-BA6D-61441682BB62} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
-		{CA7AB659-38EB-4E98-99A7-95A777DCD074} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
 		{A7CE4335-D8E6-4E53-B810-7D932E87BA59} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
 		{D832A37F-03A2-4EBD-9FF9-BC27D415378B} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
 		{C6B94069-54C2-4B96-880D-4C058A605C56} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}
@@ -287,6 +656,10 @@ Global
 		{A2BAABAE-02D4-4685-9081-F599C5AF7D30} = {D832A37F-03A2-4EBD-9FF9-BC27D415378B}
 		{BE41E66B-A170-480D-9D80-1C69E83390BA} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
 		{907E880C-10F6-4C85-9DF8-5C73F54646DB} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
+		{B690A596-AD03-40E3-B875-6722D2397011} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{1833675A-E63B-4FD3-8C8E-B7732DA73438} = {B690A596-AD03-40E3-B875-6722D2397011}
+		{2AE8945D-4EE8-4892-8D2D-D00485AF3079} = {1833675A-E63B-4FD3-8C8E-B7732DA73438}
+		{941FD4A9-CB23-4415-8DC3-67D60AEC425D} = {1833675A-E63B-4FD3-8C8E-B7732DA73438}
 		{072E1208-58D6-471D-B494-5D5670688291} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
 		{6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7} = {072E1208-58D6-471D-B494-5D5670688291}
 		{3F409C4A-6700-4061-AA77-627289E619E9} = {6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7}
@@ -294,16 +667,106 @@ Global
 		{AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD} = {BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54}
 		{521E2788-845C-4B8F-B742-DB0FDF5271D3} = {AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD}
 		{8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
+		{DC091494-5AC6-46E6-BA6D-61441682BB62} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
+		{CA7AB659-38EB-4E98-99A7-95A777DCD074} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
+		{BC0651B9-7642-4436-BF89-5D8B8BD4F4A0} = {8B6A058C-7402-4392-8956-6B1489D9E118}
+		{A63D24B8-5B7A-45B8-9C11-000000000100} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
+		{A63D24B8-5B7A-45B8-9C11-000000000101} = {6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7}
+		{A63D24B8-5B7A-45B8-9C11-000000000102} = {AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD}
+		{A63D24B8-5B7A-45B8-9C11-000000000300} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
+		{A63D24B8-5B7A-45B8-9C11-000000000301} = {A63D24B8-5B7A-45B8-9C11-000000000300}
+		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
+		{50CDBD24-894E-0FD6-7C08-442980AADBB7} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{E21B97A1-D847-2938-4E29-760523C97389} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
+		{DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{F104C833-785D-E25F-5F10-B46284462A11} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
+		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
+		{1C920419-6FCA-97AA-DE2F-11C8037C1EF6} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{A62B830A-BE58-54F9-6766-E95D2B04A2A8} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
+		{220B0789-1F04-54D3-18E5-5DB99E91172F} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
+		{77311056-84A3-4B57-AEF1-7A76F17C500C} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
+		{3E00A02D-46F3-432B-91C8-5D459F70C525} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
+		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
+		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
+		{D299E483-C236-42DA-9F90-8447C3B007D1} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
+		{C45C681B-A5F9-4F56-8DBE-70193C735CAB} = {D299E483-C236-42DA-9F90-8447C3B007D1}
+		{DE87C8F7-02CD-48E0-8FB9-916978A13394} = {C45C681B-A5F9-4F56-8DBE-70193C735CAB}
+		{E2ADF44C-9D50-4B96-BA2B-1A97992C5C8E} = {DE87C8F7-02CD-48E0-8FB9-916978A13394}
+		{62F82629-78A8-425A-91D5-05BF2D154AC6} = {C45C681B-A5F9-4F56-8DBE-70193C735CAB}
+		{4C284617-5214-41F0-8ADB-0949EF31DAB0} = {62F82629-78A8-425A-91D5-05BF2D154AC6}
+		{EB1C9B7A-2C21-47C9-ABBF-7EF51B8C5E94} = {4C284617-5214-41F0-8ADB-0949EF31DAB0}
+		{663532D9-E567-4F71-BF9F-BD70A02859CF} = {C45C681B-A5F9-4F56-8DBE-70193C735CAB}
+		{4D4A5494-4A91-4A5F-8B83-D72DBF1EBD5D} = {663532D9-E567-4F71-BF9F-BD70A02859CF}
+		{037D3408-496C-4584-8D0F-0EBA4D850D25} = {4D4A5494-4A91-4A5F-8B83-D72DBF1EBD5D}
+		{D59FF827-EF1B-47EF-B813-3B042DA22F96} = {037D3408-496C-4584-8D0F-0EBA4D850D25}
+		{BDB3D62E-A6A5-480A-BCE4-933431F6883B} = {D59FF827-EF1B-47EF-B813-3B042DA22F96}
+		{AEAA0561-8781-4068-BDDD-F0E3C14DF6F8} = {BDB3D62E-A6A5-480A-BCE4-933431F6883B}
+		{4FA74990-CFC8-415A-99C0-28369A5D959A} = {AEAA0561-8781-4068-BDDD-F0E3C14DF6F8}
+		{947B8735-57D0-4A23-920F-F4BA810F364B} = {4FA74990-CFC8-415A-99C0-28369A5D959A}
+		{6E4DBCF2-76DD-4549-A8B8-4FE1B0E8C4CB} = {4FA74990-CFC8-415A-99C0-28369A5D959A}
+		{2CB79288-C18E-423E-9571-3CAB0BA3E12D} = {4FA74990-CFC8-415A-99C0-28369A5D959A}
+		{F9EA05A5-CC30-4AD2-A652-F51F549E36F2} = {4FA74990-CFC8-415A-99C0-28369A5D959A}
+		{59895D38-CDF4-4147-9A04-43A9272774B2} = {D299E483-C236-42DA-9F90-8447C3B007D1}
+		{99D94B10-047C-480C-9CF4-3C47E7925870} = {59895D38-CDF4-4147-9A04-43A9272774B2}
+		{80A2525D-699A-419F-82E8-B26BBFDFBFB8} = {99D94B10-047C-480C-9CF4-3C47E7925870}
+		{241F0F89-1863-490F-9BA5-BA1C06CEB6B3} = {59895D38-CDF4-4147-9A04-43A9272774B2}
+		{7AF82E00-9C22-44F6-BF94-C7437524959E} = {241F0F89-1863-490F-9BA5-BA1C06CEB6B3}
+		{1478D372-2DC3-4D62-B0EF-5958CCFBF5E4} = {7AF82E00-9C22-44F6-BF94-C7437524959E}
+		{164813F8-F8DB-455B-B05A-7D212BEAED76} = {59895D38-CDF4-4147-9A04-43A9272774B2}
+		{6A4E4031-4CDE-4198-933D-ACEF1457C793} = {164813F8-F8DB-455B-B05A-7D212BEAED76}
+		{9B6F5696-CE54-4C62-80AD-FA0C6E4DDE3D} = {6A4E4031-4CDE-4198-933D-ACEF1457C793}
+		{5680DD88-5A2B-4274-9A8B-F93BAE452874} = {9B6F5696-CE54-4C62-80AD-FA0C6E4DDE3D}
+		{B4A2F3E8-0E0E-4CFC-980F-08131EEFAB4C} = {5680DD88-5A2B-4274-9A8B-F93BAE452874}
+		{4453881B-9A4C-4848-B8AB-0343FD6EB34E} = {B4A2F3E8-0E0E-4CFC-980F-08131EEFAB4C}
+		{3F8A5660-D4C0-48B3-80AE-A62844AE5528} = {4453881B-9A4C-4848-B8AB-0343FD6EB34E}
+		{AF7FED61-01B6-4E80-BF8E-9E02C4D61795} = {3F8A5660-D4C0-48B3-80AE-A62844AE5528}
+		{F74A4F83-3687-4681-A308-C7513CC34E62} = {3F8A5660-D4C0-48B3-80AE-A62844AE5528}
+		{147ADE8A-3422-4B90-BCC7-3BCB506CB8D9} = {3F8A5660-D4C0-48B3-80AE-A62844AE5528}
+		{B100E0F8-1516-41D6-B37C-0D8435FF5B96} = {3F8A5660-D4C0-48B3-80AE-A62844AE5528}
+		{820FAE63-6800-4C67-99C8-76048DE8D106} = {3F8A5660-D4C0-48B3-80AE-A62844AE5528}
+		{878DA696-AD56-4739-84BB-D9A8E4BC5A48} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{2E147DA9-AE28-4EEF-A4FF-AAE6F92E322B} = {878DA696-AD56-4739-84BB-D9A8E4BC5A48}
+		{4845DF03-5C01-4E8B-842A-4EC0A9C0D15D} = {2E147DA9-AE28-4EEF-A4FF-AAE6F92E322B}
+		{6886A40C-C0AA-4E2C-B04C-640DE620DDB6} = {2E147DA9-AE28-4EEF-A4FF-AAE6F92E322B}
+		{299A0CF7-250D-4E08-B628-B84DABF5ABF8} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{B7214789-B7E7-4F88-A6DE-F367B65F9BDF} = {299A0CF7-250D-4E08-B628-B84DABF5ABF8}
+		{861E01E1-D689-40B3-BE1D-E0F7FF11DD73} = {B7214789-B7E7-4F88-A6DE-F367B65F9BDF}
+		{BF01194B-04FD-4A07-B85F-2781C7237D5D} = {B7214789-B7E7-4F88-A6DE-F367B65F9BDF}
+		{42F9EF9D-C14A-41EB-9DB4-E80213A4DF7B} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{0CF0E8F4-117A-457B-8BE3-40FEEC842EEB} = {42F9EF9D-C14A-41EB-9DB4-E80213A4DF7B}
+		{9FE6730F-C6F4-44B7-981B-BDC489FF202C} = {0CF0E8F4-117A-457B-8BE3-40FEEC842EEB}
+		{59FB48FD-1E1A-499E-BAD5-B16AE1E29194} = {0CF0E8F4-117A-457B-8BE3-40FEEC842EEB}
+		{45569702-BF11-421C-A43A-03D1364E3C95} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
+		{C25B8C43-91C7-4F23-B186-05E37C145720} = {45569702-BF11-421C-A43A-03D1364E3C95}
+		{6332D45B-9105-4EA4-BB61-65D494AF4CE0} = {C25B8C43-91C7-4F23-B186-05E37C145720}
+		{B398F253-412C-49AA-B2EF-D5F164B8ACF2} = {6332D45B-9105-4EA4-BB61-65D494AF4CE0}
+		{03C0B81C-6B57-4791-B5F3-9D2D48CE2544} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{A82C4E93-051E-4C0B-B705-5875F748742C} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{923F42D8-57A1-4A1B-8FB9-35B5D73A7F8A} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{189A1B26-8EB9-4D78-A955-CF1E45F39257} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{5E16CA24-F8A2-436C-86B6-6511A703FB82} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
+		{1B943F80-0EB6-4134-A02A-2F1FF121CFEC} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7A3009E-A79E-4542-AC95-DD9B9C113922}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{28f717c7-a2ef-405e-96f1-538329030acf}*SharedItemsImports = 9
-		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{56ed54d2-4f7a-4cd2-91ba-3d710d8f9c24}*SharedItemsImports = 4
-		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{88573491-8330-4d25-a3c2-faab1d69e589}*SharedItemsImports = 4
-		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{a7ce4335-d8e6-4e53-b810-7d932e87ba59}*SharedItemsImports = 4
-		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{c6b94069-54c2-4b96-880d-4c058a605c56}*SharedItemsImports = 4
-		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{f27f4562-11c4-42ef-ac5a-26101fd26f46}*SharedItemsImports = 9
+		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{220b0789-1f04-54d3-18e5-5db99e91172f}*SharedItemsImports = 4
+		Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Shared.vcxitems*{28f717c7-a2ef-405e-96f1-538329030acf}*SharedItemsImports = 9
+		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{364e96cb-9d8a-40b0-8455-6a31a15a36b0}*SharedItemsImports = 9
+		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{3e00a02d-46f3-432b-91c8-5d459f70c525}*SharedItemsImports = 9
+		Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Shared.vcxitems*{56ed54d2-4f7a-4cd2-91ba-3d710d8f9c24}*SharedItemsImports = 4
+		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{6cbdc266-9b42-f741-03eb-f610ab72e1b1}*SharedItemsImports = 4
+		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{77311056-84a3-4b57-aef1-7a76f17c500c}*SharedItemsImports = 4
+		Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Shared.vcxitems*{88573491-8330-4d25-a3c2-faab1d69e589}*SharedItemsImports = 4
+		Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Shared.vcxitems*{a7ce4335-d8e6-4e53-b810-7d932e87ba59}*SharedItemsImports = 4
+		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{ab97876a-f25a-4aae-bacd-d32c776bb261}*SharedItemsImports = 9
+		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{c1e8c40d-b9b5-4c0d-9f7e-1b793d3c13ae}*SharedItemsImports = 9
+		Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Shared.vcxitems*{c6b94069-54c2-4b96-880d-4c058a605c56}*SharedItemsImports = 4
+		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{e21b97a1-d847-2938-4e29-760523c97389}*SharedItemsImports = 4
+		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{f104c833-785d-e25f-5f10-b46284462a11}*SharedItemsImports = 4
+		Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Shared.vcxitems*{f27f4562-11c4-42ef-ac5a-26101fd26f46}*SharedItemsImports = 9
+		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{fa67d7fd-393a-e9bc-f2a4-2570b2929973}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal

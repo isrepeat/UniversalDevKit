@@ -1,0 +1,10 @@
+{
+  "deliveries": {
+    "Android": "Delivery/Android/Delivery.json",
+    "NuGet": "Delivery/NuGet/Delivery.json"
+  },
+  "component": "XamlRuntime",
+  "schemaVersion": 1,
+  "name": "XamlRuntime",
+  "versionSource": "../../../Version.json"
+}

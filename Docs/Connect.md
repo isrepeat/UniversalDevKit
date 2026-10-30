@@ -18,13 +18,13 @@ Restore-UdkConnectionTransaction -ProjectPath C:/Consumer/App.vcxproj -SolutionP
 ## Содержание
 
 - [Управление и команды](#управление-и-команды)
-- [Helpers.Shared: отдельной библиотеки нет](#helpersshared-отдельной-библиотеки-нет)
-- [Helpers.Static: отдельная статическая библиотека .lib](#helpersstatic-отдельная-статическая-библиотека-lib)
-- [Helpers.Dynamic: импортная библиотека и DLL](#helpersdynamic-импортная-библиотека-и-dll)
-- [Diagnostic.Shared: исходники зависимости](#diagnosticshared-исходники-зависимости)
-- [Diagnostic.Static: зависимости доходят до линкера](#diagnosticstatic-зависимости-доходят-до-линкера)
-- [Diagnostic.Dynamic: внутренняя статическая зависимость](#diagnosticdynamic-внутренняя-статическая-зависимость)
-- [Прямой выбор Helpers и конфликты](#прямой-выбор-helpers-и-конфликты)
+- [HeleprsTest.Shared: отдельной библиотеки нет](#helpersshared-отдельной-библиотеки-нет)
+- [HeleprsTest.Static: отдельная статическая библиотека .lib](#helpersstatic-отдельная-статическая-библиотека-lib)
+- [HeleprsTest.Dynamic: импортная библиотека и DLL](#helpersdynamic-импортная-библиотека-и-dll)
+- [DiagnosticTest.Shared: исходники зависимости](#diagnosticshared-исходники-зависимости)
+- [DiagnosticTest.Static: зависимости доходят до линкера](#diagnosticstatic-зависимости-доходят-до-линкера)
+- [DiagnosticTest.Dynamic: внутренняя статическая зависимость](#diagnosticdynamic-внутренняя-статическая-зависимость)
+- [Прямой выбор HeleprsTest и конфликты](#прямой-выбор-helpers-и-конфликты)
 - [Транзитивные DLL](#транзитивные-dll)
 - [Публичные зависимости](#публичные-зависимости)
 - [Новая зависимость в JSON](#новая-зависимость-в-json)
@@ -46,55 +46,55 @@ Connect подключает UniversalDevKit к вашему C++-проекту 
 
 Connect / update добавляет компоненты или меняет их режимы; неотмеченные прежние корни сохраняются. Для удаления используйте Disconnect. Транзитивный компонент исчезает только после удаления последнего требующего его корня.
 
-Несовместимые варианты отображаются красным с отметкой `[!]`. Проверка учитывает уже подключённые компоненты и текущие отметки; после изменения выбора доступность пересчитывается. На недоступный вариант можно перейти стрелками, чтобы прочитать причину, но Space не позволяет его отметить. Например, Diagnostic.Dynamic блокирует Helpers.Dynamic, поскольку требует Helpers.Static. Для ProjectOnly доступны только Shared-варианты. Если сохранённые подключения уже конфликтуют, Apply блокируется: исправьте режимы или удалите конфликтующий корень через Disconnect.
+Несовместимые варианты отображаются красным с отметкой `[!]`. Проверка учитывает уже подключённые компоненты и текущие отметки; после изменения выбора доступность пересчитывается. На недоступный вариант можно перейти стрелками, чтобы прочитать причину, но Space не позволяет его отметить. Например, DiagnosticTest.Dynamic блокирует HeleprsTest.Dynamic, поскольку требует HeleprsTest.Static. Для ProjectOnly доступны только Shared-варианты. Если сохранённые подключения уже конфликтуют, Apply блокируется: исправьте режимы или удалите конфликтующий корень через Disconnect.
 
 Пример неинтерактивного вызова из PowerShell:
 
 ```powershell
-./Scripts/PowerShell/Connect.ps1 -SolutionPath C:/Path/App.sln -ProjectPath C:/Path/App.vcxproj -Components Diagnostic -ComponentModes @{ Diagnostic = 'Dynamic' }
+./Scripts/PowerShell/Connect.ps1 -SolutionPath C:/Path/App.sln -ProjectPath C:/Path/App.vcxproj -Components DiagnosticTest -ComponentModes @{ DiagnosticTest = 'Dynamic' }
 ```
 
 ProjectOnly поддерживает Shared без изменения solution. Static/Dynamic требуют solution. После применения перезагрузите проекты в Visual Studio.
 
-## Helpers.Shared: отдельной библиотеки нет
+## HeleprsTest.Shared: отдельной библиотеки нет
 
-Connect подключает Shared-проект Helpers. Math.cpp и Text.cpp компилируются непосредственно в consumer с его настройками. Заголовки доступны через Includes/Helpers и Includes/Core; остальные корни добавляются по графу зависимостей. PCH для исходников UDK отключён. Объектные файлы изолированы внутри IntDir/UniversalDevKit/.
+Connect подключает Shared-проект HeleprsTest. Math.cpp и Text.cpp компилируются непосредственно в consumer с его настройками. Заголовки доступны через Includes/HeleprsTest и Includes/Core; остальные корни добавляются по графу зависимостей. PCH для исходников UDK отключён. Объектные файлы изолированы внутри IntDir/UniversalDevKit/.
 
 ```text
 Main.cpp + Math.cpp + Text.cpp → Application.exe
 ```
 
-## Helpers.Static: отдельная статическая библиотека .lib
+## HeleprsTest.Static: отдельная статическая библиотека .lib
 
-Connect добавляет в проект приложения `ProjectReference` — ссылку на проект Helpers.Static. При сборке MSBuild сначала создаёт `Helpers.Static.lib`, затем линкер объединяет код приложения с нужным кодом из этой библиотеки в `Application.exe`.
+Connect добавляет в проект приложения `ProjectReference` — ссылку на проект HeleprsTest.Static. При сборке MSBuild сначала создаёт `HeleprsTest.Static.lib`, затем линкер объединяет код приложения с нужным кодом из этой библиотеки в `Application.exe`.
 
-После сборки запускать приложение можно без Helpers DLL. Отдельно копировать статическую `.lib` рядом с `.exe` тоже не нужно: она нужна только во время сборки.
+После сборки запускать приложение можно без HeleprsTest DLL. Отдельно копировать статическую `.lib` рядом с `.exe` тоже не нужно: она нужна только во время сборки.
 
 ```text
-Math.cpp + Text.cpp → Helpers.Static.lib
-Main.obj + Helpers.Static.lib → Application.exe
+Math.cpp + Text.cpp → HeleprsTest.Static.lib
+Main.obj + HeleprsTest.Static.lib → Application.exe
 ```
 
-## Helpers.Dynamic: импортная библиотека и DLL
+## HeleprsTest.Dynamic: импортная библиотека и DLL
 
-Connect добавляет ссылку на проект Helpers.Dynamic и определение `UNIVERSALDEVKIT_HELPERS_DYNAMIC`, чтобы заголовки объявляли функции как импортируемые из DLL.
+Connect добавляет ссылку на проект HeleprsTest.Dynamic и определение `UNIVERSALDEVKIT_HELEPRSTEST_DYNAMIC`, чтобы заголовки объявляли функции как импортируемые из DLL.
 
-Проект Helpers.Dynamic создаёт два файла. `Helpers.Dynamic.lib` — импортная библиотека: она позволяет линкеру приложения связать вызовы с функциями DLL. Реализация этих функций находится в `Helpers.Dynamic.dll`, поэтому эта DLL должна быть доступна при запуске приложения. Это отличается от Static, где реализация включается в приложение.
+Проект HeleprsTest.Dynamic создаёт два файла. `HeleprsTest.Dynamic.lib` — импортная библиотека: она позволяет линкеру приложения связать вызовы с функциями DLL. Реализация этих функций находится в `HeleprsTest.Dynamic.dll`, поэтому эта DLL должна быть доступна при запуске приложения. Это отличается от Static, где реализация включается в приложение.
 
 Определение с суффиксом `_EXPORTS` используется только при сборке самой DLL; приложению Connect его не задаёт.
 
 ```text
-Helpers.Dynamic.lib → линковка Application.exe
-Helpers.Dynamic.dll → каталог запуска Application.exe
+HeleprsTest.Dynamic.lib → линковка Application.exe
+HeleprsTest.Dynamic.dll → каталог запуска Application.exe
 ```
 
 UniversalDevKit.Runtime.targets после успешной сборки запрашивает GetTargetPath библиотечных проектов и копирует DLL в OutDir. Путь к !artifacts не зашит в consumer: учитываются фактические TargetName, OutDir и переданные свойства MSBuild. Файлы копируются с SkipUnchangedFiles.
 
-## Diagnostic.Shared: исходники зависимости
+## DiagnosticTest.Shared: исходники зависимости
 
-Реализация `Diagnostic::Log` вызывает функцию `EndsWithLineBreak` из Helpers. Поэтому одного `Logging.cpp` недостаточно.
+Реализация `DiagnosticTest::Log` вызывает функцию `EndsWithLineBreak` из HeleprsTest. Поэтому одного `Logging.cpp` недостаточно.
 
-Если выбрать Diagnostic.Shared, Connect добавит в приложение исходники и Diagnostic, и Helpers. Отдельные `.lib` и DLL для них не создаются. Даже если Helpers нужен нескольким компонентам, его исходники добавляются один раз. Поле `linkage` из JSON относится к бинарным вариантам; при Shared все зависимости подключаются исходниками.
+Если выбрать DiagnosticTest.Shared, Connect добавит в приложение исходники и DiagnosticTest, и HeleprsTest. Отдельные `.lib` и DLL для них не создаются. Даже если HeleprsTest нужен нескольким компонентам, его исходники добавляются один раз. Поле `linkage` из JSON относится к бинарным вариантам; при Shared все зависимости подключаются исходниками.
 
 ```text
 Main.cpp + Logging.cpp + Math.cpp + Text.cpp → Application.exe
@@ -102,66 +102,66 @@ Main.cpp + Logging.cpp + Math.cpp + Text.cpp → Application.exe
 
 visibility не исключает приватные исходники: они всё равно нужны реализации. При ProjectOnly Sources.targets раскрывает актуальный граф во время вычисления MSBuild. Обычное подключение через solution сохраняет конкретные Shared References и требует обновления после изменения JSON.
 
-## Diagnostic.Static: зависимости доходят до линкера
+## DiagnosticTest.Static: зависимости доходят до линкера
 
-В JSON указано, что Diagnostic использует Helpers внутри своей реализации (`visibility=private`) и требует статический вариант Helpers (`linkage=static`).
+В JSON указано, что DiagnosticTest использует HeleprsTest внутри своей реализации (`visibility=private`) и требует статический вариант HeleprsTest (`linkage=static`).
 
-Создаются две отдельные библиотеки: `Diagnostic.Static.lib` содержит код Diagnostic, а `Helpers.Static.lib` — код Helpers. Код Helpers не добавляется внутрь самой `Diagnostic.Static.lib`.
+Создаются две отдельные библиотеки: `DiagnosticTest.Static.lib` содержит код DiagnosticTest, а `HeleprsTest.Static.lib` — код HeleprsTest. Код HeleprsTest не добавляется внутрь самой `DiagnosticTest.Static.lib`.
 
-При создании приложения линкеру нужны обе `.lib`: из Diagnostic он получает `Log`, а из Helpers — вызываемую ей `EndsWithLineBreak`. Connect подключает обе библиотеки, даже если пользователь выбрал только Diagnostic.Static.
+При создании приложения линкеру нужны обе `.lib`: из DiagnosticTest он получает `Log`, а из HeleprsTest — вызываемую ей `EndsWithLineBreak`. Connect подключает обе библиотеки, даже если пользователь выбрал только DiagnosticTest.Static.
 
 ```text
-Application.exe ← Diagnostic.Static.lib + Helpers.Static.lib
-Diagnostic.Static.vcxproj → Helpers.Static.vcxproj (порядок сборки)
+Application.exe ← DiagnosticTest.Static.lib + HeleprsTest.Static.lib
+DiagnosticTest.Static.vcxproj → HeleprsTest.Static.vcxproj (порядок сборки)
 ```
 
-`private` означает, что Helpers нужен внутреннему коду Diagnostic. Это не означает, что его `.lib` можно исключить из сборки приложения: иначе линкер не найдёт реализацию `EndsWithLineBreak`.
+`private` означает, что HeleprsTest нужен внутреннему коду DiagnosticTest. Это не означает, что его `.lib` можно исключить из сборки приложения: иначе линкер не найдёт реализацию `EndsWithLineBreak`.
 
 В ссылках приложения на необходимые библиотеки Connect задаёт `LinkLibraryDependencies=true`. В ссылках между Static-проектами используется `false`: зависимость обеспечивает порядок сборки, а статические библиотеки остаются отдельными.
 
-## Diagnostic.Dynamic: внутренняя статическая зависимость
+## DiagnosticTest.Dynamic: внутренняя статическая зависимость
 
-Если выбрать Diagnostic.Dynamic, `linkage=static` всё равно требует Helpers.Static.
+Если выбрать DiagnosticTest.Dynamic, `linkage=static` всё равно требует HeleprsTest.Static.
 
-Сначала собирается `Helpers.Static.lib`. Затем при создании Diagnostic DLL нужный код Helpers включается в `Diagnostic.Dynamic.dll`. Приложение использует импортную `Diagnostic.Dynamic.lib` и запускается с `Diagnostic.Dynamic.dll`.
+Сначала собирается `HeleprsTest.Static.lib`. Затем при создании DiagnosticTest DLL нужный код HeleprsTest включается в `DiagnosticTest.Dynamic.dll`. Приложение использует импортную `DiagnosticTest.Dynamic.lib` и запускается с `DiagnosticTest.Dynamic.dll`.
 
 ```text
-Diagnostic.Dynamic.dll ← Logging.obj + Helpers.Static.lib
-Application.exe ← импортная Diagnostic.Dynamic.lib
-Файлы запуска: Diagnostic.Dynamic.dll
+DiagnosticTest.Dynamic.dll ← Logging.obj + HeleprsTest.Static.lib
+Application.exe ← импортная DiagnosticTest.Dynamic.lib
+Файлы запуска: DiagnosticTest.Dynamic.dll
 ```
 
-Приложению не нужно отдельно подключать Helpers для вызова `Diagnostic::Log`: необходимый код Helpers уже находится в Diagnostic DLL. Отдельная Helpers DLL из-за этой зависимости не создаётся, а макрос импорта Helpers приложению не передаётся.
+Приложению не нужно отдельно подключать HeleprsTest для вызова `DiagnosticTest::Log`: необходимый код HeleprsTest уже находится в DiagnosticTest DLL. Отдельная HeleprsTest DLL из-за этой зависимости не создаётся, а макрос импорта HeleprsTest приложению не передаётся.
 
-Однако это не даёт приложению прямого доступа к функциям Helpers через Diagnostic DLL. Если приложение само вызывает `IsPowerOfTwo`, Helpers нужно выбрать отдельно, например в режиме Static.
+Однако это не даёт приложению прямого доступа к функциям HeleprsTest через DiagnosticTest DLL. Если приложение само вызывает `IsPowerOfTwo`, HeleprsTest нужно выбрать отдельно, например в режиме Static.
 
 Для порядка сборки Connect также добавляет ссылки на внутренние проекты с `LinkLibraryDependencies=false`. Такая ссылка сохраняет проект зависимости в solution, но не подключает его `.lib` к линкеру приложения.
 
-## Прямой выбор Helpers и конфликты
+## Прямой выбор HeleprsTest и конфликты
 
-Diagnostic.Dynamic + Helpers.Static допустимы: обе цепочки требуют Static-вариант Helpers. Приложение самостоятельно использует Helpers и получает прямую статическую ссылку.
+DiagnosticTest.Dynamic + HeleprsTest.Static допустимы: обе цепочки требуют Static-вариант HeleprsTest. Приложение самостоятельно использует HeleprsTest и получает прямую статическую ссылку.
 
-Diagnostic.Dynamic + Helpers.Dynamic отклоняются: одна цепочка требует Helpers.Static, другая — Helpers.Dynamic. Аналогично запрещено сочетание Helpers.Shared с бинарной зависимостью Helpers.Static. Ошибка показывает оба режима и пути в графе; проверка выполняется до записи solution и consumer.
+DiagnosticTest.Dynamic + HeleprsTest.Dynamic отклоняются: одна цепочка требует HeleprsTest.Static, другая — HeleprsTest.Dynamic. Аналогично запрещено сочетание HeleprsTest.Shared с бинарной зависимостью HeleprsTest.Static. Ошибка показывает оба режима и пути в графе; проверка выполняется до записи solution и consumer.
 
 Это консервативная политика: один вариант на имя компонента во всём графе одного consumer. Две реализации компонента без состояния технически могут работать, но такая комбинация пока не поддерживается. Совпадение режима не гарантирует единый экземпляр состояния во всём процессе: статический код может присутствовать в нескольких DLL. Сервисы с состоянием должны отдельно определять владение и время жизни.
 
 ## Транзитивные DLL
 
-Предположим, будущий Diagnostic зависит от Formatting с linkage=same, а Formatting — от Helpers с linkage=static. Для Dynamic корня получится:
+Предположим, будущий DiagnosticTest зависит от Formatting с linkage=same, а Formatting — от HeleprsTest с linkage=static. Для Dynamic корня получится:
 
 ```text
-Application → Diagnostic.Dynamic → Formatting.Dynamic → Helpers.Static
+Application → DiagnosticTest.Dynamic → Formatting.Dynamic → HeleprsTest.Static
 ```
 
-При `visibility=private` приложение использует импортную библиотеку Diagnostic. Но при запуске Diagnostic DLL сама обращается к Formatting DLL. Поэтому рядом с приложением нужны **обе DLL**, хотя пользователь выбрал только Diagnostic.
+При `visibility=private` приложение использует импортную библиотеку DiagnosticTest. Но при запуске DiagnosticTest DLL сама обращается к Formatting DLL. Поэтому рядом с приложением нужны **обе DLL**, хотя пользователь выбрал только DiagnosticTest.
 
-Helpers.Static используется при создании Formatting DLL: нужный код включается в неё, а файл Helpers.Static.lib рядом с приложением не копируется.
+HeleprsTest.Static используется при создании Formatting DLL: нужный код включается в неё, а файл HeleprsTest.Static.lib рядом с приложением не копируется.
 
 RuntimeComponents рассчитывается по всему графу, включая private-зависимости любой глубины, с устранением повторов. Для consumer, который сам является DLL, OutDir обозначает каталог этой DLL; окончательное приложение должно также получить runtime-набор. Connect не управляет поиском DLL загрузчиком и не доставляет сторонние runtime-библиотеки, не описанные компонентами UDK.
 
 ## Публичные зависимости
 
-visibility=public означает, что публичные требования зависимости передаются потребителю. Например, если публичный интерфейс Diagnostic использует динамический Formatting, consumer получает его import-макрос и ссылку. public-цепочки раскрываются транзитивно; private-цепочка прерывает передачу публичных требований.
+visibility=public означает, что публичные требования зависимости передаются потребителю. Например, если публичный интерфейс DiagnosticTest использует динамический Formatting, consumer получает его import-макрос и ссылку. public-цепочки раскрываются транзитивно; private-цепочка прерывает передачу публичных требований.
 
 Все текущие заголовки доступны через общий Includes. Специальные внешние include-пути и произвольные compile options реестр компонентов пока не описывает. Для CMake PUBLIC/PRIVATE передаются target_link_libraries и учитываются стандартным механизмом usage requirements.
 
@@ -171,7 +171,7 @@ visibility=public означает, что публичные требовани
 
 ```json
 {
-  "component": "Helpers",
+  "component": "HeleprsTest",
   "visibility": "private",
   "linkage": "static"
 }

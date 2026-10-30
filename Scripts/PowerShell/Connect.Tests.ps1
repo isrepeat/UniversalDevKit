@@ -72,36 +72,43 @@ AssertFails { Resolve-UdkLinkageGraph @('A') @{ A = 'Static' } $componentRegistr
 # Verify the real component registry and preservation of new JSON fields.
 Import-Module (Join-Path $PSScriptRoot 'Modules/Module.Udk.Connection/Module.Udk.Connection.psm1') -Force
 $componentRegistry = Module.Udk.Connection\Get-UdkComponentRegistry $RepositoryPath
-AssertEqual $componentRegistry.Diagnostic.Dependencies[0].Visibility 'private' 'ComponentRegistry visibility'
-AssertEqual $componentRegistry.Diagnostic.Dependencies[0].Linkage 'static' 'ComponentRegistry linkage'
-$request = [pscustomobject]@{ Components = @('Diagnostic'); ComponentModes = @{ Diagnostic = 'Dynamic' }; ProjectOnly = $false; Disconnect = $false }
+AssertEqual $componentRegistry.Helpers.Kind 'headerOnly' 'Helpers component kind'
+$helpersGraph = Resolve-UdkLinkageGraph @('Helpers') @{ Helpers = 'Shared' } $componentRegistry
+AssertEqual $helpersGraph.RuntimeComponents @() 'Helpers has no runtime libraries'
+AssertEqual $helpersGraph.LinkComponents @() 'Helpers has no linker inputs'
+foreach ($mode in @('Static', 'Dynamic')) {
+    AssertFails { Resolve-UdkLinkageGraph @('Helpers') @{ Helpers = $mode } $componentRegistry } 'supports Shared only'
+}
+AssertEqual $componentRegistry.DiagnosticTest.Dependencies[0].Visibility 'private' 'ComponentRegistry visibility'
+AssertEqual $componentRegistry.DiagnosticTest.Dependencies[0].Linkage 'static' 'ComponentRegistry linkage'
+$request = [pscustomobject]@{ Components = @('DiagnosticTest'); ComponentModes = @{ DiagnosticTest = 'Dynamic' }; ProjectOnly = $false; Disconnect = $false }
 $state = [pscustomobject]@{ Components = @(); Modes = @{} }
 $plan = Module.Udk.Connection\New-UdkConnectionPlan $request $state $componentRegistry $RepositoryPath
-AssertEqual $plan.LinkComponents @('Diagnostic') 'Diagnostic DLL link set'
-AssertEqual $plan.RuntimeComponents @('Diagnostic') 'Diagnostic DLL runtime set'
+AssertEqual $plan.LinkComponents @('DiagnosticTest') 'DiagnosticTest DLL link set'
+AssertEqual $plan.RuntimeComponents @('DiagnosticTest') 'DiagnosticTest DLL runtime set'
 $request.Disconnect = $true
 $request.Components = @()
 $plan = Module.Udk.Connection\New-UdkConnectionPlan $request $state $componentRegistry $RepositoryPath
 AssertEqual $plan.LinkComponents @() 'Disconnect link set'
 # The menu accounts for existing connections, mode changes and root removal.
 . (Join-Path $PSScriptRoot 'Modules/Module.Udk.Console/Private/Menus.ps1')
-$conflict = Get-UdkMenuModeConflict @{ Diagnostic = 'Dynamic' } @{} $componentRegistry -Name Helpers -Mode Dynamic
-if ($conflict -notmatch 'Conflicting linkage for Helpers') {
-    throw 'Menu did not block Helpers.Dynamic'
+$conflict = Get-UdkMenuModeConflict @{ DiagnosticTest = 'Dynamic' } @{} $componentRegistry -Name HeleprsTest -Mode Dynamic
+if ($conflict -notmatch 'Conflicting linkage for HeleprsTest') {
+    throw 'Menu did not block HeleprsTest.Dynamic'
 }
-$conflict = Get-UdkMenuModeConflict @{ Diagnostic = 'Dynamic' } @{} $componentRegistry -Name Helpers -Mode Static
+$conflict = Get-UdkMenuModeConflict @{ DiagnosticTest = 'Dynamic' } @{} $componentRegistry -Name HeleprsTest -Mode Static
 if ($conflict) {
     throw "Menu blocked compatible Static: $conflict"
 }
-$conflict = Get-UdkMenuModeConflict @{ Helpers = 'Shared' } @{ Helpers = 'Static' } $componentRegistry -Name Diagnostic -Mode Dynamic
+$conflict = Get-UdkMenuModeConflict @{ HeleprsTest = 'Shared' } @{ HeleprsTest = 'Static' } $componentRegistry -Name DiagnosticTest -Mode Dynamic
 if ($conflict) {
     throw "Menu ignored the pending mode change: $conflict"
 }
-$conflict = Get-UdkMenuModeConflict @{} @{} $componentRegistry -Name Helpers -Mode Dynamic -ProjectOnly
+$conflict = Get-UdkMenuModeConflict @{} @{} $componentRegistry -Name HeleprsTest -Mode Dynamic -ProjectOnly
 if ($conflict -notmatch 'requires SolutionPath') {
     throw 'Menu did not block binary ProjectOnly mode'
 }
-$conflict = Get-UdkMenuModeConflict @{ Diagnostic = 'Dynamic'; Helpers = 'Dynamic' } @{ Helpers = 'Dynamic' } $componentRegistry -Removal
+$conflict = Get-UdkMenuModeConflict @{ DiagnosticTest = 'Dynamic'; HeleprsTest = 'Dynamic' } @{ HeleprsTest = 'Dynamic' } $componentRegistry -Removal
 if ($conflict) {
     throw "Menu blocked removal that resolves conflict: $conflict"
 }

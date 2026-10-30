@@ -5,13 +5,17 @@ param(
     [string]$OutputDirectory,
     [string[]]$Components,
     [string]$Generator = 'Visual Studio 18 2026',
-    [string]$RepositoryPath = (Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)))
+    [string]$RepositoryPath
 )
 
 $env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
 $env:VSLANG = '1033'
 
+. (Join-Path $PSScriptRoot '../../../Scripts/PowerShell/ArtifactDirectories.ps1')
 $ErrorActionPreference = 'Stop'
+if (-not $RepositoryPath) {
+    $RepositoryPath = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../../..'))
+}
 
 # Align console and native pipeline encodings in Windows PowerShell 5.1.
 $utf8Encoding = [Text.UTF8Encoding]::new($false)
@@ -21,13 +25,14 @@ $OutputEncoding = $utf8Encoding
 
 # 1. Locate tools and the release directory; read the shared version.
 $repository = (Resolve-Path -LiteralPath $RepositoryPath).Path
+$NuGet = & (Join-Path $repository 'Scripts/PowerShell/GetNuGet.ps1') -LocalPath $NuGet
 if (-not $CMake) {
     $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
     $CMake = @(& $vswhere -latest -products '*' -find 'Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/cmake.exe')[0]
 }
 if (-not $CMake -or -not (Get-Command $CMake -ErrorAction SilentlyContinue)) { throw 'CMake is required.' }
 $license = (Resolve-Path -LiteralPath $LicenseFile).Path
-if (-not $OutputDirectory) { $OutputDirectory = Join-Path $repository ('!artifacts/packages/nuget/' + [Guid]::NewGuid().ToString('N')) }
+if (-not $OutputDirectory) { $OutputDirectory = Join-Path $repository '!artifacts/packages/nuget' }
 $output = [IO.Path]::GetFullPath($OutputDirectory)
 [void][IO.Directory]::CreateDirectory($output)
 $version = (Get-Content (Join-Path $repository 'Version.json') -Raw | ConvertFrom-Json).version
@@ -39,7 +44,27 @@ $connection = Join-Path $repository 'Scripts/PowerShell/Modules/Module.Udk.Conne
 . (Join-Path $connection 'ConnectionPlan.ps1')
 $registry = Get-UdkComponentRegistry $repository
 if (-not $Components) { $Components = @($registry.Keys | Sort-Object) }
+if ($Components.Count -gt 1) {
+    foreach ($rootComponent in ($Components | Sort-Object -Unique)) {
+        & $PSCommandPath -CMake $CMake -NuGet $NuGet -LicenseFile $license -OutputDirectory $output -Components $rootComponent -Generator $Generator -RepositoryPath $repository
+    }
+    return
+}
 $selected = @(Resolve-UdkComponents $Components $registry)
+$output = Join-Path $output $Components[0]
+[void][IO.Directory]::CreateDirectory($output)
+$buildLock = $null
+$artifactDrive = $null
+$transcriptStarted = $false
+try {
+try {
+    $buildLock = [IO.File]::Open((Join-Path $output '.build.lock'), [IO.FileMode]::OpenOrCreate, [IO.FileAccess]::ReadWrite, [IO.FileShare]::None)
+} catch { throw "Another build owns the component directory: $output" }
+$physicalOutput = $output
+Start-Transcript -Path (Join-Path $output 'build.log') -Force | Out-Null
+$transcriptStarted = $true
+$artifactDrive = New-UdkArtifactDrive -Path $output
+$output = $artifactDrive.Path
 $hasBinaries = @($selected | Where-Object { $registry[$_].Kind -ne 'headerOnly' }).Count -gt 0
 
 # Package definitions explicitly reference components through the component adapter.
@@ -57,7 +82,7 @@ foreach ($definitionFile in Get-ChildItem -LiteralPath (Join-Path $repository 'P
     if ($delivery.adapter -ne 'component' -or 'Windows' -notin $delivery.supportedPlatforms) { continue }
     if ($delivery.schemaVersion -ne 1 -or -not $definition.component -or $delivery.id -notmatch '^[A-Za-z0-9_.-]+$') { throw "Unsupported NuGet delivery: $($definitionFile.FullName)" }
     foreach ($field in $delivery.PSObject.Properties.Name) {
-        if ($field -notin @('schemaVersion', 'adapter', 'id', 'supportedPlatforms', 'integration', 'nuspec')) { throw "Unknown delivery field: $field" }
+        if ($field -notin @('schemaVersion', 'adapter', 'id', 'supportedPlatforms', 'supportedRuntimes', 'integration', 'nuspec', 'stagingScript', 'preparationScript', 'dependencyName')) { throw "Unknown delivery field: $field" }
     }
     $packageVersion = (Get-Content -LiteralPath (Join-Path $definitionFile.DirectoryName $definition.versionSource) -Raw | ConvertFrom-Json).version
     if ($packageVersion -ne $version) { throw "Component package must use the UDK release version: $($definition.name)" }
@@ -76,7 +101,35 @@ foreach ($definitionFile in Get-ChildItem -LiteralPath (Join-Path $repository 'P
         if (-not $integrationPath.StartsWith($packagePrefix, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path -LiteralPath $integrationPath -PathType Leaf)) { throw "Invalid package integration file: $integrationPath" }
         $integration[$kind] = $integrationPath
     }
-    $packages[$definition.component] = [pscustomobject]@{ Name = $definition.name; Id = $delivery.id; Directory = $definitionFile.DirectoryName; Integration = $integration; Nuspec = $nuspecPath }
+    $supportedRuntimes = if ($delivery.PSObject.Properties['supportedRuntimes']) { @($delivery.supportedRuntimes) } else { @('Dynamic', 'Static') }
+    if (-not $supportedRuntimes.Count -or @($supportedRuntimes | Where-Object { $_ -notin @('Dynamic', 'Static') }).Count) { throw "Invalid supportedRuntimes: $($definition.name)" }
+    $stagingScript = $null
+    if ($delivery.stagingScript) {
+        $stagingScript = [IO.Path]::GetFullPath((Join-Path $deliveryDirectory $delivery.stagingScript))
+        if (-not $stagingScript.StartsWith($packagePrefix, [StringComparison]::OrdinalIgnoreCase) -or -not (Test-Path -LiteralPath $stagingScript -PathType Leaf)) {
+            throw "Invalid package staging script: $stagingScript"
+        }
+    }
+    $preparationScript = $null
+    if ($delivery.PSObject.Properties['preparationScript']) {
+        if ($delivery.preparationScript -isnot [string] -or [string]::IsNullOrWhiteSpace($delivery.preparationScript) -or
+            [IO.Path]::GetExtension($delivery.preparationScript) -ine '.ps1') {
+            throw "Invalid package preparation script: $($definition.name)"
+        }
+        $preparationScript = [IO.Path]::GetFullPath((Join-Path $deliveryDirectory $delivery.preparationScript))
+        if (-not $preparationScript.StartsWith($packagePrefix, [StringComparison]::OrdinalIgnoreCase) -or
+            -not (Test-Path -LiteralPath $preparationScript -PathType Leaf)) {
+            throw "Invalid package preparation script: $preparationScript"
+        }
+    }
+    $dependencyName = $definition.component
+    if ($delivery.PSObject.Properties['dependencyName']) {
+        if (-not $preparationScript -or $delivery.dependencyName -isnot [string] -or $delivery.dependencyName -cnotmatch '^[A-Za-z][A-Za-z0-9_-]*$') {
+            throw "Invalid dependency name: $($definition.name)"
+        }
+        $dependencyName = $delivery.dependencyName
+    }
+    $packages[$definition.component] = [pscustomobject]@{ Name = $definition.name; Id = $delivery.id; Directory = $definitionFile.DirectoryName; Integration = $integration; Nuspec = $nuspecPath; SupportedRuntimes = $supportedRuntimes; StagingScript = $stagingScript; PreparationScript = $preparationScript; DependencyName = $dependencyName }
     $packageIds[$delivery.id] = $true
 }
 foreach ($name in $selected) {
@@ -124,14 +177,46 @@ function RunCMake([string[]]$Arguments) {
 
 # 4. Build MD/MT in separate prefixes; install Debug/Release together for each CRT.
 $records = @()
+$preparations = @{}
 foreach ($runtime in @('Dynamic', 'Static')) {
-    $build = Join-Path $output "build-$runtime"
-    $install = Join-Path $output "install-$runtime"
-    RunCMake @('-S', $repository, '-B', $build, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug;Release', '-DUniversalDevKit_ENFORCE_RELEASE_POLICY=ON', "-DUniversalDevKitRuntime=$runtime", "-DCMAKE_INSTALL_PREFIX=$install", ('-DUniversalDevKit_COMPONENTS=' + ($selected -join ';')))
+    $runtimeComponents = @($selected | Where-Object { $runtime -in $packages[$_].SupportedRuntimes })
+    if (-not $runtimeComponents.Count) { continue }
+    # Подготовка зависимостей завершается до configure; рабочие каталоги сохраняются между выпусками.
+    $dependencyDefinitions = [Collections.Generic.Dictionary[string, string]]::new([StringComparer]::Ordinal)
+    foreach ($component in $selected) {
+        $package = $packages[$component]
+        if (-not $package.PreparationScript -or $runtime -notin $package.SupportedRuntimes) { continue }
+        $workDirectory = Join-Path $output "dependencies/$($package.DependencyName)/$runtime"
+        [void][IO.Directory]::CreateDirectory($workDirectory)
+        $prepared = @(& $package.PreparationScript -RepositoryPath $repository -WorkDirectory $workDirectory -Runtime $runtime -Configurations @('Debug', 'Release') -Generator $Generator)
+        if ($prepared.Count -ne 1 -or $prepared[0] -isnot [Collections.IDictionary]) {
+            throw "Preparation script must return one dictionary of CMake definitions: $component"
+        }
+        $preparations["$component/$runtime"] = $prepared[0]
+        foreach ($key in $prepared[0].Keys) {
+            if ($key -isnot [string] -or $key -cnotmatch '^UniversalDevKit[A-Za-z0-9_]+$' -or
+                $key -in @('UniversalDevKitRuntime', 'UniversalDevKit_COMPONENTS', 'UniversalDevKit_ENFORCE_RELEASE_POLICY') -or
+                $prepared[0][$key] -isnot [string]) {
+                throw "Invalid preparation CMake definition from ${component}: $key"
+            }
+            if ($dependencyDefinitions.ContainsKey($key) -and $dependencyDefinitions[$key] -cne $prepared[0][$key]) {
+                throw "Conflicting preparation CMake definition: $key"
+            }
+            $dependencyDefinitions[$key] = $prepared[0][$key]
+        }
+    }
+    $dependencyArguments = @($dependencyDefinitions.Keys | Sort-Object -CaseSensitive | ForEach-Object { '-D' + $_ + '=' + $dependencyDefinitions[$_] })
+    if ($dependencyDefinitions.ContainsKey('UniversalDevKitAngleRoot')) {
+        # Обновляем результаты find при переносе установки ANGLE.
+        $dependencyArguments += '-UudkAngle*'
+    }
+    $build = Join-Path $output "build/$runtime"
+    $install = Reset-UdkArtifactDirectory -Root $output -Path (Join-Path $output "install/$runtime")
+    RunCMake (@('-S', $repository, '-B', $build, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug;Release', '-DUniversalDevKit_ENFORCE_RELEASE_POLICY=ON', "-DUniversalDevKitRuntime=$runtime", "-DCMAKE_INSTALL_PREFIX=$install", ('-DUniversalDevKit_COMPONENTS=' + ($runtimeComponents -join ';'))) + $dependencyArguments)
     foreach ($configuration in @('Debug', 'Release')) {
-        RunCMake @('--build', $build, '--config', $configuration)
+        RunCMake @('--build', $build, '--config', $configuration, '--parallel', '4')
         RunCMake @('--install', $build, '--config', $configuration)
-        $metadata = if ($hasBinaries) {
+        $metadata = if (@($runtimeComponents | Where-Object { $registry[$_].Kind -ne 'headerOnly' }).Count -gt 0) {
             Get-Content (Join-Path $install "lib/cmake/UniversalDevKit/UniversalDevKit.Build-$configuration.json") -Raw | ConvertFrom-Json
         } else {
             # Header-only releases have no binary manifest or CRT/ABI restrictions.
@@ -146,18 +231,20 @@ foreach ($runtime in @('Dynamic', 'Static')) {
 # 5. Verify compiler/toolset consistency; tools and cl.exe versions may differ.
 $toolset = $records[0].Metadata.toolset
 $compiler = $records[0].Metadata.compilerVersion
-$cache = Get-Content (Join-Path $output 'build-Dynamic/CMakeCache.txt') -Raw
+$cache = Get-Content (Join-Path $output 'build/Dynamic/CMakeCache.txt') -Raw
 $vcTools = [regex]::Match($cache, '/MSVC/([^/]+)/bin/').Groups[1].Value
 if ($hasBinaries -and -not $vcTools) { throw 'Cannot determine actual VCToolsVersion.' }
 foreach ($record in $records) {
+    if (-not @($record.Metadata.components).Count) { continue }
     if ($record.Metadata.toolset -ne $toolset -or $record.Metadata.compilerVersion -ne $compiler) { throw 'Cannot combine compilers in one NuGet release.' }
 }
 
 # 6. Create one component package; dependency binaries remain in their own packages.
 foreach ($component in $selected) {
+    $componentHasBinaries = $registry[$component].Kind -ne 'headerOnly'
     $package = $packages[$component]
     # Use fresh staging to avoid carrying stale files into a new release.
-    $stage = Join-Path $output ('staging/' + $component + '-' + [Guid]::NewGuid().ToString('N'))
+    $stage = Reset-UdkArtifactDirectory -Root $output -Path (Join-Path $output "staging/$component")
     $payload = Join-Path $stage 'payload'
     [void][IO.Directory]::CreateDirectory((Join-Path $payload 'include'))
     Copy-Item -LiteralPath $license -Destination (Join-Path $payload 'LICENSE.txt')
@@ -177,10 +264,11 @@ foreach ($component in $selected) {
     $componentGraphs = @($graphs.Keys | Where-Object { $_.StartsWith($component + '.', [StringComparison]::Ordinal) } | Sort-Object)
     foreach ($record in $records) {
         $runtime = $record.Runtime
+        if ($runtime -notin $package.SupportedRuntimes) { continue }
         $configuration = $record.Configuration
         $destination = Join-Path $payload "binaries/$runtime/$configuration"
         [void][IO.Directory]::CreateDirectory($destination)
-        if ($hasBinaries) { Copy-Item -LiteralPath (Join-Path $record.Install "lib/cmake/UniversalDevKit/UniversalDevKit.Build-$configuration.json") -Destination (Join-Path $destination 'Release.json') }
+        if ($componentHasBinaries) { Copy-Item -LiteralPath (Join-Path $record.Install "lib/cmake/UniversalDevKit/UniversalDevKit.Build-$configuration.json") -Destination (Join-Path $destination 'Release.json') }
 
         # Copy only this component's libraries and DLLs for the current configuration.
         foreach ($entry in @($record.Metadata.components | Where-Object { $_.name -ceq $component })) {
@@ -195,7 +283,7 @@ foreach ($component in $selected) {
             $condition = (RootCondition $component $mode) + " and '`$(UniversalDevKitRuntime)' == '$runtime' and '`$(Configuration)' == '$configuration'"
             $root = '$(__UniversalDevKit' + $component + 'PackageRoot)'
             $guard = "binaries\$runtime\$configuration\Abi.h"
-            if ($hasBinaries) {
+            if ($componentHasBinaries) {
                 # Forced includes validate the actual settings of each compilation unit.
                 Copy-Item -LiteralPath (Join-Path $record.Install "lib/cmake/UniversalDevKit/UniversalDevKit.Abi-$configuration.h") -Destination (Join-Path $destination 'Abi.h')
                 $compilerParts = $compiler -split '\.'
@@ -220,7 +308,7 @@ foreach ($component in $selected) {
                     $link += $library + $(if ($library.EndsWith('.lib')) { ';' } else { '.lib;' })
                 }
             }
-            $forced = if ($hasBinaries) { "$root$guard;" } else { '' }
+            $forced = if ($componentHasBinaries) { "$root$guard;" } else { '' }
             $variants.Add("  <ItemDefinitionGroup Condition=`"$condition`"><ClCompile><AdditionalIncludeDirectories>$includes%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories><ForcedIncludeFiles>$forced%(ForcedIncludeFiles)</ForcedIncludeFiles><PreprocessorDefinitions>$definitions%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile><Link><AdditionalDependencies>$link%(AdditionalDependencies)</AdditionalDependencies></Link></ItemDefinitionGroup>")
 
             # Include private transitive DLLs in the runtime set.
@@ -271,7 +359,7 @@ foreach ($component in $selected) {
     foreach ($pair in @(
         @{ Key = 'PackageVersion'; Value = $version },
         @{ Key = 'ValidModes'; Value = $validModes },
-        @{ Key = 'HasBinaries'; Value = $hasBinaries.ToString().ToLowerInvariant() },
+        @{ Key = 'HasBinaries'; Value = $componentHasBinaries.ToString().ToLowerInvariant() },
         @{ Key = 'ExpectedToolset'; Value = $toolset },
         @{ Key = 'ExpectedTools'; Value = $vcTools }
     )) {
@@ -316,6 +404,13 @@ foreach ($component in $selected) {
             '  <Import Project="$(MSBuildThisFileDirectory)..\..\build\native\' + $package.Id + '.' + $kind + '" />' + "`n" + '</Project>'
         WriteGenerated (Join-Path $payload "buildTransitive/native/$($package.Id).$kind") $wrapper
     }
+    if ($package.StagingScript) {
+        $componentPreparations = @{}
+        foreach ($runtime in $package.SupportedRuntimes) {
+            if ($preparations.ContainsKey("$component/$runtime")) { $componentPreparations[$runtime] = $preparations["$component/$runtime"] }
+        }
+        & $package.StagingScript -Payload $payload -RepositoryPath $repository -Preparations $componentPreparations
+    }
     $spec = Get-Content -LiteralPath $package.Nuspec -Raw
     WriteGenerated (Join-Path $stage "$component.nuspec") ($spec.Replace('{{COMPONENT}}', $component).Replace('{{PACKAGE_ID}}', $package.Id).Replace('{{VERSION}}', $version).Replace('{{DEPENDENCIES}}', $dependencies))
 
@@ -324,4 +419,9 @@ foreach ($component in $selected) {
     & $NuGet pack (Join-Path $stage "$component.nuspec") -BasePath $stage -OutputDirectory $output -NonInteractive -ForceEnglishOutput -Properties 'NoWarn=NU5100;NU5128' | Out-Host
     if ($LASTEXITCODE -ne 0) { throw "NuGet pack failed for $component" }
 }
-Write-Host "NuGet feed: $output"
+Write-Host "NuGet feed: $physicalOutput"
+} finally {
+    if ($artifactDrive) { Remove-UdkArtifactDrive $artifactDrive }
+    if ($transcriptStarted) { Stop-Transcript | Out-Null }
+    if ($buildLock) { $buildLock.Dispose() }
+}

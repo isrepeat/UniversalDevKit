@@ -14,7 +14,7 @@
 
 ## Конфигурация и сборка — разные этапы
 
-CMake версии 3.22 или выше читает описания и генерирует систему сборки. cmake --build запускает компилятор и линкер через выбранный генератор. Корневой проект требует C++17.
+CMake версии 3.22 или выше читает описания и генерирует систему сборки. cmake --build запускает компилятор и линкер через выбранный генератор. Корневой проект требует C++20.
 
 Для Windows x64 в среде с настроенными MSVC и Ninja:
 
@@ -29,12 +29,12 @@ Preset использует Ninja Multi-Config. Debug/Release выбираетс
 
 ```cmake
 add_subdirectory(external/UniversalDevKit)
-target_link_libraries(MyApplication PRIVATE UniversalDevKit::Diagnostic.Static)
+target_link_libraries(MyApplication PRIVATE UniversalDevKit::DiagnosticTest.Static)
 ```
 
-Targets передают include-путь, минимальный стандарт языка и необходимые зависимости. Diagnostic.Static требует Helpers.Static; вручную повторять эту связь не нужно.
+Targets передают include-путь, минимальный стандарт языка и необходимые зависимости. DiagnosticTest.Static требует HeleprsTest.Static; вручную повторять эту связь не нужно.
 
-Для динамического варианта используйте UniversalDevKit::Diagnostic.Dynamic. На Windows consumer получает import-макрос; DLL должна быть доступна при запуске. Например, для CMake 3.22 и известного набора runtime DLL:
+Для динамического варианта используйте UniversalDevKit::DiagnosticTest.Dynamic. На Windows consumer получает import-макрос; DLL должна быть доступна при запуске. Например, для CMake 3.22 и известного набора runtime DLL:
 
 ```cmake
 if(WIN32)
@@ -59,13 +59,13 @@ endif()
 | UniversalDevKit_BUILD_DYNAMIC | ON | Создавать динамические варианты корней |
 | UniversalDevKit_INSTALL | ON | Создавать правила установки |
 
-Пример конфигурации только Diagnostic.Dynamic:
+Пример конфигурации только DiagnosticTest.Dynamic:
 
 ```powershell
-cmake --preset windows-x64 -DUniversalDevKit_COMPONENTS=Diagnostic -DUniversalDevKit_BUILD_STATIC=OFF
+cmake --preset windows-x64 -DUniversalDevKit_COMPONENTS=DiagnosticTest -DUniversalDevKit_BUILD_STATIC=OFF
 ```
 
-Helpers.Static всё равно создаётся, поскольку JSON требует его для Diagnostic.Dynamic. BUILD_STATIC=OFF запрещает статические варианты корней, но не обязательных зависимостей. Для шаблонного кода используйте UniversalDevKit::Helpers.Headers или другой компонентный Headers-target: он предоставляет свой include-корень и публичные зависимости. UniversalDevKit::Headers предоставляет только общие Export.h и Version.h. При установке копируются заголовки выбранных бинарных компонентов и их зависимостей; компонентные Headers-targets экспортируются вместе с ними.
+HeleprsTest.Static всё равно создаётся, поскольку JSON требует его для DiagnosticTest.Dynamic. BUILD_STATIC=OFF запрещает статические варианты корней, но не обязательных зависимостей. Для шаблонного кода используйте UniversalDevKit::HeleprsTest.Headers или другой компонентный Headers-target: он предоставляет свой include-корень и публичные зависимости. UniversalDevKit::Headers предоставляет только общие Export.h и Version.h. При установке копируются заголовки выбранных бинарных компонентов и их зависимостей; компонентные Headers-targets экспортируются вместе с ними.
 
 При add_subdirectory настройки можно задать заранее как обычные переменные при стандартной политике CMake родительского проекта. Выбор в меню Connect этих настроек не меняет.
 
@@ -82,7 +82,7 @@ Helpers.Static всё равно создаётся, поскольку JSON т�
 После сборки выбранной конфигурации:
 
 ```powershell
-cmake --install "!artifacts/Windows-x64/cmake/msvc-$env:VCToolsVersion-md/UniversalDevKit" --config Release
+cmake --install "!artifacts/projects/Windows-x64/cmake/UniversalDevKit/msvc-$env:VCToolsVersion-md" --config Release
 ```
 
 Preset задаёт prefix установки внутри этого дерева, в install/. Для другой цели используйте --prefix. Пакет содержит include/, библиотеки и конфигурацию в `<libdir>/cmake/UniversalDevKit/`; libdir выбирается GNUInstallDirs. На Windows DLL находятся в bin/.
@@ -96,8 +96,8 @@ Debug-имена бинарников имеют суффикс d, поэтом�
 В отдельном consumer:
 
 ```cmake
-find_package(UniversalDevKit 0.1 CONFIG REQUIRED COMPONENTS Diagnostic)
-target_link_libraries(MyApplication PRIVATE UniversalDevKit::Diagnostic.Static)
+find_package(UniversalDevKit 0.1 CONFIG REQUIRED COMPONENTS DiagnosticTest)
+target_link_libraries(MyApplication PRIVATE UniversalDevKit::DiagnosticTest.Static)
 ```
 
 При конфигурации укажите CMAKE_PREFIX_PATH с корнем установки либо UniversalDevKit_DIR с каталогом конфигурации пакета. find_package загружает экспортированные targets с путями и usage requirements; исходный checkout и ComponentDependencies.cmake не нужны.

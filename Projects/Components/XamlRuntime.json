@@ -1,0 +1,82 @@
+{
+  "name": "XamlRuntime",
+  "dependencies": [
+    {
+      "component": "Helpers",
+      "visibility": "public",
+      "linkage": "same"
+    },
+    {
+      "component": "Diagnostic",
+      "visibility": "private",
+      "linkage": "dynamic"
+    }
+  ],
+  "requirements": {
+    "cxxStandard": 20
+  },
+  "supportedPlatforms": [
+    "Windows",
+    "Android"
+  ],
+  "msbuildGuid": "{3E00A02D-46F3-432B-91C8-5D459F70C525}",
+  "headers": [
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/Animation.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/Binding.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/Config.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/DependentProperty.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/ElementBuilder.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/Export.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/GestureRecognizer.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/Input.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/InteractionController.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/ObservableCollection.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RenderEngine.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/ScrollController.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/Storyboard.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/UserControl.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/VisualState.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/XamlAttribute.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/XamlLayout.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RuntimeMarkup/IRuntimeReloadableControl.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RuntimeMarkup/RuntimeBindingContext.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RuntimeMarkup/RuntimeBindingPublisher.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RuntimeMarkup/RuntimeBindingRegistry.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RuntimeMarkup/RuntimeDiagnostics.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RuntimeMarkup/RuntimeReloadTransaction.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RuntimeMarkup/RuntimeTreeBuilder.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RuntimeMarkup/XamlAst.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RuntimeMarkup/XamlParser.h",
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RuntimeMarkup/XamlSchemaValidator.h"
+  ],
+  "sources": [
+    "Sources/XamlRuntime/Animation.cpp",
+    "Sources/XamlRuntime/Binding.cpp",
+    "Sources/XamlRuntime/ElementBuilder.cpp",
+    "Sources/XamlRuntime/GestureRecognizer.cpp",
+    "Sources/XamlRuntime/Input.cpp",
+    "Sources/XamlRuntime/InteractionController.cpp",
+    "Sources/XamlRuntime/RenderEngine.cpp",
+    "Sources/XamlRuntime/ScrollController.cpp",
+    "Sources/XamlRuntime/UserControl.cpp",
+    "Sources/XamlRuntime/VisualState.cpp",
+    "Sources/XamlRuntime/XamlAttribute.cpp",
+    "Sources/XamlRuntime/XamlLayout.cpp",
+    "Sources/XamlRuntime/RuntimeMarkup/RuntimeBindingRegistry.cpp",
+    "Sources/XamlRuntime/RuntimeMarkup/RuntimeReloadTransaction.cpp",
+    "Sources/XamlRuntime/RuntimeMarkup/RuntimeTreeBuilder.cpp",
+    "Sources/XamlRuntime/RuntimeMarkup/XamlParser.cpp",
+    "Sources/XamlRuntime/RuntimeMarkup/XamlSchemaValidator.cpp"
+  ],
+  "buildExtensions": {
+    "cmake": "Projects/Cmake/XamlRuntime/Build.cmake",
+    "msbuildTargets": "Projects/MsBuild/XamlRuntime/Build.targets"
+  },
+  "filters": {
+    "roots": [
+      { "path": "Includes/XamlRuntime/UniversalDevKit/XamlRuntime", "filter": "" },
+      { "path": "Sources/XamlRuntime", "filter": "" }
+    ],
+    "files": {}
+  }
+}

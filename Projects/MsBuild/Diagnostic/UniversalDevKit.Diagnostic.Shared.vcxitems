@@ -3,29 +3,80 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
     <HasSharedItems>true</HasSharedItems>
-    <ItemsProjectGuid>{28F717C7-A2EF-405E-96F1-538329030ACF}</ItemsProjectGuid>
+    <ItemsProjectGuid>{AB97876A-F25A-4AAE-BACD-D32C776BB261}</ItemsProjectGuid>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.props" Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\Includes\Diagnostic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-  </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\Logging.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\Logging.cpp">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\PlatformBackend.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ObjectFileName>$(IntDir)UniversalDevKit\Diagnostic\Logging.obj</ObjectFileName>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\Export.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\Logging.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\platform\windows\PlatformBackendWindows.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter>platform\windows</__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\platform\android\PlatformBackendAndroid.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter>platform\android</__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\platform\linux\PlatformBackendLinux.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter>platform\linux</__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\spdlog.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\stdout_sinks.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\color_sinks.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\file_sinks.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\async.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\cfg.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\bundled_fmtlib_format.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Update="@(ClCompile-&gt;WithMetadataValue('__UniversalDevKitComponent', 'Diagnostic'))">
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\Includes\Diagnostic;$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader Condition="'%(ClCompile.__UniversalDevKitInheritPch)' != 'true'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <Target Name="__UniversalDevKitValidateDiagnosticStateScope" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(ConfigurationType)' != 'DynamicLibrary' or '$(MSBuildProjectName)' != 'UniversalDevKit.Diagnostic.Dynamic'" Text="UniversalDevKit.Diagnostic has process state; use its Dynamic project." />
+  </Target>
+  <ItemGroup>
     <__UniversalDevKitCompileRequirement Include="Diagnostic">
-      <MinimumStandard>17</MinimumStandard>
+      <MinimumStandard>20</MinimumStandard>
     </__UniversalDevKitCompileRequirement>
     <__UniversalDevKitThreadRequirement Include="Diagnostic" />
   </ItemGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.Requirements.targets" Condition="'$(__IsUniversalDevKitRequirementsImported)' != 'true'" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\..\Projects\MsBuild\Diagnostic\Spdlog.targets" />
 </Project>

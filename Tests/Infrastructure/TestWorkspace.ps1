@@ -5,8 +5,14 @@ function Invoke-TestGit {
 }
 
 function New-TestWorkspace {
-    param([string]$RepositoryPath, [ValidateSet('WorkingTree', 'Submodule')][string]$Mode, [string]$Revision)
-    $root = Join-Path $RepositoryPath ('!artifacts/tests/' + (Get-Date -Format 'yyyy.MM.dd') + '-' + [Guid]::NewGuid().ToString('N'))
+    param([string]$RepositoryPath, [ValidateSet('WorkingTree', 'Submodule')][string]$Mode, [string]$Revision, [string]$Name)
+    if (-not $Name) {
+        $caller = @(Get-PSCallStack | Where-Object { $_.ScriptName -and $_.ScriptName -ne $PSCommandPath })[0]
+        $Name = [IO.Path]::GetFileNameWithoutExtension($caller.ScriptName)
+    }
+    if ($Name -notmatch '^[A-Za-z0-9_.-]+$') { throw "Invalid test workspace name: $Name" }
+    . (Join-Path $RepositoryPath 'Scripts/PowerShell/ArtifactDirectories.ps1')
+    $root = Reset-UdkArtifactDirectory -Root (Join-Path $RepositoryPath '!artifacts/tests') -Path (Join-Path $RepositoryPath "!artifacts/tests/$Name-$Mode")
     $consumer = Join-Path $root 'Consumer'
     $library = Join-Path $consumer 'external/UniversalDevKit'
     [void][IO.Directory]::CreateDirectory($consumer)
@@ -40,7 +46,7 @@ function Remove-TestWorkspace {
     # Allow deletion only of the specific run directory under the dedicated root.
     $parent = [IO.Path]::GetFullPath((Join-Path $RepositoryPath '!artifacts/tests')).TrimEnd('\')
     $target = [IO.Path]::GetFullPath($Workspace.Root).TrimEnd('\')
-    if ([IO.Path]::GetDirectoryName($target) -cne $parent -or [IO.Path]::GetFileName($target) -notmatch '^(?:[0-9]{4}\.[0-9]{2}\.[0-9]{2}-)?[0-9a-f]{32}$') {
+    if ([IO.Path]::GetDirectoryName($target) -cne $parent -or [IO.Path]::GetFileName($target) -notmatch '^[A-Za-z0-9_.-]+-(WorkingTree|Submodule)$') {
         throw "Unsafe test workspace: $target"
     }
     Remove-Item -LiteralPath $target -Recurse -Force

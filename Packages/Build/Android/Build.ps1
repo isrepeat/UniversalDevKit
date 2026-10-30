@@ -18,6 +18,7 @@ $env:VSLANG = '1033'
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
 $OutputEncoding = [Text.UTF8Encoding]::new($false)
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot '../../../Scripts/PowerShell/ArtifactDirectories.ps1')
 
 # 2. Находим репозиторий и проверяем Android NDK, CMake и Ninja.
 if (-not $RepositoryPath) {
@@ -55,7 +56,7 @@ $registry = Get-UdkComponentRegistry $repository
 $deliveries = @{}
 foreach ($file in Get-ChildItem (Join-Path $repository 'Packages') -Filter 'Package.json' -Recurse -File) {
     $package = Get-Content -LiteralPath $file.FullName -Raw | ConvertFrom-Json
-    if (-not $package.deliveries.Android) {
+    if (-not $package.deliveries.Android -or -not $package.component) {
         continue
     }
     if ($deliveries.ContainsKey($package.component)) {
@@ -74,9 +75,6 @@ foreach ($component in $Components) {
     if (-not $registry.ContainsKey($component) -or -not $deliveries.ContainsKey($component)) {
         throw "Missing Android component/adapter: $component"
     }
-    if ($registry[$component].Kind -eq 'headerOnly') {
-        throw 'This first Android adapter supports compiled roots only.'
-    }
 }
 
 # 4. Выбираем версию, каталог Maven-feed и изолированное дерево сборки.
@@ -84,17 +82,31 @@ $version = (Get-Content (Join-Path $repository 'Version.json') -Raw | ConvertFro
 $output = if ($OutputDirectory) {
     [IO.Path]::GetFullPath($OutputDirectory)
 } else {
-    Join-Path $repository '!artifacts/Android/packages'
+    Join-Path $repository '!artifacts/packages/maven'
 }
 $work = if ($BuildRoot) {
     [IO.Path]::GetFullPath($BuildRoot)
 } else {
-    Join-Path $repository ('!artifacts/Android/cmake/pack-' + [Guid]::NewGuid().ToString('N').Substring(0, 8))
+    Join-Path $output 'build-native'
 }
 if (-not $work.StartsWith((Join-Path $repository '!artifacts/'), [StringComparison]::OrdinalIgnoreCase)) {
     throw 'BuildRoot must be inside the repository artifacts directory.'
 }
 [void][IO.Directory]::CreateDirectory($work)
+
+$artifactDrive = New-UdkArtifactDrive -Path $output
+$workDrive = $null
+try {
+$physicalOutput = $output
+$output = $artifactDrive.Path
+if ($work.StartsWith($physicalOutput.TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
+    $work = Join-Path $output $work.Substring($physicalOutput.TrimEnd('\', '/').Length + 1)
+} elseif ($work -ieq $physicalOutput.TrimEnd('\', '/')) {
+    $work = $output
+} else {
+    $workDrive = New-UdkArtifactDrive -Path $work
+    $work = $workDrive.Path
+}
 
 # Вспомогательные функции сохраняют метаданные без завершающих переводов строк.
 function WriteText([string]$Path, [string]$Text) {
@@ -117,7 +129,8 @@ function RunCMake([string[]]$Arguments) {
 # 5. Собираем и устанавливаем общие исходники отдельно для каждого ABI.
 # Метаданные установки содержат фактические имена библиотек, а не предполагаемые пути.
 $records = @{}
-foreach ($architecture in $Abi) {
+$compiledComponents = @($Components | Where-Object { $registry[$_].Kind -ne 'headerOnly' })
+foreach ($architecture in $(if ($compiledComponents.Count) { $Abi } else { @() })) {
     $build = Join-Path $work $architecture
     $prefix = Join-Path $build 'install'
 
@@ -138,7 +151,7 @@ foreach ($architecture in $Abi) {
         '-DANDROID_STL=c++_shared',
         "-DCMAKE_BUILD_TYPE=$Configuration",
         "-DCMAKE_INSTALL_PREFIX=$prefix",
-        "-DUniversalDevKit_COMPONENTS=$($Components -join ';')"
+        "-DUniversalDevKit_COMPONENTS=$($compiledComponents -join ';')"
     )
     RunCMake @('--build', $build, '--parallel', '4')
     RunCMake @('--install', $build)
@@ -163,10 +176,9 @@ foreach ($component in $Components) {
     if (-not $registry.ContainsKey($component)) {
         throw "Unknown component: $component"
     }
-    if ($registry[$component].Kind -eq 'headerOnly') {
-        throw 'This first Android adapter supports compiled components only.'
-    }
-    $modes = if ($registry[$component].StateScope -eq 'process') {
+    $modes = if ($registry[$component].Kind -eq 'headerOnly') {
+        @('Shared')
+    } elseif ($registry[$component].StateScope -eq 'process') {
         @('Dynamic')
     } else {
         @('Static', 'Dynamic')
@@ -177,7 +189,7 @@ foreach ($component in $Components) {
         $packageName = 'udk_' + (ModuleName $component $mode)
         $delivery = $deliveries[$component]
         $artifact = $delivery.artifactPrefix + '-' + $mode.ToLowerInvariant() + '-' + $Configuration.ToLowerInvariant()
-        $stage = Join-Path $work ('stage-' + [Guid]::NewGuid().ToString('N').Substring(0, 8) + '/' + $artifact)
+        $stage = Reset-UdkArtifactDirectory -Root $output -Path (Join-Path $output "staging/$artifact")
 
         # 6.2. Записываем Android/Prefab-манифесты и собираем только публичные заголовки.
         WriteText (Join-Path $stage 'AndroidManifest.xml') ('<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.universaldevkit.' + $packageName + '"><uses-sdk android:minSdkVersion="' + $ApiLevel + '"/></manifest>')
@@ -187,7 +199,7 @@ foreach ($component in $Components) {
             version = $version
             dependencies = @()
         }
-        $linkSet = @(@($graph.LinkComponents) + @($graph.RuntimeComponents) | Sort-Object -Unique)
+        $linkSet = @(@($graph.LinkComponents) + @($graph.RuntimeComponents) | Where-Object { $registry[$_].Kind -ne 'headerOnly' } | Sort-Object -Unique)
         $rootModule = Join-Path $stage "prefab/modules/$component"
         $include = Join-Path $rootModule 'include'
         [void][IO.Directory]::CreateDirectory($include)
@@ -218,6 +230,11 @@ foreach ($component in $Components) {
         }
         WriteJson (Join-Path $include 'UniversalDevKit/Android/contract.json') $contract
         Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Consumer.cmake') -Destination (Join-Path $include 'UniversalDevKit/Android/Consumer.cmake')
+
+        # Заголовочный модуль Prefab не содержит libs или фиктивных бинарников.
+        WriteJson (Join-Path $rootModule 'module.json') @{
+            export_libraries = @()
+        }
 
         # 6.4. Описываем Prefab-модули и кладём бинарники всех выбранных ABI.
         # Внутренние модули участвуют в линковке/runtime без собственных include-путей.
@@ -285,6 +302,16 @@ foreach ($component in $Components) {
 
         # 6.5. Добавляем лицензию и контракт выпуска, затем сохраняем AAR и POM в Maven-feed.
         Copy-Item -LiteralPath (Join-Path $repository 'LICENSE') -Destination (Join-Path $stage 'LICENSE.txt')
+        if ($graph.ResolvedModes.ContainsKey('Diagnostic')) {
+            [void][IO.Directory]::CreateDirectory((Join-Path $stage 'licenses'))
+            Copy-Item -LiteralPath (Join-Path $repository 'ThirdParty/spdlog/LICENSE') -Destination (Join-Path $stage 'licenses/spdlog.LICENSE')
+        }
+        if ($component -eq 'OpenGLESRenderer') {
+            [void][IO.Directory]::CreateDirectory((Join-Path $stage 'licenses'))
+            foreach ($name in @('stb_truetype.h', 'nanosvg.h', 'nanosvgrast.h')) {
+                Copy-Item -LiteralPath (Join-Path $repository "ThirdParty/XamlRuntime/$name") -Destination (Join-Path $stage 'licenses')
+            }
+        }
         WriteJson (Join-Path $stage 'udk-release.json') $contract
 
         # Maven сохраняет идентичность и версию; публикация во внешний сервер не выполняется.
@@ -292,12 +319,9 @@ foreach ($component in $Components) {
         $destination = Join-Path $output "$groupPath/$artifact/$version"
         [void][IO.Directory]::CreateDirectory($destination)
         $aar = Join-Path $destination "$artifact-$version.aar"
-        if (Test-Path -LiteralPath $aar) {
-            throw "Refusing to overwrite a release: $aar. Use a fresh output directory."
-        }
 
         # .NET Framework создаёт обратные слеши в ZIP; для Android нужны обычные ZIP-пути.
-        $stream = [IO.File]::Open($aar, [IO.FileMode]::CreateNew)
+        $stream = [IO.File]::Open($aar, [IO.FileMode]::Create)
         $archive = [IO.Compression.ZipArchive]::new($stream, [IO.Compression.ZipArchiveMode]::Create)
         try {
             foreach ($file in Get-ChildItem -LiteralPath $stage -Recurse -File) {
@@ -316,4 +340,8 @@ foreach ($component in $Components) {
 }
 
 # 7. Выводим путь к готовому локальному feed; внешняя публикация не выполняется.
-Write-Host "Android Maven feed: $output"
+Write-Host "Android Maven feed: $physicalOutput"
+} finally {
+    if ($workDrive) { Remove-UdkArtifactDrive $workDrive }
+    Remove-UdkArtifactDrive $artifactDrive
+}

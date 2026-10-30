@@ -13,13 +13,21 @@
 - [Connect](Connect.md) — выбор компонентов, вариантов и отключение.
 - [MSBuild](MSBuild.md) — сборка и подключение к Visual Studio.
 - [CMake](CMake.md) — сборка, установка и подключение пакета.
+- [Артефакты](Artifacts.md) — каталоги проектов, пакетов, тестов и кеша.
 - [Native NuGet](../Packages/Build/NuGet/README.md) — Windows packages.config и native PackageReference.
 - [Android AAR/Prefab](../Packages/Build/Android/README.md) — NDK-профиль, Maven-поставка C++-компонентов, подключение и проверки APK.
 - [Проверки пакетов](../Tests/Integration/Packages/README.md) — реальные компоненты и отдельные заглушки способов доставки.
 
 ## Архитектура и компоненты
 
+- [Diagnostic](Diagnostic.md) — минимальный сервис логирования в общей DLL с приватным spdlog.
+
+- [Helpers](Helpers.md) — единый header-only компонент с разделами Meta, Math, Patterns, StdExt, Stream и Regex, отличие от HeleprsTest.
+- [Std](Std.md) — расширения StdExt, автоматический alias stdEx и отложенные исправления.
+
 - [Архитектура](Architecture.md) — организация кода и пути сборки.
+- [Meta](Meta.md) — C++20 concepts, traits, utilities и перенос старых потребителей.
+- [Math](Math.md) — первоначальный перенос математических helpers.
 - [Реестр компонентов](Components.md) — JSON, генерация проектов и платформенные исходники.
 - [Контракт реестра](RegistryContract.md) — версия схемы, значения по умолчанию и header-only компоненты.
 - [Требования компонентов](Requirements.md) — стандарт C++, потоки и системные библиотеки.
