@@ -1,5 +1,5 @@
 {
-  "artifactPrefix": "universaldevkit-openglesrenderer",
   "schemaVersion": 1,
-  "groupId": "org.universaldevkit"
+  "groupId": "org.universaldevkit",
+  "artifactPrefix": "universaldevkit-openglesrenderer"
 }

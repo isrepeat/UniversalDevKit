@@ -1,16 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "UniversalDevKit.XamlRuntime",
   "adapter": "component",
+  "id": "UniversalDevKit.XamlRuntime",
+  "supportedPlatforms": ["Windows"],
+  "supportedRuntimes": ["Dynamic"],
   "nuspec": "UniversalDevKit.XamlRuntime.nuspec",
-  "supportedRuntimes": [
-    "Dynamic"
-  ],
   "integration": {
-    "targets": "UniversalDevKit.XamlRuntime.targets",
-    "props": "UniversalDevKit.XamlRuntime.props"
-  },
-  "supportedPlatforms": [
-    "Windows"
-  ]
+    "props": "UniversalDevKit.XamlRuntime.props",
+    "targets": "UniversalDevKit.XamlRuntime.targets"
+  }
 }
