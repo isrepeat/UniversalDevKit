@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>AndroidTemplates</id>
+    <version>{{VERSION}}</version>
+    <authors>UniversalDevKit</authors>
+    <description>Android application tools and templates for UniversalDevKit.</description>
+    <license type="file">LICENSE.txt</license>
+    <readme>README.md</readme>
+  </metadata>
+  <files>
+    <file src="**/*" target="" />
+  </files>
+</package>

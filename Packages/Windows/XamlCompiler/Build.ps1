@@ -29,7 +29,7 @@ $artifactDrive = New-UdkArtifactDrive -Path $output
 $physicalOutput = $output
 $output = $artifactDrive.Path
 $archive = Join-Path $physicalOutput "UniversalDevKit.XamlCompiler.$version.nupkg"
-$build = Join-Path $output 'build'
+$build = Join-Path $physicalOutput 'build'
 & $CMake -S (Join-Path $root 'Projects/Cmake/XamlCompiler') -B $build -G 'Visual Studio 18 2026' -A x64
 if ($LASTEXITCODE -ne 0) { throw 'Host compiler configuration failed.' }
 & $CMake --build $build --config Release

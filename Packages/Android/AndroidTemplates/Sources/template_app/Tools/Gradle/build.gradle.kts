@@ -1,0 +1,1 @@
+// Общая Android-конфигурация поступает из AndroidBuildTools.

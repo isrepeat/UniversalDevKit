@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page id="settingsPage"
+      background="#1E1E1E"
+      xmlns="urn:{{application}}:xaml"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel width="320"
+                verticalAlignment="Center"
+                horizontalAlignment="Center"
+                orientation="Vertical">
+        <TextBlock id="greetingText"
+                   margin="0 0 0 32"
+                   fontSize="36"
+                   fontWeight="Bold"
+                   textWrapping="Wrap"
+                   horizontalAlignment="Center"
+                   foreground="#FFFFFF"
+                   text="{Binding Message}"/>
+        <Button id="backButton"
+                height="72"
+                fontSize="36"
+                fontWeight="Bold"
+                contentAlignment="Center"
+                foreground="#FFFFFF"
+                background="#3A6EA5"
+                command="{Binding NavigateToMainCommand}"
+                text="Back"/>
+    </StackPanel>
+</Page>

@@ -1,0 +1,25 @@
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.android.tools.build:gradle:9.3.2'
+}
+
+gradlePlugin {
+    plugins {
+        androidApplication {
+            id = 'com.isrepeat.android.application'
+            implementationClass = 'com.isrepeat.build.AndroidApplicationPlugin'
+        }
+        androidSettings {
+            id = 'com.isrepeat.android.settings'
+            implementationClass = 'com.isrepeat.build.AndroidSettingsPlugin'
+        }
+    }
+}

@@ -1,0 +1,18 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "dll",
+      "project": "CMakeLists.txt",
+      "name": "AndroidAppPreviewer — {{Application}} (Debug)",
+      "exe": {{PreviewerDebugExecutableJson}},
+      "args": [
+        "--plugin",
+        "${workspaceRoot}\\Build\\{{Application}}.PreviewPlugin\\Build\\Debug\\x64\\{{Application}}.PreviewPlugin\\{{Application}}.PreviewPlugin.dll"
+      ],
+      "currentDir": {{PreviewerDebugDirectoryJson}},
+      "debugType": "native"
+    }
+  ]
+}

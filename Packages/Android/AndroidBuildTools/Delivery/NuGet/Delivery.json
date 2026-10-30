@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "adapter": "content",
+  "id": "AndroidBuildTools",
+  "supportedPlatforms": [
+    "Windows"
+  ],
+  "nuspec": "AndroidBuildTools.nuspec"
+}

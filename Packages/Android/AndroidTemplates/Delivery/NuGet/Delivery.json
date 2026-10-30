@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "adapter": "content",
+  "id": "AndroidTemplates",
+  "supportedPlatforms": [
+    "Windows"
+  ],
+  "nuspec": "AndroidTemplates.nuspec"
+}
