@@ -50,12 +50,9 @@
   ],
   "sources": [],
   "filters": {
-    "files": {},
     "roots": [
-      {
-        "path": "Includes/Helpers/UniversalDevKit/Helpers",
-        "filter": ""
-      }
-    ]
+      { "path": "Includes/Helpers/UniversalDevKit/Helpers", "filter": "" }
+    ],
+    "files": {}
   }
 }

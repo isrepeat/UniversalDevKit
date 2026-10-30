@@ -12,14 +12,8 @@
   ],
   "filters": {
     "roots": [
-      {
-        "path": "Includes/HeleprsTest/UniversalDevKit/HeleprsTest",
-        "filter": ""
-      },
-      {
-        "path": "Sources/HeleprsTest",
-        "filter": ""
-      }
+      { "path": "Includes/HeleprsTest/UniversalDevKit/HeleprsTest", "filter": "" },
+      { "path": "Sources/HeleprsTest", "filter": "" }
     ],
     "files": {}
   }

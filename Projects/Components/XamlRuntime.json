@@ -1,35 +1,25 @@
 {
-  "sources": [
-    "Sources/XamlRuntime/Animation.cpp",
-    "Sources/XamlRuntime/Binding.cpp",
-    "Sources/XamlRuntime/ElementBuilder.cpp",
-    "Sources/XamlRuntime/GestureRecognizer.cpp",
-    "Sources/XamlRuntime/Input.cpp",
-    "Sources/XamlRuntime/InteractionController.cpp",
-    "Sources/XamlRuntime/RenderEngine.cpp",
-    "Sources/XamlRuntime/ScrollController.cpp",
-    "Sources/XamlRuntime/UserControl.cpp",
-    "Sources/XamlRuntime/VisualState.cpp",
-    "Sources/XamlRuntime/XamlAttribute.cpp",
-    "Sources/XamlRuntime/XamlLayout.cpp",
-    "Sources/XamlRuntime/RuntimeMarkup/RuntimeBindingRegistry.cpp",
-    "Sources/XamlRuntime/RuntimeMarkup/RuntimeReloadTransaction.cpp",
-    "Sources/XamlRuntime/RuntimeMarkup/RuntimeTreeBuilder.cpp",
-    "Sources/XamlRuntime/RuntimeMarkup/XamlParser.cpp",
-    "Sources/XamlRuntime/RuntimeMarkup/XamlSchemaValidator.cpp"
-  ],
+  "name": "XamlRuntime",
   "dependencies": [
     {
-      "linkage": "same",
       "component": "Helpers",
-      "visibility": "public"
+      "visibility": "public",
+      "linkage": "same"
     },
     {
-      "linkage": "dynamic",
       "component": "Diagnostic",
-      "visibility": "private"
+      "visibility": "private",
+      "linkage": "dynamic"
     }
   ],
+  "requirements": {
+    "cxxStandard": 20
+  },
+  "supportedPlatforms": [
+    "Windows",
+    "Android"
+  ],
+  "msbuildGuid": "{3E00A02D-46F3-432B-91C8-5D459F70C525}",
   "headers": [
     "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/Animation.h",
     "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/Binding.h",
@@ -59,30 +49,34 @@
     "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RuntimeMarkup/XamlParser.h",
     "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/RuntimeMarkup/XamlSchemaValidator.h"
   ],
+  "sources": [
+    "Sources/XamlRuntime/Animation.cpp",
+    "Sources/XamlRuntime/Binding.cpp",
+    "Sources/XamlRuntime/ElementBuilder.cpp",
+    "Sources/XamlRuntime/GestureRecognizer.cpp",
+    "Sources/XamlRuntime/Input.cpp",
+    "Sources/XamlRuntime/InteractionController.cpp",
+    "Sources/XamlRuntime/RenderEngine.cpp",
+    "Sources/XamlRuntime/ScrollController.cpp",
+    "Sources/XamlRuntime/UserControl.cpp",
+    "Sources/XamlRuntime/VisualState.cpp",
+    "Sources/XamlRuntime/XamlAttribute.cpp",
+    "Sources/XamlRuntime/XamlLayout.cpp",
+    "Sources/XamlRuntime/RuntimeMarkup/RuntimeBindingRegistry.cpp",
+    "Sources/XamlRuntime/RuntimeMarkup/RuntimeReloadTransaction.cpp",
+    "Sources/XamlRuntime/RuntimeMarkup/RuntimeTreeBuilder.cpp",
+    "Sources/XamlRuntime/RuntimeMarkup/XamlParser.cpp",
+    "Sources/XamlRuntime/RuntimeMarkup/XamlSchemaValidator.cpp"
+  ],
   "buildExtensions": {
-    "msbuildTargets": "Projects/MsBuild/XamlRuntime/Build.targets",
-    "cmake": "Projects/Cmake/XamlRuntime/Build.cmake"
+    "cmake": "Projects/Cmake/XamlRuntime/Build.cmake",
+    "msbuildTargets": "Projects/MsBuild/XamlRuntime/Build.targets"
   },
   "filters": {
     "roots": [
-      {
-        "path": "Includes/XamlRuntime/UniversalDevKit/XamlRuntime",
-        "filter": ""
-      },
-      {
-        "path": "Sources/XamlRuntime",
-        "filter": ""
-      }
+      { "path": "Includes/XamlRuntime/UniversalDevKit/XamlRuntime", "filter": "" },
+      { "path": "Sources/XamlRuntime", "filter": "" }
     ],
     "files": {}
-  },
-  "requirements": {
-    "cxxStandard": 20
-  },
-  "name": "XamlRuntime",
-  "msbuildGuid": "{3E00A02D-46F3-432B-91C8-5D459F70C525}",
-  "supportedPlatforms": [
-    "Windows",
-    "Android"
-  ]
+  }
 }

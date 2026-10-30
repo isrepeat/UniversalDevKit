@@ -1,11 +1,13 @@
 {
   "name": "Diagnostic",
   "stateScope": "process",
-  "dependencies": [{
+  "dependencies": [
+    {
       "component": "Helpers",
       "visibility": "private",
       "linkage": "same"
-  }],
+    }
+  ],
   "requirements": {
     "cxxStandard": 20,
     "threads": true

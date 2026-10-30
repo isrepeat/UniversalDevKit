@@ -1,9 +1,5 @@
 {
   "name": "DiagnosticTest",
-  "requirements": {
-    "cxxStandard": 20,
-    "threads": true
-  },
   "dependencies": [
     {
       "component": "HeleprsTest",
@@ -11,6 +7,10 @@
       "linkage": "static"
     }
   ],
+  "requirements": {
+    "cxxStandard": 20,
+    "threads": true
+  },
   "msbuildGuid": "{28F717C7-A2EF-405E-96F1-538329030ACF}",
   "headers": [
     "Includes/DiagnosticTest/UniversalDevKit/DiagnosticTest/Logging.h"
@@ -20,14 +20,8 @@
   ],
   "filters": {
     "roots": [
-      {
-        "path": "Includes/DiagnosticTest/UniversalDevKit/DiagnosticTest",
-        "filter": ""
-      },
-      {
-        "path": "Sources/DiagnosticTest",
-        "filter": ""
-      }
+      { "path": "Includes/DiagnosticTest/UniversalDevKit/DiagnosticTest", "filter": "" },
+      { "path": "Sources/DiagnosticTest", "filter": "" }
     ],
     "files": {}
   }
