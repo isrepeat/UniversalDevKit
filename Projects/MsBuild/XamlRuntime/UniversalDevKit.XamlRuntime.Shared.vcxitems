@@ -6,11 +6,6 @@
     <ItemsProjectGuid>{3E00A02D-46F3-432B-91C8-5D459F70C525}</ItemsProjectGuid>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.props" Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-  </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\Animation.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
@@ -94,72 +89,77 @@
       <__UniversalDevKitFilter>RuntimeMarkup</__UniversalDevKitFilter>
     </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\Animation.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\Animation.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\Binding.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\Binding.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\ElementBuilder.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\ElementBuilder.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\GestureRecognizer.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\GestureRecognizer.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\Input.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\Input.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\InteractionController.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\InteractionController.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\RenderEngine.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\RenderEngine.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\ScrollController.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\ScrollController.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\UserControl.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\UserControl.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\VisualState.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\VisualState.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\XamlAttribute.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\XamlAttribute.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\XamlLayout.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\XamlLayout.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\RuntimeMarkup\RuntimeBindingRegistry.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>RuntimeMarkup</__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\RuntimeMarkup\RuntimeBindingRegistry.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\RuntimeMarkup\RuntimeReloadTransaction.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>RuntimeMarkup</__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\RuntimeMarkup\RuntimeReloadTransaction.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\RuntimeMarkup\RuntimeTreeBuilder.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>RuntimeMarkup</__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\RuntimeMarkup\RuntimeTreeBuilder.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\RuntimeMarkup\XamlParser.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>RuntimeMarkup</__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\RuntimeMarkup\XamlParser.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\RuntimeMarkup\XamlSchemaValidator.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>RuntimeMarkup</__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\XamlRuntime\RuntimeMarkup\XamlSchemaValidator.obj</ObjectFileName>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Update="@(ClCompile-&gt;WithMetadataValue('__UniversalDevKitComponent', 'XamlRuntime'))">
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemGroup>
   <Target Name="__UniversalDevKitValidateXamlRuntimePlatform" BeforeTargets="PrepareForBuild">

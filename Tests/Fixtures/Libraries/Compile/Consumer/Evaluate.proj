@@ -1,0 +1,15 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>CONSUMER_ONLY</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Before.cpp" />
+  </ItemGroup>
+  <Import Project="../Projects/MsBuild/CompileProbe/UniversalDevKit.CompileProbe.Shared.vcxitems" />
+  <ItemGroup>
+    <ClCompile Include="After.cpp" />
+  </ItemGroup>
+</Project>

@@ -24,21 +24,33 @@ $generator = Join-Path $workspace.Library 'Scripts/PowerShell/GenerateComponentP
 $sharedPath = Join-Path $workspace.Library 'Projects/MsBuild/CompileProbe/UniversalDevKit.CompileProbe.Shared.vcxitems'
 [xml]$shared = Get-Content -LiteralPath $sharedPath -Raw
 $items = @($shared.SelectNodes('//*[local-name()="ClCompile" and @Include]'))
-if ($items.Count -ne 2 -or $items[0].ObjectFileName -eq $items[1].ObjectFileName) { throw 'Object paths collide.' }
-if ($items[0].PrecompiledHeader -or $items[0].PreprocessorDefinitions.Contains('COMPILE_FILE')) { throw 'File settings leaked.' }
-if ($items[1].PrecompiledHeader -ne 'NotUsing' -or
-    -not $items[1].PreprocessorDefinitions.Contains('COMPILE_BASE=7;COMPILE_FILE=9;') -or
-    -not $items[1].AdditionalIncludeDirectories.Contains('CompileProbe\local;')) { throw 'File settings are missing.' }
+if ($items.Count -ne 2) { throw 'Incorrect source count.' }
 $build = Join-Path $workspace.Library '!artifacts/c'
 & $CMake -S $workspace.Library -B $build -G 'Visual Studio 18 2026' -A x64
 if ($LASTEXITCODE -ne 0) { throw 'CMake configure failed.' }
 & $CMake --build $build --config Debug --parallel 4
 if ($LASTEXITCODE -ne 0) { throw 'CMake compile settings build failed.' }
 $msbuild = Get-TestMSBuild
+$evaluation = & $msbuild (Join-Path $workspace.Library 'Consumer/Evaluate.proj') -getItem:ClCompile /nologo
+if ($LASTEXITCODE -ne 0) { throw 'MSBuild evaluation failed.' }
+$evaluatedItems = (($evaluation -join "`n") | ConvertFrom-Json).Items.ClCompile
+foreach ($item in $evaluatedItems) {
+    if ($item.Identity -in @('Before.cpp', 'After.cpp')) {
+        if ($item.PreprocessorDefinitions -ne 'CONSUMER_ONLY' -or $item.PrecompiledHeader -ne 'Use' -or $item.AdditionalIncludeDirectories -match 'CompileProbe') {
+            throw 'Component settings leaked to consumer sources.'
+        }
+    } elseif ($item.Identity.EndsWith('External.cpp')) {
+        if ($item.PrecompiledHeader -ne 'NotUsing' -or $item.PreprocessorDefinitions -notmatch 'COMPILE_FILE=9') { throw 'File settings are missing.' }
+    } elseif ($item.Identity.EndsWith('Value.cpp')) {
+        if ($item.PrecompiledHeader -ne 'Use' -or $item.PreprocessorDefinitions -notmatch 'COMPILE_BASE=7' -or $item.PreprocessorDefinitions -match 'COMPILE_FILE') {
+            throw 'Common compile settings or inheritance are incorrect.'
+        }
+    }
+}
 foreach ($variant in @('Static', 'Dynamic')) {
     $project = Join-Path $workspace.Library "Projects/MsBuild/CompileProbe/UniversalDevKit.CompileProbe.$variant.vcxproj"
     $intDir = Join-Path $workspace.Root "o/$variant/"
     & $msbuild $project /p:Configuration=Debug /p:Platform=x64 "/p:IntDir=$intDir" /v:minimal /nologo
     if ($LASTEXITCODE -ne 0) { throw "MSBuild compile settings build failed: $variant" }
 }
-Write-Host "PASS: common and per-file compile settings, PCH and object paths. Workspace: $($workspace.Root)"
+Write-Host "PASS: common and per-file compile settings and PCH. Workspace: $($workspace.Root)"

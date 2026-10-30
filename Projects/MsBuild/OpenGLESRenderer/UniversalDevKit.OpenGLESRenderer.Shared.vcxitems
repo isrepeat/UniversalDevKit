@@ -6,11 +6,6 @@
     <ItemsProjectGuid>{364E96CB-9D8A-40B0-8455-6A31A15A36B0}</ItemsProjectGuid>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.props" Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\Includes\OpenGLESRenderer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-  </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\OpenGLESRenderer\UniversalDevKit\OpenGLESRenderer\Config.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
@@ -25,12 +20,17 @@
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\OpenGLESRenderer\OpenGlRenderer.cpp">
+      <__UniversalDevKitComponent>OpenGLESRenderer</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\OpenGLESRenderer\OpenGlRenderer.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\OpenGLESRenderer\StandardShaders.cpp">
+      <__UniversalDevKitComponent>OpenGLESRenderer</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <ObjectFileName>$(IntDir)UniversalDevKit\OpenGLESRenderer\StandardShaders.obj</ObjectFileName>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Update="@(ClCompile-&gt;WithMetadataValue('__UniversalDevKitComponent', 'OpenGLESRenderer'))">
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\Includes\OpenGLESRenderer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemGroup>
   <Target Name="__UniversalDevKitValidateOpenGLESRendererPlatform" BeforeTargets="PrepareForBuild">

@@ -6,11 +6,6 @@
     <ItemsProjectGuid>{AB97876A-F25A-4AAE-BACD-D32C776BB261}</ItemsProjectGuid>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.props" Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\Includes\Diagnostic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-  </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\Logging.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
@@ -22,81 +17,55 @@
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\Logging.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ObjectFileName>$(IntDir)UniversalDevKit\Diagnostic\Logging.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\platform\windows\PlatformBackendWindows.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>platform\windows</__UniversalDevKitFilter>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ObjectFileName>$(IntDir)UniversalDevKit\Diagnostic\platform\windows\PlatformBackendWindows.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\platform\android\PlatformBackendAndroid.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>platform\android</__UniversalDevKitFilter>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ObjectFileName>$(IntDir)UniversalDevKit\Diagnostic\platform\android\PlatformBackendAndroid.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\platform\linux\PlatformBackendLinux.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>platform\linux</__UniversalDevKitFilter>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ObjectFileName>$(IntDir)UniversalDevKit\Diagnostic\platform\linux\PlatformBackendLinux.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\spdlog.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ObjectFileName>$(IntDir)UniversalDevKit\Diagnostic\Repository\ThirdParty\spdlog\src\spdlog.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\stdout_sinks.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ObjectFileName>$(IntDir)UniversalDevKit\Diagnostic\Repository\ThirdParty\spdlog\src\stdout_sinks.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\color_sinks.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ObjectFileName>$(IntDir)UniversalDevKit\Diagnostic\Repository\ThirdParty\spdlog\src\color_sinks.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\file_sinks.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ObjectFileName>$(IntDir)UniversalDevKit\Diagnostic\Repository\ThirdParty\spdlog\src\file_sinks.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\async.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ObjectFileName>$(IntDir)UniversalDevKit\Diagnostic\Repository\ThirdParty\spdlog\src\async.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\cfg.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ObjectFileName>$(IntDir)UniversalDevKit\Diagnostic\Repository\ThirdParty\spdlog\src\cfg.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\bundled_fmtlib_format.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Update="@(ClCompile-&gt;WithMetadataValue('__UniversalDevKitComponent', 'Diagnostic'))">
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\Includes\Diagnostic;$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ObjectFileName>$(IntDir)UniversalDevKit\Diagnostic\Repository\ThirdParty\spdlog\src\bundled_fmtlib_format.obj</ObjectFileName>
+      <PrecompiledHeader Condition="'%(ClCompile.__UniversalDevKitInheritPch)' != 'true'">NotUsing</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <Target Name="__UniversalDevKitValidateDiagnosticStateScope" BeforeTargets="PrepareForBuild">

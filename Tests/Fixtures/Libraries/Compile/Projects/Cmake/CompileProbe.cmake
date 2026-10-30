@@ -1,6 +1,6 @@
 function(udk_extend_CompileProbe target variant outputRoot)
     get_source_file_property(commonSkip "${PROJECT_SOURCE_DIR}/Sources/CompileProbe/Value.cpp" SKIP_PRECOMPILE_HEADERS)
-    get_source_file_property(externalSkip "${PROJECT_SOURCE_DIR}/ThirdParty/CompileProbe/Value.cpp" SKIP_PRECOMPILE_HEADERS)
+    get_source_file_property(externalSkip "${PROJECT_SOURCE_DIR}/ThirdParty/CompileProbe/External.cpp" SKIP_PRECOMPILE_HEADERS)
     if(commonSkip OR NOT externalSkip)
         message(FATAL_ERROR "Incorrect per-file PCH settings")
     endif()

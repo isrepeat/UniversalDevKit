@@ -2,13 +2,13 @@
   "name": "CompileProbe",
   "msbuildGuid": "{1DFD5E41-F82B-4DB7-ABBE-503FE74880FA}",
   "headers": ["ThirdParty/CompileProbe/include/Value.h"],
-  "sources": ["Sources/CompileProbe/Value.cpp", "ThirdParty/CompileProbe/Value.cpp"],
+  "sources": ["Sources/CompileProbe/Value.cpp", "ThirdParty/CompileProbe/External.cpp"],
   "compile": {
     "includeDirectories": ["ThirdParty/CompileProbe/include"],
     "preprocessorDefinitions": ["COMPILE_BASE=7"]
   },
   "sourceSettings": [{
-    "files": ["ThirdParty/CompileProbe/Value.cpp"],
+    "files": ["ThirdParty/CompileProbe/External.cpp"],
     "compile": {
       "includeDirectories": ["ThirdParty/CompileProbe/local"],
       "preprocessorDefinitions": ["COMPILE_FILE=9"],
