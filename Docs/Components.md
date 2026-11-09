@@ -13,7 +13,7 @@
 
 ## Настройки компиляции
 
-Публичный include-корень определяется по заголовкам `Includes/.../UniversalDevKit/...` из описания компонента. Для платформенного AndroidAppPreviewerPluginSdk это `Includes/Windows/AndroidAppPreviewerPluginSdk`; CMake, генератор MSBuild, Connect и генерация Export.h используют тот же корень. C#-обёртка AndroidAppPreviewerPluginSdk.Managed является отдельным проектом и не входит в список C++ файлов компонента.
+Публичный include-корень определяется по заголовкам `Includes/.../UniversalDevKit/...` из описания компонента. Для внешнего компонента с заголовком `<компонент>/Export.h` корнем служит родитель каталога компонента. У AndroidAppPreviewerPluginSdk это `ThirdParty/AndroidAppPreviewer`, а публичное подключение имеет вид `<AndroidAppPreviewerPluginSdk/AndroidAppPreviewerPlugin.h>`. CMake, генератор MSBuild, Connect и генерация Export.h используют тот же корень. При установке внешнего компонента копируются только его заголовки, без каталогов Internal и Managed. C#-обёртка AndroidAppPreviewerPluginSdk.Managed является отдельным проектом и не входит в список C++ файлов компонента.
 
 Собственные и сторонние файлы перечисляются в общих `sources` и `headers`. Все пути отсчитываются от корня репозитория через `/`, без wildcard, макросов и выхода через `..`. Каталог `ThirdParty/` обозначает происхождение кода, отдельного поля `thirdParty` больше нет. Размещение в IDE по-прежнему задаётся через `filters`; заголовки за пределами публичного include-корня компонента не становятся публичными заголовками установки.
 

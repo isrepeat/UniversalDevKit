@@ -939,119 +939,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppPreviewerPluginSd
 		Projects\MsBuild\AndroidAppPreviewerPluginSdk\Build.targets = Projects\MsBuild\AndroidAppPreviewerPluginSdk\Build.targets
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppPreviewer", "AndroidAppPreviewer", "{6022a553-fa31-f394-65a6-d3655eec14ee}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewer\App.xaml = Sources\Windows\AndroidAppPreviewer\App.xaml
-		Sources\Windows\AndroidAppPreviewer\App.xaml.cs = Sources\Windows\AndroidAppPreviewer\App.xaml.cs
-		Sources\Windows\AndroidAppPreviewer\MainWindow.xaml = Sources\Windows\AndroidAppPreviewer\MainWindow.xaml
-		Sources\Windows\AndroidAppPreviewer\MainWindow.xaml.cs = Sources\Windows\AndroidAppPreviewer\MainWindow.xaml.cs
-		Sources\Windows\AndroidAppPreviewer\WindowLayoutController.cs = Sources\Windows\AndroidAppPreviewer\WindowLayoutController.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Animations", "Animations", "{7b6b9c83-3b44-b84e-186e-a16d34ecb2a8}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewer\Animations\GridLengthAnimation.cs = Sources\Windows\AndroidAppPreviewer\Animations\GridLengthAnimation.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Controls", "Controls", "{ef31d0ee-059d-531b-cf31-bf800b1f86a5}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewer\Controls\HorizontalSplitter.cs = Sources\Windows\AndroidAppPreviewer\Controls\HorizontalSplitter.cs
-		Sources\Windows\AndroidAppPreviewer\Controls\PreviewStatusPresenter.cs = Sources\Windows\AndroidAppPreviewer\Controls\PreviewStatusPresenter.cs
-		Sources\Windows\AndroidAppPreviewer\Controls\SvgIconControl.cs = Sources\Windows\AndroidAppPreviewer\Controls\SvgIconControl.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dialogs", "Dialogs", "{a95e6ff5-b501-c9c2-6619-9d47bca98344}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewer\Dialogs\ExternalMarkupConflictDialog.xaml = Sources\Windows\AndroidAppPreviewer\Dialogs\ExternalMarkupConflictDialog.xaml
-		Sources\Windows\AndroidAppPreviewer\Dialogs\ExternalMarkupConflictDialog.xaml.cs = Sources\Windows\AndroidAppPreviewer\Dialogs\ExternalMarkupConflictDialog.xaml.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Editors", "Editors", "{b971905a-8382-39a5-0d90-cba49acc9fdf}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewer\Editors\DocumentEditorController.cs = Sources\Windows\AndroidAppPreviewer\Editors\DocumentEditorController.cs
-		Sources\Windows\AndroidAppPreviewer\Editors\EditorScrollController.cs = Sources\Windows\AndroidAppPreviewer\Editors\EditorScrollController.cs
-		Sources\Windows\AndroidAppPreviewer\Editors\MarkupEditorController.cs = Sources\Windows\AndroidAppPreviewer\Editors\MarkupEditorController.cs
-		Sources\Windows\AndroidAppPreviewer\Editors\MarkupSyntaxHighlighter.cs = Sources\Windows\AndroidAppPreviewer\Editors\MarkupSyntaxHighlighter.cs
-		Sources\Windows\AndroidAppPreviewer\Editors\MarkupValidator.cs = Sources\Windows\AndroidAppPreviewer\Editors\MarkupValidator.cs
-		Sources\Windows\AndroidAppPreviewer\Editors\ScenarioController.cs = Sources\Windows\AndroidAppPreviewer\Editors\ScenarioController.cs
-		Sources\Windows\AndroidAppPreviewer\Editors\XamlCompletionController.cs = Sources\Windows\AndroidAppPreviewer\Editors\XamlCompletionController.cs
-		Sources\Windows\AndroidAppPreviewer\Editors\XmlFoldingMargin.cs = Sources\Windows\AndroidAppPreviewer\Editors\XmlFoldingMargin.cs
-		Sources\Windows\AndroidAppPreviewer\Editors\XmlFoldingStrategy.cs = Sources\Windows\AndroidAppPreviewer\Editors\XmlFoldingStrategy.cs
-		Sources\Windows\AndroidAppPreviewer\Editors\XmlIndentationGuideRenderer.cs = Sources\Windows\AndroidAppPreviewer\Editors\XmlIndentationGuideRenderer.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Input", "Input", "{d57a92d8-2fa7-8957-004c-ab02fbfd4711}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewer\Input\PreviewCursorSet.cs = Sources\Windows\AndroidAppPreviewer\Input\PreviewCursorSet.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Navigation", "Navigation", "{63ee44a6-0b1e-bdbf-234d-8d3429ce4b55}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewer\Navigation\NavigationGraphControl.xaml = Sources\Windows\AndroidAppPreviewer\Navigation\NavigationGraphControl.xaml
-		Sources\Windows\AndroidAppPreviewer\Navigation\NavigationGraphControl.xaml.cs = Sources\Windows\AndroidAppPreviewer\Navigation\NavigationGraphControl.xaml.cs
-		Sources\Windows\AndroidAppPreviewer\Navigation\NavigationGraphController.cs = Sources\Windows\AndroidAppPreviewer\Navigation\NavigationGraphController.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugin", "Plugin", "{8188fa37-8887-2766-dcf3-5b69024f64f8}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewer\Plugin\PluginSessionController.cs = Sources\Windows\AndroidAppPreviewer\Plugin\PluginSessionController.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Rendering", "Rendering", "{d9732f64-6b0d-8867-2bb2-854e96afc121}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewer\Rendering\AnglePreviewRenderer.cs = Sources\Windows\AndroidAppPreviewer\Rendering\AnglePreviewRenderer.cs
-		Sources\Windows\AndroidAppPreviewer\Rendering\NativePreviewSession.cs = Sources\Windows\AndroidAppPreviewer\Rendering\NativePreviewSession.cs
-		Sources\Windows\AndroidAppPreviewer\Rendering\PreviewController.cs = Sources\Windows\AndroidAppPreviewer\Rendering\PreviewController.cs
-		Sources\Windows\AndroidAppPreviewer\Rendering\PreviewDeviceController.cs = Sources\Windows\AndroidAppPreviewer\Rendering\PreviewDeviceController.cs
-		Sources\Windows\AndroidAppPreviewer\Rendering\PreviewViewportController.cs = Sources\Windows\AndroidAppPreviewer\Rendering\PreviewViewportController.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{bec19ee1-b55e-3a76-75ec-362fc825d664}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cursors", "Cursors", "{78967cb1-8b59-e3ae-6d1b-5f2360de4738}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewer\Resources\Cursors\grab.png = Sources\Windows\AndroidAppPreviewer\Resources\Cursors\grab.png
-		Sources\Windows\AndroidAppPreviewer\Resources\Cursors\grabbing.png = Sources\Windows\AndroidAppPreviewer\Resources\Cursors\grabbing.png
-		Sources\Windows\AndroidAppPreviewer\Resources\Cursors\tap.png = Sources\Windows\AndroidAppPreviewer\Resources\Cursors\tap.png
-		Sources\Windows\AndroidAppPreviewer\Resources\Cursors\tap_pressed.png = Sources\Windows\AndroidAppPreviewer\Resources\Cursors\tap_pressed.png
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fonts", "Fonts", "{4a41d238-84cd-7fe3-62d2-76da8078f03d}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewer\Resources\Fonts\Roboto-Black.ttf = Sources\Windows\AndroidAppPreviewer\Resources\Fonts\Roboto-Black.ttf
-		Sources\Windows\AndroidAppPreviewer\Resources\Fonts\Roboto-Bold.ttf = Sources\Windows\AndroidAppPreviewer\Resources\Fonts\Roboto-Bold.ttf
-		Sources\Windows\AndroidAppPreviewer\Resources\Fonts\Roboto-Regular.ttf = Sources\Windows\AndroidAppPreviewer\Resources\Fonts\Roboto-Regular.ttf
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Icons", "Icons", "{6e2ae79c-6d00-3edb-d9cd-36d64d6c81dd}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewer\Resources\Icons\close.svg = Sources\Windows\AndroidAppPreviewer\Resources\Icons\close.svg
-		Sources\Windows\AndroidAppPreviewer\Resources\Icons\expand-all.svg = Sources\Windows\AndroidAppPreviewer\Resources\Icons\expand-all.svg
-		Sources\Windows\AndroidAppPreviewer\Resources\Icons\find-next.svg = Sources\Windows\AndroidAppPreviewer\Resources\Icons\find-next.svg
-		Sources\Windows\AndroidAppPreviewer\Resources\Icons\find-previous.svg = Sources\Windows\AndroidAppPreviewer\Resources\Icons\find-previous.svg
-		Sources\Windows\AndroidAppPreviewer\Resources\Icons\navigate-back.svg = Sources\Windows\AndroidAppPreviewer\Resources\Icons\navigate-back.svg
-		Sources\Windows\AndroidAppPreviewer\Resources\Icons\navigate-forward.svg = Sources\Windows\AndroidAppPreviewer\Resources\Icons\navigate-forward.svg
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{9443b7d9-db7e-7b8c-db98-eb6b80e0c07e}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewer\Settings\PreviewerSettings.cs = Sources\Windows\AndroidAppPreviewer\Settings\PreviewerSettings.cs
-		Sources\Windows\AndroidAppPreviewer\Settings\SettingsController.cs = Sources\Windows\AndroidAppPreviewer\Settings\SettingsController.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Theme", "Theme", "{8ad40061-fc8d-f416-28c9-48c7d02c8bec}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewer\Theme\PreviewBrushes.cs = Sources\Windows\AndroidAppPreviewer\Theme\PreviewBrushes.cs
-		Sources\Windows\AndroidAppPreviewer\Theme\WindowTheme.cs = Sources\Windows\AndroidAppPreviewer\Theme\WindowTheme.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workspace", "Workspace", "{7e45b021-beaf-98a2-9fbe-72eff9a79178}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewer\Workspace\FolderPickerController.cs = Sources\Windows\AndroidAppPreviewer\Workspace\FolderPickerController.cs
-		Sources\Windows\AndroidAppPreviewer\Workspace\PreviewFileWatchController.cs = Sources\Windows\AndroidAppPreviewer\Workspace\PreviewFileWatchController.cs
-		Sources\Windows\AndroidAppPreviewer\Workspace\WorkspaceController.cs = Sources\Windows\AndroidAppPreviewer\Workspace\WorkspaceController.cs
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.AndroidAppPreviewerPluginSdk.Shared", "Projects\MsBuild\AndroidAppPreviewerPluginSdk\UniversalDevKit.AndroidAppPreviewerPluginSdk.Shared.vcxitems", "{7E33F806-A888-45B2-B862-A61603F21C75}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.AndroidAppPreviewerPluginSdk.Static", "Projects\MsBuild\AndroidAppPreviewerPluginSdk\UniversalDevKit.AndroidAppPreviewerPluginSdk.Static.vcxproj", "{E9E58BF3-9603-0E64-8C6F-036536B11EC3}"
@@ -1059,6 +946,190 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.AndroidAppPreviewerPluginSdk.Dynamic", "Projects\MsBuild\AndroidAppPreviewerPluginSdk\UniversalDevKit.AndroidAppPreviewerPluginSdk.Dynamic.vcxproj", "{A2A668D2-8B2C-CA60-56B0-BAC51F1D8242}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppPreviewerPluginSdk.Managed", "AndroidAppPreviewerPluginSdk.Managed", "{492E64B1-4A25-442B-AD02-21DF137A3CD9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", "{9DB2FB9B-4F23-F563-7FB9-1E1C7BA6191F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppPreviewer", "AndroidAppPreviewer", "{F20A534C-2135-3585-A122-26BBBDC1E6FC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppPreviewer", "AndroidAppPreviewer", "{232BE0F8-F61D-62FB-CE43-DD69271185A5}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\App.xaml = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\App.xaml
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\App.xaml.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\App.xaml.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\MainWindow.xaml = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\MainWindow.xaml
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\MainWindow.xaml.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\MainWindow.xaml.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\WindowLayoutController.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\WindowLayoutController.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Animations", "Animations", "{FA1AAC4D-2934-B5CE-0C14-F7538DC911F7}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Animations\GridLengthAnimation.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Animations\GridLengthAnimation.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Controls", "Controls", "{A5C5D984-115A-73FC-2A26-879D9C0E7B19}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Controls\HorizontalSplitter.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Controls\HorizontalSplitter.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Controls\PreviewStatusPresenter.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Controls\PreviewStatusPresenter.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Controls\SvgIconControl.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Controls\SvgIconControl.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dialogs", "Dialogs", "{5C67610D-3CE6-3EAC-709C-E8FA678D321C}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Dialogs\ExternalMarkupConflictDialog.xaml = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Dialogs\ExternalMarkupConflictDialog.xaml
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Dialogs\ExternalMarkupConflictDialog.xaml.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Dialogs\ExternalMarkupConflictDialog.xaml.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Editors", "Editors", "{FA570F26-B714-F624-B483-A18D1BFF390E}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\DocumentEditorController.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\DocumentEditorController.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\EditorScrollController.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\EditorScrollController.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\MarkupEditorController.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\MarkupEditorController.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\MarkupSyntaxHighlighter.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\MarkupSyntaxHighlighter.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\MarkupValidator.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\MarkupValidator.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\ScenarioController.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\ScenarioController.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\XamlCompletionController.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\XamlCompletionController.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\XmlFoldingMargin.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\XmlFoldingMargin.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\XmlFoldingStrategy.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\XmlFoldingStrategy.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\XmlIndentationGuideRenderer.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Editors\XmlIndentationGuideRenderer.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Input", "Input", "{139F4387-E421-D274-5E58-729FF63AB40A}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Input\PreviewCursorSet.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Input\PreviewCursorSet.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Navigation", "Navigation", "{69787EA4-6391-85A5-3E5E-A42750D7EE65}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Navigation\NavigationGraphControl.xaml = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Navigation\NavigationGraphControl.xaml
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Navigation\NavigationGraphControl.xaml.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Navigation\NavigationGraphControl.xaml.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Navigation\NavigationGraphController.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Navigation\NavigationGraphController.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugin", "Plugin", "{C6BE5F02-6EA6-9366-17B0-1449CA197D9A}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Plugin\PluginSessionController.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Plugin\PluginSessionController.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Rendering", "Rendering", "{BF653F67-661C-9746-424D-3342F324371F}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Rendering\AnglePreviewRenderer.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Rendering\AnglePreviewRenderer.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Rendering\NativePreviewSession.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Rendering\NativePreviewSession.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Rendering\PreviewController.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Rendering\PreviewController.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Rendering\PreviewDeviceController.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Rendering\PreviewDeviceController.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Rendering\PreviewViewportController.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Rendering\PreviewViewportController.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{B701575F-FB81-0CDE-5295-0F227EDEC32F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cursors", "Cursors", "{4329A8F8-5327-AC73-6051-E260C0FC3E7D}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Cursors\grab.png = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Cursors\grab.png
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Cursors\grabbing.png = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Cursors\grabbing.png
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Cursors\tap_pressed.png = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Cursors\tap_pressed.png
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Cursors\tap.png = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Cursors\tap.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Fonts", "Fonts", "{4448B080-3637-9F12-8B70-39BE666373ED}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Fonts\Roboto-Black.ttf = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Fonts\Roboto-Black.ttf
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Fonts\Roboto-Bold.ttf = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Fonts\Roboto-Bold.ttf
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Fonts\Roboto-Regular.ttf = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Fonts\Roboto-Regular.ttf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Icons", "Icons", "{FC7770DE-9793-5C0D-59F0-BC2801A797C3}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Icons\close.svg = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Icons\close.svg
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Icons\expand-all.svg = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Icons\expand-all.svg
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Icons\find-next.svg = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Icons\find-next.svg
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Icons\find-previous.svg = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Icons\find-previous.svg
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Icons\navigate-back.svg = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Icons\navigate-back.svg
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Icons\navigate-forward.svg = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Resources\Icons\navigate-forward.svg
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{53B5E041-9862-52B2-FBD6-500033C86634}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Settings\PreviewerSettings.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Settings\PreviewerSettings.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Settings\SettingsController.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Settings\SettingsController.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Theme", "Theme", "{FC086AB8-838B-D8A1-251E-CB24DF92B2C7}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Theme\PreviewBrushes.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Theme\PreviewBrushes.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Theme\WindowTheme.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Theme\WindowTheme.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workspace", "Workspace", "{EBF5417C-7A28-22B5-616D-A6C8D388090F}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Workspace\FolderPickerController.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Workspace\FolderPickerController.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Workspace\PreviewFileWatchController.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Workspace\PreviewFileWatchController.cs
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Workspace\WorkspaceController.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewer\Workspace\WorkspaceController.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppPreviewerPluginSdk", "AndroidAppPreviewerPluginSdk", "{61A3D0C6-FA0E-2D81-44BC-8BB4F2ED55F4}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\AndroidAppPreviewerPlugin.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\AndroidAppPreviewerPlugin.h
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Export.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Export.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Internal", "Internal", "{B4D9434F-EECB-E270-1146-F7A4B1B97173}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\PreviewPluginExports.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\PreviewPluginExports.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Abi", "Abi", "{5C96D5B2-D085-20BA-BE4E-977FC0997B34}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\DiagnosticAbi.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\DiagnosticAbi.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\DiagnosticAbi.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\DiagnosticAbi.h
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\ElementAbi.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\ElementAbi.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\ElementAbi.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\ElementAbi.h
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\InteractionAbi.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\InteractionAbi.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\InteractionAbi.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\InteractionAbi.h
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\MetadataAbi.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\MetadataAbi.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\MetadataAbi.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\MetadataAbi.h
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\PreviewPluginAbi.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\PreviewPluginAbi.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\PreviewPluginAbi.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\PreviewPluginAbi.h
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\RenderingAbi.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\RenderingAbi.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\RenderingAbi.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\RenderingAbi.h
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\SessionAbi.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\SessionAbi.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\SessionAbi.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\SessionAbi.h
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\XamlCompletionAbi.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\XamlCompletionAbi.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\XamlCompletionAbi.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\XamlCompletionAbi.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bridge", "Bridge", "{A175C3FC-6F1D-A801-7BFB-3080D5057E24}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\Diagnostic.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\Diagnostic.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\Diagnostic.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\Diagnostic.h
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\ElementTree.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\ElementTree.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\ElementTree.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\ElementTree.h
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\PreviewPluginSdkTypes.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\PreviewPluginSdkTypes.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\PreviewPluginSdkTypes.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\PreviewPluginSdkTypes.h
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\TextBuffer.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\TextBuffer.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\TextBuffer.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\TextBuffer.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Rendering", "Rendering", "{5CCEA29F-D63B-DFF8-C6F7-82D7566037B8}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Rendering\AngleRenderSurface.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Rendering\AngleRenderSurface.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Rendering\AngleRenderSurface.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Rendering\AngleRenderSurface.h
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Rendering\RecordingBackend.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Rendering\RecordingBackend.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Rendering\RecordingBackend.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Rendering\RecordingBackend.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppPreviewerPluginSdk.Managed", "AndroidAppPreviewerPluginSdk.Managed", "{8CE4DCE9-EB88-49FE-04D3-5A6FD28EC76A}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk.Managed\NativeRuntime.cs = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk.Managed\NativeRuntime.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Session", "Session", "{C09F135A-54F5-B5F7-974E-16BFEE622737}"
+	ProjectSection(SolutionItems) = preProject
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\ApplicationPreviewSession.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\ApplicationPreviewSession.h
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PluginDefinition.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PluginDefinition.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PluginDefinition.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PluginDefinition.h
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PreviewNavigationController.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PreviewNavigationController.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PreviewNavigationController.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PreviewNavigationController.h
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PreviewSessionBase.cpp = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PreviewSessionBase.cpp
+		ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PreviewSessionBase.h = ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PreviewSessionBase.h
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1111,6 +1182,30 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{F20A534C-2135-3585-A122-26BBBDC1E6FC} = {9DB2FB9B-4F23-F563-7FB9-1E1C7BA6191F}
+		{232BE0F8-F61D-62FB-CE43-DD69271185A5} = {F20A534C-2135-3585-A122-26BBBDC1E6FC}
+		{FA1AAC4D-2934-B5CE-0C14-F7538DC911F7} = {232BE0F8-F61D-62FB-CE43-DD69271185A5}
+		{A5C5D984-115A-73FC-2A26-879D9C0E7B19} = {232BE0F8-F61D-62FB-CE43-DD69271185A5}
+		{5C67610D-3CE6-3EAC-709C-E8FA678D321C} = {232BE0F8-F61D-62FB-CE43-DD69271185A5}
+		{FA570F26-B714-F624-B483-A18D1BFF390E} = {232BE0F8-F61D-62FB-CE43-DD69271185A5}
+		{139F4387-E421-D274-5E58-729FF63AB40A} = {232BE0F8-F61D-62FB-CE43-DD69271185A5}
+		{69787EA4-6391-85A5-3E5E-A42750D7EE65} = {232BE0F8-F61D-62FB-CE43-DD69271185A5}
+		{C6BE5F02-6EA6-9366-17B0-1449CA197D9A} = {232BE0F8-F61D-62FB-CE43-DD69271185A5}
+		{BF653F67-661C-9746-424D-3342F324371F} = {232BE0F8-F61D-62FB-CE43-DD69271185A5}
+		{B701575F-FB81-0CDE-5295-0F227EDEC32F} = {232BE0F8-F61D-62FB-CE43-DD69271185A5}
+		{4329A8F8-5327-AC73-6051-E260C0FC3E7D} = {B701575F-FB81-0CDE-5295-0F227EDEC32F}
+		{4448B080-3637-9F12-8B70-39BE666373ED} = {B701575F-FB81-0CDE-5295-0F227EDEC32F}
+		{FC7770DE-9793-5C0D-59F0-BC2801A797C3} = {B701575F-FB81-0CDE-5295-0F227EDEC32F}
+		{53B5E041-9862-52B2-FBD6-500033C86634} = {232BE0F8-F61D-62FB-CE43-DD69271185A5}
+		{FC086AB8-838B-D8A1-251E-CB24DF92B2C7} = {232BE0F8-F61D-62FB-CE43-DD69271185A5}
+		{EBF5417C-7A28-22B5-616D-A6C8D388090F} = {232BE0F8-F61D-62FB-CE43-DD69271185A5}
+		{61A3D0C6-FA0E-2D81-44BC-8BB4F2ED55F4} = {F20A534C-2135-3585-A122-26BBBDC1E6FC}
+		{B4D9434F-EECB-E270-1146-F7A4B1B97173} = {61A3D0C6-FA0E-2D81-44BC-8BB4F2ED55F4}
+		{5C96D5B2-D085-20BA-BE4E-977FC0997B34} = {B4D9434F-EECB-E270-1146-F7A4B1B97173}
+		{A175C3FC-6F1D-A801-7BFB-3080D5057E24} = {B4D9434F-EECB-E270-1146-F7A4B1B97173}
+		{5CCEA29F-D63B-DFF8-C6F7-82D7566037B8} = {B4D9434F-EECB-E270-1146-F7A4B1B97173}
+		{8CE4DCE9-EB88-49FE-04D3-5A6FD28EC76A} = {F20A534C-2135-3585-A122-26BBBDC1E6FC}
+		{C09F135A-54F5-B5F7-974E-16BFEE622737} = {61A3D0C6-FA0E-2D81-44BC-8BB4F2ED55F4}
 		{492E64B1-4A25-442B-AD02-21DF137A3CD9} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{8FCB661C-DF12-4466-9D58-8F159EED456D} = {492E64B1-4A25-442B-AD02-21DF137A3CD9}
 		{A2A668D2-8B2C-CA60-56B0-BAC51F1D8242} = {1b7855dd-16fa-560a-e464-295b1665ded0}
@@ -1127,22 +1222,6 @@ Global
 		{9af3a288-e6e9-e99d-6061-a6fade40be87} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{B0EEAABC-66D1-4CB2-8487-42ADE5A9DA60} = {9af3a288-e6e9-e99d-6061-a6fade40be87}
 		{1b7855dd-16fa-560a-e464-295b1665ded0} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
-		{6022a553-fa31-f394-65a6-d3655eec14ee} = {91C1626E-08D0-D15F-E92C-49D0A474AFDC}
-		{7b6b9c83-3b44-b84e-186e-a16d34ecb2a8} = {6022a553-fa31-f394-65a6-d3655eec14ee}
-		{ef31d0ee-059d-531b-cf31-bf800b1f86a5} = {6022a553-fa31-f394-65a6-d3655eec14ee}
-		{a95e6ff5-b501-c9c2-6619-9d47bca98344} = {6022a553-fa31-f394-65a6-d3655eec14ee}
-		{b971905a-8382-39a5-0d90-cba49acc9fdf} = {6022a553-fa31-f394-65a6-d3655eec14ee}
-		{d57a92d8-2fa7-8957-004c-ab02fbfd4711} = {6022a553-fa31-f394-65a6-d3655eec14ee}
-		{63ee44a6-0b1e-bdbf-234d-8d3429ce4b55} = {6022a553-fa31-f394-65a6-d3655eec14ee}
-		{8188fa37-8887-2766-dcf3-5b69024f64f8} = {6022a553-fa31-f394-65a6-d3655eec14ee}
-		{d9732f64-6b0d-8867-2bb2-854e96afc121} = {6022a553-fa31-f394-65a6-d3655eec14ee}
-		{bec19ee1-b55e-3a76-75ec-362fc825d664} = {6022a553-fa31-f394-65a6-d3655eec14ee}
-		{78967cb1-8b59-e3ae-6d1b-5f2360de4738} = {bec19ee1-b55e-3a76-75ec-362fc825d664}
-		{4a41d238-84cd-7fe3-62d2-76da8078f03d} = {bec19ee1-b55e-3a76-75ec-362fc825d664}
-		{6e2ae79c-6d00-3edb-d9cd-36d64d6c81dd} = {bec19ee1-b55e-3a76-75ec-362fc825d664}
-		{9443b7d9-db7e-7b8c-db98-eb6b80e0c07e} = {6022a553-fa31-f394-65a6-d3655eec14ee}
-		{8ad40061-fc8d-f416-28c9-48c7d02c8bec} = {6022a553-fa31-f394-65a6-d3655eec14ee}
-		{7e45b021-beaf-98a2-9fbe-72eff9a79178} = {6022a553-fa31-f394-65a6-d3655eec14ee}
 		{013748EA-6701-12BC-3730-1FFD5A485470} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
 		{013C7FA6-68C2-D8E8-8226-C5A1F4015813} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
 		{03C0B81C-6B57-4791-B5F3-9D2D48CE2544} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}

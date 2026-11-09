@@ -13,7 +13,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <EnableDefaultItems>false</EnableDefaultItems>
     <OutputPath>../../../!artifacts/projects/windows/msbuild/AndroidAppPreviewer/bin/$(Configuration)/</OutputPath>
-    <PreviewerSource>../../../Sources/Windows/AndroidAppPreviewer</PreviewerSource>
+    <PreviewerSource>../../../ThirdParty/AndroidAppPreviewer/AndroidAppPreviewer</PreviewerSource>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../AndroidAppPreviewerPluginSdk.Managed/AndroidAppPreviewerPluginSdk.Managed.csproj" />

@@ -9,115 +9,115 @@
     <Filter Include="Session" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\DiagnosticAbi.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\DiagnosticAbi.cpp">
       <Filter>Internal\Abi</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\ElementAbi.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\ElementAbi.cpp">
       <Filter>Internal\Abi</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\InteractionAbi.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\InteractionAbi.cpp">
       <Filter>Internal\Abi</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\MetadataAbi.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\MetadataAbi.cpp">
       <Filter>Internal\Abi</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\PreviewPluginAbi.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\PreviewPluginAbi.cpp">
       <Filter>Internal\Abi</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\RenderingAbi.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\RenderingAbi.cpp">
       <Filter>Internal\Abi</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\SessionAbi.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\SessionAbi.cpp">
       <Filter>Internal\Abi</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\XamlCompletionAbi.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\XamlCompletionAbi.cpp">
       <Filter>Internal\Abi</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\Diagnostic.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\Diagnostic.cpp">
       <Filter>Internal\Bridge</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\ElementTree.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\ElementTree.cpp">
       <Filter>Internal\Bridge</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\PreviewPluginSdkTypes.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\PreviewPluginSdkTypes.cpp">
       <Filter>Internal\Bridge</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\TextBuffer.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\TextBuffer.cpp">
       <Filter>Internal\Bridge</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\PreviewPluginExports.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\PreviewPluginExports.cpp">
       <Filter>Internal</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Rendering\AngleRenderSurface.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Rendering\AngleRenderSurface.cpp">
       <Filter>Internal\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Rendering\RecordingBackend.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Rendering\RecordingBackend.cpp">
       <Filter>Internal\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Session\PluginDefinition.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PluginDefinition.cpp">
       <Filter>Session</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Session\PreviewNavigationController.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PreviewNavigationController.cpp">
       <Filter>Session</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Session\PreviewSessionBase.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PreviewSessionBase.cpp">
       <Filter>Session</Filter>
     </ClCompile>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Windows\AndroidAppPreviewerPluginSdk\UniversalDevKit\Windows\AndroidAppPreviewerPluginSdk\AndroidAppPreviewerPlugin.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Windows\AndroidAppPreviewerPluginSdk\UniversalDevKit\Windows\AndroidAppPreviewerPluginSdk\Export.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Windows\AndroidAppPreviewerPluginSdk\UniversalDevKit\Windows\AndroidAppPreviewerPluginSdk\Session\ApplicationPreviewSession.h">
-      <Filter>Session</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Windows\AndroidAppPreviewerPluginSdk\UniversalDevKit\Windows\AndroidAppPreviewerPluginSdk\Session\PluginDefinition.h">
-      <Filter>Session</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Windows\AndroidAppPreviewerPluginSdk\UniversalDevKit\Windows\AndroidAppPreviewerPluginSdk\Session\PreviewNavigationController.h">
-      <Filter>Session</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Windows\AndroidAppPreviewerPluginSdk\UniversalDevKit\Windows\AndroidAppPreviewerPluginSdk\Session\PreviewSessionBase.h">
-      <Filter>Session</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\DiagnosticAbi.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\AndroidAppPreviewerPlugin.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Export.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\DiagnosticAbi.h">
       <Filter>Internal\Abi</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\ElementAbi.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\ElementAbi.h">
       <Filter>Internal\Abi</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\InteractionAbi.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\InteractionAbi.h">
       <Filter>Internal\Abi</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\MetadataAbi.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\MetadataAbi.h">
       <Filter>Internal\Abi</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\PreviewPluginAbi.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\PreviewPluginAbi.h">
       <Filter>Internal\Abi</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\RenderingAbi.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\RenderingAbi.h">
       <Filter>Internal\Abi</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\SessionAbi.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\SessionAbi.h">
       <Filter>Internal\Abi</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\XamlCompletionAbi.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Abi\XamlCompletionAbi.h">
       <Filter>Internal\Abi</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\Diagnostic.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\Diagnostic.h">
       <Filter>Internal\Bridge</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\ElementTree.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\ElementTree.h">
       <Filter>Internal\Bridge</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\PreviewPluginSdkTypes.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\PreviewPluginSdkTypes.h">
       <Filter>Internal\Bridge</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\TextBuffer.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Bridge\TextBuffer.h">
       <Filter>Internal\Bridge</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Rendering\AngleRenderSurface.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Rendering\AngleRenderSurface.h">
       <Filter>Internal\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Rendering\RecordingBackend.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Internal\Rendering\RecordingBackend.h">
       <Filter>Internal\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\ApplicationPreviewSession.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PluginDefinition.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PreviewNavigationController.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\AndroidAppPreviewer\AndroidAppPreviewerPluginSdk\Session\PreviewSessionBase.h">
+      <Filter>Session</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 #pragma once
-#include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Session/PreviewSessionBase.h>
+#include <AndroidAppPreviewerPluginSdk/Session/PreviewSessionBase.h>
 
 #include <stdexcept>
 

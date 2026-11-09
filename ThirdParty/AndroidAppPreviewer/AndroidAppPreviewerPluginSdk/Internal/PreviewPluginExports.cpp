@@ -1,4 +1,4 @@
-#include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/AndroidAppPreviewerPlugin.h>
+#include <AndroidAppPreviewerPluginSdk/AndroidAppPreviewerPlugin.h>
 
 #include "Internal/Abi/XamlCompletionAbi.h"
 #include "Internal/Abi/InteractionAbi.h"

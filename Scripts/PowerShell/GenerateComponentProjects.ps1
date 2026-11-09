@@ -249,7 +249,7 @@ foreach ($includePath in $manifest.includes) {
     $componentIncludeRoot = Get-UdkComponentIncludeRoot $component
     $binaryComponentRegistry[$name] = [pscustomobject]@{
         IncludeRoot = $componentIncludeRoot
-        ExportHeader = $componentIncludeRoot + '/UniversalDevKit/' + $componentIncludeRoot.Substring(9) + '/Export.h'
+        ExportHeader = if ($componentIncludeRoot.StartsWith('ThirdParty/', [StringComparison]::Ordinal)) { $componentIncludeRoot + '/' + $name + '/Export.h' } else { $componentIncludeRoot + '/UniversalDevKit/' + $componentIncludeRoot.Substring($componentIncludeRoot.LastIndexOf('Includes/', [StringComparison]::Ordinal) + 9) + '/Export.h' }
         SharedGuid = $guid
         Kind = $kind
         StateScope = $component.stateScope

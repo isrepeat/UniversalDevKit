@@ -13,7 +13,7 @@
     <OutputPath>../../../!artifacts/projects/windows/msbuild/AndroidAppPreviewerPluginSdk.Managed/bin/$(Configuration)/</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="../../../Sources/Windows/AndroidAppPreviewerPluginSdk/Managed/*.cs" />
+    <Compile Include="../../../ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk.Managed/*.cs" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

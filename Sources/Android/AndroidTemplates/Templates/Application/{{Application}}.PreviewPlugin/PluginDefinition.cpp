@@ -1,4 +1,4 @@
-#include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Session/PluginDefinition.h>
+#include <AndroidAppPreviewerPluginSdk/Session/PluginDefinition.h>
 
 #include "./Session/PreviewSession.h"
 

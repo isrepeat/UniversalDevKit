@@ -1,6 +1,6 @@
 # AndroidAppPreviewer
 
-Windows WPF-превьювер приложений из AndroidTemplates. Исходники: Sources/Windows/AndroidAppPreviewer; проект: Projects/MsBuild/AndroidAppPreviewer/AndroidAppPreviewer.csproj. Поддерживает редактирование XAML, hot reload, инспекцию элементов, граф навигации и сценарии.
+Windows WPF-превьювер приложений из AndroidTemplates. Исходники: ThirdParty/AndroidAppPreviewer/AndroidAppPreviewer; проект: Projects/MsBuild/AndroidAppPreviewer/AndroidAppPreviewer.csproj. Поддерживает редактирование XAML, hot reload, инспекцию элементов, граф навигации и сценарии.
 
 Сборка и упаковка: `Scripts/Packages/Windows/Pack.AndroidAppPreviewer.cmd`. NuGet UniversalDevKit.AndroidAppPreviewer использует корневую Version.json и содержит self-contained приложение в tools/win-x64 вместе со шрифтами и курсорами. Native SDK собирается отдельно; managed ABI подключён через ProjectReference из того же репозитория.
 

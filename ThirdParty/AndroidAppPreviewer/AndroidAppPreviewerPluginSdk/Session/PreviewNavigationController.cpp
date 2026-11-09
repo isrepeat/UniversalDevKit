@@ -1,6 +1,6 @@
-#include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Session/PreviewNavigationController.h>
+#include <AndroidAppPreviewerPluginSdk/Session/PreviewNavigationController.h>
 
-#include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Session/PreviewSessionBase.h>
+#include <AndroidAppPreviewerPluginSdk/Session/PreviewSessionBase.h>
 
 #include <set>
 

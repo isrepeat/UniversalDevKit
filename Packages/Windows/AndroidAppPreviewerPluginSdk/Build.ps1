@@ -39,10 +39,10 @@ try {
     $componentPath = Join-Path $root 'Projects/Components/AndroidAppPreviewerPluginSdk.json'
     $component = Get-Content -LiteralPath $componentPath -Raw | ConvertFrom-Json
     foreach ($file in @($component.headers) + @($component.sources)) {
-        $relative = if ($file.StartsWith('Includes/Windows/AndroidAppPreviewerPluginSdk/')) {
-            'include/' + $file.Substring('Includes/Windows/AndroidAppPreviewerPluginSdk/'.Length)
-        } elseif ($file.StartsWith('Sources/Windows/AndroidAppPreviewerPluginSdk/')) {
-            'src/' + $file.Substring('Sources/Windows/AndroidAppPreviewerPluginSdk/'.Length)
+        $relative = if ($file -in $component.headers -and -not $file.Contains('/Internal/')) {
+            'include/' + $file.Substring('ThirdParty/AndroidAppPreviewer/'.Length)
+        } elseif ($file.StartsWith('ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/')) {
+            'src/' + $file.Substring('ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/'.Length)
         } else { throw "Unexpected preview SDK component file: $file" }
         $destination = Join-Path $payload $relative
         [void][IO.Directory]::CreateDirectory((Split-Path $destination))

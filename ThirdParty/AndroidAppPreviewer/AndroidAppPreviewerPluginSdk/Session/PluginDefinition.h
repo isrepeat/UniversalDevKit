@@ -1,6 +1,6 @@
 #pragma once
 #include "../Export.h"
-#include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Session/PreviewSessionBase.h>
+#include <AndroidAppPreviewerPluginSdk/Session/PreviewSessionBase.h>
 
 #include <memory>
 #include <string>

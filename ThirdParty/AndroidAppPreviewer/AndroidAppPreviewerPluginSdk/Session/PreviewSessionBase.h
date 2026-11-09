@@ -1,7 +1,7 @@
 #pragma once
 #include "../Export.h"
 #include <UniversalDevKit/XamlRuntime/RenderEngine.h>
-#include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Session/PreviewNavigationController.h>
+#include <AndroidAppPreviewerPluginSdk/Session/PreviewNavigationController.h>
 
 #include <string_view>
 #include <memory>

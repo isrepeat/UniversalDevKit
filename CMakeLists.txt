@@ -105,7 +105,12 @@ install(TARGETS universaldevkit_headers ${exportedComponentTargets} EXPORT Unive
 )
 install(DIRECTORY "Includes/Core/" DESTINATION "include")
 foreach(componentName IN LISTS availablePackageComponents)
-    install(DIRECTORY "${componentIncludeRoot_${componentName}}/" DESTINATION "include")
+    if(componentIncludeRoot_${componentName} MATCHES "^ThirdParty/")
+        install(DIRECTORY "${componentIncludeRoot_${componentName}}/${componentName}" DESTINATION "include"
+            FILES_MATCHING PATTERN "*.h" PATTERN "Internal" EXCLUDE PATTERN "Managed" EXCLUDE)
+    else()
+        install(DIRECTORY "${componentIncludeRoot_${componentName}}/" DESTINATION "include")
+    endif()
 endforeach()
 # Namespace + EXPORT_NAME дают, например, UniversalDevKit::XamlRuntime.Static.
 install(EXPORT UniversalDevKitTargets

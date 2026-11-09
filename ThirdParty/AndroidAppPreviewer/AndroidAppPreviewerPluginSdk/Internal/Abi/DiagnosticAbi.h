@@ -1,5 +1,5 @@
 #pragma once
-#include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/AndroidAppPreviewerPlugin.h>
+#include <AndroidAppPreviewerPluginSdk/AndroidAppPreviewerPlugin.h>
 
 namespace universaldevkit::windows::androidapppreviewerpluginsdk::internal::abi {
     using namespace universaldevkit::windows::androidapppreviewerpluginsdk;

@@ -25,50 +25,50 @@
   ],
   "msbuildGuid": "{7E33F806-A888-45B2-B862-A61603F21C75}",
   "headers": [
-    "Includes/Windows/AndroidAppPreviewerPluginSdk/UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Export.h",
-    "Includes/Windows/AndroidAppPreviewerPluginSdk/UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/AndroidAppPreviewerPlugin.h",
-    "Includes/Windows/AndroidAppPreviewerPluginSdk/UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Session/ApplicationPreviewSession.h",
-    "Includes/Windows/AndroidAppPreviewerPluginSdk/UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Session/PluginDefinition.h",
-    "Includes/Windows/AndroidAppPreviewerPluginSdk/UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Session/PreviewNavigationController.h",
-    "Includes/Windows/AndroidAppPreviewerPluginSdk/UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Session/PreviewSessionBase.h",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Abi/DiagnosticAbi.h",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Abi/ElementAbi.h",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Abi/InteractionAbi.h",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Abi/MetadataAbi.h",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Abi/PreviewPluginAbi.h",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Abi/RenderingAbi.h",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Abi/SessionAbi.h",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Abi/XamlCompletionAbi.h",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Bridge/Diagnostic.h",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Bridge/ElementTree.h",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Bridge/PreviewPluginSdkTypes.h",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Bridge/TextBuffer.h",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Rendering/AngleRenderSurface.h",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Rendering/RecordingBackend.h"
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Export.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/AndroidAppPreviewerPlugin.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Session/ApplicationPreviewSession.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Session/PluginDefinition.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Session/PreviewNavigationController.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Session/PreviewSessionBase.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Abi/DiagnosticAbi.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Abi/ElementAbi.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Abi/InteractionAbi.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Abi/MetadataAbi.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Abi/PreviewPluginAbi.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Abi/RenderingAbi.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Abi/SessionAbi.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Abi/XamlCompletionAbi.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Bridge/Diagnostic.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Bridge/ElementTree.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Bridge/PreviewPluginSdkTypes.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Bridge/TextBuffer.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Rendering/AngleRenderSurface.h",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Rendering/RecordingBackend.h"
   ],
   "sources": [
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Abi/DiagnosticAbi.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Abi/ElementAbi.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Abi/InteractionAbi.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Abi/MetadataAbi.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Abi/PreviewPluginAbi.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Abi/RenderingAbi.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Abi/SessionAbi.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Abi/XamlCompletionAbi.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Bridge/Diagnostic.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Bridge/ElementTree.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Bridge/PreviewPluginSdkTypes.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Bridge/TextBuffer.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/PreviewPluginExports.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Rendering/AngleRenderSurface.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Internal/Rendering/RecordingBackend.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Session/PluginDefinition.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Session/PreviewNavigationController.cpp",
-    "Sources/Windows/AndroidAppPreviewerPluginSdk/Session/PreviewSessionBase.cpp"
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Abi/DiagnosticAbi.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Abi/ElementAbi.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Abi/InteractionAbi.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Abi/MetadataAbi.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Abi/PreviewPluginAbi.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Abi/RenderingAbi.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Abi/SessionAbi.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Abi/XamlCompletionAbi.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Bridge/Diagnostic.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Bridge/ElementTree.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Bridge/PreviewPluginSdkTypes.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Bridge/TextBuffer.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/PreviewPluginExports.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Rendering/AngleRenderSurface.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Internal/Rendering/RecordingBackend.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Session/PluginDefinition.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Session/PreviewNavigationController.cpp",
+    "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk/Session/PreviewSessionBase.cpp"
   ],
   "compile": {
     "includeDirectories": [
-      "Sources/Windows/AndroidAppPreviewerPluginSdk"
+      "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk"
     ],
     "preprocessorDefinitions": [
       "NOMINMAX",
@@ -82,11 +82,7 @@
   "filters": {
     "roots": [
       {
-        "path": "Includes/Windows/AndroidAppPreviewerPluginSdk/UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk",
-        "filter": ""
-      },
-      {
-        "path": "Sources/Windows/AndroidAppPreviewerPluginSdk",
+        "path": "ThirdParty/AndroidAppPreviewer/AndroidAppPreviewerPluginSdk",
         "filter": ""
       }
     ],

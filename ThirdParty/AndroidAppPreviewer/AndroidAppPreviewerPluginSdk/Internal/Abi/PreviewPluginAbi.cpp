@@ -1,6 +1,6 @@
 #include "Internal/Abi/PreviewPluginAbi.h"
 
-#include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Session/PluginDefinition.h>
+#include <AndroidAppPreviewerPluginSdk/Session/PluginDefinition.h>
 
 #include "Internal/Bridge/Diagnostic.h"
 #include "Internal/Bridge/TextBuffer.h"

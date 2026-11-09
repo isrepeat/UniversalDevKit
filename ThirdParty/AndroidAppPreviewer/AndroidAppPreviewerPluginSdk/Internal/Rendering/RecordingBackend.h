@@ -1,6 +1,6 @@
 #pragma once
 #include <UniversalDevKit/XamlRuntime/RenderEngine.h>
-#include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/AndroidAppPreviewerPlugin.h>
+#include <AndroidAppPreviewerPluginSdk/AndroidAppPreviewerPlugin.h>
 
 #include <initializer_list>
 #include <string_view>

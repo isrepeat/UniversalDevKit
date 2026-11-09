@@ -1,6 +1,6 @@
 #include <Windows.h>
 
-#include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/AndroidAppPreviewerPlugin.h>
+#include <AndroidAppPreviewerPluginSdk/AndroidAppPreviewerPlugin.h>
 
 #include <stdexcept>
 #include <iostream>

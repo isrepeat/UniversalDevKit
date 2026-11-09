@@ -3,8 +3,8 @@
 #include <UniversalDevKit/XamlRuntime/ScrollController.h>
 #include <UniversalDevKit/XamlRuntime/XamlLayout.h>
 #include <UniversalDevKit/XamlRuntime/Animation.h>
-#include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Session/PreviewSessionBase.h>
-#include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/AndroidAppPreviewerPlugin.h>
+#include <AndroidAppPreviewerPluginSdk/Session/PreviewSessionBase.h>
+#include <AndroidAppPreviewerPluginSdk/AndroidAppPreviewerPlugin.h>
 
 #include "Internal/Rendering/AngleRenderSurface.h"
 

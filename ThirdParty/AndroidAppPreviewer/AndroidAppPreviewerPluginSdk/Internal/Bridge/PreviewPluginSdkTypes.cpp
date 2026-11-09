@@ -1,6 +1,6 @@
 #include "Internal/Bridge/PreviewPluginSdkTypes.h"
 
-#include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Session/PluginDefinition.h>
+#include <AndroidAppPreviewerPluginSdk/Session/PluginDefinition.h>
 
 namespace universaldevkit::windows::androidapppreviewerpluginsdk {
     xp_angle_surface::xp_angle_surface(
