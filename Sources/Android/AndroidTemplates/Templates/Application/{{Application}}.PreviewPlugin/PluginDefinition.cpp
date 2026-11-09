@@ -1,11 +1,11 @@
-#include <AndroidAppPreviewer.PluginSDK/Session/PluginDefinition.h>
+#include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Session/PluginDefinition.h>
 
 #include "./Session/PreviewSession.h"
 
 #include <memory>
 #include <format>
 
-namespace preview_sdk {
+namespace universaldevkit::windows::androidapppreviewerpluginsdk {
     std::unique_ptr<session::PreviewSessionBase> CreatePreviewSession(int width, int height) {
         return std::make_unique<{{application}}::preview::session::PreviewSession>(width, height);
     }

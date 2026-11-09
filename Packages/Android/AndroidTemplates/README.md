@@ -1,6 +1,8 @@
 # AndroidTemplates
 
-Шаблон Android-приложения и команды его создания/удаления перенесены из UtilityHelpersLib. NuGet ID `AndroidTemplates`, версия `1.0.0.31`; версия задаётся Version.json без автоматического увеличения.
+Полный цикл создания приложения, настройки и выпуска: [гайд Android-приложений](../../../Docs/AndroidBuild.md).
+
+Шаблон Android-приложения и команды его создания/удаления перенесены из UtilityHelpersLib. NuGet ID `AndroidTemplates`, версия `1.0.0.33`; версия задаётся Version.json без автоматического увеличения.
 
 Сборка: `Scripts/Packages/Android/Pack.AndroidTemplates.cmd`. Исходники команд и шаблона находятся в Sources/Android/AndroidTemplates/PowerShell и Sources/Android/AndroidTemplates/Templates/Application. Delivery.json собирает из них прежние PowerShell и template_app внутри NuGet. После восстановления пакета вызовите `PowerShell/New-AndroidApplication.ps1 -Name MyApp -PackageId com.example.myapp -Destination <new-directory>`.
 
@@ -10,7 +12,7 @@
 
 После создания: `build.ps1 build-android -Configuration Debug`. Gradle получает локальные пути CMake/SDK от AndroidBuildTools; CMake не восстанавливает прежний XamlRuntime NuGet. Оба корневых native AAR содержат одну и ту же Diagnostic SO, поэтому шаблон выбирает один экземпляр конкретного файла. Их версии UDK закреплены одинаково, а граф проверяется Consumer.cmake.
 
-PreviewPlugin и его команды сохранены как исходная заготовка; Windows preview явно отключён до отдельного переноса Preview SDK. Переход существующих рабочих приложений не входит в этот этап.
+Windows preview подключён к UDK: `build.ps1 run-android-app-previewer -Configuration Debug` либо Release; `-BuildOnly` собирает только DLL. Из PackagesFeed восстанавливаются UniversalDevKit.AndroidAppPreviewer.PluginSDK и UniversalDevKit.AndroidAppPreviewer версии UdkVersion. SDK содержит Windows XamlRuntime.Static, OpenGLESRenderer.Static, Diagnostic.Dynamic и ANGLE. Старые UtilityHelpersLib и XamlRuntime NuGet не требуются. Пути к EXE в Android.SharedProps.json и параметры выбора внешнего превьювера не используются. Windows CMake восстанавливает WPF-пакет также для запуска отладчика Visual Studio.
 
 
-Внешний ApkUpdater перед сборкой проверяется только при RequireUpdater = $true в android-build.psd1; новый шаблон по умолчанию не собирает чужие проекты. Windows preset из исходного шаблона сохранён как заготовка, но preview ещё не подключён.
+Внешний ApkUpdater перед сборкой проверяется только при RequireUpdater = $true в android-build.psd1; новый шаблон по умолчанию не собирает чужие проекты. Windows preset поддерживает сборку PreviewPlugin из Visual Studio. Перевод существующих приложений не требуется: прикладную логику можно переносить в новый проект из AndroidTemplates.

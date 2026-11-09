@@ -40,6 +40,8 @@ ComponentA — условное имя: замените его именем н�
 
 **Android / Gradle / C++:** используйте [AAR из Maven с Prefab](Packages/Build/Android/README.md#подключение). Пакеты содержат заголовки и готовые библиотеки; исходный checkout UDK потребителю не нужен. Продуктовый Java/Kotlin API пока не предоставляется.
 
+Создание приложения из AndroidTemplates, настройка окружения, Windows preview и выпуск APK описаны в [гайде Android-приложений](Docs/AndroidBuild.md).
+
 ## Какой способ подключения выбрать
 
 | Способ | Как используется код |

@@ -21,7 +21,7 @@ function Read-AndroidSharedProps {
                 throw "Android.SharedProps.json must define SchemaVersion = 1: $path"
             }
             $result = @{ FilePath = $path; Paths = @{}; Properties = @{} }
-            foreach ($name in @('SecretsRoot', 'SigningProperties', 'DriveOAuthClientPath', 'DriveTokenPath', 'PackagesFeed', 'PreviewerDebugExecutablePath', 'PreviewerReleaseExecutablePath')) {
+            foreach ($name in @('SecretsRoot', 'SigningProperties', 'DriveOAuthClientPath', 'DriveTokenPath', 'PackagesFeed')) {
                 $value = $data.Paths.$name
                 if ($value -isnot [string] -or [string]::IsNullOrWhiteSpace($value)) {
                     throw "Android.SharedProps.json must define Paths.${name}: $path"

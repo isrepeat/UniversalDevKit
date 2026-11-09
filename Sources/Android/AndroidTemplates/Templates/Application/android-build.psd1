@@ -18,7 +18,7 @@
     PackageDirectories = @{
         AndroidBuildTools = 'Build\Packages\{{Application}}'
         XamlRuntime = 'Build\Packages\{{Application}}.AndroidHost'
-        AndroidAppPreviewerPluginSdk = 'Build\Packages\{{Application}}.PreviewPlugin'
+        AndroidAppPreviewerPluginSdk = 'Build\Preview'
     }
     Xaml = @{
         Namespace = 'urn:{{application}}:xaml'

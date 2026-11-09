@@ -49,7 +49,7 @@ class AndroidApplicationPlugin implements org.gradle.api.Plugin<org.gradle.api.P
         if (!(androidSharedProps instanceof java.util.Map) || androidSharedProps.SchemaVersion != 1 || !(androidSharedProps.Paths?.SigningProperties instanceof java.lang.String) || androidSharedProps.Paths.SigningProperties.trim().isEmpty()) {
             throw new org.gradle.api.GradleException("Invalid Android.SharedProps.json contract: ${androidSharedPropsFile}.")
         }
-        ['SecretsRoot', 'SigningProperties', 'DriveOAuthClientPath', 'DriveTokenPath', 'PackagesFeed', 'PreviewerDebugExecutablePath', 'PreviewerReleaseExecutablePath'].each { key ->
+        ['SecretsRoot', 'SigningProperties', 'DriveOAuthClientPath', 'DriveTokenPath', 'PackagesFeed'].each { key ->
             if (!(androidSharedProps.Paths[key] instanceof java.lang.String) || androidSharedProps.Paths[key].trim().isEmpty()) {
                 throw new org.gradle.api.GradleException("Android.SharedProps.json must define Paths.${key}: ${androidSharedPropsFile}.")
             }

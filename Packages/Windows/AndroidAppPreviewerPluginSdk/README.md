@@ -1,0 +1,7 @@
+# AndroidAppPreviewer Plugin SDK
+
+NuGet UniversalDevKit.AndroidAppPreviewer.PluginSDK использует корневую Version.json. Публичные заголовки находятся в Includes/Windows/AndroidAppPreviewerPluginSdk, native-реализация и managed ABI — в Sources/Windows/AndroidAppPreviewerPluginSdk. Единственный native-экспорт xp_get_abi сохраняет C ABI версии 1.
+
+Сборка: `Scripts/Packages/Windows/Pack.AndroidAppPreviewerPluginSdk.cmd`. ANGLE готовится закреплённым рецептом UDK через vcpkg и binary cache. SDK включает Debug/Release x64, CRT MD/MDd: установленные CMake-пакеты XamlRuntime.Static, OpenGLESRenderer.Static, Helpers и Diagnostic.Dynamic; ANGLE и лицензии; исходники SDK; managed AndroidAppPreviewer.PluginSDK.dll для net8.0.
+
+AndroidTemplates восстанавливает SDK версии UdkVersion в Build/Preview/sdk-<version>. CMake-конфигурация AndroidAppPreviewerPluginConfig.cmake предоставляет AndroidAppPreviewerPlugin::SDK и android_app_previewer_add_runtime(target); функция добавляет реализацию в прикладной плагин и копирует runtime DLL рядом с ним. Прикладной PreviewSession реализует ApplicationPreviewSession, PluginDefinition создаёт сессию и описывает приложение. Бизнес-логика остаётся в проекте потребителя.

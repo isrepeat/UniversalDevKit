@@ -50,7 +50,7 @@ try {
     $plugin = Join-Path $artifactDirectory $androidProjectConfig.Preview.Plugin.Replace('{Configuration}', $Configuration)
     $visualStudioCmake = $tools.CMake
     $visualStudioNinja = $tools.Ninja
-    $cmakeBuildDirectory = Join-Path $artifactDirectory 'Intermediate\CMake'
+    $cmakeBuildDirectory = Join-Path $ProjectRoot "Build\Preview\cmake\$Configuration"
 
     Initialize-VisualStudioEnvironment -VisualStudioRoot $tools.VisualStudio
 
@@ -84,6 +84,7 @@ try {
     $packageRoot = Split-Path -Parent $PSScriptRoot
     $sdkPackages = Module.AndroidBuildTools\Resolve-AndroidBuildConfigurationPath -Configuration $androidProjectConfig -ProjectRoot $ProjectRoot -Name 'PackageDirectories.AndroidAppPreviewerPluginSdk'
     $cmakeArguments += @(
+        "-DANDROID_UDK_VERSION=$($androidProjectConfig.UdkVersion)",
         "-DANDROID_BUILD_TOOLS_ROOT=$packageRoot",
         "-DANDROID_BUILD_CONFIGURATION_PackageDirectories_XamlRuntime=$xamlPackages",
         "-DANDROID_BUILD_CONFIGURATION_PackageDirectories_AndroidAppPreviewerPluginSdk=$sdkPackages"
@@ -106,18 +107,7 @@ try {
         return
     }
 
-    $previewerValue = $androidProjectSharedConfig.Paths[('Previewer' + $Configuration + 'ExecutablePath')]
-    if ([string]::IsNullOrWhiteSpace($previewerValue)) {
-        throw "Preview.Executable.$Configuration must specify the AndroidAppPreviewer executable."
-    }
-    $previewer = if ([IO.Path]::IsPathRooted($previewerValue)) {
-        [IO.Path]::GetFullPath($previewerValue)
-    } else {
-        [IO.Path]::GetFullPath((Join-Path $ProjectRoot $previewerValue))
-    }
-    if (-not (Test-Path -LiteralPath $previewer -PathType Leaf)) {
-        throw "AndroidAppPreviewer executable was not found: $previewer"
-    }
+    $previewer = & (Join-Path $PSScriptRoot 'Resolve-AndroidAppPreviewer.ps1') -PackagesRoot $sdkPackages -Source $androidProjectSharedConfig.Paths.PackagesFeed -Version $androidProjectConfig.UdkVersion
 
     Write-Host "==> Starting $previewer"
     Start-Process -FilePath $previewer -ArgumentList '--plugin', ('"{0}"' -f $plugin) -WindowStyle Normal

@@ -16,6 +16,7 @@
 - [Артефакты](Artifacts.md) — каталоги проектов, пакетов, тестов и кеша.
 - [Native NuGet](../Packages/Build/NuGet/README.md) — Windows packages.config и native PackageReference.
 - [Android AAR/Prefab](../Packages/Build/Android/README.md) — NDK-профиль, Maven-поставка C++-компонентов, подключение и проверки APK.
+- [Android-приложения](AndroidBuild.md) — окружение, Android.SharedProps.json, создание проекта из шаблона, NuGet-превьювер, APK и выпуск.
 - [Проверки пакетов](../Tests/Integration/Packages/README.md) — реальные компоненты и отдельные заглушки способов доставки.
 
 ## Архитектура и компоненты

@@ -23,9 +23,9 @@ target_include_directories({{application}}_preview_plugin PRIVATE "${CMAKE_CURRE
 target_link_libraries({{application}}_preview_plugin PRIVATE
     AndroidAppPreviewerPlugin::SDK
     {{application}}_application
-    XamlRuntime::Logging
-    XamlRuntime::Runtime
-    XamlRuntime::OpenGLESRenderer)
+    UDK::Diagnostic
+    UDK::XamlRuntime
+    UniversalDevKit::OpenGLESRenderer.Static)
 if (MSVC)
     target_compile_options({{application}}_preview_plugin PRIVATE /utf-8)
 endif()
@@ -33,20 +33,6 @@ target_compile_definitions({{application}}_preview_plugin PRIVATE
     {{APPLICATION}}_PREVIEW_SOURCE_MARKUP_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../{{Application}}.Application/UI"
     {{APPLICATION}}_PREVIEW_SOURCE_ENTRY_MARKUP_PATH="${CMAKE_CURRENT_SOURCE_DIR}/../{{Application}}.Application/UI/Page/MainPage.xaml"
     {{APPLICATION}}_PREVIEW_SOURCE_CONTROLS_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../{{Application}}.UI/Control")
-
-# ANGLE ищет свои DLL рядом с загруженным плагином.
-get_target_property({{application}}_angle_runtime_library XamlRuntime::OpenGLESRenderer IMPORTED_LOCATION)
-get_filename_component({{application}}_angle_runtime_directory "${{{application}}_angle_runtime_library}" DIRECTORY)
-set({{application}}_angle_runtime_files libEGL.dll libGLESv2.dll z.dll)
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set({{application}}_angle_runtime_files libEGL.dll libGLESv2.dll zd.dll)
-endif()
-foreach ({{application}}_angle_runtime_file IN LISTS {{application}}_angle_runtime_files)
-    add_custom_command(TARGET {{application}}_preview_plugin POST_BUILD
-        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-            "${{{application}}_angle_runtime_directory}/${{{application}}_angle_runtime_file}"
-            "$<TARGET_FILE_DIR:{{application}}_preview_plugin>/${{{application}}_angle_runtime_file}")
-endforeach()
 
 set({{application}}_preview_resources "${CMAKE_CURRENT_SOURCE_DIR}/../{{Application}}.Application/Resources")
 if (EXISTS "${{{application}}_preview_resources}")

@@ -6,12 +6,12 @@
       "type": "dll",
       "project": "CMakeLists.txt",
       "name": "AndroidAppPreviewer — {{Application}} (Debug)",
-      "exe": {{PreviewerDebugExecutableJson}},
+      "exe": "${workspaceRoot}\\Build\\Preview\\UniversalDevKit.AndroidAppPreviewer.{{UdkVersion}}\\tools\\win-x64\\AndroidAppPreviewer.exe",
       "args": [
         "--plugin",
         "${workspaceRoot}\\Build\\{{Application}}.PreviewPlugin\\Build\\Debug\\x64\\{{Application}}.PreviewPlugin\\{{Application}}.PreviewPlugin.dll"
       ],
-      "currentDir": {{PreviewerDebugDirectoryJson}},
+      "currentDir": "${workspaceRoot}\\Build\\Preview\\UniversalDevKit.AndroidAppPreviewer.{{UdkVersion}}\\tools\\win-x64",
       "debugType": "native"
     }
   ]

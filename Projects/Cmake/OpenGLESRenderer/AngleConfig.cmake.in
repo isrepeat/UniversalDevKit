@@ -19,6 +19,7 @@ if(NOT TARGET UniversalDevKit::ANGLE)
 endif()
 
 function(udk_xaml_copy_runtime target)
+    get_filename_component(udkAnglePrefix "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../../.." ABSOLUTE)
     add_custom_command(TARGET ${target} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${target}> $<TARGET_FILE_DIR:${target}>
         COMMAND ${CMAKE_COMMAND} -E copy_directory "${udkAnglePrefix}/@CMAKE_INSTALL_BINDIR@/ANGLE/$<CONFIG>" $<TARGET_FILE_DIR:${target}>

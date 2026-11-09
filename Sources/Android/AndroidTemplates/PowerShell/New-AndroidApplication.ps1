@@ -8,8 +8,6 @@ param(
     [string]$SecretsRoot,
     [string]$DriveOAuthClientPath,
     [string]$DriveTokenPath,
-    [string]$PreviewerDebugExecutablePath,
-    [string]$PreviewerReleaseExecutablePath,
     [string]$ApkUpdaterProjectRoot,
     [string]$GoogleCloudProject
 )
@@ -26,12 +24,6 @@ if (-not $PSBoundParameters.ContainsKey('BuildToolsSource')) {
 }
 if (-not $PSBoundParameters.ContainsKey('NativePackageSource')) {
     $NativePackageSource = $sharedProps.Paths.PackagesFeed
-}
-if (-not $PSBoundParameters.ContainsKey('PreviewerDebugExecutablePath')) {
-    $PreviewerDebugExecutablePath = $sharedProps.Paths.PreviewerDebugExecutablePath
-}
-if (-not $PSBoundParameters.ContainsKey('PreviewerReleaseExecutablePath')) {
-    $PreviewerReleaseExecutablePath = $sharedProps.Paths.PreviewerReleaseExecutablePath
 }
 if (-not $PSBoundParameters.ContainsKey('SecretsRoot')) {
     $SecretsRoot = $sharedProps.Paths.SecretsRoot
@@ -124,9 +116,6 @@ foreach ($file in $files) {
         continue
     }
     $text = [IO.File]::ReadAllText($file.FullName)
-    # JSON требует собственного экранирования путей, включая обратные слеши и кавычки.
-    $text = $text.Replace('{{PreviewerDebugExecutableJson}}', (ConvertTo-Json -InputObject $PreviewerDebugExecutablePath -Compress))
-    $text = $text.Replace('{{PreviewerDebugDirectoryJson}}', (ConvertTo-Json -InputObject (Split-Path -Parent $PreviewerDebugExecutablePath) -Compress))
     $text = $text.Replace('{{Application}}', $Name).Replace('{{application}}', $Name.ToLowerInvariant()).Replace('{{APPLICATION}}', $Name.ToUpperInvariant()).Replace('{{ApplicationVersion}}', $applicationVersion).Replace('{{AndroidBuildToolsVersion}}', $androidBuildToolsVersion).Replace('{{UdkVersion}}', $udkVersion)
     $text = $text.Replace('{{PackageId}}', $PackageId).Replace('{{JniPackage}}', $PackageId.Replace('.', '_'))
     $text = $text.Replace('{{BuildToolsSource}}', $BuildToolsSource.Replace("'", "''"))
@@ -135,8 +124,6 @@ foreach ($file in $files) {
     $text = $text.Replace('{{ApkUpdaterProjectRoot}}', $ApkUpdaterProjectRoot.Replace("'", "''"))
     $text = $text.Replace('{{DriveOAuthClientPath}}', $DriveOAuthClientPath.Replace("'", "''"))
     $text = $text.Replace('{{DriveTokenPath}}', $DriveTokenPath.Replace("'", "''"))
-    $text = $text.Replace('{{PreviewerDebugExecutablePath}}', $PreviewerDebugExecutablePath.Replace("'", "''"))
-    $text = $text.Replace('{{PreviewerReleaseExecutablePath}}', $PreviewerReleaseExecutablePath.Replace("'", "''"))
     $encoding = if ($file.Extension -eq '.ps1') { [Text.UTF8Encoding]::new($true) } else { [Text.UTF8Encoding]::new($false) }
     [IO.File]::WriteAllText($target, $text.TrimEnd(), $encoding)
 }

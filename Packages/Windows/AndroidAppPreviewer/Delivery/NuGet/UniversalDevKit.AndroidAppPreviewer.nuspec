@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>UniversalDevKit.AndroidAppPreviewer</id>
+    <version>{{VERSION}}</version>
+    <authors>isrepeat</authors>
+    <description>Windows WPF previewer for UDK AndroidTemplates applications.</description>
+    <license type="file">LICENSE.txt</license>
+    <readme>README.md</readme>
+  </metadata>
+  <files><file src="payload\**\*" target="" /></files>
+</package>
