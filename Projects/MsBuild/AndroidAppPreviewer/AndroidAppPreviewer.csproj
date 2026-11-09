@@ -16,7 +16,7 @@
     <PreviewerSource>../../../Sources/Windows/AndroidAppPreviewer</PreviewerSource>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../AndroidAppPreviewerPluginSdk/AndroidAppPreviewerPluginSdk.csproj" />
+    <ProjectReference Include="../AndroidAppPreviewerPluginSdk.Managed/AndroidAppPreviewerPluginSdk.Managed.csproj" />
     <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
     <ApplicationDefinition Include="$(PreviewerSource)/App.xaml" Link="App.xaml" />
     <Compile Include="$(PreviewerSource)/**/*.cs" Link="%(RecursiveDir)%(Filename)%(Extension)" />

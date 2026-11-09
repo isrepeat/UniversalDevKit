@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Package-specific integration. Edit this file directly. -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <UniversalDevKitRuntime Condition="'$(UniversalDevKitRuntime)' == ''">Dynamic</UniversalDevKitRuntime>
+    <__UniversalDevKitNativeProbePackageRoot>$(MSBuildThisFileDirectory)..\..\</__UniversalDevKitNativeProbePackageRoot>
+    <__UniversalDevKitNativeProbePackageVersion>$(__UniversalDevKitNativeProbePackageVersion)</__UniversalDevKitNativeProbePackageVersion>
+    <UniversalDevKitNativeProbeLinkage Condition="'$(UniversalDevKitNativeProbeLinkage)' == ''">Static</UniversalDevKitNativeProbeLinkage>
+  </PropertyGroup>
+  <Import Project="Generated\Settings.targets" />
+  <ItemGroup>
+    <__UniversalDevKitNuGetRoot Include="$(UniversalDevKitComponents)" />
+  </ItemGroup>
+  <Target Name="__UniversalDevKitNativeProbeValidateNuGet" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(Platform)' != 'x64'" Text="UniversalDevKit.NativeProbe: only Windows x64 is packaged." />
+    <Error Condition="'$(Configuration)' != 'Debug' and '$(Configuration)' != 'Release'" Text="UniversalDevKit.NativeProbe: select Debug or Release." />
+    <Error Condition="'$(UniversalDevKitComponents)' == ''" Text="Set UniversalDevKitComponents to explicitly selected root components." />
+    <Error Condition="!$([System.String]::Copy(';$(__UniversalDevKitNativeProbeValidModes);').Contains(';$(UniversalDevKitNativeProbeLinkage);'))" Text="UniversalDevKit.NativeProbe: unsupported linkage." />
+    <Error Condition="'$(UniversalDevKitRuntime)' != 'Static' and '$(UniversalDevKitRuntime)' != 'Dynamic'" Text="UniversalDevKitRuntime must be Static (MT) or Dynamic (MD)." />
+    <Error Condition="'$(__UniversalDevKitNativeProbeHasBinaries)' == 'true' and '$(PlatformToolset)' != '$(__UniversalDevKitNativeProbeExpectedToolset)'" Text="UniversalDevKit.NativeProbe: package requires toolset $(__UniversalDevKitNativeProbeExpectedToolset)." />
+    <Error Condition="'$(__UniversalDevKitNativeProbeHasBinaries)' == 'true' and '$(VCToolsVersion)' != '$(__UniversalDevKitNativeProbeExpectedTools)'" Text="UniversalDevKit.NativeProbe: package requires MSVC tools $(__UniversalDevKitNativeProbeExpectedTools)." />
+    <Error Condition="'$(__UniversalDevKitNativeProbePackageRoot)' == ''" Text="UniversalDevKit package import is missing." />
+
+  </Target>
+  <Target Name="__UniversalDevKitNativeProbeCopyNuGetRuntime" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Copy SourceFiles="@(__UniversalDevKitNativeProbeNuGetRuntime)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

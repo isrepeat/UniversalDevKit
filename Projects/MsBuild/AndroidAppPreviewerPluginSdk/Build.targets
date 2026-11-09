@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <UniversalDevKitAngleRoot Condition="'$(UniversalDevKitAngleRoot)' == ''">$(UDK_ANGLE_ROOT)</UniversalDevKitAngleRoot>
+    <__UniversalDevKitPreviewAngleInclude>$(UniversalDevKitAngleRoot)\include</__UniversalDevKitPreviewAngleInclude>
+    <__UniversalDevKitPreviewAngleLib>$(UniversalDevKitAngleRoot)\lib</__UniversalDevKitPreviewAngleLib>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(__UniversalDevKitPreviewAngleInclude);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <ExceptionHandling>Sync</ExceptionHandling>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(__UniversalDevKitPreviewAngleLib)\libEGL.lib;$(__UniversalDevKitPreviewAngleLib)\libGLESv2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Target Name="__UniversalDevKitValidatePreviewAngle" BeforeTargets="PrepareForBuild">
+    <Error Condition="!Exists('$(__UniversalDevKitPreviewAngleInclude)\GLES3\gl3.h')" Text="Set UniversalDevKitAngleRoot or UDK_ANGLE_ROOT to an ANGLE installation." />
+  </Target>
+</Project>

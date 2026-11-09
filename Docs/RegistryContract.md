@@ -8,8 +8,8 @@
 {
   "schemaVersion": 2,
   "includes": [
-    "Projects/Components/HeleprsTest.json",
-    "Projects/Components/DiagnosticTest.json"
+    "Projects/Components/Helpers.json",
+    "Projects/Components/Diagnostic.json"
   ]
 }
 ```
@@ -42,9 +42,9 @@ msbuildGuid записывается в форме {xxxxxxxx-xxxx-xxxx-xxxx-xxxx
 ```json
 "dependencies": [
   {
-    "component": "HeleprsTest",
+    "component": "Diagnostic",
     "visibility": "private",
-    "linkage": "static"
+    "linkage": "dynamic"
   }
 ]
 ```

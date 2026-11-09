@@ -11,6 +11,19 @@ $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScri
 . (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
 $run = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/TestBinaryCompatibility')
 $source = Join-Path $repository 'Tests/Fixtures/Consumers/BinaryCompatibility'
+. (Join-Path $repository 'Tests/Infrastructure/TestWorkspace.ps1')
+$workspace = New-TestWorkspace $repository WorkingTree HEAD -Name BinaryCompatibilityLibrary
+$library = $workspace.Library
+$fixture = Join-Path $repository 'Tests/Fixtures/Libraries/Export'
+foreach ($directory in @('Includes', 'Sources', 'Projects')) {
+    Copy-Item -LiteralPath (Join-Path $fixture $directory) -Destination $library -Recurse -Force
+}
+Copy-Item -LiteralPath (Join-Path $fixture 'Components.json') -Destination $library -Force
+$shortLibrary = Join-Path $workspace.Root 'L'
+Copy-Item -LiteralPath $library -Destination $shortLibrary -Recurse
+$library = $shortLibrary
+$buildRoot = Join-Path $library '!artifacts/tests/ABI'
+& (Join-Path $library 'Scripts/PowerShell/GenerateComponentProjects.ps1') -RepositoryRoot $library
 function InvokeCMake([string[]]$Arguments) {
     & $CMake @Arguments | Out-Host
     if ($LASTEXITCODE -ne 0) { throw "CMake failed: $($Arguments -join ' ')" }
@@ -25,9 +38,9 @@ function AssertFails([string[]]$Arguments, [string]$Pattern) {
 }
 
 foreach ($runtime in @('Dynamic', 'Static')) {
-    $build = Join-Path $run "build-$runtime"
+    $build = Join-Path $buildRoot "build-$runtime"
     $prefix = Join-Path $run "install-$runtime"
-    InvokeCMake @('-S', $repository, '-B', $build, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug;Release', "-DUniversalDevKitRuntime=$runtime")
+    InvokeCMake @('-S', $library, '-B', $build, '-G', $Generator, '-A', 'x64', '-DCMAKE_CONFIGURATION_TYPES=Debug;Release', "-DUniversalDevKitRuntime=$runtime")
     foreach ($configuration in @('Debug', 'Release')) {
         InvokeCMake @('--build', $build, '--config', $configuration)
         # Validate explicit --prefix just like CMAKE_INSTALL_PREFIX.
@@ -58,9 +71,9 @@ foreach ($runtime in @('Dynamic', 'Static')) {
 
 # Stop incompatible installation before overwriting binaries.
 $mdPrefix = Join-Path $run 'install-Dynamic'
-$before = (Get-FileHash (Join-Path $mdPrefix 'bin/universaldevkit_diagnostictest_dynamic.dll')).Hash
-AssertFails @('--install', (Join-Path $run 'build-Static'), '--config', 'Release', '--prefix', $mdPrefix) 'incompatible package'
-if ((Get-FileHash (Join-Path $mdPrefix 'bin/universaldevkit_diagnostictest_dynamic.dll')).Hash -ne $before) { throw 'Rejected install changed binary' }
+$before = (Get-FileHash (Join-Path $mdPrefix 'bin/universaldevkit_exportprobe_dynamic.dll')).Hash
+AssertFails @('--install', (Join-Path $buildRoot 'build-Static'), '--config', 'Release', '--prefix', $mdPrefix) 'incompatible package'
+if ((Get-FileHash (Join-Path $mdPrefix 'bin/universaldevkit_exportprobe_dynamic.dll')).Hash -ne $before) { throw 'Rejected install changed binary' }
 
 foreach ($case in @('CRT', 'Iterator')) {
     $consumer = Join-Path $run "rejected-$case"

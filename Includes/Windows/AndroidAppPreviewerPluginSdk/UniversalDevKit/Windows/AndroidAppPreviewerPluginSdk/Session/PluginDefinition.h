@@ -1,11 +1,18 @@
 #pragma once
+#include "../Export.h"
 #include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Session/PreviewSessionBase.h>
 
 #include <memory>
 #include <string>
 
-namespace universaldevkit::windows::androidapppreviewerpluginsdk {
-    // Реализуются приложением; общий runtime не зависит от его конкретных классов.
-    std::unique_ptr<session::PreviewSessionBase> CreatePreviewSession(int width, int height);
-    std::string PluginInfoJson();
+namespace universaldevkit::windows::androidapppreviewerpluginsdk::session {
+    using PreviewSessionFactory = std::unique_ptr<PreviewSessionBase> (*)(int, int);
+    using PluginInfoProvider = std::string (*)();
+
+    class UNIVERSALDEVKIT_ANDROIDAPPPREVIEWERPLUGINSDK_API PluginDefinition final {
+    public:
+        PluginDefinition(PreviewSessionFactory previewSessionFactory, PluginInfoProvider pluginInfoProvider);
+        static std::unique_ptr<PreviewSessionBase> CreatePreviewSession(int width, int height);
+        static std::string PluginInfoJson();
+    };
 }

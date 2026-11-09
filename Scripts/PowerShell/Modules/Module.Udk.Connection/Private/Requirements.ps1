@@ -87,3 +87,13 @@ function Get-UdkRequirementItemsXml {
     }
     return (@('  <ItemGroup>') + $items.ToArray() + @('  </ItemGroup>')) -join "`n"
 }
+
+function Get-UdkComponentIncludeRoot {
+    param($Component)
+    $roots = @($Component.headers | Where-Object { $_ -match '^Includes/.+/UniversalDevKit/' } | ForEach-Object {
+        $_.Substring(0, $_.IndexOf('/UniversalDevKit/', [StringComparison]::Ordinal))
+    } | Sort-Object -Unique)
+    if ($roots.Count -gt 1) { throw "Multiple public include roots: $($Component.name)" }
+    if ($roots.Count -eq 1) { return $roots[0] }
+    return "Includes/$($Component.name)"
+}

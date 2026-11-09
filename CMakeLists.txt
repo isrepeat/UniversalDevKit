@@ -105,9 +105,9 @@ install(TARGETS universaldevkit_headers ${exportedComponentTargets} EXPORT Unive
 )
 install(DIRECTORY "Includes/Core/" DESTINATION "include")
 foreach(componentName IN LISTS availablePackageComponents)
-    install(DIRECTORY "Includes/${componentName}/" DESTINATION "include")
+    install(DIRECTORY "${componentIncludeRoot_${componentName}}/" DESTINATION "include")
 endforeach()
-# Namespace + EXPORT_NAME дают, например, UniversalDevKit::HeleprsTest.Static.
+# Namespace + EXPORT_NAME дают, например, UniversalDevKit::XamlRuntime.Static.
 install(EXPORT UniversalDevKitTargets
     NAMESPACE UniversalDevKit::
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/UniversalDevKit"

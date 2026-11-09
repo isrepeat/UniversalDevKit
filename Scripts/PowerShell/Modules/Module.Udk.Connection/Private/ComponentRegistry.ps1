@@ -33,6 +33,7 @@ function Get-UdkComponentRegistry {
         }
         $componentRegistry[$component.name] = [pscustomobject]@{
             Name = $component.name
+            IncludeRoot = Get-UdkComponentIncludeRoot $component
             Guid = $guid
             Kind = if ($component.kind) { $component.kind } else { 'compiled' }
             StateScope = $component.stateScope

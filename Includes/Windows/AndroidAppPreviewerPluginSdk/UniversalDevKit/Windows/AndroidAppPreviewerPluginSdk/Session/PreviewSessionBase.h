@@ -1,4 +1,5 @@
 #pragma once
+#include "../Export.h"
 #include <UniversalDevKit/XamlRuntime/RenderEngine.h>
 #include <UniversalDevKit/Windows/AndroidAppPreviewerPluginSdk/Session/PreviewNavigationController.h>
 
@@ -21,7 +22,7 @@ namespace universaldevkit::windows::androidapppreviewerpluginsdk::session {
         bool hasPreviewDefaultNavigationState;
     };
 
-    class PreviewSessionBase {
+    class UNIVERSALDEVKIT_ANDROIDAPPPREVIEWERPLUGINSDK_API PreviewSessionBase {
     public:
         PreviewSessionBase();
         virtual ~PreviewSessionBase();

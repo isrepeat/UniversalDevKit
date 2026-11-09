@@ -69,7 +69,7 @@ foreach ($file in Get-ChildItem (Join-Path $repository 'Packages') -Filter 'Pack
     $deliveries[$package.component] = $delivery
 }
 if (-not $Components) {
-    $Components = @($registry.Keys | Sort-Object)
+    $Components = @($deliveries.Keys | Sort-Object)
 }
 foreach ($component in $Components) {
     if (-not $registry.ContainsKey($component) -or -not $deliveries.ContainsKey($component)) {
@@ -256,7 +256,7 @@ foreach ($component in $Components) {
             }
             $systemSources = if ($name -eq $component) {
                 @($graph.SystemLibraryComponents)
-           
+
             } elseif ($resolvedMode -eq 'Static') {
                 @($name)
             } else {

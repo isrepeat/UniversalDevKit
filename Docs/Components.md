@@ -13,6 +13,8 @@
 
 ## Настройки компиляции
 
+Публичный include-корень определяется по заголовкам `Includes/.../UniversalDevKit/...` из описания компонента. Для платформенного AndroidAppPreviewerPluginSdk это `Includes/Windows/AndroidAppPreviewerPluginSdk`; CMake, генератор MSBuild, Connect и генерация Export.h используют тот же корень. C#-обёртка AndroidAppPreviewerPluginSdk.Managed является отдельным проектом и не входит в список C++ файлов компонента.
+
 Собственные и сторонние файлы перечисляются в общих `sources` и `headers`. Все пути отсчитываются от корня репозитория через `/`, без wildcard, макросов и выхода через `..`. Каталог `ThirdParty/` обозначает происхождение кода, отдельного поля `thirdParty` больше нет. Размещение в IDE по-прежнему задаётся через `filters`; заголовки за пределами публичного include-корня компонента не становятся публичными заголовками установки.
 
 Необязательный объект `compile` задаёт приватные настройки всех исходников компонента:
@@ -45,7 +47,7 @@ Include-каталоги должны существовать. Определе
 
 В MSBuild файлы сначала объявляются с меткой компонента, затем общие настройки применяются одним `ClCompile Update` к выборке по этой метке; файловые настройки идут отдельными блоками `Update`. Эти блоки изменяют метаданные только выбранных файлов; в CMake — в PRIVATE-настройки target и свойства исходников. Они не передаются другим файлам потребителя и потребителям публичных заголовков. Пути объектных файлов определяются стандартными настройками проекта Visual Studio; генератор не задаёт `ObjectFileName`. В `buildExtensions` остаются дополнительные настройки, не выраженные общей схемой. Полный пример — `Projects/Components/Diagnostic.json`.
 
-Корневой `Components.json` содержит `schemaVersion` и массив `includes` с путями отдельных описаний: `Projects/Components/HeleprsTest.json`, `Projects/Components/DiagnosticTest.json`. Пути includes отсчитываются от корневого файла. Вложенные include запрещены; объединённый JSON на диске не создаётся.
+Корневой `Components.json` содержит `schemaVersion` и массив `includes` с путями отдельных описаний: `Projects/Components/Helpers.json`, `Projects/Components/Diagnostic.json`. Пути includes отсчитываются от корневого файла. Вложенные include запрещены; объединённый JSON на диске не создаётся.
 
 Каждое описание содержит `name`, `msbuildGuid`, `headers` и `sources`, а также необязательный объект `filters`. `name` определяет компонент и имя `.vcxitems`. `msbuildGuid` сохраняет идентификатор Shared-проекта; при добавлении компонента нужен новый уникальный GUID.
 
@@ -76,7 +78,7 @@ Shared.vcxitems, Sources.targets и Dependencies.props полностью упр
 ```json
 "dependencies": [
   {
-    "component": "HeleprsTest",
+    "component": "Diagnostic",
     "visibility": "private",
     "linkage": "same"
   }
@@ -87,7 +89,7 @@ component должен точно совпадать с name существую�
 
 GenerateComponentProjects проверяет неизвестные компоненты, повторяющиеся зависимости и циклы, затем формирует UniversalDevKit.Sources.targets. Каждый Shared-проект импортируется один раз, даже если он нужен нескольким выбранным компонентам. В ProjectOnly сохраняется выбор UniversalDevKitComponents; Sources.targets раскрывает смешанный граф при каждой сборке. После изменения графа запустите генератор. В режиме ProjectOnly зависимости раскрываются при сборке; для обычного подключения через solution повторите Connect.
 
-Connect перед записью проверяет актуальность сгенерированных файлов. Если проверка не проходит, сначала запустите GenerateComponentProjects.cmd. DiagnosticTest использует HeleprsTest с visibility=private и linkage=static. Для обычных Shared References и бинарного подключения после изменения JSON повторите Connect; ProjectOnly раскрывает Shared-зависимости при сборке.
+Connect перед записью проверяет актуальность сгенерированных файлов. Если проверка не проходит, сначала запустите GenerateComponentProjects.cmd. XamlRuntime использует Diagnostic с visibility=private и linkage=dynamic. Для обычных Shared References и бинарного подключения после изменения JSON повторите Connect; ProjectOnly раскрывает Shared-зависимости при сборке.
 
 ## Виртуальные папки Visual Studio
 
@@ -96,23 +98,23 @@ Connect перед записью проверяет актуальность с
 ```json
 "filters": {
   "roots": [
-    { "path": "Includes/UniversalDevKit/HeleprsTest", "filter": "Public" },
-    { "path": "Sources/HeleprsTest", "filter": "Implementation" },
-    { "path": "Sources/HeleprsTest/platform/windows", "filter": "Platforms/Windows" }
+    { "path": "Includes/UniversalDevKit/Helpers", "filter": "Public" },
+    { "path": "Sources/Helpers", "filter": "Implementation" },
+    { "path": "Sources/Helpers/platform/windows", "filter": "Platforms/Windows" }
   ],
   "files": {
-    "Sources/HeleprsTest/Math.cpp": "Algorithms"
+    "Sources/Helpers/Math.cpp": "Algorithms"
   }
 }
 ```
 
 `files` задаёт точную виртуальную папку файла и имеет приоритет над roots. Пустое значение помещает файл непосредственно в корень проекта. Файл должен присутствовать в headers, sources или platformSources компонента.
 
-В roots выбирается самый длинный подходящий path с учётом границы каталога. Этот префикс заменяется на filter, а подкаталоги ниже него сохраняются. Например, `Sources/HeleprsTest/Text/Encoding/Utf8.cpp` отображается в `Implementation/Text/Encoding`. Пустой filter убирает указанный корень. При отсутствии подходящего правила сохраняется структура относительно корня репозитория. Пути записываются через `/`; пустые сегменты, `.` и `..` запрещены.
+В roots выбирается самый длинный подходящий path с учётом границы каталога. Этот префикс заменяется на filter, а подкаталоги ниже него сохраняются. Например, `Sources/Helpers/Text/Encoding/Utf8.cpp` отображается в `Implementation/Text/Encoding`. Пустой filter убирает указанный корень. При отсутствии подходящего правила сохраняется структура относительно корня репозитория. Пути записываются через `/`; пустые сегменты, `.` и `..` запрещены.
 
 Генератор записывает вычисленные папки в метаданные `__UniversalDevKitFilter` каждого элемента `.vcxitems`. UpdateProjectFilters переносит их в `.filters`, создавая родительские папки и пропуская пустые. Для остальных проектов остаётся прежняя поддержка UniversalDevKitFilterRoots. Изменения влияют только на отображение, исходники не перемещаются.
 
-После изменения filters выполните только GenerateComponentProjects. В HeleprsTest и DiagnosticTest явно заданы пустые корневые фильтры для сохранения прежнего объединённого дерева.
+После изменения filters выполните только GenerateComponentProjects. В Helpers и XamlRuntime явно заданы пустые корневые фильтры для сохранения прежнего объединённого дерева.
 
 ## Политика состояния
 

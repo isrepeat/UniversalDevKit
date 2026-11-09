@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "adapter": "component",
+  "id": "UniversalDevKit.NativeProbe",
+  "supportedPlatforms": ["Windows"],
+  "nuspec": "UniversalDevKit.NativeProbe.nuspec",
+  "integration": {
+    "props": "UniversalDevKit.NativeProbe.props",
+    "targets": "UniversalDevKit.NativeProbe.targets"
+  }
+}

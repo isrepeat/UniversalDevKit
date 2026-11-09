@@ -1,4 +1,6 @@
 #pragma once
+#include "../Export.h"
+
 #include <string_view>
 #include <string>
 #include <span>
@@ -6,7 +8,7 @@
 namespace universaldevkit::windows::androidapppreviewerpluginsdk::session {
     class PreviewSessionBase;
 
-    class PreviewNavigationController final {
+    class UNIVERSALDEVKIT_ANDROIDAPPPREVIEWERPLUGINSDK_API PreviewNavigationController final {
     public:
         explicit PreviewNavigationController(PreviewSessionBase& session);
 

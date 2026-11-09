@@ -21,7 +21,7 @@ namespace universaldevkit::windows::androidapppreviewerpluginsdk::internal::abi 
             throw std::invalid_argument("Plugin-info buffer and positive capacity are required");
         }
         bridge::TextBuffer::Write(
-            PluginInfoJson(),
+            session::PluginDefinition::PluginInfoJson(),
             destination,
             static_cast<size_t>(capacity),
             "Plugin-info buffer is too small"

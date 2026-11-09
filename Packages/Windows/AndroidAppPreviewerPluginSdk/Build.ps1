@@ -36,16 +36,24 @@ try {
         if ($LASTEXITCODE -ne 0) { throw "Preview SDK native $configuration installation failed." }
     }
     [void][IO.Directory]::CreateDirectory((Join-Path $payload 'cmake'))
-    Copy-Item (Join-Path $root 'Includes/Windows/AndroidAppPreviewerPluginSdk') (Join-Path $payload 'include') -Recurse
-    [void][IO.Directory]::CreateDirectory((Join-Path $payload 'src'))
-    foreach ($directory in @('Internal', 'Session')) {
-        Copy-Item (Join-Path $root "Sources/Windows/AndroidAppPreviewerPluginSdk/$directory") (Join-Path $payload 'src') -Recurse
+    $componentPath = Join-Path $root 'Projects/Components/AndroidAppPreviewerPluginSdk.json'
+    $component = Get-Content -LiteralPath $componentPath -Raw | ConvertFrom-Json
+    foreach ($file in @($component.headers) + @($component.sources)) {
+        $relative = if ($file.StartsWith('Includes/Windows/AndroidAppPreviewerPluginSdk/')) {
+            'include/' + $file.Substring('Includes/Windows/AndroidAppPreviewerPluginSdk/'.Length)
+        } elseif ($file.StartsWith('Sources/Windows/AndroidAppPreviewerPluginSdk/')) {
+            'src/' + $file.Substring('Sources/Windows/AndroidAppPreviewerPluginSdk/'.Length)
+        } else { throw "Unexpected preview SDK component file: $file" }
+        $destination = Join-Path $payload $relative
+        [void][IO.Directory]::CreateDirectory((Split-Path $destination))
+        Copy-Item (Join-Path $root $file) $destination
     }
+    Copy-Item $componentPath (Join-Path $payload 'cmake/AndroidAppPreviewerPluginSdk.json')
     Copy-Item (Join-Path $root 'Projects/Cmake/AndroidAppPreviewerPluginSdk/AndroidAppPreviewerPluginConfig.cmake') (Join-Path $payload 'cmake')
-    & dotnet build (Join-Path $root 'Projects/MsBuild/AndroidAppPreviewerPluginSdk/AndroidAppPreviewerPluginSdk.csproj') -c Release --nologo
+    & dotnet build (Join-Path $root 'Projects/MsBuild/AndroidAppPreviewerPluginSdk.Managed/AndroidAppPreviewerPluginSdk.Managed.csproj') -c Release --nologo
     if ($LASTEXITCODE -ne 0) { throw 'Preview SDK managed build failed.' }
     [void][IO.Directory]::CreateDirectory((Join-Path $payload 'lib/net8.0'))
-    Copy-Item (Join-Path $root '!artifacts/projects/windows/msbuild/AndroidAppPreviewerPluginSdk/bin/Release/net8.0/AndroidAppPreviewer.PluginSDK.dll') (Join-Path $payload 'lib/net8.0')
+    Copy-Item (Join-Path $root '!artifacts/projects/windows/msbuild/AndroidAppPreviewerPluginSdk.Managed/bin/Release/net8.0/AndroidAppPreviewer.PluginSDK.dll') (Join-Path $payload 'lib/net8.0')
     Copy-Item (Join-Path $root 'LICENSE') (Join-Path $payload 'LICENSE.txt')
     Copy-Item (Join-Path $PSScriptRoot 'README.md') (Join-Path $payload 'README.md')
     [void][IO.Directory]::CreateDirectory((Join-Path $payload 'licenses'))

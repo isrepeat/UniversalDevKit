@@ -16,7 +16,6 @@ Helpers — header-only компонент C++20 с разделами Meta, Mat
 
 CMake предоставляет только UniversalDevKit::Helpers.Headers. В MSBuild доступны Helpers.Shared и проверочное приложение Helpers.HeaderCheck; Static/Dynamic вариантов нет. NuGet UniversalDevKit.Helpers использует linkage Shared. Android AAR: org.universaldevkit:universaldevkit-helpers-shared-release:<version>, Prefab target udk_helpers_shared::Helpers. Собственной .lib/.dll/.a/.so у Helpers нет.
 
-Старый compiled-компонент переименован именно в HeleprsTest. Его API находится в UniversalDevKit/HeleprsTest/, namespace — universaldevkit::heleprstest::math и universaldevkit::heleprstest::text. Сохранены GUID прежних проектов, Static/Dynamic/Shared и пакеты UniversalDevKit.HeleprsTest. DiagnosticTest пока использует его как private/static тестовую зависимость; новый Helpers от HeleprsTest и DiagnosticTest не зависит.
 
 Независимые компоненты Meta и Math, их проекты и пакетные адаптеры удалены. Совместимых обёрток для старых include/namespace не добавлено. Подробности API разделов — Meta.md и Math.md.
 

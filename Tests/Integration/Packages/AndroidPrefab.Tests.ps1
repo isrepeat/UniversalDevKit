@@ -8,7 +8,7 @@ param(
     [string]$Feed,
     [string]$Serial,
     [ValidateSet('arm64-v8a', 'x86_64')][string]$Abi = 'arm64-v8a',
-    [string[]]$Components = @('Helpers', 'HeleprsTest', 'DiagnosticTest', 'Diagnostic'),
+    [string[]]$Components = @('Helpers', 'Diagnostic'),
     [ValidateSet('Static', 'Dynamic')][string[]]$Mode = @('Static', 'Dynamic'),
     [switch]$SkipDevice
 )
@@ -117,8 +117,10 @@ try {
                 $status = 'Passed'
             }
             $results += [pscustomobject]@{ Component = $component; Linkage = $linkage; Abi = $Abi; Status = $status }
-            if ($component -eq 'DiagnosticTest' -and $linkage -eq 'Dynamic') {
+            if ($component -eq 'Diagnostic' -and $linkage -eq 'Dynamic') {
                 [void](RunTool $Gradle ($arguments + '-PudkStl=c++_static') (Join-Path $run 'wrong-stl.log') 'UDK requires c\+\+_shared|static STL|STL.*incompatib|No compatible librar')
+            }
+            if ($component -eq 'XamlRuntime' -and $linkage -eq 'Static') {
                 [void](RunTool $Gradle ($arguments + '-PudkConflict=ON') (Join-Path $run 'conflicting-variants.log') 'Conflicting UDK Android variant')
             }
             Write-Host "$name : $status"

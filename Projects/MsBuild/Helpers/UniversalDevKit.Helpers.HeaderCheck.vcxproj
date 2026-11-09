@@ -38,6 +38,10 @@
     <Import Project="UniversalDevKit.Helpers.Shared.vcxitems"
             Label="Shared" />
   </ImportGroup>
-  <ItemGroup><ClCompile Include="HeaderCheck.cpp" /></ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="HeaderCheck.cpp">
+      <__UniversalDevKitFilter />
+    </ClCompile>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

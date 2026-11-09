@@ -5,8 +5,8 @@
 #include <memory>
 #include <format>
 
-namespace universaldevkit::windows::androidapppreviewerpluginsdk {
-    std::unique_ptr<session::PreviewSessionBase> CreatePreviewSession(int width, int height) {
+namespace {{application}}::preview {
+    std::unique_ptr<universaldevkit::windows::androidapppreviewerpluginsdk::session::PreviewSessionBase> CreatePreviewSession(int width, int height) {
         return std::make_unique<{{application}}::preview::session::PreviewSession>(width, height);
     }
 
@@ -20,4 +20,9 @@ namespace universaldevkit::windows::androidapppreviewerpluginsdk {
             {{APPLICATION}}_PREVIEW_SOURCE_CONTROLS_DIRECTORY
         );
     }
+
+    const universaldevkit::windows::androidapppreviewerpluginsdk::session::PluginDefinition pluginDefinition(
+        &{{application}}::preview::CreatePreviewSession,
+        &{{application}}::preview::PluginInfoJson
+    );
 }

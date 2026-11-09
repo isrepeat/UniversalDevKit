@@ -43,7 +43,15 @@ $connection = Join-Path $repository 'Scripts/PowerShell/Modules/Module.Udk.Conne
 . (Join-Path $connection 'ComponentRegistry.ps1')
 . (Join-Path $connection 'ConnectionPlan.ps1')
 $registry = Get-UdkComponentRegistry $repository
-if (-not $Components) { $Components = @($registry.Keys | Sort-Object) }
+if (-not $Components) {
+    $Components = @(foreach ($file in Get-ChildItem (Join-Path $repository 'Packages') -Filter Package.json -File -Recurse) {
+        $package = Get-Content -LiteralPath $file.FullName -Raw | ConvertFrom-Json
+        if (-not $package.component -or -not $package.deliveries.NuGet) { continue }
+        $delivery = Get-Content (Join-Path $file.DirectoryName $package.deliveries.NuGet) -Raw | ConvertFrom-Json
+        if ($delivery.adapter -eq 'component' -and 'Windows' -in $delivery.supportedPlatforms) { $package.component }
+    })
+    $Components = @($Components | Sort-Object -Unique)
+}
 if ($Components.Count -gt 1) {
     foreach ($rootComponent in ($Components | Sort-Object -Unique)) {
         & $PSCommandPath -CMake $CMake -NuGet $NuGet -LicenseFile $license -OutputDirectory $output -Components $rootComponent -Generator $Generator -RepositoryPath $repository

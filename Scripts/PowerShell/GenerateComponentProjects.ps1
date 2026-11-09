@@ -246,7 +246,10 @@ foreach ($includePath in $manifest.includes) {
         }
     }
     $componentGraph[$name] = $dependencies.ToArray()
+    $componentIncludeRoot = Get-UdkComponentIncludeRoot $component
     $binaryComponentRegistry[$name] = [pscustomobject]@{
+        IncludeRoot = $componentIncludeRoot
+        ExportHeader = $componentIncludeRoot + '/UniversalDevKit/' + $componentIncludeRoot.Substring(9) + '/Export.h'
         SharedGuid = $guid
         Kind = $kind
         StateScope = $component.stateScope
@@ -337,7 +340,7 @@ foreach ($includePath in $manifest.includes) {
     if ($kind -eq 'headerOnly') {
         $lines.Add('  <ItemDefinitionGroup>')
         $lines.Add('    <ClCompile>')
-        $lines.Add('      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\Includes\' + $name + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>')
+        $lines.Add('      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\' + $binaryComponentRegistry[$name].IncludeRoot.Replace('/', '\') + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>')
         $lines.Add('    </ClCompile>')
         $lines.Add('  </ItemDefinitionGroup>')
     }
@@ -356,7 +359,7 @@ foreach ($includePath in $manifest.includes) {
         $lines.Add('    </ClInclude>')
     }
     # Generated export headers are project items even when omitted from the registry.
-    $exportHeader = "Includes/$name/UniversalDevKit/$name/Export.h"
+    $exportHeader = $binaryComponentRegistry[$name].ExportHeader
     if ($exportHeader -notin $component.headers) {
         $include = EscapeXml ('$' + '(MSBuildThisFileDirectory)..\..\..\' + $exportHeader.Replace('/', '\'))
         $lines.Add('    <ClInclude Include="' + $include + '">')
@@ -392,7 +395,7 @@ foreach ($includePath in $manifest.includes) {
     if ($componentSources.Count) {
         $lines.Add('  <ItemGroup>')
         $lines.Add('    <ClCompile Update="@(ClCompile-&gt;WithMetadataValue(''__UniversalDevKitComponent'', ''' + $name + '''))">')
-        $settings = @{ includeDirectories = @('Includes/' + $name); preprocessorDefinitions = @(); precompiledHeader = 'inherit' }
+        $settings = @{ includeDirectories = @($binaryComponentRegistry[$name].IncludeRoot); preprocessorDefinitions = @(); precompiledHeader = 'inherit' }
         if ($component.compile) {
             foreach ($field in $component.compile.PSObject.Properties.Name) {
                 if ($field -eq 'includeDirectories') { $settings[$field] += $component.compile.$field }
@@ -537,7 +540,7 @@ foreach ($name in $componentNames) {
         $definitionSelectors = @($selectors | Where-Object { $name -cin $sourceGraphs[$_].DefinitionComponents })
         if ($definitionSelectors.Count) {
             $lines.Add('  <ItemDefinitionGroup Condition="' + (GetSourceCondition $definitionSelectors) + '">')
-            $lines.Add('    <ClCompile><AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\Includes\' + $name + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile>')
+            $lines.Add('    <ClCompile><AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\' + $binaryComponentRegistry[$name].IncludeRoot.Replace('/', '\') + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile>')
             $lines.Add('    <ClCompile><PreprocessorDefinitions>UNIVERSALDEVKIT_' + $name.ToUpperInvariant() + '_DYNAMIC;%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile>')
             $lines.Add('  </ItemDefinitionGroup>')
         }
@@ -681,7 +684,7 @@ foreach ($name in $componentNames) {
             'DynamicLibrary'
         }
         $condition = "'`$(ConfigurationType)' == '$configurationType'"
-        $dependencyIncludeRoots = @($dependencyGraph.RequirementComponents | ForEach-Object { '$(MSBuildThisFileDirectory)..\..\..\Includes\' + $_ })
+        $dependencyIncludeRoots = @($dependencyGraph.RequirementComponents | ForEach-Object { '$(MSBuildThisFileDirectory)..\..\..\' + $binaryComponentRegistry[$_].IncludeRoot.Replace('/', '\') })
         if ($dependencyIncludeRoots.Count) {
             $lines.Add('  <ItemDefinitionGroup Condition="' + $condition + '"><ClCompile><AdditionalIncludeDirectories>' + ($dependencyIncludeRoots -join ';') + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile></ItemDefinitionGroup>')
         }
@@ -743,16 +746,23 @@ foreach ($name in $componentNames) {
     }
     $language = if ($standard -eq 23) { 'stdcpplatest' } else { 'stdcpp' + $standard }
     $content = $projectTemplate.Replace('@COMPONENT@', $name).Replace('@GUID@', $guid).Replace('@CONFIGURATION_TYPE@', 'Application').Replace('@DYNAMIC_DEFINITIONS@', '').Replace('stdcpp20', $language)
-    $dependencyIncludes = @($headerGraph.RequirementComponents | Where-Object { $_ -ne $name } | ForEach-Object { '$(MSBuildThisFileDirectory)..\..\..\Includes\' + $_ })
+    $dependencyIncludes = @($headerGraph.RequirementComponents | Where-Object { $_ -ne $name } | ForEach-Object { '$(MSBuildThisFileDirectory)..\..\..\' + $binaryComponentRegistry[$_].IncludeRoot.Replace('/', '\') })
     if ($dependencyIncludes.Count) {
         $content = $content.Replace('<LanguageStandard>', '<AdditionalIncludeDirectories>' + ($dependencyIncludes -join ';') + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>' + "`n      <LanguageStandard>")
     }
-    $content = $content.Replace('  <Import Project="UniversalDevKit.' + $name + '.Dependencies.props" />', '  <ItemGroup><ClCompile Include="HeaderCheck.cpp" /></ItemGroup>')
+    $headerCheckItem = @(
+        '  <ItemGroup>'
+        '    <ClCompile Include="HeaderCheck.cpp">'
+        '      <__UniversalDevKitFilter />'
+        '    </ClCompile>'
+        '  </ItemGroup>'
+    ) -join "`n"
+    $content = $content.Replace('  <Import Project="UniversalDevKit.' + $name + '.Dependencies.props" />', $headerCheckItem)
     $source = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Templates/HeaderCheck.cpp.in')).TrimEnd([char[]]"`r`n") + "`n"
     $definition = Get-Content -LiteralPath (Join-Path $repositoryPath "Projects/Components/$name.json") -Raw | ConvertFrom-Json
     foreach ($header in $definition.headers) {
-        if (-not $header.StartsWith("Includes/$name/", [StringComparison]::Ordinal)) { continue }
-        $source += '#include <' + ($header -replace ('^Includes/' + $name + '/'), '') + '>' + "`n"
+        if (-not $header.StartsWith($binaryComponentRegistry[$name].IncludeRoot + '/', [StringComparison]::Ordinal)) { continue }
+        $source += '#include <' + $header.Substring($binaryComponentRegistry[$name].IncludeRoot.Length + 1) + '>' + "`n"
     }
     $source += "`nint main() { return 0; }"
     foreach ($item in @(@{ Path = "Projects/MsBuild/$name/UniversalDevKit.$name.HeaderCheck.vcxproj"; Content = $content.TrimEnd([char[]]"`r`n") }, @{ Path = "Projects/MsBuild/$name/HeaderCheck.cpp"; Content = $source })) {
@@ -877,7 +887,7 @@ $exportTemplate = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Templates/Exp
 $componentExportTemplate = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Templates/ComponentExport.h.in'))
 AddGeneratedMetadata 'Includes/Core/UniversalDevKit/Export.h' $exportTemplate
 foreach ($name in $componentNames) {
-    AddGeneratedMetadata "Includes/$name/UniversalDevKit/$name/Export.h" ($componentExportTemplate.Replace('@COMPONENT@', $name.ToUpperInvariant()))
+    AddGeneratedMetadata $binaryComponentRegistry[$name].ExportHeader ($componentExportTemplate.Replace('@COMPONENT@', $name.ToUpperInvariant()))
 }
 $versionPath = Join-Path $repositoryPath 'Version.json'
 if (Test-Path -LiteralPath $versionPath) {

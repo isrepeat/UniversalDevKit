@@ -27,7 +27,7 @@
 
 | Поставка | Для чего нужна |
 |---|---|
-| AndroidTemplates 1.0.0.33 | Генератор и шаблон приложения |
+| AndroidTemplates 1.0.0.34 | Генератор и шаблон приложения |
 | AndroidBuildTools 1.0.63.31 | PowerShell, Gradle, CMake и ApplicationFramework |
 | UniversalDevKit.XamlCompiler версии UDK | Генерация C++ из XAML на Windows |
 | UniversalDevKit.AndroidAppPreviewer.PluginSDK версии UDK | Native SDK и Windows-библиотеки Debug/Release |
@@ -89,7 +89,7 @@ $feed = if ([IO.Path]::IsPathRooted($shared.Paths.PackagesFeed)) {
 } else {
     [IO.Path]::GetFullPath((Join-Path $projectsRoot $shared.Paths.PackagesFeed))
 }
-$templatesVersion = '1.0.0.33'
+$templatesVersion = '1.0.0.34'
 $bootstrap = Join-Path $env:TEMP ('AndroidTemplates-' + [Guid]::NewGuid().ToString('N'))
 
 nuget.exe install AndroidTemplates -Version $templatesVersion -Source $feed -OutputDirectory $bootstrap -NonInteractive -ForceEnglishOutput

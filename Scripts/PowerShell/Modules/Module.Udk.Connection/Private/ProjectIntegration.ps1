@@ -212,10 +212,11 @@ function Invoke-UdkConnectionPlanCore {
                 [void]$root.InsertBefore($libraryReferences, $anchor)
             }
             if ($Plan.RequirementComponents.Count) {
+                $includeRegistry = Get-UdkComponentRegistry $repositoryPath
                 $compile = $document.CreateElement('ClCompile', $namespace)
                 $includeDirectories = $document.CreateElement('AdditionalIncludeDirectories', $namespace)
                 $includeDirectories.InnerText = (@($Plan.RequirementComponents | ForEach-Object {
-                    GetRelativePath $projectDirectory (Join-Path $repositoryPath "Includes/$_")
+                    GetRelativePath $projectDirectory (Join-Path $repositoryPath $includeRegistry[$_].IncludeRoot)
                 }) -join ';') + ';%(AdditionalIncludeDirectories)'
                 [void]$compile.AppendChild($includeDirectories)
                 $definitions = $document.CreateElement('PreprocessorDefinitions', $namespace)

@@ -1,5 +1,5 @@
-#include <UniversalDevKit/DiagnosticTest/Logging.h>
+#include <UniversalDevKit/ExportProbe/Probe.h>
 
 int main() {
-    return universaldevkit::diagnostictest::TryLog("Binary compatibility consumer") ? 0 : 1;
+    return ::UdkPublicProbe() == 42 ? 0 : 1;
 }

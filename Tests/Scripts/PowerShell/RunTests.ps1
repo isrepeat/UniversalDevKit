@@ -3,8 +3,8 @@ param(
     [string]$Revision = 'HEAD',
     [string]$SolutionInjectorPath,
     [switch]$CleanOnSuccess,
-    [ValidateSet('Shared', 'Static', 'Dynamic', 'ModeSwitch', 'Disconnect', 'Diamond', 'Export', 'Runtime')]
-    [string[]]$Scenario = @('Shared', 'Static', 'Dynamic', 'ModeSwitch', 'Disconnect', 'Diamond', 'Export', 'Runtime')
+    [ValidateSet('Diamond', 'Export')]
+    [string[]]$Scenario = @('Diamond', 'Export')
 )
 
 $env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
@@ -22,7 +22,7 @@ $reportDirectory = Reset-UdkArtifactDirectory -Root (Join-Path $repositoryPath '
 $transcriptPath = Join-Path $reportDirectory 'console.log'
 $summaryPath = Join-Path $reportDirectory 'summary.csv'
 $selectedScenarios = @($Scenario | Select-Object -Unique)
-$results = @('Setup', 'PublicHeaders', 'Shared', 'Static', 'Dynamic', 'ModeSwitch', 'Disconnect', 'Diamond', 'Export', 'Runtime') | ForEach-Object {
+$results = @('Setup', 'PublicHeaders', 'Diamond', 'Export') | ForEach-Object {
     [pscustomobject]@{
         Test = $_
         Status = if ($_ -in @('Setup', 'PublicHeaders') -or $_ -in $selectedScenarios) { 'NotRun' } else { 'NotSelected' }
@@ -60,7 +60,6 @@ try {
     $currentRecord = Start-TestRecord 'Setup'
     . (Join-Path $testsPath 'Infrastructure/TestWorkspace.ps1')
     . (Join-Path $testsPath 'Infrastructure/BuildTools.ps1')
-    . (Join-Path $testsPath 'Integration/MsBuild/Connect.Tests.ps1')
     $msbuild = Get-TestMSBuild
     if (-not (Get-Command git -ErrorAction SilentlyContinue)) { throw 'Git is required.' }
     Complete-TestRecord $currentRecord

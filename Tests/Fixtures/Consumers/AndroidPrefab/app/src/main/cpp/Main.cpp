@@ -24,13 +24,8 @@
 #include <UniversalDevKit/Helpers/Math/Size.h>
 using Callback = decltype([](int value) noexcept { return value; });
 static_assert(universaldevkit::helpers::meta::FunctionTraits<Callback>::IsNoexcept);
-#elif defined(UDK_TEST_HELEPRSTEST)
-#include <UniversalDevKit/HeleprsTest/Text.h>
 #else
-#include <UniversalDevKit/DiagnosticTest/Logging.h>
-#if __has_include(<UniversalDevKit/HeleprsTest/Text.h>)
-#error Private HeleprsTest headers leaked into DiagnosticTest consumer
-#endif
+#error Select a supported Android component
 #endif
 
 extern "C" JNIEXPORT jint JNICALL Java_org_universaldevkit_packageconsumer_NativeBridge_verify(JNIEnv*, jclass) {
@@ -55,9 +50,7 @@ extern "C" JNIEXPORT jint JNICALL Java_org_universaldevkit_packageconsumer_Nativ
     matrix[1][1] += 1.0f;
     float* value = &matrix[1][1];
     return universaldevkit::helpers::meta::utilities::ValueExtractor::From(value) == 8.0f ? 0 : 1;
-#elif defined(UDK_TEST_HELEPRSTEST)
-    return universaldevkit::heleprstest::text::EndsWithLineBreak("Android package\n") ? 0 : 1;
 #else
-    return universaldevkit::diagnostictest::TryLog("Android Prefab consumer passed") ? 0 : 1;
+#error Select a supported Android component
 #endif
 }

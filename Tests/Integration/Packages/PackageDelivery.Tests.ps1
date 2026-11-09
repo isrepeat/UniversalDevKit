@@ -161,7 +161,7 @@ try {
         $results += [pscustomobject]@{ Family = 'AndroidMaven'; Status = 'BuildPassed;DeviceRunNotPerformed' }
     }
     if ('NativeWindows' -in $Family) {
-        & (Join-Path $PSScriptRoot 'NuGet.Tests.ps1') -LicenseFile (Join-Path $repository 'LICENSE') -NuGet $NuGet -CMake $CMake
+        & (Join-Path $PSScriptRoot 'NuGet.PackageReference.Tests.ps1') -NuGet $NuGet -CMake $CMake
         $results += [pscustomobject]@{ Family = 'NativeWindows'; Status = 'Passed' }
     }
 }

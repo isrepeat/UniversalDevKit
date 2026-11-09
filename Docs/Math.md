@@ -13,7 +13,7 @@ Function1D — нешаблонный header-only класс с std::function, s
 
 DifferentialVar хранит value и grad. AccumulateGrad прибавляет явно переданный градиент, ResetGrad обнуляет только градиент, Reset обнуляет оба поля. Это контейнер данных, а не граф вычислений или механизм автоматического дифференцирования. Скалярная специализация по-прежнему принимает арифметические типы, тензорная — Tensor; контракт типов в этом исправлении не сужается.
 
-CMake: UniversalDevKit::Helpers.Headers. NuGet: UniversalDevKit.Helpers с linkage Shared. Android: universaldevkit-helpers-shared-release и udk_helpers_shared::Helpers. Реестр и проекты Shared/HeaderCheck создаются штатным генератором. HeleprsTest/Math.h не изменён.
+CMake: UniversalDevKit::Helpers.Headers. NuGet: UniversalDevKit.Helpers с linkage Shared. Android: universaldevkit-helpers-shared-release и udk_helpers_shared::Helpers. Реестр и проекты Shared/HeaderCheck создаются штатным генератором.
 
 AndroidPrefab.Tests.ps1 -Components Helpers -SkipDevice собирает отдельный JNI/APK consumer из AAR; без устройства это не подтверждает runtime.
 

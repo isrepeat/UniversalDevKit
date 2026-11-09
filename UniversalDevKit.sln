@@ -2,8 +2,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.10.12224.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.HeleprsTest.Static", "Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Static.vcxproj", "{A7CE4335-D8E6-4E53-B810-7D932E87BA59}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}"
 	ProjectSection(SolutionItems) = preProject
 		Scripts\Connect.cmd = Scripts\Connect.cmd
@@ -22,8 +20,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", 
 		Scripts\PowerShell\SyncRuntimeLibraries.ps1 = Scripts\PowerShell\SyncRuntimeLibraries.ps1
 		Scripts\PowerShell\UpdateProjectFilters.ps1 = Scripts\PowerShell\UpdateProjectFilters.ps1
 	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.DiagnosticTest.Static", "Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Static.vcxproj", "{C6B94069-54C2-4B96-880D-4C058A605C56}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{13DA8639-4234-4E82-9423-056A19840860}"
 EndProject
@@ -46,11 +42,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{8CB5D103-21B9-4651-A4A1-671107F28847}"
 	ProjectSection(SolutionItems) = preProject
 		Projects\Components\Diagnostic.json = Projects\Components\Diagnostic.json
-		Projects\Components\DiagnosticTest.json = Projects\Components\DiagnosticTest.json
-		Projects\Components\HeleprsTest.json = Projects\Components\HeleprsTest.json
 		Projects\Components\Helpers.json = Projects\Components\Helpers.json
 		Projects\Components\OpenGLESRenderer.json = Projects\Components\OpenGLESRenderer.json
 		Projects\Components\XamlRuntime.json = Projects\Components\XamlRuntime.json
+		Projects\Components\AndroidAppPreviewerPluginSdk.json = Projects\Components\AndroidAppPreviewerPluginSdk.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}"
@@ -61,24 +56,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{08C8
 		Projects\MsBuild\UniversalDevKit.Runtime.targets = Projects\MsBuild\UniversalDevKit.Runtime.targets
 		Projects\MsBuild\UniversalDevKit.Sources.targets = Projects\MsBuild\UniversalDevKit.Sources.targets
 		Projects\MsBuild\UniversalDevKit.Version.props = Projects\MsBuild\UniversalDevKit.Version.props
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.HeleprsTest.Shared", "Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Shared.vcxitems", "{F27F4562-11C4-42EF-AC5A-26101FD26F46}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.HeleprsTest.Dynamic", "Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Dynamic.vcxproj", "{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.DiagnosticTest.Shared", "Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Shared.vcxitems", "{28F717C7-A2EF-405E-96F1-538329030ACF}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.DiagnosticTest.Dynamic", "Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Dynamic.vcxproj", "{88573491-8330-4D25-A3C2-FAAB1D69E589}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeleprsTest", "HeleprsTest", "{8B6DD9E6-3057-45B9-80F6-B813601BE33B}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Dependencies.props = Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Dependencies.props
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DiagnosticTest", "DiagnosticTest", "{5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Dependencies.props = Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Dependencies.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{8B6A058C-7402-4392-8956-6B1489D9E118}"
@@ -171,8 +148,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatform", "{CA7AB659-38EB-4E98-99A7-95A777DCD074}"
 	ProjectSection(SolutionItems) = preProject
 		Scripts\Packages\CrossPlatform\Pack.Diagnostic.cmd = Scripts\Packages\CrossPlatform\Pack.Diagnostic.cmd
-		Scripts\Packages\CrossPlatform\Pack.DiagnosticTest.cmd = Scripts\Packages\CrossPlatform\Pack.DiagnosticTest.cmd
-		Scripts\Packages\CrossPlatform\Pack.HeleprsTest.cmd = Scripts\Packages\CrossPlatform\Pack.HeleprsTest.cmd
 		Scripts\Packages\CrossPlatform\Pack.Helpers.cmd = Scripts\Packages\CrossPlatform\Pack.Helpers.cmd
 		Scripts\Packages\CrossPlatform\Pack.OpenGLESRenderer.cmd = Scripts\Packages\CrossPlatform\Pack.OpenGLESRenderer.cmd
 		Scripts\Packages\CrossPlatform\Pack.XamlRuntime.cmd = Scripts\Packages\CrossPlatform\Pack.XamlRuntime.cmd
@@ -200,9 +175,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Shared", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems", "{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{50CDBD24-894E-0FD6-7C08-442980AADBB7}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\MsBuild\Helpers\HeaderCheck.cpp = Projects\MsBuild\Helpers\HeaderCheck.cpp
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.HeaderCheck", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj", "{E21B97A1-D847-2938-4E29-760523C97389}"
 EndProject
@@ -386,46 +358,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{2AE8945D
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{AE22FCE8-BBB1-103D-24A8-E4830CE20A6B}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DiagnosticTest", "DiagnosticTest", "{072E1208-58D6-471D-B494-5D5670688291}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\DiagnosticTest\Package.json = Packages\CrossPlatform\DiagnosticTest\Package.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000101}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\DiagnosticTest\Delivery\Android\Delivery.json = Packages\CrossPlatform\DiagnosticTest\Delivery\Android\Delivery.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{3F409C4A-6700-4061-AA77-627289E619E9}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\Delivery.json
-		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.nuspec = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.nuspec
-		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.props = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.props
-		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.targets = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.targets
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeleprsTest", "HeleprsTest", "{BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\HeleprsTest\Package.json = Packages\CrossPlatform\HeleprsTest\Package.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000102}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\HeleprsTest\Delivery\Android\Delivery.json = Packages\CrossPlatform\HeleprsTest\Delivery\Android\Delivery.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{521E2788-845C-4B8F-B742-DB0FDF5271D3}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\Delivery.json
-		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.nuspec = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.nuspec
-		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.props = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.props
-		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.targets = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.targets
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{878DA696-AD56-4739-84BB-D9A8E4BC5A48}"
 	ProjectSection(SolutionItems) = preProject
@@ -960,28 +892,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompile
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidAppPreviewer", "Projects\MsBuild\AndroidAppPreviewer\AndroidAppPreviewer.csproj", "{B0EEAABC-66D1-4CB2-8487-42ADE5A9DA60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidAppPreviewerPluginSdk", "Projects\MsBuild\AndroidAppPreviewerPluginSdk\AndroidAppPreviewerPluginSdk.csproj", "{8FCB661C-DF12-4466-9D58-8F159EED456D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndroidAppPreviewerPluginSdk.Managed", "Projects\MsBuild\AndroidAppPreviewerPluginSdk.Managed\AndroidAppPreviewerPluginSdk.Managed.csproj", "{8FCB661C-DF12-4466-9D58-8F159EED456D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{e912f2fc-2d08-78b5-f751-8b7237b6366b}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppPreviewerPluginSdk", "AndroidAppPreviewerPluginSdk", "{42d69fe7-d6fb-caa0-e620-9509df8a01e2}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniversalDevKit", "UniversalDevKit", "{c1397f4c-d9ca-031b-8a09-817a128234a9}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{96921cee-649a-a089-b9e9-2f74ecc553f7}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppPreviewerPluginSdk", "AndroidAppPreviewerPluginSdk", "{e6087ba5-56a2-8464-99b3-22bfbfb5fffe}"
-	ProjectSection(SolutionItems) = preProject
-		Includes\Windows\AndroidAppPreviewerPluginSdk\UniversalDevKit\Windows\AndroidAppPreviewerPluginSdk\AndroidAppPreviewerPlugin.h = Includes\Windows\AndroidAppPreviewerPluginSdk\UniversalDevKit\Windows\AndroidAppPreviewerPluginSdk\AndroidAppPreviewerPlugin.h
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Session", "Session", "{c0c75db2-8c30-0273-79c2-63fc8270690d}"
-	ProjectSection(SolutionItems) = preProject
-		Includes\Windows\AndroidAppPreviewerPluginSdk\UniversalDevKit\Windows\AndroidAppPreviewerPluginSdk\Session\ApplicationPreviewSession.h = Includes\Windows\AndroidAppPreviewerPluginSdk\UniversalDevKit\Windows\AndroidAppPreviewerPluginSdk\Session\ApplicationPreviewSession.h
-		Includes\Windows\AndroidAppPreviewerPluginSdk\UniversalDevKit\Windows\AndroidAppPreviewerPluginSdk\Session\PluginDefinition.h = Includes\Windows\AndroidAppPreviewerPluginSdk\UniversalDevKit\Windows\AndroidAppPreviewerPluginSdk\Session\PluginDefinition.h
-		Includes\Windows\AndroidAppPreviewerPluginSdk\UniversalDevKit\Windows\AndroidAppPreviewerPluginSdk\Session\PreviewNavigationController.h = Includes\Windows\AndroidAppPreviewerPluginSdk\UniversalDevKit\Windows\AndroidAppPreviewerPluginSdk\Session\PreviewNavigationController.h
-		Includes\Windows\AndroidAppPreviewerPluginSdk\UniversalDevKit\Windows\AndroidAppPreviewerPluginSdk\Session\PreviewSessionBase.h = Includes\Windows\AndroidAppPreviewerPluginSdk\UniversalDevKit\Windows\AndroidAppPreviewerPluginSdk\Session\PreviewSessionBase.h
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppPreviewer", "AndroidAppPreviewer", "{ac2e904e-0031-ecb7-3c67-9b58db6f70f9}"
 	ProjectSection(SolutionItems) = preProject
@@ -1016,11 +929,15 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppPreviewerPluginSdk", "AndroidAppPreviewerPluginSdk", "{f4b03f50-a83c-9d97-bf0f-ee2e1993f935}"
 	ProjectSection(SolutionItems) = preProject
 		Projects\Cmake\AndroidAppPreviewerPluginSdk\AndroidAppPreviewerPluginConfig.cmake = Projects\Cmake\AndroidAppPreviewerPluginSdk\AndroidAppPreviewerPluginConfig.cmake
+		Projects\Cmake\AndroidAppPreviewerPluginSdk\Build.cmake = Projects\Cmake\AndroidAppPreviewerPluginSdk\Build.cmake
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppPreviewer", "AndroidAppPreviewer", "{9af3a288-e6e9-e99d-6061-a6fade40be87}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppPreviewerPluginSdk", "AndroidAppPreviewerPluginSdk", "{1b7855dd-16fa-560a-e464-295b1665ded0}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\MsBuild\AndroidAppPreviewerPluginSdk\Build.targets = Projects\MsBuild\AndroidAppPreviewerPluginSdk\Build.targets
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppPreviewer", "AndroidAppPreviewer", "{6022a553-fa31-f394-65a6-d3655eec14ee}"
 	ProjectSection(SolutionItems) = preProject
@@ -1135,63 +1052,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workspace", "Workspace", "{
 		Sources\Windows\AndroidAppPreviewer\Workspace\WorkspaceController.cs = Sources\Windows\AndroidAppPreviewer\Workspace\WorkspaceController.cs
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppPreviewerPluginSdk", "AndroidAppPreviewerPluginSdk", "{5b54d6ac-5ca2-d0e9-5ba5-2ae215b895df}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.AndroidAppPreviewerPluginSdk.Shared", "Projects\MsBuild\AndroidAppPreviewerPluginSdk\UniversalDevKit.AndroidAppPreviewerPluginSdk.Shared.vcxitems", "{7E33F806-A888-45B2-B862-A61603F21C75}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Internal", "Internal", "{70261e9c-a5c0-007f-ae80-a44e5c52ad51}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\PreviewPluginExports.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\PreviewPluginExports.cpp
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.AndroidAppPreviewerPluginSdk.Static", "Projects\MsBuild\AndroidAppPreviewerPluginSdk\UniversalDevKit.AndroidAppPreviewerPluginSdk.Static.vcxproj", "{E9E58BF3-9603-0E64-8C6F-036536B11EC3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Abi", "Abi", "{f839f925-3017-c6ce-567d-6a8f95040390}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\DiagnosticAbi.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\DiagnosticAbi.cpp
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\DiagnosticAbi.h = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\DiagnosticAbi.h
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\ElementAbi.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\ElementAbi.cpp
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\ElementAbi.h = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\ElementAbi.h
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\InteractionAbi.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\InteractionAbi.cpp
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\InteractionAbi.h = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\InteractionAbi.h
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\MetadataAbi.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\MetadataAbi.cpp
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\MetadataAbi.h = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\MetadataAbi.h
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\PreviewPluginAbi.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\PreviewPluginAbi.cpp
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\PreviewPluginAbi.h = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\PreviewPluginAbi.h
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\RenderingAbi.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\RenderingAbi.cpp
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\RenderingAbi.h = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\RenderingAbi.h
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\SessionAbi.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\SessionAbi.cpp
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\SessionAbi.h = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\SessionAbi.h
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\XamlCompletionAbi.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\XamlCompletionAbi.cpp
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\XamlCompletionAbi.h = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Abi\XamlCompletionAbi.h
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.AndroidAppPreviewerPluginSdk.Dynamic", "Projects\MsBuild\AndroidAppPreviewerPluginSdk\UniversalDevKit.AndroidAppPreviewerPluginSdk.Dynamic.vcxproj", "{A2A668D2-8B2C-CA60-56B0-BAC51F1D8242}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bridge", "Bridge", "{8171f2cc-4f7f-bad5-431d-b4ea7e04d6fb}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\Diagnostic.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\Diagnostic.cpp
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\Diagnostic.h = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\Diagnostic.h
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\ElementTree.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\ElementTree.cpp
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\ElementTree.h = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\ElementTree.h
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\PreviewPluginSdkTypes.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\PreviewPluginSdkTypes.cpp
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\PreviewPluginSdkTypes.h = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\PreviewPluginSdkTypes.h
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\TextBuffer.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\TextBuffer.cpp
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\TextBuffer.h = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Bridge\TextBuffer.h
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Rendering", "Rendering", "{cc82688f-44b7-7208-c677-0e413f10d542}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Rendering\AngleRenderSurface.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Rendering\AngleRenderSurface.cpp
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Rendering\AngleRenderSurface.h = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Rendering\AngleRenderSurface.h
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Rendering\RecordingBackend.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Rendering\RecordingBackend.cpp
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Rendering\RecordingBackend.h = Sources\Windows\AndroidAppPreviewerPluginSdk\Internal\Rendering\RecordingBackend.h
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Managed", "Managed", "{043be73a-50f3-215f-a43a-eaf4dc04f799}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Managed\NativeRuntime.cs = Sources\Windows\AndroidAppPreviewerPluginSdk\Managed\NativeRuntime.cs
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Session", "Session", "{2892d45b-4a52-9c56-edb8-25a10164d9dc}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Session\PreviewNavigationController.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Session\PreviewNavigationController.cpp
-		Sources\Windows\AndroidAppPreviewerPluginSdk\Session\PreviewSessionBase.cpp = Sources\Windows\AndroidAppPreviewerPluginSdk\Session\PreviewSessionBase.cpp
-	EndProjectSection
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppPreviewerPluginSdk.Managed", "AndroidAppPreviewerPluginSdk.Managed", "{492E64B1-4A25-442B-AD02-21DF137A3CD9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1199,6 +1066,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2A668D2-8B2C-CA60-56B0-BAC51F1D8242}.Debug|x64.ActiveCfg = Debug|x64
+		{A2A668D2-8B2C-CA60-56B0-BAC51F1D8242}.Debug|x64.Build.0 = Debug|x64
+		{A2A668D2-8B2C-CA60-56B0-BAC51F1D8242}.Release|x64.ActiveCfg = Release|x64
+		{A2A668D2-8B2C-CA60-56B0-BAC51F1D8242}.Release|x64.Build.0 = Release|x64
+		{E9E58BF3-9603-0E64-8C6F-036536B11EC3}.Debug|x64.ActiveCfg = Debug|x64
+		{E9E58BF3-9603-0E64-8C6F-036536B11EC3}.Debug|x64.Build.0 = Debug|x64
+		{E9E58BF3-9603-0E64-8C6F-036536B11EC3}.Release|x64.ActiveCfg = Release|x64
+		{E9E58BF3-9603-0E64-8C6F-036536B11EC3}.Release|x64.Build.0 = Release|x64
 		{B0EEAABC-66D1-4CB2-8487-42ADE5A9DA60}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{B0EEAABC-66D1-4CB2-8487-42ADE5A9DA60}.Debug|x64.Build.0 = Debug|Any CPU
 		{B0EEAABC-66D1-4CB2-8487-42ADE5A9DA60}.Release|x64.ActiveCfg = Release|Any CPU
@@ -1207,22 +1082,6 @@ Global
 		{8FCB661C-DF12-4466-9D58-8F159EED456D}.Debug|x64.Build.0 = Debug|Any CPU
 		{8FCB661C-DF12-4466-9D58-8F159EED456D}.Release|x64.ActiveCfg = Release|Any CPU
 		{8FCB661C-DF12-4466-9D58-8F159EED456D}.Release|x64.Build.0 = Release|Any CPU
-		{A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Debug|x64.ActiveCfg = Debug|x64
-		{A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Debug|x64.Build.0 = Debug|x64
-		{A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Release|x64.ActiveCfg = Release|x64
-		{A7CE4335-D8E6-4E53-B810-7D932E87BA59}.Release|x64.Build.0 = Release|x64
-		{C6B94069-54C2-4B96-880D-4C058A605C56}.Debug|x64.ActiveCfg = Debug|x64
-		{C6B94069-54C2-4B96-880D-4C058A605C56}.Debug|x64.Build.0 = Debug|x64
-		{C6B94069-54C2-4B96-880D-4C058A605C56}.Release|x64.ActiveCfg = Release|x64
-		{C6B94069-54C2-4B96-880D-4C058A605C56}.Release|x64.Build.0 = Release|x64
-		{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24}.Debug|x64.ActiveCfg = Debug|x64
-		{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24}.Debug|x64.Build.0 = Debug|x64
-		{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24}.Release|x64.ActiveCfg = Release|x64
-		{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24}.Release|x64.Build.0 = Release|x64
-		{88573491-8330-4D25-A3C2-FAAB1D69E589}.Debug|x64.ActiveCfg = Debug|x64
-		{88573491-8330-4D25-A3C2-FAAB1D69E589}.Debug|x64.Build.0 = Debug|x64
-		{88573491-8330-4D25-A3C2-FAAB1D69E589}.Release|x64.ActiveCfg = Release|x64
-		{88573491-8330-4D25-A3C2-FAAB1D69E589}.Release|x64.Build.0 = Release|x64
 		{E21B97A1-D847-2938-4E29-760523C97389}.Debug|x64.ActiveCfg = Debug|x64
 		{E21B97A1-D847-2938-4E29-760523C97389}.Debug|x64.Build.0 = Debug|x64
 		{E21B97A1-D847-2938-4E29-760523C97389}.Release|x64.ActiveCfg = Release|x64
@@ -1252,12 +1111,12 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{492E64B1-4A25-442B-AD02-21DF137A3CD9} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{8FCB661C-DF12-4466-9D58-8F159EED456D} = {492E64B1-4A25-442B-AD02-21DF137A3CD9}
+		{A2A668D2-8B2C-CA60-56B0-BAC51F1D8242} = {1b7855dd-16fa-560a-e464-295b1665ded0}
+		{E9E58BF3-9603-0E64-8C6F-036536B11EC3} = {1b7855dd-16fa-560a-e464-295b1665ded0}
+		{7E33F806-A888-45B2-B862-A61603F21C75} = {1b7855dd-16fa-560a-e464-295b1665ded0}
 		{e912f2fc-2d08-78b5-f751-8b7237b6366b} = {CC3C64B5-A5FC-8F8E-720E-921A21F00229}
-		{42d69fe7-d6fb-caa0-e620-9509df8a01e2} = {e912f2fc-2d08-78b5-f751-8b7237b6366b}
-		{c1397f4c-d9ca-031b-8a09-817a128234a9} = {42d69fe7-d6fb-caa0-e620-9509df8a01e2}
-		{96921cee-649a-a089-b9e9-2f74ecc553f7} = {c1397f4c-d9ca-031b-8a09-817a128234a9}
-		{e6087ba5-56a2-8464-99b3-22bfbfb5fffe} = {96921cee-649a-a089-b9e9-2f74ecc553f7}
-		{c0c75db2-8c30-0273-79c2-63fc8270690d} = {e6087ba5-56a2-8464-99b3-22bfbfb5fffe}
 		{ac2e904e-0031-ecb7-3c67-9b58db6f70f9} = {45569702-BF11-421C-A43A-03D1364E3C95}
 		{b8dde45b-13ed-6c00-527c-cc6585eabcea} = {ac2e904e-0031-ecb7-3c67-9b58db6f70f9}
 		{618c44fb-cb75-1d10-8129-377998147dce} = {b8dde45b-13ed-6c00-527c-cc6585eabcea}
@@ -1268,7 +1127,6 @@ Global
 		{9af3a288-e6e9-e99d-6061-a6fade40be87} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{B0EEAABC-66D1-4CB2-8487-42ADE5A9DA60} = {9af3a288-e6e9-e99d-6061-a6fade40be87}
 		{1b7855dd-16fa-560a-e464-295b1665ded0} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
-		{8FCB661C-DF12-4466-9D58-8F159EED456D} = {1b7855dd-16fa-560a-e464-295b1665ded0}
 		{6022a553-fa31-f394-65a6-d3655eec14ee} = {91C1626E-08D0-D15F-E92C-49D0A474AFDC}
 		{7b6b9c83-3b44-b84e-186e-a16d34ecb2a8} = {6022a553-fa31-f394-65a6-d3655eec14ee}
 		{ef31d0ee-059d-531b-cf31-bf800b1f86a5} = {6022a553-fa31-f394-65a6-d3655eec14ee}
@@ -1285,18 +1143,10 @@ Global
 		{9443b7d9-db7e-7b8c-db98-eb6b80e0c07e} = {6022a553-fa31-f394-65a6-d3655eec14ee}
 		{8ad40061-fc8d-f416-28c9-48c7d02c8bec} = {6022a553-fa31-f394-65a6-d3655eec14ee}
 		{7e45b021-beaf-98a2-9fbe-72eff9a79178} = {6022a553-fa31-f394-65a6-d3655eec14ee}
-		{5b54d6ac-5ca2-d0e9-5ba5-2ae215b895df} = {91C1626E-08D0-D15F-E92C-49D0A474AFDC}
-		{70261e9c-a5c0-007f-ae80-a44e5c52ad51} = {5b54d6ac-5ca2-d0e9-5ba5-2ae215b895df}
-		{f839f925-3017-c6ce-567d-6a8f95040390} = {70261e9c-a5c0-007f-ae80-a44e5c52ad51}
-		{8171f2cc-4f7f-bad5-431d-b4ea7e04d6fb} = {70261e9c-a5c0-007f-ae80-a44e5c52ad51}
-		{cc82688f-44b7-7208-c677-0e413f10d542} = {70261e9c-a5c0-007f-ae80-a44e5c52ad51}
-		{043be73a-50f3-215f-a43a-eaf4dc04f799} = {5b54d6ac-5ca2-d0e9-5ba5-2ae215b895df}
-		{2892d45b-4a52-9c56-edb8-25a10164d9dc} = {5b54d6ac-5ca2-d0e9-5ba5-2ae215b895df}
 		{013748EA-6701-12BC-3730-1FFD5A485470} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
 		{013C7FA6-68C2-D8E8-8226-C5A1F4015813} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
 		{03C0B81C-6B57-4791-B5F3-9D2D48CE2544} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
 		{0479A7AB-4849-4235-1DCC-90CADF98EA5B} = {6886A40C-C0AA-4E2C-B04C-640DE620DDB6}
-		{072E1208-58D6-471D-B494-5D5670688291} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
 		{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83} = {13DA8639-4234-4E82-9423-056A19840860}
 		{0A281F7B-C6D3-D687-5485-F34DEF383257} = {D2E0D44F-71F1-1478-F989-466955EC6F80}
 		{0B0BF4AA-D150-0D6A-5F07-8FBEA5294145} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
@@ -1322,7 +1172,6 @@ Global
 		{2287AD25-6609-017D-CE21-82CBCD8794A9} = {10D9F55F-8C24-CD83-4800-C15419867BF2}
 		{244E0458-C3ED-6881-0EF2-37E679480FF3} = {6625778A-E44C-F016-70B3-507A374B34BF}
 		{26DC63D4-1E80-4386-ACBA-A8B9D984FC44} = {13DA8639-4234-4E82-9423-056A19840860}
-		{28F717C7-A2EF-405E-96F1-538329030ACF} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}
 		{299A0CF7-250D-4E08-B628-B84DABF5ABF8} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
 		{29D7CAB4-B2E3-541B-0D13-40F66C92226D} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
 		{2AE8945D-4EE8-4892-8D2D-D00485AF3079} = {1833675A-E63B-4FD3-8C8E-B7732DA73438}
@@ -1338,7 +1187,6 @@ Global
 		{3A28BDCD-290B-8EAE-5201-F926C15FA315} = {A5F21C3D-5BE7-7CE7-8DA7-E727F8333062}
 		{3E00A02D-46F3-432B-91C8-5D459F70C525} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
 		{3E60607C-2159-1178-7D1D-D2F895A93ECE} = {A5F21C3D-5BE7-7CE7-8DA7-E727F8333062}
-		{3F409C4A-6700-4061-AA77-627289E619E9} = {6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7}
 		{3FA9D130-CBA4-CA5F-B93E-6D5470AE8CC9} = {D299E483-C236-42DA-9F90-8447C3B007D1}
 		{42F1061C-608C-B995-DA40-CCDC28562784} = {1CB3D83B-053E-C090-B11A-3D549CAE5D02}
 		{42F9EF9D-C14A-41EB-9DB4-E80213A4DF7B} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
@@ -1351,21 +1199,17 @@ Global
 		{4EC19DE5-86B2-F917-EDBE-0853570B42C8} = {E742837F-6B59-8FB2-A0A2-A595262A3096}
 		{50CDBD24-894E-0FD6-7C08-442980AADBB7} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{5134BE1A-F783-8202-D25D-A30A9D58EEC7} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
-		{521E2788-845C-4B8F-B742-DB0FDF5271D3} = {AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD}
 		{53CCF09D-3A31-CC46-3125-C7A20C83157C} = {BF6E01A3-B5FA-4885-DDF6-04EBC39A937F}
 		{53D85186-4F21-7AF4-966E-0BFE3529E387} = {30501EDF-7220-1290-983B-ED3AD395DAB9}
 		{54759879-4933-7741-25DA-A95FC7B5B6E4} = {C9FA28BE-811A-821C-36B5-541DDABEA455}
 		{55C13CE1-FBB1-5BD5-BD41-2250C3A423B1} = {244E0458-C3ED-6881-0EF2-37E679480FF3}
-		{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
 		{57653CA8-8A75-118F-DC80-3EBC71559550} = {B0918D5C-3B09-C8F7-F0ED-764BD3B50846}
 		{59895D38-CDF4-4147-9A04-43A9272774B2} = {D299E483-C236-42DA-9F90-8447C3B007D1}
 		{59FB48FD-1E1A-499E-BAD5-B16AE1E29194} = {0CF0E8F4-117A-457B-8BE3-40FEEC842EEB}
 		{5A3097F9-84D7-8CA6-4986-8CDA0E26D227} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
 		{5E16CA24-F8A2-436C-86B6-6511A703FB82} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
 		{5F8285EB-50A6-72A5-EC22-272252A78342} = {2D6239A5-1257-7085-A746-2B83BF5833B3}
-		{5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{62BB4FD3-461F-9188-4888-44C68D0ED548} = {D2288D3A-B06E-9A12-3C08-06E8689CF6A8}
-		{6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7} = {072E1208-58D6-471D-B494-5D5670688291}
 		{6332D45B-9105-4EA4-BB61-65D494AF4CE0} = {C25B8C43-91C7-4F23-B186-05E37C145720}
 		{63F4DEE8-3B65-353E-BE35-5E4AE270E5BA} = {DB514C30-5601-82E1-CDE1-701ADA43A9BE}
 		{6625778A-E44C-F016-70B3-507A374B34BF} = {9D17877F-6145-90EC-14CD-F14A1A24D13C}
@@ -1390,10 +1234,8 @@ Global
 		{83DCB71D-7876-BAB1-592A-80813F305E4D} = {B514E8BC-8590-54F4-383E-9CCA8C91D5E2}
 		{861E01E1-D689-40B3-BE1D-E0F7FF11DD73} = {B7214789-B7E7-4F88-A6DE-F367B65F9BDF}
 		{878DA696-AD56-4739-84BB-D9A8E4BC5A48} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
-		{88573491-8330-4D25-A3C2-FAAB1D69E589} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}
 		{8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
 		{8B6A058C-7402-4392-8956-6B1489D9E118} = {D832A37F-03A2-4EBD-9FF9-BC27D415378B}
-		{8B6DD9E6-3057-45B9-80F6-B813601BE33B} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{8C2CF08B-7E03-796A-7D77-8F40A51B3827} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
 		{8CB5D103-21B9-4651-A4A1-671107F28847} = {13DA8639-4234-4E82-9423-056A19840860}
 		{907E880C-10F6-4C85-9DF8-5C73F54646DB} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
@@ -1412,14 +1254,10 @@ Global
 		{A5F21C3D-5BE7-7CE7-8DA7-E727F8333062} = {53D85186-4F21-7AF4-966E-0BFE3529E387}
 		{A62B830A-BE58-54F9-6766-E95D2B04A2A8} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{A63D24B8-5B7A-45B8-9C11-000000000100} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
-		{A63D24B8-5B7A-45B8-9C11-000000000101} = {6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7}
-		{A63D24B8-5B7A-45B8-9C11-000000000102} = {AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD}
 		{A63D24B8-5B7A-45B8-9C11-000000000300} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
 		{A63D24B8-5B7A-45B8-9C11-000000000301} = {A63D24B8-5B7A-45B8-9C11-000000000300}
-		{A7CE4335-D8E6-4E53-B810-7D932E87BA59} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
 		{A82C4E93-051E-4C0B-B705-5875F748742C} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
 		{A9D15F6F-E8E6-215E-B4A8-4EEF838A4827} = {954721D1-E3F2-CE5D-E92C-D6B6FF3DA750}
-		{AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD} = {BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54}
 		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
 		{ABDB27EA-51AF-8FD4-C199-EED7FB927000} = {96EB236F-1DA2-3CE9-BB64-D02FAE2393A9}
 		{ADBA3BA9-F6AC-7A5C-7A27-59AE40606576} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
@@ -1441,13 +1279,11 @@ Global
 		{BD39C8CE-C2B3-E621-63FE-823BF42FD280} = {EE0699C4-AF73-7691-6CA6-84054809308A}
 		{BE41E66B-A170-480D-9D80-1C69E83390BA} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
 		{BF01194B-04FD-4A07-B85F-2781C7237D5D} = {B7214789-B7E7-4F88-A6DE-F367B65F9BDF}
-		{BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
 		{BF6E01A3-B5FA-4885-DDF6-04EBC39A937F} = {219E05B7-6343-C810-FB04-31E430BD5184}
 		{C107C931-3488-14EB-5D4A-E3550F9BEF90} = {4E95EF45-F0E9-25F3-42D1-46CE1983D834}
 		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
 		{C25B8C43-91C7-4F23-B186-05E37C145720} = {45569702-BF11-421C-A43A-03D1364E3C95}
 		{C45C681B-A5F9-4F56-8DBE-70193C735CAB} = {D299E483-C236-42DA-9F90-8447C3B007D1}
-		{C6B94069-54C2-4B96-880D-4C058A605C56} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}
 		{C9FA28BE-811A-821C-36B5-541DDABEA455} = {96EB236F-1DA2-3CE9-BB64-D02FAE2393A9}
 		{CA7AB659-38EB-4E98-99A7-95A777DCD074} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
 		{CB7EEAB5-39FB-49B2-95A1-72774A80F5B8} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
@@ -1474,7 +1310,6 @@ Global
 		{EE0699C4-AF73-7691-6CA6-84054809308A} = {9A43C79B-ED5A-7282-DF3B-F27B77DD2EA1}
 		{F104C833-785D-E25F-5F10-B46284462A11} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
 		{F14DE294-71C4-BF70-A2DA-80F47CB2AE6C} = {B30EC563-478C-BAFB-6574-559B0E97A3BA}
-		{F27F4562-11C4-42EF-AC5A-26101FD26F46} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
 		{F33C432B-1712-B0E5-F5CE-920716EC8DFE} = {13729F43-F63B-797F-F4AB-9F7BA47C69C2}
 		{F980E824-E22F-AD62-3F6C-1C68F2150D95} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
 		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
@@ -1485,21 +1320,18 @@ Global
 		SolutionGuid = {D7A3009E-A79E-4542-AC95-DD9B9C113922}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Projects\MsBuild\AndroidAppPreviewerPluginSdk\UniversalDevKit.AndroidAppPreviewerPluginSdk.Shared.vcxitems*{7e33f806-a888-45b2-b862-a61603f21c75}*SharedItemsImports = 9
+		Projects\MsBuild\AndroidAppPreviewerPluginSdk\UniversalDevKit.AndroidAppPreviewerPluginSdk.Shared.vcxitems*{e9e58bf3-9603-0e64-8c6f-036536b11ec3}*SharedItemsImports = 4
+		Projects\MsBuild\AndroidAppPreviewerPluginSdk\UniversalDevKit.AndroidAppPreviewerPluginSdk.Shared.vcxitems*{a2a668d2-8b2c-ca60-56b0-bac51f1d8242}*SharedItemsImports = 4
 		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{220b0789-1f04-54d3-18e5-5db99e91172f}*SharedItemsImports = 4
-		Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Shared.vcxitems*{28f717c7-a2ef-405e-96f1-538329030acf}*SharedItemsImports = 9
 		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{364e96cb-9d8a-40b0-8455-6a31a15a36b0}*SharedItemsImports = 9
 		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{3e00a02d-46f3-432b-91c8-5d459f70c525}*SharedItemsImports = 9
-		Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Shared.vcxitems*{56ed54d2-4f7a-4cd2-91ba-3d710d8f9c24}*SharedItemsImports = 4
 		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{6cbdc266-9b42-f741-03eb-f610ab72e1b1}*SharedItemsImports = 4
 		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{77311056-84a3-4b57-aef1-7a76f17c500c}*SharedItemsImports = 4
-		Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Shared.vcxitems*{88573491-8330-4d25-a3c2-faab1d69e589}*SharedItemsImports = 4
-		Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Shared.vcxitems*{a7ce4335-d8e6-4e53-b810-7d932e87ba59}*SharedItemsImports = 4
 		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{ab97876a-f25a-4aae-bacd-d32c776bb261}*SharedItemsImports = 9
 		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{c1e8c40d-b9b5-4c0d-9f7e-1b793d3c13ae}*SharedItemsImports = 9
-		Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Shared.vcxitems*{c6b94069-54c2-4b96-880d-4c058a605c56}*SharedItemsImports = 4
 		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{e21b97a1-d847-2938-4e29-760523c97389}*SharedItemsImports = 4
 		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{f104c833-785d-e25f-5f10-b46284462a11}*SharedItemsImports = 4
-		Projects\MsBuild\HeleprsTest\UniversalDevKit.HeleprsTest.Shared.vcxitems*{f27f4562-11c4-42ef-ac5a-26101fd26f46}*SharedItemsImports = 9
 		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{fa67d7fd-393a-e9bc-f2a4-2570b2929973}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal

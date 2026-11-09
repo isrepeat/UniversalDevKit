@@ -25,15 +25,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Consumers", "Consumers", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CmakeContract", "CmakeContract", "{9DC9397B-FC4E-4C91-B0AB-EA426503A537}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Consumers\CmakeContract\CMakeLists.txt = Tests\Fixtures\Consumers\CmakeContract\CMakeLists.txt
-		Tests\Fixtures\Consumers\CmakeContract\Main.cpp = Tests\Fixtures\Consumers\CmakeContract\Main.cpp
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CmakePackage", "CmakePackage", "{B397F065-72CA-4B76-A612-E82A0DBF2F27}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Consumers\CmakePackage\CMakeLists.txt = Tests\Fixtures\Consumers\CmakePackage\CMakeLists.txt
-		Tests\Fixtures\Consumers\CmakePackage\Main.cpp = Tests\Fixtures\Consumers\CmakePackage\Main.cpp
-		Tests\Fixtures\Consumers\CmakePackage\LoggingContract.cpp = Tests\Fixtures\Consumers\CmakePackage\LoggingContract.cpp
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{716D026A-FDEF-4BBA-89DB-FC45C84E16DF}"
@@ -245,39 +240,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{D24CA339
 	ProjectSection(SolutionItems) = preProject
 		Tests\Integration\Cmake\RequirementValidation.cmake = Tests\Integration\Cmake\RequirementValidation.cmake
 		Tests\Integration\Cmake\Diamond.Tests.ps1 = Tests\Integration\Cmake\Diamond.Tests.ps1
-		Tests\Integration\Cmake\TestCMakePackage.ps1 = Tests\Integration\Cmake\TestCMakePackage.ps1
 		Tests\Integration\Cmake\TestBinaryCompatibility.ps1 = Tests\Integration\Cmake\TestBinaryCompatibility.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{22F9FF80-DFE4-4C9D-A560-0F28D87C1E72}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Integration\MsBuild\Connect.Tests.ps1 = Tests\Integration\MsBuild\Connect.Tests.ps1
 		Tests\Integration\MsBuild\Diamond.Tests.ps1 = Tests\Integration\MsBuild\Diamond.Tests.ps1
-		Tests\Integration\MsBuild\Disconnect.Tests.ps1 = Tests\Integration\MsBuild\Disconnect.Tests.ps1
-		Tests\Integration\MsBuild\Dynamic.Tests.ps1 = Tests\Integration\MsBuild\Dynamic.Tests.ps1
 		Tests\Integration\MsBuild\Export.Tests.ps1 = Tests\Integration\MsBuild\Export.Tests.ps1
-		Tests\Integration\MsBuild\ModeSwitch.Tests.ps1 = Tests\Integration\MsBuild\ModeSwitch.Tests.ps1
-		Tests\Integration\MsBuild\Shared.Tests.ps1 = Tests\Integration\MsBuild\Shared.Tests.ps1
-		Tests\Integration\MsBuild\Static.Tests.ps1 = Tests\Integration\MsBuild\Static.Tests.ps1
-		Tests\Integration\MsBuild\Runtime.Tests.ps1 = Tests\Integration\MsBuild\Runtime.Tests.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{41619890-3A56-45F7-B0B8-45C4A554206B}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Scripts\RunDiamond.cmd = Tests\Scripts\RunDiamond.cmd
 		Tests\Scripts\RunDiamondMatrixTests.cmd = Tests\Scripts\RunDiamondMatrixTests.cmd
-		Tests\Scripts\RunNuGet.cmd = Tests\Scripts\RunNuGet.cmd
 		Tests\Scripts\RunPackageDeliveryTests.cmd = Tests\Scripts\RunPackageDeliveryTests.cmd
 		Tests\Scripts\RunWinRtPackageTests.cmd = Tests\Scripts\RunWinRtPackageTests.cmd
 		Tests\Scripts\RunNuGetRegistry.cmd = Tests\Scripts\RunNuGetRegistry.cmd
 		Tests\Scripts\RunAndroidPrefabTests.cmd = Tests\Scripts\RunAndroidPrefabTests.cmd
 		Tests\Scripts\RunNuGetPackageReferenceTests.cmd = Tests\Scripts\RunNuGetPackageReferenceTests.cmd
-		Tests\Scripts\RunDisconnect.cmd = Tests\Scripts\RunDisconnect.cmd
-		Tests\Scripts\RunDynamic.cmd = Tests\Scripts\RunDynamic.cmd
 		Tests\Scripts\RunExport.cmd = Tests\Scripts\RunExport.cmd
-		Tests\Scripts\RunModeSwitch.cmd = Tests\Scripts\RunModeSwitch.cmd
-		Tests\Scripts\RunShared.cmd = Tests\Scripts\RunShared.cmd
-		Tests\Scripts\RunStatic.cmd = Tests\Scripts\RunStatic.cmd
 		Tests\Scripts\RunSubmodule.cmd = Tests\Scripts\RunSubmodule.cmd
 		Tests\Scripts\RunTests.cmd = Tests\Scripts\RunTests.cmd
 		Tests\Scripts\RunAllTests.cmd = Tests\Scripts\RunAllTests.cmd
@@ -285,8 +266,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{4161
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeaderIsolation", "HeaderIsolation", "{4B1389B8-69D3-4DA0-972F-A790EAE8AE64}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Consumers\HeaderIsolation\CMakeLists.txt = Tests\Fixtures\Consumers\HeaderIsolation\CMakeLists.txt
-		Tests\Fixtures\Consumers\HeaderIsolation\Main.cpp = Tests\Fixtures\Consumers\HeaderIsolation\Main.cpp
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Generated", "Generated", "{52BED2B5-4FBC-4A59-8FF7-332C3AC443A9}"
@@ -398,7 +377,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PublicHeaders", "PublicHead
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{46309FCB-5690-43A9-A727-F7ED75AE0E96}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Consumers\NuGet\Main.cpp = Tests\Fixtures\Consumers\NuGet\Main.cpp
 		Tests\Fixtures\Consumers\NuGet\Consumer.vcxproj.in = Tests\Fixtures\Consumers\NuGet\Consumer.vcxproj.in
 		Tests\Fixtures\Consumers\NuGet\packages.config.in = Tests\Fixtures\Consumers\NuGet\packages.config.in
 		Tests\Fixtures\Consumers\NuGet\PackageReference.Main.cpp = Tests\Fixtures\Consumers\NuGet\PackageReference.Main.cpp
@@ -407,7 +385,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{46309FCB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{DB9A4DC7-79EC-45F0-810C-E698375CC27C}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Integration\Packages\NuGet.Tests.ps1 = Tests\Integration\Packages\NuGet.Tests.ps1
 		Tests\Integration\Packages\NuGet.PackageReference.Tests.ps1 = Tests\Integration\Packages\NuGet.PackageReference.Tests.ps1
 		Tests\Integration\Packages\PackageDelivery.Tests.ps1 = Tests\Integration\Packages\PackageDelivery.Tests.ps1
 		Tests\Integration\Packages\README.md = Tests\Integration\Packages\README.md

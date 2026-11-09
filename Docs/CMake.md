@@ -29,12 +29,12 @@ Preset использует Ninja Multi-Config. Debug/Release выбираетс
 
 ```cmake
 add_subdirectory(external/UniversalDevKit)
-target_link_libraries(MyApplication PRIVATE UniversalDevKit::DiagnosticTest.Static)
+target_link_libraries(MyApplication PRIVATE UniversalDevKit::XamlRuntime.Static)
 ```
 
-Targets передают include-путь, минимальный стандарт языка и необходимые зависимости. DiagnosticTest.Static требует HeleprsTest.Static; вручную повторять эту связь не нужно.
+Targets передают include-путь, минимальный стандарт языка и необходимые зависимости. XamlRuntime.Static получает Helpers.Headers и Diagnostic.Dynamic по графу; вручную повторять эту связь не нужно.
 
-Для динамического варианта используйте UniversalDevKit::DiagnosticTest.Dynamic. На Windows consumer получает import-макрос; DLL должна быть доступна при запуске. Например, для CMake 3.22 и известного набора runtime DLL:
+Для динамического варианта используйте UniversalDevKit::XamlRuntime.Dynamic. На Windows consumer получает import-макрос; DLL должна быть доступна при запуске. Например, для CMake 3.22 и известного набора runtime DLL:
 
 ```cmake
 if(WIN32)
@@ -59,13 +59,13 @@ endif()
 | UniversalDevKit_BUILD_DYNAMIC | ON | Создавать динамические варианты корней |
 | UniversalDevKit_INSTALL | ON | Создавать правила установки |
 
-Пример конфигурации только DiagnosticTest.Dynamic:
+Пример конфигурации только XamlRuntime.Dynamic:
 
 ```powershell
-cmake --preset windows-x64 -DUniversalDevKit_COMPONENTS=DiagnosticTest -DUniversalDevKit_BUILD_STATIC=OFF
+cmake --preset windows-x64 -DUniversalDevKit_COMPONENTS=XamlRuntime -DUniversalDevKit_BUILD_STATIC=OFF
 ```
 
-HeleprsTest.Static всё равно создаётся, поскольку JSON требует его для DiagnosticTest.Dynamic. BUILD_STATIC=OFF запрещает статические варианты корней, но не обязательных зависимостей. Для шаблонного кода используйте UniversalDevKit::HeleprsTest.Headers или другой компонентный Headers-target: он предоставляет свой include-корень и публичные зависимости. UniversalDevKit::Headers предоставляет только общие Export.h и Version.h. При установке копируются заголовки выбранных бинарных компонентов и их зависимостей; компонентные Headers-targets экспортируются вместе с ними.
+Helpers.Headers и Diagnostic.Dynamic добавляются как зависимости XamlRuntime.Dynamic. BUILD_STATIC=OFF запрещает статические варианты корней, но не обязательных зависимостей: например, native Preview SDK требует статические XamlRuntime и renderer. Для шаблонного кода используйте UniversalDevKit::Helpers.Headers или другой компонентный Headers-target: он предоставляет свой include-корень и публичные зависимости. UniversalDevKit::Headers предоставляет только общие Export.h и Version.h. При установке копируются заголовки выбранных бинарных компонентов и их зависимостей; компонентные Headers-targets экспортируются вместе с ними.
 
 При add_subdirectory настройки можно задать заранее как обычные переменные при стандартной политике CMake родительского проекта. Выбор в меню Connect этих настроек не меняет.
 
@@ -96,8 +96,8 @@ Debug-имена бинарников имеют суффикс d, поэтом�
 В отдельном consumer:
 
 ```cmake
-find_package(UniversalDevKit 0.1 CONFIG REQUIRED COMPONENTS DiagnosticTest)
-target_link_libraries(MyApplication PRIVATE UniversalDevKit::DiagnosticTest.Static)
+find_package(UniversalDevKit 0.1 CONFIG REQUIRED COMPONENTS XamlRuntime)
+target_link_libraries(MyApplication PRIVATE UniversalDevKit::XamlRuntime.Static)
 ```
 
 При конфигурации укажите CMAKE_PREFIX_PATH с корнем установки либо UniversalDevKit_DIR с каталогом конфигурации пакета. find_package загружает экспортированные targets с путями и usage requirements; исходный checkout и ComponentDependencies.cmake не нужны.

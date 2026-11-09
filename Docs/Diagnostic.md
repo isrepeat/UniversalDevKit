@@ -10,7 +10,7 @@ Android AAR/Prefab выпускается через `Packages/Build/Android/Bui
 
 Постоянный общий набор первого этапа находится в Tests/Fixtures/Consumers/Diagnostic: контракт, многопоточная запись и общее состояние EXE/DLL или executable/SO. Команды и границы проверки — Tests/Integration/Diagnostic/README.md; Android build-only явно отделён от запуска на устройстве.
 
-Минимальный C++20 сервис логирования со статическим классом `Logger`: `UniversalDevKit::Diagnostic.Dynamic`, namespace `universaldevkit::diagnostic`. Компонент имеет `stateScope=process`: штатные способы подключения разрешают только DLL/SO. Все модули приложения должны использовать один загруженный экземпляр Diagnostic. Тестовый DiagnosticTest остаётся отдельным компонентом.
+Минимальный C++20 сервис логирования со статическим классом `Logger`: `UniversalDevKit::Diagnostic.Dynamic`, namespace `universaldevkit::diagnostic`. Компонент имеет `stateScope=process`: штатные способы подключения разрешают только DLL/SO. Все модули приложения должны использовать один загруженный экземпляр Diagnostic.
 
 ## Результат инициализации
 

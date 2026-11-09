@@ -14,7 +14,7 @@ namespace universaldevkit::windows::androidapppreviewerpluginsdk {
     }
 
     xp_session::xp_session(int width, int height)
-        : previewSession(universaldevkit::windows::androidapppreviewerpluginsdk::CreatePreviewSession(width, height))
+        : previewSession(session::PluginDefinition::CreatePreviewSession(width, height))
         , value(*this->previewSession) {
     }
 }

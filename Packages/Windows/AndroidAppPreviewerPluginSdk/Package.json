@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "name": "AndroidAppPreviewerPluginSdk",
+  "component": "AndroidAppPreviewerPluginSdk",
   "versionSource": "../../../Version.json",
   "deliveries": { "NuGet": "Delivery/NuGet/Delivery.json" }
 }

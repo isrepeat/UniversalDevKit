@@ -2,8 +2,8 @@ param(
     [string]$Feed,
     [string]$CMake,
     [string]$NuGet = 'nuget.exe',
-    [ValidateSet('DiagnosticTest', 'HeleprsTest', 'Helpers', 'Diagnostic', 'XamlRuntime', 'OpenGLESRenderer')]
-    [string[]]$Components = @('DiagnosticTest', 'HeleprsTest', 'Helpers', 'Diagnostic')
+    [ValidateSet('Helpers', 'Diagnostic', 'XamlRuntime', 'OpenGLESRenderer')]
+    [string[]]$Components = @('Helpers', 'Diagnostic')
 )
 $env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
 $env:VSLANG = '1033'
@@ -52,7 +52,7 @@ try {
                 [void][IO.Directory]::CreateDirectory($consumer)
                 $cache = Join-Path $consumer 'cache'
                 Copy-Item -LiteralPath (Join-Path $fixture 'PackageReference.Main.cpp') -Destination (Join-Path $consumer 'Main.cpp')
-                $definitions = if ($component -eq 'HeleprsTest') { 'UDK_TEST_HELEPRSTEST_ONLY=1;' } else { '' }
+                $definitions = ''
                 if ($component -eq 'Helpers') { $definitions = 'UDK_TEST_HEADER_HELPERS=1;' }
                 if ($component -eq 'Diagnostic') { $definitions = 'UDK_TEST_DIAGNOSTIC=1;' }
                 if ($component -in @('XamlRuntime', 'OpenGLESRenderer')) { $definitions = 'UDK_TEST_XAML=1;' }
@@ -70,7 +70,7 @@ try {
                 $assetsPath = Join-Path $consumer 'obj/project.assets.json'
                 if (-not (Test-Path -LiteralPath $assetsPath)) { throw 'Native PackageReference restore did not produce project.assets.json. A supporting Visual Studio is required.' }
                 $assets = Get-Content -LiteralPath $assetsPath -Raw | ConvertFrom-Json
-                $expectedPackages = if ($component -eq 'DiagnosticTest') { @('DiagnosticTest', 'HeleprsTest') } elseif ($component -eq 'Diagnostic') { @('Diagnostic', 'Helpers') } elseif ($component -in @('XamlRuntime', 'OpenGLESRenderer')) { @($component, 'XamlRuntime', 'Diagnostic', 'Helpers') | Select-Object -Unique } else { @($component) }
+                $expectedPackages = if ($component -eq 'Diagnostic') { @('Diagnostic', 'Helpers') } elseif ($component -in @('XamlRuntime', 'OpenGLESRenderer')) { @($component, 'XamlRuntime', 'Diagnostic', 'Helpers') | Select-Object -Unique } else { @($component) }
                 foreach ($package in $expectedPackages) {
                     if (-not $assets.libraries.PSObject.Properties["UniversalDevKit.$package/$version"]) { throw "Missing restored dependency: $package" }
                 }
@@ -109,9 +109,6 @@ try {
                 }
                 if ($runtime -eq 'Dynamic' -and $component -ne 'Helpers') {
                     InvokeChecked ($common + @('/t:Rebuild', '/p:Configuration=Release', '/p:UdkTestWrongCrt=true')) (Join-Path $consumer 'wrong-crt.log') 'CRT mismatch'
-                }
-                if ($component -eq 'DiagnosticTest') {
-                    InvokeChecked ($common + @('/t:Rebuild', '/p:Configuration=Release', '/p:UniversalDevKitComponents=HeleprsTest', '/p:UniversalDevKitHeleprsTestLinkage=Shared')) (Join-Path $consumer 'wrong-linkage.log') 'unsupported linkage'
                 }
                 if ($component -eq 'Helpers') {
                     InvokeChecked ($common + @('/t:Rebuild', '/p:Configuration=Release', '/p:UniversalDevKitHelpersLinkage=Dynamic')) (Join-Path $consumer 'wrong-linkage.log') 'unsupported linkage'
