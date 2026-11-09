@@ -14,9 +14,11 @@ Android Kotlin AAR: [AndroidCoreSdk](Android/AndroidCoreSdk/README.md) и [Andro
 
 Пакеты группируются по назначению: CrossPlatform, Windows и Android. Каждый пакет содержит Package.json и Delivery/<способ>/ с описаниями доставки. Категория CrossPlatform обозначает назначение продукта; фактически проверенные платформы перечисляются в Delivery.json.
 
-HeleprsTest и DiagnosticTest находятся в CrossPlatform и ссылаются на компоненты UDK без копирования исходников. Sources и Projects внутри пакета создаются только для дополнительных исходников и проектов. Пустые каталоги не создаются.
+HeleprsTest и DiagnosticTest находятся в CrossPlatform и ссылаются на компоненты UDK без копирования исходников. Реализация всех компонентов находится в Sources/<имя>, публичные C++ заголовки — в Includes/<имя>, проекты сборки — в Projects/<система>/<имя>; внутри Packages остаются описание выпуска, delivery-манифесты и файлы интеграции. Пустые каталоги не создаются.
 
-Общий NuGet-упаковщик и шаблоны находятся в Packages/Build/NuGet. Текущий адаптер component связывает пакет с одним компонентом, а его package ID читается из Delivery.json. Другие адаптеры для шаблонов, инструментов и составных пакетов будут добавляться отдельно. Версия компонентных пакетов читается через versionSource из Version.json. Готовые пакеты и промежуточные файлы — в !artifacts.
+Общий NuGet-упаковщик и шаблоны находятся в Packages/Build/NuGet. Текущий адаптер component связывает пакет с одним компонентом, а его package ID читается из Delivery.json. Адаптер Content собирает инструменты и шаблоны по явным files в Delivery.json; составные адаптеры добавляются отдельно. Версия компонентных пакетов читается через versionSource из Version.json. Готовые пакеты и промежуточные файлы — в !artifacts.
 
 Собственные nuspec, targets и при необходимости props находятся непосредственно в Delivery/NuGet каждого пакета. Они перечислены в Delivery.json: nuspec и integration. Props/targets копируются без подстановок и могут содержать индивидуальную логику. Общий упаковщик генерирует данные выпуска и рассчитанные настройки графа в Generated/Settings.props и Settings.targets; пакет подключает их явными imports.
 Android host-инструменты: [AndroidBuildTools](Android/AndroidBuildTools/README.md) и [AndroidTemplates](Android/AndroidTemplates/README.md). Адаптер `Packages/Build/Content/Build.ps1` выпускает самостоятельные NuGet с собственными Version.json, без C++-компонента и без изменения версии при упаковке. CMD-точки входа находятся в Scripts/Packages/Android. Новый шаблон использует UDK AAR/Prefab, Diagnostic и отдельный XamlCompiler; Preview SDK и рабочие приложения переносятся следующим этапом.
+
+Размещение реализации, инструментов и шаблонов: [структура исходников](../Docs/SourceLayout.md).

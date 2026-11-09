@@ -1,0 +1,31 @@
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.android.tools.build:gradle:9.3.2'
+}
+
+gradlePlugin {
+    plugins {
+        androidApplication {
+            id = 'com.isrepeat.android.application'
+            implementationClass = 'com.isrepeat.build.AndroidApplicationPlugin'
+        }
+        androidSettings {
+            id = 'com.isrepeat.android.settings'
+            implementationClass = 'com.isrepeat.build.AndroidSettingsPlugin'
+        }
+    }
+}
+
+// Пакет использует локальные src, checkout — общие исходники репозитория.
+if (!file('src/main/groovy').isDirectory()) {
+    sourceSets.main.groovy.setSrcDirs([file('../../../Sources/Android/AndroidBuildTools/Gradle/src/main/groovy')])
+    layout.buildDirectory.set(file('../../../!artifacts/projects/Windows-x64/gradle/AndroidBuildTools'))
+}

@@ -5,5 +5,27 @@
   "supportedPlatforms": [
     "Windows"
   ],
-  "nuspec": "AndroidTemplates.nuspec"
+  "nuspec": "AndroidTemplates.nuspec",
+  "files": [
+    {
+      "source": "Sources/Android/AndroidTemplates/PowerShell",
+      "target": "PowerShell"
+    },
+    {
+      "source": "Sources/Android/AndroidTemplates/Templates/Application",
+      "target": "template_app"
+    },
+    {
+      "source": "Sources/Android/AndroidTemplates/PowerShell/Read-AndroidSharedProps.ps1",
+      "target": "template_app/Scripts/PowerShell/Read-AndroidSharedProps.ps1"
+    },
+    {
+      "source": "Sources/Android/AndroidTemplates/PowerShell/Remove-AndroidProject.ps1",
+      "target": "template_app/Scripts/PowerShell/Remove-AndroidProject.ps1"
+    },
+    {
+      "source": "Version.json",
+      "target": "UdkVersion.json"
+    }
+  ]
 }

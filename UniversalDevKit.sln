@@ -39,7 +39,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4
 		Projects\Cmake\PackageCompatibility.cmake.in = Projects\Cmake\PackageCompatibility.cmake.in
 		Projects\Cmake\PackageMetadata.cmake = Projects\Cmake\PackageMetadata.cmake
 		Projects\Cmake\RegistryContract.cmake = Projects\Cmake\RegistryContract.cmake
-		Projects\Cmake\ThirdParty.cmake = Projects\Cmake\ThirdParty.cmake
 		Projects\Cmake\UniversalDevKitConfig.cmake.in = Projects\Cmake\UniversalDevKitConfig.cmake.in
 		Projects\Cmake\Version.cmake = Projects\Cmake\Version.cmake
 	EndProjectSection
@@ -80,11 +79,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DiagnosticTest", "DiagnosticTest", "{5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}"
 	ProjectSection(SolutionItems) = preProject
 		Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Dependencies.props = Projects\MsBuild\DiagnosticTest\UniversalDevKit.DiagnosticTest.Dependencies.props
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{066DAD5F-063F-43BF-8ADC-0E76A36CA54D}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\README.md = Packages\README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{8B6A058C-7402-4392-8956-6B1489D9E118}"
@@ -146,6 +140,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{0458F395-E
 		Docs\Tools.md = Docs\Tools.md
 		Docs\Validation.md = Docs\Validation.md
 		Docs\XamlRuntime.md = Docs\XamlRuntime.md
+		Docs\SourceLayout.md = Docs\SourceLayout.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Repository", "!Repository", "{01643071-A00B-441F-B890-826B2408BC9D}"
@@ -170,66 +165,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{
 		Scripts\PowerShell\Templates\HeaderCheck.cpp.in = Scripts\PowerShell\Templates\HeaderCheck.cpp.in
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{BE41E66B-A170-480D-9D80-1C69E83390BA}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\Build\NuGet\Build.ps1 = Packages\Build\NuGet\Build.ps1
-		Packages\Build\NuGet\README.md = Packages\Build\NuGet\README.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatform", "{907E880C-10F6-4C85-9DF8-5C73F54646DB}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{B690A596-AD03-40E3-B875-6722D2397011}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\Diagnostic\Package.json = Packages\CrossPlatform\Diagnostic\Package.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{1833675A-E63B-4FD3-8C8E-B7732DA73438}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{2AE8945D-4EE8-4892-8D2D-D00485AF3079}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\Delivery.json
-		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.nuspec = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.nuspec
-		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.props = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.props
-		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.targets = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.targets
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{941FD4A9-CB23-4415-8DC3-67D60AEC425D}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\Diagnostic\Delivery\Android\Delivery.json = Packages\CrossPlatform\Diagnostic\Delivery\Android\Delivery.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DiagnosticTest", "DiagnosticTest", "{072E1208-58D6-471D-B494-5D5670688291}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\DiagnosticTest\Package.json = Packages\CrossPlatform\DiagnosticTest\Package.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{3F409C4A-6700-4061-AA77-627289E619E9}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\Delivery.json
-		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.nuspec = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.nuspec
-		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.props = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.props
-		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.targets = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.targets
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeleprsTest", "HeleprsTest", "{BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\HeleprsTest\Package.json = Packages\CrossPlatform\HeleprsTest\Package.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{521E2788-845C-4B8F-B742-DB0FDF5271D3}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\Delivery.json
-		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.nuspec = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.nuspec
-		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.props = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.props
-		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.targets = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.targets
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{DC091494-5AC6-46E6-BA6D-61441682BB62}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatform", "{CA7AB659-38EB-4E98-99A7-95A777DCD074}"
@@ -245,24 +180,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MessagingModule", "MessagingModule", "{BC0651B9-7642-4436-BF89-5D8B8BD4F4A0}"
 	ProjectSection(SolutionItems) = preProject
 		Scripts\PowerShell\Modules\MessagingModule\MessagingModule.psm1 = Scripts\PowerShell\Modules\MessagingModule\MessagingModule.psm1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000100}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\Build\Android\Build.ps1 = Packages\Build\Android\Build.ps1
-		Packages\Build\Android\BuildKotlin.ps1 = Packages\Build\Android\BuildKotlin.ps1
-		Packages\Build\Android\Consumer.cmake = Packages\Build\Android\Consumer.cmake
-		Packages\Build\Android\README.md = Packages\Build\Android\README.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000101}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\DiagnosticTest\Delivery\Android\Delivery.json = Packages\CrossPlatform\DiagnosticTest\Delivery\Android\Delivery.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000102}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\CrossPlatform\HeleprsTest\Delivery\Android\Delivery.json = Packages\CrossPlatform\HeleprsTest\Delivery\Android\Delivery.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000300}"
@@ -322,6 +239,46 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Dynamic", "Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dynamic.vcxproj", "{FA67D7FD-393A-E9BC-F2A4-2570B2929973}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{03C0B81C-6B57-4791-B5F3-9D2D48CE2544}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\Diagnostic\Spdlog.cmake = Projects\Cmake\Diagnostic\Spdlog.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLESRenderer", "{A82C4E93-051E-4C0B-B705-5875F748742C}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\OpenGLESRenderer\AngleConfig.cmake.in = Projects\Cmake\OpenGLESRenderer\AngleConfig.cmake.in
+		Projects\Cmake\OpenGLESRenderer\Build.cmake = Projects\Cmake\OpenGLESRenderer\Build.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{923F42D8-57A1-4A1B-8FB9-35B5D73A7F8A}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\XamlCompiler\CMakeLists.txt = Projects\Cmake\XamlCompiler\CMakeLists.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlRuntime", "XamlRuntime", "{189A1B26-8EB9-4D78-A955-CF1E45F39257}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\XamlRuntime\Build.cmake = Projects\Cmake\XamlRuntime\Build.cmake
+		Projects\Cmake\XamlRuntime\Consumer.cmake = Projects\Cmake\XamlRuntime\Consumer.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{5E16CA24-F8A2-436C-86B6-6511A703FB82}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Packages\Android\Pack.AndroidAppKit.cmd = Scripts\Packages\Android\Pack.AndroidAppKit.cmd
+		Scripts\Packages\Android\Pack.AndroidBuildTools.cmd = Scripts\Packages\Android\Pack.AndroidBuildTools.cmd
+		Scripts\Packages\Android\Pack.AndroidCoreSdk.cmd = Scripts\Packages\Android\Pack.AndroidCoreSdk.cmd
+		Scripts\Packages\Android\Pack.AndroidTemplates.cmd = Scripts\Packages\Android\Pack.AndroidTemplates.cmd
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{1B943F80-0EB6-4134-A02A-2F1FF121CFEC}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Packages\Windows\Pack.XamlCompiler.cmd = Scripts\Packages\Windows\Pack.XamlCompiler.cmd
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{066DAD5F-063F-43BF-8ADC-0E76A36CA54D}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\README.md = Packages\README.md
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{D299E483-C236-42DA-9F90-8447C3B007D1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppKit", "AndroidAppKit", "{C45C681B-A5F9-4F56-8DBE-70193C735CAB}"
@@ -337,64 +294,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{E2AD
 		Packages\Android\AndroidAppKit\Delivery\Android\Delivery.json = Packages\Android\AndroidAppKit\Delivery\Android\Delivery.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{62F82629-78A8-425A-91D5-05BF2D154AC6}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{4C284617-5214-41F0-8ADB-0949EF31DAB0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{B30EC563-478C-BAFB-6574-559B0E97A3BA}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidAppKit\Projects\Gradle\build.gradle.kts = Packages\Android\AndroidAppKit\Projects\Gradle\build.gradle.kts
-		Packages\Android\AndroidAppKit\Projects\Gradle\gradle.properties = Packages\Android\AndroidAppKit\Projects\Gradle\gradle.properties
-		Packages\Android\AndroidAppKit\Projects\Gradle\settings.gradle.kts = Packages\Android\AndroidAppKit\Projects\Gradle\settings.gradle.kts
+		Packages\Android\AndroidBuildTools\Package.json = Packages\Android\AndroidBuildTools\Package.json
+		Packages\Android\AndroidBuildTools\README.md = Packages\Android\AndroidBuildTools\README.md
+		Packages\Android\AndroidBuildTools\Version.json = Packages\Android\AndroidBuildTools\Version.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidappkit", "androidappkit", "{EB1C9B7A-2C21-47C9-ABBF-7EF51B8C5E94}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{F14DE294-71C4-BF70-A2DA-80F47CB2AE6C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{4762FEDE-2D5B-136F-22B0-F9E8A6BF1E50}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidAppKit\Projects\Gradle\androidappkit\build.gradle.kts = Packages\Android\AndroidAppKit\Projects\Gradle\androidappkit\build.gradle.kts
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{663532D9-E567-4F71-BF9F-BD70A02859CF}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4D4A5494-4A91-4A5F-8B83-D72DBF1EBD5D}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "main", "main", "{037D3408-496C-4584-8D0F-0EBA4D850D25}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidAppKit\Sources\src\main\AndroidManifest.xml = Packages\Android\AndroidAppKit\Sources\src\main\AndroidManifest.xml
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kotlin", "kotlin", "{D59FF827-EF1B-47EF-B813-3B042DA22F96}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "com", "com", "{BDB3D62E-A6A5-480A-BCE4-933431F6883B}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "isrepeat", "isrepeat", "{AEAA0561-8781-4068-BDDD-F0E3C14DF6F8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidappkit", "androidappkit", "{4FA74990-CFC8-415A-99C0-28369A5D959A}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\androidappkit.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\androidappkit.kt
-		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\AppKit.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\AppKit.kt
-		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\NativeOpenGlActivity.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\NativeOpenGlActivity.kt
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "diagnostics", "diagnostics", "{947B8735-57D0-4A23-920F-F4BA810F364B}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppDiagnostics.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppDiagnostics.kt
-		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppKitLogger.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppKitLogger.kt
-		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\NativeSessionLog.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\NativeSessionLog.kt
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "drive", "drive", "{6E4DBCF2-76DD-4549-A8B8-4FE1B0E8C4CB}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\drive\GoogleDriveUploader.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\drive\GoogleDriveUploader.kt
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "media", "media", "{2CB79288-C18E-423E-9571-3CAB0BA3E12D}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\media\SurfaceScreenshotCapture.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\media\SurfaceScreenshotCapture.kt
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "update", "update", "{F9EA05A5-CC30-4AD2-A652-F51F549E36F2}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\update\ApkUpdaterProtocol.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\update\ApkUpdaterProtocol.kt
-		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\update\GoogleDriveUpdateConfiguration.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\update\GoogleDriveUpdateConfiguration.kt
-		Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\update\GoogleDriveUpdateController.kt = Packages\Android\AndroidAppKit\Sources\src\main\kotlin\com\isrepeat\androidappkit\update\GoogleDriveUpdateController.kt
+		Packages\Android\AndroidBuildTools\Delivery\NuGet\AndroidBuildTools.nuspec = Packages\Android\AndroidBuildTools\Delivery\NuGet\AndroidBuildTools.nuspec
+		Packages\Android\AndroidBuildTools\Delivery\NuGet\Delivery.json = Packages\Android\AndroidBuildTools\Delivery\NuGet\Delivery.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidCoreSdk", "AndroidCoreSdk", "{59895D38-CDF4-4147-9A04-43A9272774B2}"
@@ -410,67 +322,106 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{80A2
 		Packages\Android\AndroidCoreSdk\Delivery\Android\Delivery.json = Packages\Android\AndroidCoreSdk\Delivery\Android\Delivery.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{241F0F89-1863-490F-9BA5-BA1C06CEB6B3}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{7AF82E00-9C22-44F6-BF94-C7437524959E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidTemplates", "AndroidTemplates", "{3FA9D130-CBA4-CA5F-B93E-6D5470AE8CC9}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidCoreSdk\Projects\Gradle\build.gradle.kts = Packages\Android\AndroidCoreSdk\Projects\Gradle\build.gradle.kts
-		Packages\Android\AndroidCoreSdk\Projects\Gradle\gradle.properties = Packages\Android\AndroidCoreSdk\Projects\Gradle\gradle.properties
-		Packages\Android\AndroidCoreSdk\Projects\Gradle\settings.gradle.kts = Packages\Android\AndroidCoreSdk\Projects\Gradle\settings.gradle.kts
+		Packages\Android\AndroidTemplates\Package.json = Packages\Android\AndroidTemplates\Package.json
+		Packages\Android\AndroidTemplates\README.md = Packages\Android\AndroidTemplates\README.md
+		Packages\Android\AndroidTemplates\Version.json = Packages\Android\AndroidTemplates\Version.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidcoresdk", "androidcoresdk", "{1478D372-2DC3-4D62-B0EF-5958CCFBF5E4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{12C09B2F-C78B-CC22-D2D7-E3B64300C265}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{E9D989EE-D136-4BE0-E95F-EC2543481E3D}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidCoreSdk\Projects\Gradle\androidcoresdk\build.gradle.kts = Packages\Android\AndroidCoreSdk\Projects\Gradle\androidcoresdk\build.gradle.kts
+		Packages\Android\AndroidTemplates\Delivery\NuGet\AndroidTemplates.nuspec = Packages\Android\AndroidTemplates\Delivery\NuGet\AndroidTemplates.nuspec
+		Packages\Android\AndroidTemplates\Delivery\NuGet\Delivery.json = Packages\Android\AndroidTemplates\Delivery\NuGet\Delivery.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{164813F8-F8DB-455B-B05A-7D212BEAED76}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6A4E4031-4CDE-4198-933D-ACEF1457C793}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "main", "main", "{9B6F5696-CE54-4C62-80AD-FA0C6E4DDE3D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000100}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidCoreSdk\Sources\src\main\AndroidManifest.xml = Packages\Android\AndroidCoreSdk\Sources\src\main\AndroidManifest.xml
+		Packages\Build\Android\Build.ps1 = Packages\Build\Android\Build.ps1
+		Packages\Build\Android\BuildKotlin.ps1 = Packages\Build\Android\BuildKotlin.ps1
+		Packages\Build\Android\Consumer.cmake = Packages\Build\Android\Consumer.cmake
+		Packages\Build\Android\README.md = Packages\Build\Android\README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kotlin", "kotlin", "{5680DD88-5A2B-4274-9A8B-F93BAE452874}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "com", "com", "{B4A2F3E8-0E0E-4CFC-980F-08131EEFAB4C}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "isrepeat", "isrepeat", "{4453881B-9A4C-4848-B8AB-0343FD6EB34E}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidcoresdk", "androidcoresdk", "{3F8A5660-D4C0-48B3-80AE-A62844AE5528}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Content", "Content", "{013C7FA6-68C2-D8E8-8226-C5A1F4015813}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\androidcoresdk.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\androidcoresdk.kt
+		Packages\Build\Content\Build.ps1 = Packages\Build\Content\Build.ps1
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "coroutines", "coroutines", "{AF7FED61-01B6-4E80-BF8E-9E02C4D61795}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{BE41E66B-A170-480D-9D80-1C69E83390BA}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\coroutines\CancellableContinuationCompletion.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\coroutines\CancellableContinuationCompletion.kt
-		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\coroutines\LifecycleCoroutineRunner.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\coroutines\LifecycleCoroutineRunner.kt
+		Packages\Build\NuGet\Build.ps1 = Packages\Build\NuGet\Build.ps1
+		Packages\Build\NuGet\README.md = Packages\Build\NuGet\README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "diagnostics", "diagnostics", "{F74A4F83-3687-4681-A308-C7513CC34E62}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{14D07021-9AB9-4B61-4C7E-ACFD6675B738}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatform", "{907E880C-10F6-4C85-9DF8-5C73F54646DB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{B690A596-AD03-40E3-B875-6722D2397011}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\diagnostics\MediaStoreSessionLog.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\diagnostics\MediaStoreSessionLog.kt
-		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\diagnostics\SdkLogger.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\diagnostics\SdkLogger.kt
+		Packages\CrossPlatform\Diagnostic\Package.json = Packages\CrossPlatform\Diagnostic\Package.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "drive", "drive", "{147ADE8A-3422-4B90-BCC7-3BCB506CB8D9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{1833675A-E63B-4FD3-8C8E-B7732DA73438}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{941FD4A9-CB23-4415-8DC3-67D60AEC425D}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\drive\GoogleDriveClient.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\drive\GoogleDriveClient.kt
+		Packages\CrossPlatform\Diagnostic\Delivery\Android\Delivery.json = Packages\CrossPlatform\Diagnostic\Delivery\Android\Delivery.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "media", "media", "{B100E0F8-1516-41D6-B37C-0D8435FF5B96}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{2AE8945D-4EE8-4892-8D2D-D00485AF3079}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\media\ScreenshotCapture.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\media\ScreenshotCapture.kt
+		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\Delivery.json
+		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.nuspec = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.nuspec
+		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.props = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.props
+		Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.targets = Packages\CrossPlatform\Diagnostic\Delivery\NuGet\UniversalDevKit.Diagnostic.targets
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nativeui", "nativeui", "{820FAE63-6800-4C67-99C8-76048DE8D106}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{AE22FCE8-BBB1-103D-24A8-E4830CE20A6B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DiagnosticTest", "DiagnosticTest", "{072E1208-58D6-471D-B494-5D5670688291}"
 	ProjectSection(SolutionItems) = preProject
-		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeMessageDispatcher.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeMessageDispatcher.kt
-		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeRenderHost.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeRenderHost.kt
-		Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeRenderSurfaceView.kt = Packages\Android\AndroidCoreSdk\Sources\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeRenderSurfaceView.kt
+		Packages\CrossPlatform\DiagnosticTest\Package.json = Packages\CrossPlatform\DiagnosticTest\Package.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000101}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\DiagnosticTest\Delivery\Android\Delivery.json = Packages\CrossPlatform\DiagnosticTest\Delivery\Android\Delivery.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{3F409C4A-6700-4061-AA77-627289E619E9}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\Delivery.json
+		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.nuspec = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.nuspec
+		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.props = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.props
+		Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.targets = Packages\CrossPlatform\DiagnosticTest\Delivery\NuGet\UniversalDevKit.DiagnosticTest.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeleprsTest", "HeleprsTest", "{BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\HeleprsTest\Package.json = Packages\CrossPlatform\HeleprsTest\Package.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000102}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\HeleprsTest\Delivery\Android\Delivery.json = Packages\CrossPlatform\HeleprsTest\Delivery\Android\Delivery.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{521E2788-845C-4B8F-B742-DB0FDF5271D3}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\Delivery.json
+		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.nuspec = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.nuspec
+		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.props = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.props
+		Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.targets = Packages\CrossPlatform\HeleprsTest\Delivery\NuGet\UniversalDevKit.HeleprsTest.targets
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{878DA696-AD56-4739-84BB-D9A8E4BC5A48}"
@@ -493,6 +444,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{6886A40C
 		Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.targets = Packages\CrossPlatform\Helpers\Delivery\NuGet\UniversalDevKit.Helpers.targets
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{0479A7AB-4849-4235-1DCC-90CADF98EA5B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Math", "Math", "{B514E8BC-8590-54F4-383E-9CCA8C91D5E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{83DCB71D-7876-BAB1-592A-80813F305E4D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{76A3F26F-97C1-7DAD-188E-C659035C6E8D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{CC90F2C4-08ED-FF9E-387F-E7B68E3DA9A5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meta", "Meta", "{2FC31D1A-439B-9DE5-924A-CF699427B1EB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{13729F43-F63B-797F-F4AB-9F7BA47C69C2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{7DB38D35-8427-EAA1-FB78-6BC19A25955C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{F33C432B-1712-B0E5-F5CE-920716EC8DFE}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLESRenderer", "{299A0CF7-250D-4E08-B628-B84DABF5ABF8}"
 	ProjectSection(SolutionItems) = preProject
 		Packages\CrossPlatform\OpenGLESRenderer\Package.json = Packages\CrossPlatform\OpenGLESRenderer\Package.json
@@ -509,6 +478,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{BF01194B
 	ProjectSection(SolutionItems) = preProject
 		Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\Angle.targets = Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\Angle.targets
 		Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\Delivery.json = Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\Delivery.json
+		Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\PrepareAngle.ps1 = Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\PrepareAngle.ps1
 		Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\StageAngle.ps1 = Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\StageAngle.ps1
 		Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\UniversalDevKit.OpenGLESRenderer.nuspec = Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\UniversalDevKit.OpenGLESRenderer.nuspec
 		Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\UniversalDevKit.OpenGLESRenderer.props = Packages\CrossPlatform\OpenGLESRenderer\Delivery\NuGet\UniversalDevKit.OpenGLESRenderer.props
@@ -551,37 +521,437 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{B398F253
 		Packages\Windows\XamlCompiler\Delivery\NuGet\UniversalDevKit.XamlCompiler.nuspec = Packages\Windows\XamlCompiler\Delivery\NuGet\UniversalDevKit.XamlCompiler.nuspec
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{03C0B81C-6B57-4791-B5F3-9D2D48CE2544}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{ADBA3BA9-F6AC-7A5C-7A27-59AE40606576}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApplicationFramework", "ApplicationFramework", "{E2BB8948-A33B-7D06-CADA-F3B535F84401}"
 	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\Diagnostic\Spdlog.cmake = Projects\Cmake\Diagnostic\Spdlog.cmake
+		Projects\Cmake\AndroidBuildTools\ApplicationFramework\CMakeLists.txt = Projects\Cmake\AndroidBuildTools\ApplicationFramework\CMakeLists.txt
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLESRenderer", "{A82C4E93-051E-4C0B-B705-5875F748742C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{D2E0D44F-71F1-1478-F989-466955EC6F80}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppKit", "AndroidAppKit", "{7E765BF6-D902-9F4E-CD6C-90C614044B91}"
 	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\OpenGLESRenderer\AngleConfig.cmake.in = Projects\Cmake\OpenGLESRenderer\AngleConfig.cmake.in
-		Projects\Cmake\OpenGLESRenderer\Build.cmake = Projects\Cmake\OpenGLESRenderer\Build.cmake
+		Projects\Gradle\AndroidAppKit\build.gradle.kts = Projects\Gradle\AndroidAppKit\build.gradle.kts
+		Projects\Gradle\AndroidAppKit\gradle.properties = Projects\Gradle\AndroidAppKit\gradle.properties
+		Projects\Gradle\AndroidAppKit\settings.gradle.kts = Projects\Gradle\AndroidAppKit\settings.gradle.kts
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{923F42D8-57A1-4A1B-8FB9-35B5D73A7F8A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidappkit", "androidappkit", "{7FA23122-0EF3-554B-F66F-7011C69C51C4}"
 	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\XamlCompiler\CMakeLists.txt = Projects\Cmake\XamlCompiler\CMakeLists.txt
+		Projects\Gradle\AndroidAppKit\androidappkit\build.gradle.kts = Projects\Gradle\AndroidAppKit\androidappkit\build.gradle.kts
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlRuntime", "XamlRuntime", "{189A1B26-8EB9-4D78-A955-CF1E45F39257}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{6F7F63BC-5509-E8FD-57DB-35CDFDCAF744}"
 	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\XamlRuntime\Build.cmake = Projects\Cmake\XamlRuntime\Build.cmake
-		Projects\Cmake\XamlRuntime\Consumer.cmake = Projects\Cmake\XamlRuntime\Consumer.cmake
+		Projects\Gradle\AndroidBuildTools\.gitignore = Projects\Gradle\AndroidBuildTools\.gitignore
+		Projects\Gradle\AndroidBuildTools\build.gradle = Projects\Gradle\AndroidBuildTools\build.gradle
+		Projects\Gradle\AndroidBuildTools\settings.gradle = Projects\Gradle\AndroidBuildTools\settings.gradle
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{5E16CA24-F8A2-436C-86B6-6511A703FB82}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidCoreSdk", "AndroidCoreSdk", "{0A281F7B-C6D3-D687-5485-F34DEF383257}"
 	ProjectSection(SolutionItems) = preProject
-		Scripts\Packages\Android\Pack.AndroidAppKit.cmd = Scripts\Packages\Android\Pack.AndroidAppKit.cmd
-		Scripts\Packages\Android\Pack.AndroidCoreSdk.cmd = Scripts\Packages\Android\Pack.AndroidCoreSdk.cmd
+		Projects\Gradle\AndroidCoreSdk\build.gradle.kts = Projects\Gradle\AndroidCoreSdk\build.gradle.kts
+		Projects\Gradle\AndroidCoreSdk\gradle.properties = Projects\Gradle\AndroidCoreSdk\gradle.properties
+		Projects\Gradle\AndroidCoreSdk\settings.gradle.kts = Projects\Gradle\AndroidCoreSdk\settings.gradle.kts
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{1B943F80-0EB6-4134-A02A-2F1FF121CFEC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidcoresdk", "androidcoresdk", "{832B5C4F-3EB0-0B68-2891-21F9C30AE7D2}"
 	ProjectSection(SolutionItems) = preProject
-		Scripts\Packages\Windows\Pack.XamlCompiler.cmd = Scripts\Packages\Windows\Pack.XamlCompiler.cmd
+		Projects\Gradle\AndroidCoreSdk\androidcoresdk\build.gradle.kts = Projects\Gradle\AndroidCoreSdk\androidcoresdk\build.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Includes", "Includes", "{CC3C64B5-A5FC-8F8E-720E-921A21F00229}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{71FB51E6-F9B0-937E-39F6-38EFD7C91189}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{9D17877F-6145-90EC-14CD-F14A1A24D13C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniversalDevKit", "UniversalDevKit", "{6625778A-E44C-F016-70B3-507A374B34BF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{244E0458-C3ED-6881-0EF2-37E679480FF3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{55C13CE1-FBB1-5BD5-BD41-2250C3A423B1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApplicationFramework", "ApplicationFramework", "{DCEE23F9-A0C0-19CB-258B-9D2A5A9171DD}"
+	ProjectSection(SolutionItems) = preProject
+		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\ApplicationSessionBase.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\ApplicationSessionBase.h
+		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\AppSessionControllerBase.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\AppSessionControllerBase.h
+		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.h
+		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\PageManagerBase.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\PageManagerBase.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{A9963E0C-F9B5-4635-505D-54E094B1F113}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{D2288D3A-B06E-9A12-3C08-06E8689CF6A8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppKit", "AndroidAppKit", "{62BB4FD3-461F-9188-4888-44C68D0ED548}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidAppKit\README.md = Sources\Android\AndroidAppKit\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{30C6ED4F-6B52-2F4E-2094-8D0A1261E8EC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "main", "main", "{10D9F55F-8C24-CD83-4800-C15419867BF2}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidAppKit\src\main\AndroidManifest.xml = Sources\Android\AndroidAppKit\src\main\AndroidManifest.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kotlin", "kotlin", "{2287AD25-6609-017D-CE21-82CBCD8794A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "com", "com", "{2EBC7002-F2CD-D818-C6B9-E2522FC6E793}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "isrepeat", "isrepeat", "{70784D89-0A75-0366-7174-BEE862B9AFC2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidappkit", "androidappkit", "{B0918D5C-3B09-C8F7-F0ED-764BD3B50846}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\androidappkit.kt = Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\androidappkit.kt
+		Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\AppKit.kt = Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\AppKit.kt
+		Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\NativeOpenGlActivity.kt = Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\NativeOpenGlActivity.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "diagnostics", "diagnostics", "{FD8E4341-008D-D47E-74BC-857A2385FB25}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppDiagnostics.kt = Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppDiagnostics.kt
+		Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppKitLogger.kt = Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppKitLogger.kt
+		Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\NativeSessionLog.kt = Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\NativeSessionLog.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "drive", "drive", "{1780E0FF-5393-0368-9F5F-A45E94275AC7}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\drive\GoogleDriveUploader.kt = Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\drive\GoogleDriveUploader.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "media", "media", "{57653CA8-8A75-118F-DC80-3EBC71559550}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\media\SurfaceScreenshotCapture.kt = Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\media\SurfaceScreenshotCapture.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "update", "update", "{6C51D135-2DDF-FC35-0708-A289D9BDE33A}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\update\ApkUpdaterProtocol.kt = Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\update\ApkUpdaterProtocol.kt
+		Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\update\GoogleDriveUpdateConfiguration.kt = Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\update\GoogleDriveUpdateConfiguration.kt
+		Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\update\GoogleDriveUpdateController.kt = Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\update\GoogleDriveUpdateController.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{96EB236F-1DA2-3CE9-BB64-D02FAE2393A9}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidBuildTools\README.md = Sources\Android\AndroidBuildTools\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApplicationFramework", "ApplicationFramework", "{B1134F64-5AC3-5777-C8DC-87B904646C91}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.cpp = Sources\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{ABDB27EA-51AF-8FD4-C199-EED7FB927000}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidBuildTools\Cmake\AndroidApplicationFramework.cmake = Sources\Android\AndroidBuildTools\Cmake\AndroidApplicationFramework.cmake
+		Sources\Android\AndroidBuildTools\Cmake\AndroidBuildConfiguration.cmake = Sources\Android\AndroidBuildTools\Cmake\AndroidBuildConfiguration.cmake
+		Sources\Android\AndroidBuildTools\Cmake\AndroidToolchain.cmake = Sources\Android\AndroidBuildTools\Cmake\AndroidToolchain.cmake
+		Sources\Android\AndroidBuildTools\Cmake\InstallAndroidAppPreviewerPluginSdk.cmake = Sources\Android\AndroidBuildTools\Cmake\InstallAndroidAppPreviewerPluginSdk.cmake
+		Sources\Android\AndroidBuildTools\Cmake\InstallXamlRuntime.cmake = Sources\Android\AndroidBuildTools\Cmake\InstallXamlRuntime.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{C9FA28BE-811A-821C-36B5-541DDABEA455}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{54759879-4933-7741-25DA-A95FC7B5B6E4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "main", "main", "{DB514C30-5601-82E1-CDE1-701ADA43A9BE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "groovy", "groovy", "{63F4DEE8-3B65-353E-BE35-5E4AE270E5BA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "com", "com", "{66E6F059-15CC-E73D-631D-D37626A53A9E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "isrepeat", "isrepeat", "{1CB3D83B-053E-C090-B11A-3D549CAE5D02}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{42F1061C-608C-B995-DA40-CCDC28562784}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidBuildTools\Gradle\src\main\groovy\com\isrepeat\build\AndroidApplicationPlugin.groovy = Sources\Android\AndroidBuildTools\Gradle\src\main\groovy\com\isrepeat\build\AndroidApplicationPlugin.groovy
+		Sources\Android\AndroidBuildTools\Gradle\src\main\groovy\com\isrepeat\build\AndroidSettingsPlugin.groovy = Sources\Android\AndroidBuildTools\Gradle\src\main\groovy\com\isrepeat\build\AndroidSettingsPlugin.groovy
+		Sources\Android\AndroidBuildTools\Gradle\src\main\groovy\com\isrepeat\build\VerifyReleaseSigning.groovy = Sources\Android\AndroidBuildTools\Gradle\src\main\groovy\com\isrepeat\build\VerifyReleaseSigning.groovy
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{4E95EF45-F0E9-25F3-42D1-46CE1983D834}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidBuildTools\PowerShell\build-and-distribute.ps1 = Sources\Android\AndroidBuildTools\PowerShell\build-and-distribute.ps1
+		Sources\Android\AndroidBuildTools\PowerShell\build-android.ps1 = Sources\Android\AndroidBuildTools\PowerShell\build-android.ps1
+		Sources\Android\AndroidBuildTools\PowerShell\bump-version.ps1 = Sources\Android\AndroidBuildTools\PowerShell\bump-version.ps1
+		Sources\Android\AndroidBuildTools\PowerShell\generate-xaml.ps1 = Sources\Android\AndroidBuildTools\PowerShell\generate-xaml.ps1
+		Sources\Android\AndroidBuildTools\PowerShell\get-configuration-path.ps1 = Sources\Android\AndroidBuildTools\PowerShell\get-configuration-path.ps1
+		Sources\Android\AndroidBuildTools\PowerShell\get-configuration-value.ps1 = Sources\Android\AndroidBuildTools\PowerShell\get-configuration-value.ps1
+		Sources\Android\AndroidBuildTools\PowerShell\Invoke-Build.ps1 = Sources\Android\AndroidBuildTools\PowerShell\Invoke-Build.ps1
+		Sources\Android\AndroidBuildTools\PowerShell\Read-AndroidSharedProps.ps1 = Sources\Android\AndroidBuildTools\PowerShell\Read-AndroidSharedProps.ps1
+		Sources\Android\AndroidBuildTools\PowerShell\run-android-app-previewer.ps1 = Sources\Android\AndroidBuildTools\PowerShell\run-android-app-previewer.ps1
+		Sources\Android\AndroidBuildTools\PowerShell\test-apk-signing.ps1 = Sources\Android\AndroidBuildTools\PowerShell\test-apk-signing.ps1
+		Sources\Android\AndroidBuildTools\PowerShell\upload-apk-to-drive.ps1 = Sources\Android\AndroidBuildTools\PowerShell\upload-apk-to-drive.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{C107C931-3488-14EB-5D4A-E3550F9BEF90}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Module.AndroidBuildTools", "Module.AndroidBuildTools", "{FD5EB6FB-8E3E-612D-6EA7-6A98EFF87A76}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidBuildTools\PowerShell\Modules\Module.AndroidBuildTools\Module.AndroidBuildTools.psm1 = Sources\Android\AndroidBuildTools\PowerShell\Modules\Module.AndroidBuildTools\Module.AndroidBuildTools.psm1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidCoreSdk", "AndroidCoreSdk", "{E742837F-6B59-8FB2-A0A2-A595262A3096}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidCoreSdk\README.md = Sources\Android\AndroidCoreSdk\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4EC19DE5-86B2-F917-EDBE-0853570B42C8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "main", "main", "{9A43C79B-ED5A-7282-DF3B-F27B77DD2EA1}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidCoreSdk\src\main\AndroidManifest.xml = Sources\Android\AndroidCoreSdk\src\main\AndroidManifest.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kotlin", "kotlin", "{EE0699C4-AF73-7691-6CA6-84054809308A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "com", "com", "{BD39C8CE-C2B3-E621-63FE-823BF42FD280}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "isrepeat", "isrepeat", "{E2174583-0F9E-9F9C-BC44-62107766E1C4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidcoresdk", "androidcoresdk", "{9395B0E3-017F-7F84-FB1C-A6CBED930E09}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\androidcoresdk.kt = Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\androidcoresdk.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "coroutines", "coroutines", "{F980E824-E22F-AD62-3F6C-1C68F2150D95}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\coroutines\CancellableContinuationCompletion.kt = Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\coroutines\CancellableContinuationCompletion.kt
+		Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\coroutines\LifecycleCoroutineRunner.kt = Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\coroutines\LifecycleCoroutineRunner.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "diagnostics", "diagnostics", "{0D3A7DCE-A63D-E9E2-D3E2-F164BE1908A2}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\diagnostics\MediaStoreSessionLog.kt = Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\diagnostics\MediaStoreSessionLog.kt
+		Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\diagnostics\SdkLogger.kt = Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\diagnostics\SdkLogger.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "drive", "drive", "{4A70DDFC-457B-5612-55F0-FD1DD01C84A1}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\drive\GoogleDriveClient.kt = Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\drive\GoogleDriveClient.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "media", "media", "{D0232E88-555A-715D-6447-52CCBAD305FC}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\media\ScreenshotCapture.kt = Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\media\ScreenshotCapture.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nativeui", "nativeui", "{013748EA-6701-12BC-3730-1FFD5A485470}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeMessageDispatcher.kt = Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeMessageDispatcher.kt
+		Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeRenderHost.kt = Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeRenderHost.kt
+		Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeRenderSurfaceView.kt = Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeRenderSurfaceView.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidTemplates", "AndroidTemplates", "{219E05B7-6343-C810-FB04-31E430BD5184}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\README.md = Sources\Android\AndroidTemplates\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{A2A1771D-A861-1285-43E2-9EBFD04BFCC1}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\PowerShell\New-AndroidApplication.ps1 = Sources\Android\AndroidTemplates\PowerShell\New-AndroidApplication.ps1
+		Sources\Android\AndroidTemplates\PowerShell\Open-AndroidOAuthClientSetup.ps1 = Sources\Android\AndroidTemplates\PowerShell\Open-AndroidOAuthClientSetup.ps1
+		Sources\Android\AndroidTemplates\PowerShell\Read-AndroidSharedProps.ps1 = Sources\Android\AndroidTemplates\PowerShell\Read-AndroidSharedProps.ps1
+		Sources\Android\AndroidTemplates\PowerShell\Remove-AndroidProject.ps1 = Sources\Android\AndroidTemplates\PowerShell\Remove-AndroidProject.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{BF6E01A3-B5FA-4885-DDF6-04EBC39A937F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{53CCF09D-3A31-CC46-3125-C7A20C83157C}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\.gitignore = Sources\Android\AndroidTemplates\Templates\Application\.gitignore
+		Sources\Android\AndroidTemplates\Templates\Application\android-build.psd1 = Sources\Android\AndroidTemplates\Templates\Application\android-build.psd1
+		Sources\Android\AndroidTemplates\Templates\Application\build.ps1 = Sources\Android\AndroidTemplates\Templates\Application\build.ps1
+		Sources\Android\AndroidTemplates\Templates\Application\CMakeLists.txt = Sources\Android\AndroidTemplates\Templates\Application\CMakeLists.txt
+		Sources\Android\AndroidTemplates\Templates\Application\CMakePresets.json = Sources\Android\AndroidTemplates\Templates\Application\CMakePresets.json
+		Sources\Android\AndroidTemplates\Templates\Application\launch.vs.json = Sources\Android\AndroidTemplates\Templates\Application\launch.vs.json
+		Sources\Android\AndroidTemplates\Templates\Application\README.md = Sources\Android\AndroidTemplates\Templates\Application\README.md
+		Sources\Android\AndroidTemplates\Templates\Application\version.properties = Sources\Android\AndroidTemplates\Templates\Application\version.properties
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "{{Application}}.Android", "{{Application}}.Android", "{B7217065-2D8A-8851-0B4F-46E7CEB4D4F0}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\build.gradle.kts = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\build.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{30501EDF-7220-1290-983B-ED3AD395DAB9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "main", "main", "{53D85186-4F21-7AF4-966E-0BFE3529E387}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\AndroidManifest.xml = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\AndroidManifest.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "java", "java", "{7E6A17D1-EC6E-9802-06EB-AC9B75B11339}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "{{PackagePath}}", "{{PackagePath}}", "{DFDA3D21-D9F6-7EC5-DC03-983844BB8450}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\java\{{PackagePath}}\MainPage.kt = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\java\{{PackagePath}}\MainPage.kt
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\java\{{PackagePath}}\NativeCommandDispatcher.kt = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\java\{{PackagePath}}\NativeCommandDispatcher.kt
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\java\{{PackagePath}}\NativeDiagnostics.kt = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\java\{{PackagePath}}\NativeDiagnostics.kt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "res", "res", "{A5F21C3D-5BE7-7CE7-8DA7-E727F8333062}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "drawable", "drawable", "{6DEB47AB-1056-3133-6922-0C428B9ECD52}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\drawable\app_icon.xml = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\drawable\app_icon.xml
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\drawable\splash_screen.xml = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\drawable\splash_screen.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "values-v31", "values-v31", "{3E60607C-2159-1178-7D1D-D2F895A93ECE}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values-v31\themes.xml = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values-v31\themes.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "values", "values", "{1F362129-FF56-E9DA-4626-9846358035F0}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values\themes.xml = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values\themes.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "xml", "xml", "{3A28BDCD-290B-8EAE-5201-F926C15FA315}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\xml\file_paths.xml = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\xml\file_paths.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "{{Application}}.AndroidHost", "{{Application}}.AndroidHost", "{BA51EB65-9FFD-B105-4679-3BC400E9F983}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\AndroidCommandDispatcher.cpp = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\AndroidCommandDispatcher.cpp
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\AndroidCommandDispatcher.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\AndroidCommandDispatcher.h
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\CMakeLists.txt = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\CMakeLists.txt
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\Native.cpp = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\Native.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jni", "Jni", "{73D7F203-E36F-1FD4-ADB2-149FDB43BD7C}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\Jni\Jni.cpp = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\Jni\Jni.cpp
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\Jni\Jni.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\Jni\Jni.h
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\Jni\README.md = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\Jni\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "{{Application}}.Application", "{{Application}}.Application", "{B569FD6A-798F-1FA3-BA02-38D11F7B1747}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\CMakeLists.txt = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\CMakeLists.txt
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\README.md = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base", "Base", "{1069A91B-23EB-1074-9B12-F771B287424E}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Base\AppRepositoryBase.cpp = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Base\AppRepositoryBase.cpp
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Base\AppRepositoryBase.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Base\AppRepositoryBase.h
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Base\NavigationStateBase.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Base\NavigationStateBase.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{8C2CF08B-7E03-796A-7D77-8F40A51B3827}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\ApplicationSession.cpp = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\ApplicationSession.cpp
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\ApplicationSession.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\ApplicationSession.h
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\ApplicationStateStore.cpp = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\ApplicationStateStore.cpp
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\ApplicationStateStore.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\ApplicationStateStore.h
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\AppSessionController.cpp = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\AppSessionController.cpp
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\AppSessionController.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\AppSessionController.h
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\Navigation.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\Navigation.h
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\NavigationStates.cpp = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\NavigationStates.cpp
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\NavigationStates.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\NavigationStates.h
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\PageManager.cpp = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\PageManager.cpp
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\PageManager.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\PageManager.h
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\PageRegistry.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\PageRegistry.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interface", "Interface", "{B14DAB6E-86A3-4998-20B8-E7AF79E61621}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Interface\IHostCommandDispatcher.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Interface\IHostCommandDispatcher.h
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Interface\INavigationPage.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Interface\INavigationPage.h
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Interface\IPage.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Interface\IPage.h
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Interface\IPageNavigator.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Interface\IPageNavigator.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Model", "Model", "{5A3097F9-84D7-8CA6-4986-8CDA0E26D227}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Model\ApplicationRepository.cpp = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Model\ApplicationRepository.cpp
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Model\ApplicationRepository.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Model\ApplicationRepository.h
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Model\ApplicationStateDocument.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Model\ApplicationStateDocument.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{D693EE1E-DC42-D1C1-7685-7768CDA90754}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\XamlCompilerIgnore.json = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\XamlCompilerIgnore.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Page", "Page", "{4BEDE627-6948-17E9-7D2A-FAC4AF0BB55F}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\MainPage.xaml = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\MainPage.xaml
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\MainPageViewModel.cpp = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\MainPageViewModel.cpp
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\MainPageViewModel.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\MainPageViewModel.h
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\SettingsPage.xaml = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\SettingsPage.xaml
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\SettingsPageViewModel.cpp = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\SettingsPageViewModel.cpp
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\SettingsPageViewModel.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\SettingsPageViewModel.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "{{Application}}.PreviewPlugin", "{{Application}}.PreviewPlugin", "{B241A093-3EF2-C381-34F0-E038AA6C2CBE}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.PreviewPlugin\CMakeLists.txt = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.PreviewPlugin\CMakeLists.txt
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.PreviewPlugin\PluginDefinition.cpp = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.PreviewPlugin\PluginDefinition.cpp
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Session", "Session", "{2D8A0564-40F7-A6CD-5212-7A085383443E}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.PreviewPlugin\Session\PreviewSession.cpp = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.PreviewPlugin\Session\PreviewSession.cpp
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.PreviewPlugin\Session\PreviewSession.h = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.PreviewPlugin\Session\PreviewSession.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "{{Application}}.UI", "{{Application}}.UI", "{29D7CAB4-B2E3-541B-0D13-40F66C92226D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Control", "Control", "{34242C6D-6418-92C1-647F-5E73461A6CFE}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.UI\Control\.gitkeep = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.UI\Control\.gitkeep
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cmake", "cmake", "{0B0BF4AA-D150-0D6A-5F07-8FBEA5294145}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\cmake\AndroidToolchain.cmake = Sources\Android\AndroidTemplates\Templates\Application\cmake\AndroidToolchain.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{5134BE1A-F783-8202-D25D-A30A9D58EEC7}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.debug.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.debug.bat
+		Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.release.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.release.bat
+		Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-debug.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-debug.bat
+		Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-release.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-release.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{16EB1208-65C9-97CC-F7EE-91D4F6183B54}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\Scripts\PowerShell\ensure-apk-updater.ps1 = Sources\Android\AndroidTemplates\Templates\Application\Scripts\PowerShell\ensure-apk-updater.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{954721D1-E3F2-CE5D-E92C-D6B6FF3DA750}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{A9D15F6F-E8E6-215E-B4A8-4EEF838A4827}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\build.gradle.kts = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\build.gradle.kts
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle.properties = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle.properties
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew.bat = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew.bat
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\settings.gradle.kts = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\settings.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gradle", "gradle", "{2D6239A5-1257-7085-A746-2B83BF5833B3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wrapper", "wrapper", "{5F8285EB-50A6-72A5-EC22-272252A78342}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.jar = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.jar
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.properties = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.properties
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{91C1626E-08D0-D15F-E92C-49D0A474AFDC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{15C9DD02-133A-0D54-8BE8-73206CCE738F}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\XamlCompiler\Main.cpp = Sources\Windows\XamlCompiler\Main.cpp
 	EndProjectSection
 EndProject
 Global
@@ -635,118 +1005,194 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{A7CE4335-D8E6-4E53-B810-7D932E87BA59} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
-		{D832A37F-03A2-4EBD-9FF9-BC27D415378B} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
-		{C6B94069-54C2-4B96-880D-4C058A605C56} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}
-		{26DC63D4-1E80-4386-ACBA-A8B9D984FC44} = {13DA8639-4234-4E82-9423-056A19840860}
-		{8CB5D103-21B9-4651-A4A1-671107F28847} = {13DA8639-4234-4E82-9423-056A19840860}
-		{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83} = {13DA8639-4234-4E82-9423-056A19840860}
-		{F27F4562-11C4-42EF-AC5A-26101FD26F46} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
-		{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
-		{28F717C7-A2EF-405E-96F1-538329030ACF} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}
-		{88573491-8330-4D25-A3C2-FAAB1D69E589} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}
-		{8B6DD9E6-3057-45B9-80F6-B813601BE33B} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
-		{5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
-		{8B6A058C-7402-4392-8956-6B1489D9E118} = {D832A37F-03A2-4EBD-9FF9-BC27D415378B}
-		{18F6F60D-7635-4701-A27F-616A9A9C251A} = {8B6A058C-7402-4392-8956-6B1489D9E118}
-		{BB4173F9-2ECC-455A-AE66-4115A51C9396} = {18F6F60D-7635-4701-A27F-616A9A9C251A}
-		{D9146E66-5EB7-4919-B6CC-F36544D8ACE4} = {8B6A058C-7402-4392-8956-6B1489D9E118}
-		{7DAB2C47-91F8-4085-8786-94437B89820E} = {D9146E66-5EB7-4919-B6CC-F36544D8ACE4}
-		{CB7EEAB5-39FB-49B2-95A1-72774A80F5B8} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
-		{A2BAABAE-02D4-4685-9081-F599C5AF7D30} = {D832A37F-03A2-4EBD-9FF9-BC27D415378B}
-		{BE41E66B-A170-480D-9D80-1C69E83390BA} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
-		{907E880C-10F6-4C85-9DF8-5C73F54646DB} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
-		{B690A596-AD03-40E3-B875-6722D2397011} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
-		{1833675A-E63B-4FD3-8C8E-B7732DA73438} = {B690A596-AD03-40E3-B875-6722D2397011}
-		{2AE8945D-4EE8-4892-8D2D-D00485AF3079} = {1833675A-E63B-4FD3-8C8E-B7732DA73438}
-		{941FD4A9-CB23-4415-8DC3-67D60AEC425D} = {1833675A-E63B-4FD3-8C8E-B7732DA73438}
+		{013748EA-6701-12BC-3730-1FFD5A485470} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
+		{013C7FA6-68C2-D8E8-8226-C5A1F4015813} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
+		{03C0B81C-6B57-4791-B5F3-9D2D48CE2544} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{0479A7AB-4849-4235-1DCC-90CADF98EA5B} = {6886A40C-C0AA-4E2C-B04C-640DE620DDB6}
 		{072E1208-58D6-471D-B494-5D5670688291} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
-		{6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7} = {072E1208-58D6-471D-B494-5D5670688291}
+		{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83} = {13DA8639-4234-4E82-9423-056A19840860}
+		{0A281F7B-C6D3-D687-5485-F34DEF383257} = {D2E0D44F-71F1-1478-F989-466955EC6F80}
+		{0B0BF4AA-D150-0D6A-5F07-8FBEA5294145} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
+		{0CF0E8F4-117A-457B-8BE3-40FEEC842EEB} = {42F9EF9D-C14A-41EB-9DB4-E80213A4DF7B}
+		{0D3A7DCE-A63D-E9E2-D3E2-F164BE1908A2} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
+		{1069A91B-23EB-1074-9B12-F771B287424E} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
+		{10D9F55F-8C24-CD83-4800-C15419867BF2} = {30C6ED4F-6B52-2F4E-2094-8D0A1261E8EC}
+		{12C09B2F-C78B-CC22-D2D7-E3B64300C265} = {3FA9D130-CBA4-CA5F-B93E-6D5470AE8CC9}
+		{13729F43-F63B-797F-F4AB-9F7BA47C69C2} = {2FC31D1A-439B-9DE5-924A-CF699427B1EB}
+		{14D07021-9AB9-4B61-4C7E-ACFD6675B738} = {BE41E66B-A170-480D-9D80-1C69E83390BA}
+		{15C9DD02-133A-0D54-8BE8-73206CCE738F} = {91C1626E-08D0-D15F-E92C-49D0A474AFDC}
+		{16EB1208-65C9-97CC-F7EE-91D4F6183B54} = {5134BE1A-F783-8202-D25D-A30A9D58EEC7}
+		{1780E0FF-5393-0368-9F5F-A45E94275AC7} = {B0918D5C-3B09-C8F7-F0ED-764BD3B50846}
+		{1833675A-E63B-4FD3-8C8E-B7732DA73438} = {B690A596-AD03-40E3-B875-6722D2397011}
+		{189A1B26-8EB9-4D78-A955-CF1E45F39257} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{18F6F60D-7635-4701-A27F-616A9A9C251A} = {8B6A058C-7402-4392-8956-6B1489D9E118}
+		{1B943F80-0EB6-4134-A02A-2F1FF121CFEC} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
+		{1C920419-6FCA-97AA-DE2F-11C8037C1EF6} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{1CB3D83B-053E-C090-B11A-3D549CAE5D02} = {66E6F059-15CC-E73D-631D-D37626A53A9E}
+		{1F362129-FF56-E9DA-4626-9846358035F0} = {A5F21C3D-5BE7-7CE7-8DA7-E727F8333062}
+		{219E05B7-6343-C810-FB04-31E430BD5184} = {D2288D3A-B06E-9A12-3C08-06E8689CF6A8}
+		{220B0789-1F04-54D3-18E5-5DB99E91172F} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
+		{2287AD25-6609-017D-CE21-82CBCD8794A9} = {10D9F55F-8C24-CD83-4800-C15419867BF2}
+		{244E0458-C3ED-6881-0EF2-37E679480FF3} = {6625778A-E44C-F016-70B3-507A374B34BF}
+		{26DC63D4-1E80-4386-ACBA-A8B9D984FC44} = {13DA8639-4234-4E82-9423-056A19840860}
+		{28F717C7-A2EF-405E-96F1-538329030ACF} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}
+		{299A0CF7-250D-4E08-B628-B84DABF5ABF8} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{29D7CAB4-B2E3-541B-0D13-40F66C92226D} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
+		{2AE8945D-4EE8-4892-8D2D-D00485AF3079} = {1833675A-E63B-4FD3-8C8E-B7732DA73438}
+		{2D6239A5-1257-7085-A746-2B83BF5833B3} = {A9D15F6F-E8E6-215E-B4A8-4EEF838A4827}
+		{2D8A0564-40F7-A6CD-5212-7A085383443E} = {B241A093-3EF2-C381-34F0-E038AA6C2CBE}
+		{2E147DA9-AE28-4EEF-A4FF-AAE6F92E322B} = {878DA696-AD56-4739-84BB-D9A8E4BC5A48}
+		{2EBC7002-F2CD-D818-C6B9-E2522FC6E793} = {2287AD25-6609-017D-CE21-82CBCD8794A9}
+		{2FC31D1A-439B-9DE5-924A-CF699427B1EB} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{30501EDF-7220-1290-983B-ED3AD395DAB9} = {B7217065-2D8A-8851-0B4F-46E7CEB4D4F0}
+		{30C6ED4F-6B52-2F4E-2094-8D0A1261E8EC} = {62BB4FD3-461F-9188-4888-44C68D0ED548}
+		{34242C6D-6418-92C1-647F-5E73461A6CFE} = {29D7CAB4-B2E3-541B-0D13-40F66C92226D}
+		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
+		{3A28BDCD-290B-8EAE-5201-F926C15FA315} = {A5F21C3D-5BE7-7CE7-8DA7-E727F8333062}
+		{3E00A02D-46F3-432B-91C8-5D459F70C525} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
+		{3E60607C-2159-1178-7D1D-D2F895A93ECE} = {A5F21C3D-5BE7-7CE7-8DA7-E727F8333062}
 		{3F409C4A-6700-4061-AA77-627289E619E9} = {6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7}
-		{BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
-		{AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD} = {BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54}
+		{3FA9D130-CBA4-CA5F-B93E-6D5470AE8CC9} = {D299E483-C236-42DA-9F90-8447C3B007D1}
+		{42F1061C-608C-B995-DA40-CCDC28562784} = {1CB3D83B-053E-C090-B11A-3D549CAE5D02}
+		{42F9EF9D-C14A-41EB-9DB4-E80213A4DF7B} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{45569702-BF11-421C-A43A-03D1364E3C95} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
+		{4762FEDE-2D5B-136F-22B0-F9E8A6BF1E50} = {F14DE294-71C4-BF70-A2DA-80F47CB2AE6C}
+		{4845DF03-5C01-4E8B-842A-4EC0A9C0D15D} = {2E147DA9-AE28-4EEF-A4FF-AAE6F92E322B}
+		{4A70DDFC-457B-5612-55F0-FD1DD01C84A1} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
+		{4BEDE627-6948-17E9-7D2A-FAC4AF0BB55F} = {D693EE1E-DC42-D1C1-7685-7768CDA90754}
+		{4E95EF45-F0E9-25F3-42D1-46CE1983D834} = {96EB236F-1DA2-3CE9-BB64-D02FAE2393A9}
+		{4EC19DE5-86B2-F917-EDBE-0853570B42C8} = {E742837F-6B59-8FB2-A0A2-A595262A3096}
+		{50CDBD24-894E-0FD6-7C08-442980AADBB7} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{5134BE1A-F783-8202-D25D-A30A9D58EEC7} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
 		{521E2788-845C-4B8F-B742-DB0FDF5271D3} = {AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD}
+		{53CCF09D-3A31-CC46-3125-C7A20C83157C} = {BF6E01A3-B5FA-4885-DDF6-04EBC39A937F}
+		{53D85186-4F21-7AF4-966E-0BFE3529E387} = {30501EDF-7220-1290-983B-ED3AD395DAB9}
+		{54759879-4933-7741-25DA-A95FC7B5B6E4} = {C9FA28BE-811A-821C-36B5-541DDABEA455}
+		{55C13CE1-FBB1-5BD5-BD41-2250C3A423B1} = {244E0458-C3ED-6881-0EF2-37E679480FF3}
+		{56ED54D2-4F7A-4CD2-91BA-3D710D8F9C24} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
+		{57653CA8-8A75-118F-DC80-3EBC71559550} = {B0918D5C-3B09-C8F7-F0ED-764BD3B50846}
+		{59895D38-CDF4-4147-9A04-43A9272774B2} = {D299E483-C236-42DA-9F90-8447C3B007D1}
+		{59FB48FD-1E1A-499E-BAD5-B16AE1E29194} = {0CF0E8F4-117A-457B-8BE3-40FEEC842EEB}
+		{5A3097F9-84D7-8CA6-4986-8CDA0E26D227} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
+		{5E16CA24-F8A2-436C-86B6-6511A703FB82} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
+		{5F8285EB-50A6-72A5-EC22-272252A78342} = {2D6239A5-1257-7085-A746-2B83BF5833B3}
+		{5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{62BB4FD3-461F-9188-4888-44C68D0ED548} = {D2288D3A-B06E-9A12-3C08-06E8689CF6A8}
+		{6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7} = {072E1208-58D6-471D-B494-5D5670688291}
+		{6332D45B-9105-4EA4-BB61-65D494AF4CE0} = {C25B8C43-91C7-4F23-B186-05E37C145720}
+		{63F4DEE8-3B65-353E-BE35-5E4AE270E5BA} = {DB514C30-5601-82E1-CDE1-701ADA43A9BE}
+		{6625778A-E44C-F016-70B3-507A374B34BF} = {9D17877F-6145-90EC-14CD-F14A1A24D13C}
+		{66E6F059-15CC-E73D-631D-D37626A53A9E} = {63F4DEE8-3B65-353E-BE35-5E4AE270E5BA}
+		{6886A40C-C0AA-4E2C-B04C-640DE620DDB6} = {2E147DA9-AE28-4EEF-A4FF-AAE6F92E322B}
+		{6C51D135-2DDF-FC35-0708-A289D9BDE33A} = {B0918D5C-3B09-C8F7-F0ED-764BD3B50846}
+		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
+		{6DEB47AB-1056-3133-6922-0C428B9ECD52} = {A5F21C3D-5BE7-7CE7-8DA7-E727F8333062}
+		{6F7F63BC-5509-E8FD-57DB-35CDFDCAF744} = {D2E0D44F-71F1-1478-F989-466955EC6F80}
+		{70784D89-0A75-0366-7174-BEE862B9AFC2} = {2EBC7002-F2CD-D818-C6B9-E2522FC6E793}
+		{71FB51E6-F9B0-937E-39F6-38EFD7C91189} = {CC3C64B5-A5FC-8F8E-720E-921A21F00229}
+		{73D7F203-E36F-1FD4-ADB2-149FDB43BD7C} = {BA51EB65-9FFD-B105-4679-3BC400E9F983}
+		{76A3F26F-97C1-7DAD-188E-C659035C6E8D} = {83DCB71D-7876-BAB1-592A-80813F305E4D}
+		{77311056-84A3-4B57-AEF1-7A76F17C500C} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
+		{7DAB2C47-91F8-4085-8786-94437B89820E} = {D9146E66-5EB7-4919-B6CC-F36544D8ACE4}
+		{7DB38D35-8427-EAA1-FB78-6BC19A25955C} = {13729F43-F63B-797F-F4AB-9F7BA47C69C2}
+		{7E6A17D1-EC6E-9802-06EB-AC9B75B11339} = {53D85186-4F21-7AF4-966E-0BFE3529E387}
+		{7E765BF6-D902-9F4E-CD6C-90C614044B91} = {D2E0D44F-71F1-1478-F989-466955EC6F80}
+		{7FA23122-0EF3-554B-F66F-7011C69C51C4} = {7E765BF6-D902-9F4E-CD6C-90C614044B91}
+		{80A2525D-699A-419F-82E8-B26BBFDFBFB8} = {99D94B10-047C-480C-9CF4-3C47E7925870}
+		{832B5C4F-3EB0-0B68-2891-21F9C30AE7D2} = {0A281F7B-C6D3-D687-5485-F34DEF383257}
+		{83DCB71D-7876-BAB1-592A-80813F305E4D} = {B514E8BC-8590-54F4-383E-9CCA8C91D5E2}
+		{861E01E1-D689-40B3-BE1D-E0F7FF11DD73} = {B7214789-B7E7-4F88-A6DE-F367B65F9BDF}
+		{878DA696-AD56-4739-84BB-D9A8E4BC5A48} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{88573491-8330-4D25-A3C2-FAAB1D69E589} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}
 		{8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
-		{DC091494-5AC6-46E6-BA6D-61441682BB62} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
-		{CA7AB659-38EB-4E98-99A7-95A777DCD074} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
-		{BC0651B9-7642-4436-BF89-5D8B8BD4F4A0} = {8B6A058C-7402-4392-8956-6B1489D9E118}
+		{8B6A058C-7402-4392-8956-6B1489D9E118} = {D832A37F-03A2-4EBD-9FF9-BC27D415378B}
+		{8B6DD9E6-3057-45B9-80F6-B813601BE33B} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{8C2CF08B-7E03-796A-7D77-8F40A51B3827} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
+		{8CB5D103-21B9-4651-A4A1-671107F28847} = {13DA8639-4234-4E82-9423-056A19840860}
+		{907E880C-10F6-4C85-9DF8-5C73F54646DB} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
+		{91C1626E-08D0-D15F-E92C-49D0A474AFDC} = {A9963E0C-F9B5-4635-505D-54E094B1F113}
+		{923F42D8-57A1-4A1B-8FB9-35B5D73A7F8A} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{9395B0E3-017F-7F84-FB1C-A6CBED930E09} = {E2174583-0F9E-9F9C-BC44-62107766E1C4}
+		{941FD4A9-CB23-4415-8DC3-67D60AEC425D} = {1833675A-E63B-4FD3-8C8E-B7732DA73438}
+		{954721D1-E3F2-CE5D-E92C-D6B6FF3DA750} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
+		{96EB236F-1DA2-3CE9-BB64-D02FAE2393A9} = {D2288D3A-B06E-9A12-3C08-06E8689CF6A8}
+		{99D94B10-047C-480C-9CF4-3C47E7925870} = {59895D38-CDF4-4147-9A04-43A9272774B2}
+		{9A43C79B-ED5A-7282-DF3B-F27B77DD2EA1} = {4EC19DE5-86B2-F917-EDBE-0853570B42C8}
+		{9D17877F-6145-90EC-14CD-F14A1A24D13C} = {71FB51E6-F9B0-937E-39F6-38EFD7C91189}
+		{9FE6730F-C6F4-44B7-981B-BDC489FF202C} = {0CF0E8F4-117A-457B-8BE3-40FEEC842EEB}
+		{A2A1771D-A861-1285-43E2-9EBFD04BFCC1} = {219E05B7-6343-C810-FB04-31E430BD5184}
+		{A2BAABAE-02D4-4685-9081-F599C5AF7D30} = {D832A37F-03A2-4EBD-9FF9-BC27D415378B}
+		{A5F21C3D-5BE7-7CE7-8DA7-E727F8333062} = {53D85186-4F21-7AF4-966E-0BFE3529E387}
+		{A62B830A-BE58-54F9-6766-E95D2B04A2A8} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{A63D24B8-5B7A-45B8-9C11-000000000100} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
 		{A63D24B8-5B7A-45B8-9C11-000000000101} = {6320CC7B-7E4D-4EAC-B6FA-392A0F1CC3D7}
 		{A63D24B8-5B7A-45B8-9C11-000000000102} = {AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD}
 		{A63D24B8-5B7A-45B8-9C11-000000000300} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
 		{A63D24B8-5B7A-45B8-9C11-000000000301} = {A63D24B8-5B7A-45B8-9C11-000000000300}
-		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
-		{50CDBD24-894E-0FD6-7C08-442980AADBB7} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
-		{E21B97A1-D847-2938-4E29-760523C97389} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
-		{DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
-		{F104C833-785D-E25F-5F10-B46284462A11} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
-		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
-		{1C920419-6FCA-97AA-DE2F-11C8037C1EF6} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
-		{A62B830A-BE58-54F9-6766-E95D2B04A2A8} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
-		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
-		{220B0789-1F04-54D3-18E5-5DB99E91172F} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
-		{77311056-84A3-4B57-AEF1-7A76F17C500C} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
-		{3E00A02D-46F3-432B-91C8-5D459F70C525} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
-		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
-		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
-		{D299E483-C236-42DA-9F90-8447C3B007D1} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
-		{C45C681B-A5F9-4F56-8DBE-70193C735CAB} = {D299E483-C236-42DA-9F90-8447C3B007D1}
-		{DE87C8F7-02CD-48E0-8FB9-916978A13394} = {C45C681B-A5F9-4F56-8DBE-70193C735CAB}
-		{E2ADF44C-9D50-4B96-BA2B-1A97992C5C8E} = {DE87C8F7-02CD-48E0-8FB9-916978A13394}
-		{62F82629-78A8-425A-91D5-05BF2D154AC6} = {C45C681B-A5F9-4F56-8DBE-70193C735CAB}
-		{4C284617-5214-41F0-8ADB-0949EF31DAB0} = {62F82629-78A8-425A-91D5-05BF2D154AC6}
-		{EB1C9B7A-2C21-47C9-ABBF-7EF51B8C5E94} = {4C284617-5214-41F0-8ADB-0949EF31DAB0}
-		{663532D9-E567-4F71-BF9F-BD70A02859CF} = {C45C681B-A5F9-4F56-8DBE-70193C735CAB}
-		{4D4A5494-4A91-4A5F-8B83-D72DBF1EBD5D} = {663532D9-E567-4F71-BF9F-BD70A02859CF}
-		{037D3408-496C-4584-8D0F-0EBA4D850D25} = {4D4A5494-4A91-4A5F-8B83-D72DBF1EBD5D}
-		{D59FF827-EF1B-47EF-B813-3B042DA22F96} = {037D3408-496C-4584-8D0F-0EBA4D850D25}
-		{BDB3D62E-A6A5-480A-BCE4-933431F6883B} = {D59FF827-EF1B-47EF-B813-3B042DA22F96}
-		{AEAA0561-8781-4068-BDDD-F0E3C14DF6F8} = {BDB3D62E-A6A5-480A-BCE4-933431F6883B}
-		{4FA74990-CFC8-415A-99C0-28369A5D959A} = {AEAA0561-8781-4068-BDDD-F0E3C14DF6F8}
-		{947B8735-57D0-4A23-920F-F4BA810F364B} = {4FA74990-CFC8-415A-99C0-28369A5D959A}
-		{6E4DBCF2-76DD-4549-A8B8-4FE1B0E8C4CB} = {4FA74990-CFC8-415A-99C0-28369A5D959A}
-		{2CB79288-C18E-423E-9571-3CAB0BA3E12D} = {4FA74990-CFC8-415A-99C0-28369A5D959A}
-		{F9EA05A5-CC30-4AD2-A652-F51F549E36F2} = {4FA74990-CFC8-415A-99C0-28369A5D959A}
-		{59895D38-CDF4-4147-9A04-43A9272774B2} = {D299E483-C236-42DA-9F90-8447C3B007D1}
-		{99D94B10-047C-480C-9CF4-3C47E7925870} = {59895D38-CDF4-4147-9A04-43A9272774B2}
-		{80A2525D-699A-419F-82E8-B26BBFDFBFB8} = {99D94B10-047C-480C-9CF4-3C47E7925870}
-		{241F0F89-1863-490F-9BA5-BA1C06CEB6B3} = {59895D38-CDF4-4147-9A04-43A9272774B2}
-		{7AF82E00-9C22-44F6-BF94-C7437524959E} = {241F0F89-1863-490F-9BA5-BA1C06CEB6B3}
-		{1478D372-2DC3-4D62-B0EF-5958CCFBF5E4} = {7AF82E00-9C22-44F6-BF94-C7437524959E}
-		{164813F8-F8DB-455B-B05A-7D212BEAED76} = {59895D38-CDF4-4147-9A04-43A9272774B2}
-		{6A4E4031-4CDE-4198-933D-ACEF1457C793} = {164813F8-F8DB-455B-B05A-7D212BEAED76}
-		{9B6F5696-CE54-4C62-80AD-FA0C6E4DDE3D} = {6A4E4031-4CDE-4198-933D-ACEF1457C793}
-		{5680DD88-5A2B-4274-9A8B-F93BAE452874} = {9B6F5696-CE54-4C62-80AD-FA0C6E4DDE3D}
-		{B4A2F3E8-0E0E-4CFC-980F-08131EEFAB4C} = {5680DD88-5A2B-4274-9A8B-F93BAE452874}
-		{4453881B-9A4C-4848-B8AB-0343FD6EB34E} = {B4A2F3E8-0E0E-4CFC-980F-08131EEFAB4C}
-		{3F8A5660-D4C0-48B3-80AE-A62844AE5528} = {4453881B-9A4C-4848-B8AB-0343FD6EB34E}
-		{AF7FED61-01B6-4E80-BF8E-9E02C4D61795} = {3F8A5660-D4C0-48B3-80AE-A62844AE5528}
-		{F74A4F83-3687-4681-A308-C7513CC34E62} = {3F8A5660-D4C0-48B3-80AE-A62844AE5528}
-		{147ADE8A-3422-4B90-BCC7-3BCB506CB8D9} = {3F8A5660-D4C0-48B3-80AE-A62844AE5528}
-		{B100E0F8-1516-41D6-B37C-0D8435FF5B96} = {3F8A5660-D4C0-48B3-80AE-A62844AE5528}
-		{820FAE63-6800-4C67-99C8-76048DE8D106} = {3F8A5660-D4C0-48B3-80AE-A62844AE5528}
-		{878DA696-AD56-4739-84BB-D9A8E4BC5A48} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
-		{2E147DA9-AE28-4EEF-A4FF-AAE6F92E322B} = {878DA696-AD56-4739-84BB-D9A8E4BC5A48}
-		{4845DF03-5C01-4E8B-842A-4EC0A9C0D15D} = {2E147DA9-AE28-4EEF-A4FF-AAE6F92E322B}
-		{6886A40C-C0AA-4E2C-B04C-640DE620DDB6} = {2E147DA9-AE28-4EEF-A4FF-AAE6F92E322B}
-		{299A0CF7-250D-4E08-B628-B84DABF5ABF8} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
-		{B7214789-B7E7-4F88-A6DE-F367B65F9BDF} = {299A0CF7-250D-4E08-B628-B84DABF5ABF8}
-		{861E01E1-D689-40B3-BE1D-E0F7FF11DD73} = {B7214789-B7E7-4F88-A6DE-F367B65F9BDF}
-		{BF01194B-04FD-4A07-B85F-2781C7237D5D} = {B7214789-B7E7-4F88-A6DE-F367B65F9BDF}
-		{42F9EF9D-C14A-41EB-9DB4-E80213A4DF7B} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
-		{0CF0E8F4-117A-457B-8BE3-40FEEC842EEB} = {42F9EF9D-C14A-41EB-9DB4-E80213A4DF7B}
-		{9FE6730F-C6F4-44B7-981B-BDC489FF202C} = {0CF0E8F4-117A-457B-8BE3-40FEEC842EEB}
-		{59FB48FD-1E1A-499E-BAD5-B16AE1E29194} = {0CF0E8F4-117A-457B-8BE3-40FEEC842EEB}
-		{45569702-BF11-421C-A43A-03D1364E3C95} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
-		{C25B8C43-91C7-4F23-B186-05E37C145720} = {45569702-BF11-421C-A43A-03D1364E3C95}
-		{6332D45B-9105-4EA4-BB61-65D494AF4CE0} = {C25B8C43-91C7-4F23-B186-05E37C145720}
-		{B398F253-412C-49AA-B2EF-D5F164B8ACF2} = {6332D45B-9105-4EA4-BB61-65D494AF4CE0}
-		{03C0B81C-6B57-4791-B5F3-9D2D48CE2544} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{A7CE4335-D8E6-4E53-B810-7D932E87BA59} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
 		{A82C4E93-051E-4C0B-B705-5875F748742C} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
-		{923F42D8-57A1-4A1B-8FB9-35B5D73A7F8A} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
-		{189A1B26-8EB9-4D78-A955-CF1E45F39257} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
-		{5E16CA24-F8A2-436C-86B6-6511A703FB82} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
-		{1B943F80-0EB6-4134-A02A-2F1FF121CFEC} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
+		{A9D15F6F-E8E6-215E-B4A8-4EEF838A4827} = {954721D1-E3F2-CE5D-E92C-D6B6FF3DA750}
+		{AA9D9390-917E-4BC7-B4D8-DEBEF582BFFD} = {BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54}
+		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
+		{ABDB27EA-51AF-8FD4-C199-EED7FB927000} = {96EB236F-1DA2-3CE9-BB64-D02FAE2393A9}
+		{ADBA3BA9-F6AC-7A5C-7A27-59AE40606576} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{AE22FCE8-BBB1-103D-24A8-E4830CE20A6B} = {2AE8945D-4EE8-4892-8D2D-D00485AF3079}
+		{B0918D5C-3B09-C8F7-F0ED-764BD3B50846} = {70784D89-0A75-0366-7174-BEE862B9AFC2}
+		{B1134F64-5AC3-5777-C8DC-87B904646C91} = {96EB236F-1DA2-3CE9-BB64-D02FAE2393A9}
+		{B14DAB6E-86A3-4998-20B8-E7AF79E61621} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
+		{B241A093-3EF2-C381-34F0-E038AA6C2CBE} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
+		{B30EC563-478C-BAFB-6574-559B0E97A3BA} = {D299E483-C236-42DA-9F90-8447C3B007D1}
+		{B398F253-412C-49AA-B2EF-D5F164B8ACF2} = {6332D45B-9105-4EA4-BB61-65D494AF4CE0}
+		{B514E8BC-8590-54F4-383E-9CCA8C91D5E2} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{B569FD6A-798F-1FA3-BA02-38D11F7B1747} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
+		{B690A596-AD03-40E3-B875-6722D2397011} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{B7214789-B7E7-4F88-A6DE-F367B65F9BDF} = {299A0CF7-250D-4E08-B628-B84DABF5ABF8}
+		{B7217065-2D8A-8851-0B4F-46E7CEB4D4F0} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
+		{BA51EB65-9FFD-B105-4679-3BC400E9F983} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
+		{BB4173F9-2ECC-455A-AE66-4115A51C9396} = {18F6F60D-7635-4701-A27F-616A9A9C251A}
+		{BC0651B9-7642-4436-BF89-5D8B8BD4F4A0} = {8B6A058C-7402-4392-8956-6B1489D9E118}
+		{BD39C8CE-C2B3-E621-63FE-823BF42FD280} = {EE0699C4-AF73-7691-6CA6-84054809308A}
+		{BE41E66B-A170-480D-9D80-1C69E83390BA} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
+		{BF01194B-04FD-4A07-B85F-2781C7237D5D} = {B7214789-B7E7-4F88-A6DE-F367B65F9BDF}
+		{BF1E9A75-8A08-41CC-A53F-AB73D3D4AF54} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{BF6E01A3-B5FA-4885-DDF6-04EBC39A937F} = {219E05B7-6343-C810-FB04-31E430BD5184}
+		{C107C931-3488-14EB-5D4A-E3550F9BEF90} = {4E95EF45-F0E9-25F3-42D1-46CE1983D834}
+		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
+		{C25B8C43-91C7-4F23-B186-05E37C145720} = {45569702-BF11-421C-A43A-03D1364E3C95}
+		{C45C681B-A5F9-4F56-8DBE-70193C735CAB} = {D299E483-C236-42DA-9F90-8447C3B007D1}
+		{C6B94069-54C2-4B96-880D-4C058A605C56} = {5FBB5292-A02D-4B3E-AF25-61A2EA2D2C00}
+		{C9FA28BE-811A-821C-36B5-541DDABEA455} = {96EB236F-1DA2-3CE9-BB64-D02FAE2393A9}
+		{CA7AB659-38EB-4E98-99A7-95A777DCD074} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
+		{CB7EEAB5-39FB-49B2-95A1-72774A80F5B8} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
+		{CC90F2C4-08ED-FF9E-387F-E7B68E3DA9A5} = {83DCB71D-7876-BAB1-592A-80813F305E4D}
+		{D0232E88-555A-715D-6447-52CCBAD305FC} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
+		{D2288D3A-B06E-9A12-3C08-06E8689CF6A8} = {A9963E0C-F9B5-4635-505D-54E094B1F113}
+		{D299E483-C236-42DA-9F90-8447C3B007D1} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
+		{D2E0D44F-71F1-1478-F989-466955EC6F80} = {13DA8639-4234-4E82-9423-056A19840860}
+		{D693EE1E-DC42-D1C1-7685-7768CDA90754} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
+		{D832A37F-03A2-4EBD-9FF9-BC27D415378B} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
+		{D9146E66-5EB7-4919-B6CC-F36544D8ACE4} = {8B6A058C-7402-4392-8956-6B1489D9E118}
+		{DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{DB514C30-5601-82E1-CDE1-701ADA43A9BE} = {54759879-4933-7741-25DA-A95FC7B5B6E4}
+		{DC091494-5AC6-46E6-BA6D-61441682BB62} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
+		{DCEE23F9-A0C0-19CB-258B-9D2A5A9171DD} = {55C13CE1-FBB1-5BD5-BD41-2250C3A423B1}
+		{DE87C8F7-02CD-48E0-8FB9-916978A13394} = {C45C681B-A5F9-4F56-8DBE-70193C735CAB}
+		{DFDA3D21-D9F6-7EC5-DC03-983844BB8450} = {7E6A17D1-EC6E-9802-06EB-AC9B75B11339}
+		{E2174583-0F9E-9F9C-BC44-62107766E1C4} = {BD39C8CE-C2B3-E621-63FE-823BF42FD280}
+		{E21B97A1-D847-2938-4E29-760523C97389} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
+		{E2ADF44C-9D50-4B96-BA2B-1A97992C5C8E} = {DE87C8F7-02CD-48E0-8FB9-916978A13394}
+		{E2BB8948-A33B-7D06-CADA-F3B535F84401} = {ADBA3BA9-F6AC-7A5C-7A27-59AE40606576}
+		{E742837F-6B59-8FB2-A0A2-A595262A3096} = {D2288D3A-B06E-9A12-3C08-06E8689CF6A8}
+		{E9D989EE-D136-4BE0-E95F-EC2543481E3D} = {12C09B2F-C78B-CC22-D2D7-E3B64300C265}
+		{EE0699C4-AF73-7691-6CA6-84054809308A} = {9A43C79B-ED5A-7282-DF3B-F27B77DD2EA1}
+		{F104C833-785D-E25F-5F10-B46284462A11} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
+		{F14DE294-71C4-BF70-A2DA-80F47CB2AE6C} = {B30EC563-478C-BAFB-6574-559B0E97A3BA}
+		{F27F4562-11C4-42EF-AC5A-26101FD26F46} = {8B6DD9E6-3057-45B9-80F6-B813601BE33B}
+		{F33C432B-1712-B0E5-F5CE-920716EC8DFE} = {13729F43-F63B-797F-F4AB-9F7BA47C69C2}
+		{F980E824-E22F-AD62-3F6C-1C68F2150D95} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
+		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
+		{FD5EB6FB-8E3E-612D-6EA7-6A98EFF87A76} = {C107C931-3488-14EB-5D4A-E3550F9BEF90}
+		{FD8E4341-008D-D47E-74BC-857A2385FB25} = {B0918D5C-3B09-C8F7-F0ED-764BD3B50846}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7A3009E-A79E-4542-AC95-DD9B9C113922}

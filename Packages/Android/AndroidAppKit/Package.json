@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "name": "AndroidAppKit",
-  "versionSource": "Projects/Gradle/gradle.properties",
+  "versionSource": "../../../Projects/Gradle/AndroidAppKit/gradle.properties",
   "deliveries": {
     "Android": "Delivery/Android/Delivery.json"
   }

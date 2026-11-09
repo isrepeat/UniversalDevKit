@@ -31,23 +31,30 @@ try {
     $stage = Reset-UdkArtifactDirectory -Root $drive.Path -Path (Join-Path $drive.Path "staging/$Package")
     $payload = Join-Path $stage 'payload'
     [void][IO.Directory]::CreateDirectory($payload)
-    Copy-Item (Join-Path $packageRoot 'Sources/*') $payload -Recurse -Force
+    # Состав поставки задаётся delivery; реализация находится в Sources, публичные заголовки — в Includes, проекты — в Projects.
+    if ($delivery.files -isnot [Array] -or -not $delivery.files.Count) { throw 'Content delivery requires a nonempty files array.' }
+    foreach ($mapping in $delivery.files) {
+        foreach ($field in @('source', 'target')) {
+            if ($mapping.$field -isnot [string] -or [string]::IsNullOrWhiteSpace($mapping.$field) -or
+                $mapping.$field -match '[\\:*?;$@%\r\n]' -or
+                @($mapping.$field.Split('/') | Where-Object { $_ -in @('', '.', '..') }).Count) {
+                throw "Invalid content mapping $field."
+            }
+        }
+        $source = Join-Path $repository $mapping.source
+        $destination = Join-Path $payload $mapping.target
+        if (Test-Path -LiteralPath $source -PathType Container) {
+            [void][IO.Directory]::CreateDirectory($destination)
+            Get-ChildItem -LiteralPath $source -Force | ForEach-Object {
+                Copy-Item -LiteralPath $_.FullName -Destination $destination -Recurse -Force
+            }
+        } elseif (Test-Path -LiteralPath $source -PathType Leaf) {
+            [void][IO.Directory]::CreateDirectory((Split-Path $destination))
+            Copy-Item -LiteralPath $source -Destination $destination -Force
+        } else { throw "Content source does not exist: $source" }
+    }
     Copy-Item (Join-Path $packageRoot 'README.md') $payload
     Copy-Item (Join-Path $repository 'LICENSE') (Join-Path $payload 'LICENSE.txt')
-    if ($Package -eq 'AndroidBuildTools') {
-        $androidTools = Join-Path $payload 'tools/Android'
-        [void][IO.Directory]::CreateDirectory($androidTools)
-        foreach ($name in @('ResolveToolchain.ps1', 'Toolchain.json')) {
-            Copy-Item (Join-Path $repository "Scripts/Android/$name") $androidTools
-        }
-    }
-    # Служебные команды шаблона также доступны внутри созданного приложения.
-    if ($Package -eq 'AndroidTemplates') {
-        Copy-Item (Join-Path $repository 'Version.json') (Join-Path $payload 'UdkVersion.json')
-        foreach ($name in @('Read-AndroidSharedProps.ps1', 'Remove-AndroidProject.ps1')) {
-            Copy-Item (Join-Path $payload "PowerShell/$name") (Join-Path $payload "template_app/Scripts/PowerShell/$name") -Force
-        }
-    }
     $spec = (Get-Content (Join-Path (Split-Path $deliveryFile) $delivery.nuspec) -Raw).Replace('{{VERSION}}', $version)
     $specPath = Join-Path $stage "$Package.nuspec"
     [IO.File]::WriteAllText($specPath, $spec.TrimEnd([char]13, [char]10), [Text.UTF8Encoding]::new($false))

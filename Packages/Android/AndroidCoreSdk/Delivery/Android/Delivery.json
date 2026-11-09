@@ -3,5 +3,5 @@
   "adapter": "kotlin-aar",
   "groupId": "com.isrepeat",
   "artifactId": "androidcoresdk",
-  "project": "../../Projects/Gradle"
+  "project": "../../../../../Projects/Gradle/AndroidCoreSdk"
 }

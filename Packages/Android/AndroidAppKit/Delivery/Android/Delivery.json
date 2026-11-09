@@ -3,5 +3,5 @@
   "adapter": "kotlin-aar",
   "groupId": "com.isrepeat",
   "artifactId": "androidappkit",
-  "project": "../../Projects/Gradle"
+  "project": "../../../../../Projects/Gradle/AndroidAppKit"
 }
