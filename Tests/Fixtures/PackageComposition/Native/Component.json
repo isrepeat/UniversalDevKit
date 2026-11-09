@@ -1,0 +1,5 @@
+{
+  "name": "Probe",
+  "headers": ["Native/Probe/Probe.h", "Native/Probe/Internal/Hidden.h"],
+  "sources": ["Native/Probe/Probe.cpp"]
+}

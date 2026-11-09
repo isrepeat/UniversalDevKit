@@ -1,11 +1,18 @@
 {
   "schemaVersion": 1,
-  "adapter": "component",
+  "adapter": "nuget",
   "id": "UniversalDevKit.NativeProbe",
-  "supportedPlatforms": ["Windows"],
+  "supportedPlatforms": [
+    "Windows"
+  ],
   "nuspec": "UniversalDevKit.NativeProbe.nuspec",
   "integration": {
     "props": "UniversalDevKit.NativeProbe.props",
     "targets": "UniversalDevKit.NativeProbe.targets"
-  }
+  },
+  "dependencySource": "udk-component",
+  "noWarn": [
+    "NU5100",
+    "NU5128"
+  ]
 }

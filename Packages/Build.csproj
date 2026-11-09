@@ -1,0 +1,31 @@
+<Project>
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)../!artifacts/projects/windows/msbuild/PackageRelease/obj/</BaseIntermediateOutputPath>
+    <MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+  </PropertyGroup>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <UdkPackageRepository>$(MSBuildProjectDirectory)/..</UdkPackageRepository>
+    <UdkPackageToolsEntry>$(UdkPackageRepository)/Sources/PackageTools/Build.ps1</UdkPackageToolsEntry>
+  </PropertyGroup>
+  <ItemGroup>
+    <UdkPackage Include="Packages/Windows/PackageTools/Package.json"><Delivery>NuGet</Delivery></UdkPackage>
+    <UdkPackage Include="Packages/Android/AndroidAppKit/Package.json"><Delivery>Android</Delivery></UdkPackage>
+    <UdkPackage Include="Packages/Android/AndroidBuildTools/Package.json"><Delivery>NuGet</Delivery></UdkPackage>
+    <UdkPackage Include="Packages/Android/AndroidCoreSdk/Package.json"><Delivery>Android</Delivery></UdkPackage>
+    <UdkPackage Include="Packages/Android/AndroidTemplates/Package.json"><Delivery>NuGet</Delivery></UdkPackage>
+    <UdkPackage Include="Packages/CrossPlatform/Diagnostic/Package.json"><Delivery>NuGet</Delivery></UdkPackage>
+    <UdkPackage Include="Packages/CrossPlatform/Diagnostic/Package.json"><Delivery>Android</Delivery></UdkPackage>
+    <UdkPackage Include="Packages/CrossPlatform/Helpers/Package.json"><Delivery>NuGet</Delivery></UdkPackage>
+    <UdkPackage Include="Packages/CrossPlatform/Helpers/Package.json"><Delivery>Android</Delivery></UdkPackage>
+    <UdkPackage Include="Packages/CrossPlatform/OpenGLESRenderer/Package.json"><Delivery>Android</Delivery></UdkPackage>
+    <UdkPackage Include="Packages/CrossPlatform/OpenGLESRenderer/Package.json"><Delivery>NuGet</Delivery></UdkPackage>
+    <UdkPackage Include="Packages/CrossPlatform/XamlRuntime/Package.json"><Delivery>Android</Delivery></UdkPackage>
+    <UdkPackage Include="Packages/CrossPlatform/XamlRuntime/Package.json"><Delivery>NuGet</Delivery></UdkPackage>
+    <UdkPackage Include="Packages/Windows/XamlCompiler/Package.json"><Delivery>NuGet</Delivery></UdkPackage>
+  </ItemGroup>
+  <Import Project="../Projects/MsBuild/PackageTools/UniversalDevKit.PackageTools.targets" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

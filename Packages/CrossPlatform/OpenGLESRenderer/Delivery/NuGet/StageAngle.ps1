@@ -3,6 +3,12 @@ $ErrorActionPreference = 'Stop'
 $preparedRoot = if ($Preparations -and $Preparations.Contains('Dynamic')) { $Preparations['Dynamic']['UniversalDevKitAngleRoot'] } else { $env:UDK_ANGLE_ROOT }
 if (-not $preparedRoot) { throw 'Prepare ANGLE first or set UDK_ANGLE_ROOT to its installation.' }
 $angleRoot = (Resolve-Path -LiteralPath $preparedRoot).Path
+$headers = Join-Path $angleRoot 'include'
+if (-not (Test-Path -LiteralPath $headers -PathType Container)) { $headers = Join-Path $angleRoot 'build/native/include' }
+if (-not (Test-Path -LiteralPath (Join-Path $headers 'GLES3/gl3.h') -PathType Leaf)) { throw 'ANGLE public headers were not found.' }
+$headerDestination = Join-Path $Payload 'include/ANGLE'
+[void][IO.Directory]::CreateDirectory($headerDestination)
+Get-ChildItem -LiteralPath $headers | Copy-Item -Destination $headerDestination -Recurse -Force
 foreach ($configuration in @('Debug', 'Release')) {
     $source = Join-Path $angleRoot "runtimes/win-x64/native/$configuration"
     if (-not (Test-Path -LiteralPath $source)) {

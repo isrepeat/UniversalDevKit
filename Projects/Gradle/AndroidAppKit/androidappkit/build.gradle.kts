@@ -47,7 +47,7 @@ publishing {
     repositories {
         maven {
             name = "AndroidPackagesFeed"
-            url = uri(providers.gradleProperty("androidPackagesFeedPath").get())
+            url = uri(providers.gradleProperty("udkPublicationFeedPath").orElse(providers.gradleProperty("androidPackagesFeedPath")).get())
         }
     }
 }

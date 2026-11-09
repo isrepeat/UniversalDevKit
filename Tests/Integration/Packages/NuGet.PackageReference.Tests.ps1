@@ -36,9 +36,10 @@ function InvokeChecked([string[]]$Arguments, [string]$Log, [string]$ExpectedErro
 try {
     if (-not $Feed) {
         $Feed = Join-Path $run 'feed'
-        $packArguments = @{ LicenseFile = (Join-Path $repository 'LICENSE'); OutputDirectory = $Feed; NuGet = $NuGet; Components = $Components }
-        if ($CMake) { $packArguments.CMake = $CMake }
-        & (Join-Path $repository 'Packages/Build/NuGet/Build.ps1') @packArguments | Out-Host
+        foreach ($component in $Components) {
+            $artifacts = & (Join-Path $repository 'Packages/Build/Build.ps1') -PackagePath "Packages/CrossPlatform/$component/Package.json" -OutputDirectory $Feed -NuGet $NuGet -CMake $CMake
+            foreach ($artifact in $artifacts) { if ($artifact -like '*.nupkg') { Copy-Item -LiteralPath $artifact -Destination $Feed -Force } }
+        }
     }
     $Feed = (Resolve-Path -LiteralPath $Feed).Path
     $version = (Get-Content (Join-Path $repository 'Version.json') -Raw | ConvertFrom-Json).version

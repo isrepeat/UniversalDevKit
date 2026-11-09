@@ -1,7 +1,6 @@
 {
   "schemaVersion": 1,
-  "adapter": "kotlin-aar",
+  "adapter": "maven-repository",
   "groupId": "com.isrepeat",
-  "artifactId": "androidappkit",
-  "project": "../../../../../Projects/Gradle/AndroidAppKit"
+  "artifactId": "androidappkit"
 }

@@ -58,7 +58,7 @@ try {
     if (-not $Ninja) { $Ninja = Join-Path (Split-Path (Split-Path (Split-Path $CMake -Parent) -Parent) -Parent) 'Ninja/ninja.exe' }
     if (-not $Feed) {
         $Feed = Join-Path $run 'feed'
-        & (Join-Path $repository 'Packages/Build/Android/Build.ps1') -AndroidNdk $AndroidNdk -CMake $CMake -Ninja $Ninja -Abi $Abi -Components $Components -OutputDirectory $Feed | Out-Host
+        foreach ($component in $Components) { & (Join-Path $repository 'Packages/Build/Build.ps1') -PackagePath "Packages/CrossPlatform/$component/Package.json" -Delivery Android -AndroidNdk $AndroidNdk -CMake $CMake -Ninja $Ninja -Abi $Abi -OutputDirectory $Feed | Out-Host }
     }
     $Feed = (Resolve-Path -LiteralPath $Feed).Path
     $version = (Get-Content (Join-Path $repository 'Version.json') -Raw | ConvertFrom-Json).version

@@ -1,6 +1,39 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "name": "XamlCompiler",
   "versionSource": "../../../Version.json",
-  "deliveries": { "NuGet": "Delivery/NuGet/Delivery.json" }
+  "projects": {
+    "compiler": {
+      "adapter": "cmake-build",
+      "sourceDirectory": "Projects/Cmake/XamlCompiler",
+      "buildDirectory": "!artifacts/packages/nuget/XamlCompiler/build",
+      "generator": "Visual Studio 18 2026",
+      "architecture": "x64",
+      "configurations": [
+        "Release"
+      ],
+      "parallel": 2,
+      "variables": {},
+      "artifacts": {
+        "executable": {
+          "root": "build",
+          "path": "Release/XamlCompiler.exe"
+        }
+      }
+    }
+  },
+  "contents": [
+    {
+      "project": "compiler",
+      "artifact": "executable",
+      "destination": "tools/win-x64"
+    },
+    {
+      "file": "../../../LICENSE",
+      "destination": "LICENSE.txt"
+    }
+  ],
+  "deliveries": {
+    "NuGet": "Delivery/NuGet/Delivery.json"
+  }
 }

@@ -10,6 +10,8 @@
 | AndroidPrefab.Tests.ps1 | APK, Prefab и SO рабочих Android-компонентов |
 | AndroidKotlin.Tests.ps1 | Kotlin AAR, Maven и транзитивные зависимости |
 | PackageDelivery.Tests.ps1 | Механизмы доставки на изолированных fixtures |
+| PackageTools.Migration.Tests.ps1 | Все Package.json версии 2, 14 доставок, отсутствие старых упаковщиков; BaselineDirectory сверяет файлы и NuGet-зависимости, CheckMaven — Android-публикации |
+| PackageComposition.Tests.ps1 | JSON-граф смешанных проектов, установленный PackageTools, точные NuGet-зависимости, состав пакета и ошибки контрактов |
 
 Общий Windows component-шаблон для synthetic-fixtures находится в ../../Fixtures/Packages/NativeComponent. Он не регистрируется и не выпускается как рабочий компонент.
 

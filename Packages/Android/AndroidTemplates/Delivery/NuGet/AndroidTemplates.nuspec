@@ -9,6 +9,6 @@
     <readme>README.md</readme>
   </metadata>
   <files>
-    <file src="**/*" target="" />
+    <file src="payload\**/*" target="" />
   </files>
 </package>

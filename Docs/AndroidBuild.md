@@ -38,7 +38,7 @@
 
 Это версии текущей поставки. Версия UDK читается из UdkVersion.json внутри AndroidTemplates и записывается в android-build.psd1; сейчас это 0.1.0. Генератор выбирает последнюю доступную версию AndroidBuildTools из feed и закрепляет её в проекте. NuGet-превьювер и его SDK восстанавливаются именно версии UdkVersion. Загрузчик XamlCompiler сейчас выбирает последнюю доступную версию своего пакета, поэтому в feed должна находиться совместимая версия.
 
-В общей папке feed файлы .nupkg находятся рядом с Maven-каталогами `com/isrepeat/...` и `org/universaldevkit/...`, содержащими POM и AAR. Способы выпуска описаны в [Android AAR/Prefab](../Packages/Build/Android/README.md), [AndroidBuildTools](../Packages/Android/AndroidBuildTools/README.md), [AndroidTemplates](../Packages/Android/AndroidTemplates/README.md) и [WPF-превьювере](../Packages/Windows/AndroidAppPreviewer/README.md). Потребителю не нужен checkout UtilityHelpersLib или исходников превьювера.
+В общей папке feed файлы .nupkg находятся рядом с Maven-каталогами `com/isrepeat/...` и `org/universaldevkit/...`, содержащими POM и AAR. Способы выпуска описаны в [Android AAR/Prefab](../Packages/Build/Android/README.md), [AndroidBuildTools](../Packages/Android/AndroidBuildTools/README.md), [AndroidTemplates](../Packages/Android/AndroidTemplates/README.md) и [универсальном инструменте выпуска](PackageComposition.md). Потребителю не нужен checkout UtilityHelpersLib или исходников превьювера.
 
 ## Общая конфигурация
 
@@ -133,12 +133,12 @@ Windows CMake восстанавливает WPF-пакет также при Bu
 
 Артефакты по умолчанию:
 
-- SDK: `Build/Preview/sdk-<UdkVersion>`.
+- SDK: `Build/Preview/UniversalDevKit.AndroidAppPreviewer.PluginSDK.<UdkVersion>`; зависимости UDK восстанавливаются NuGet в соседние каталоги ID.VERSION.
 - WPF: `Build/Preview/UniversalDevKit.AndroidAppPreviewer.<UdkVersion>/tools/win-x64`.
 - CMake: `Build/Preview/cmake/Debug` или Release.
 - Плагин: `Build/TestFooApp.PreviewPlugin/Build/Debug/x64/TestFooApp.PreviewPlugin/TestFooApp.PreviewPlugin.dll`; для Release меняется конфигурация в пути.
 
-Есть также Scripts/run-android-app-previewer-debug.bat и run-android-app-previewer-release.bat. Превью поддерживает ввод, навигацию, инспекцию элементов и hot reload XAML. Подробнее об устройстве SDK — [Plugin SDK](../Packages/Windows/AndroidAppPreviewerPluginSdk/README.md).
+Есть также Scripts/run-android-app-previewer-debug.bat и run-android-app-previewer-release.bat. Превью поддерживает ввод, навигацию, инспекцию элементов и hot reload XAML. Подробнее об устройстве SDK — отдельном репозитории AndroidAppPreviewer.
 
 ## Android APK
 

@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
   "groupId": "org.universaldevkit",
-  "artifactPrefix": "universaldevkit-openglesrenderer"
+  "artifactPrefix": "universaldevkit-openglesrenderer",
+  "adapter": "maven-prefab"
 }

@@ -9,7 +9,7 @@
     <tags>native C++ Windows UniversalDevKit</tags>
     <license type="file">LICENSE.txt</license>
     <readme>README.md</readme>
-    <dependencies><group targetFramework="native">{{DEPENDENCIES}}</group></dependencies>
+    <dependencies>{{DEPENDENCIES}}</dependencies>
   </metadata>
   <files><file src="payload\**\*" target="" /></files>
 </package>

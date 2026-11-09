@@ -1,9 +1,13 @@
 {
   "schemaVersion": 1,
-  "adapter": "component",
+  "adapter": "nuget",
   "id": "UniversalDevKit.OpenGLESRenderer",
-  "supportedPlatforms": ["Windows"],
-  "supportedRuntimes": ["Dynamic"],
+  "supportedPlatforms": [
+    "Windows"
+  ],
+  "supportedRuntimes": [
+    "Dynamic"
+  ],
   "nuspec": "UniversalDevKit.OpenGLESRenderer.nuspec",
   "preparationScript": "PrepareAngle.ps1",
   "dependencyName": "ANGLE",
@@ -11,5 +15,10 @@
   "integration": {
     "props": "UniversalDevKit.OpenGLESRenderer.props",
     "targets": "UniversalDevKit.OpenGLESRenderer.targets"
-  }
+  },
+  "dependencySource": "udk-component",
+  "noWarn": [
+    "NU5100",
+    "NU5128"
+  ]
 }

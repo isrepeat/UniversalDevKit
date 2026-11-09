@@ -1,7 +1,6 @@
 {
   "schemaVersion": 1,
-  "adapter": "kotlin-aar",
+  "adapter": "maven-repository",
   "groupId": "com.isrepeat",
-  "artifactId": "androidcoresdk",
-  "project": "../../../../../Projects/Gradle/AndroidCoreSdk"
+  "artifactId": "androidcoresdk"
 }

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "name": "Managed",
+  "adapter": "dotnet",
+  "project": "Managed/Probe.csproj",
+  "operation": "build",
+  "configuration": "Release",
+  "artifacts": { "assembly": { "root": "output", "path": "Probe.dll" } }
+}

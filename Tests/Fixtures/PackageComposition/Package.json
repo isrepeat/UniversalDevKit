@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 2,
+  "name": "CompositionProbe",
+  "versionSource": "Version.json",
+  "projects": "Projects.json",
+  "contents": [
+    { "project": "Managed", "artifact": "assembly", "destination": "lib/net8.0" },
+    { "project": "Native", "artifact": "sources", "destination": "." },
+    { "project": "CMake", "artifact": "installation", "destination": "native" },
+    { "file": "CMake/marker.txt", "destination": "README.txt" }
+  ],
+  "deliveries": { "NuGet": "Delivery.json" }
+}

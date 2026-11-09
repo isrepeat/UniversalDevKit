@@ -13,31 +13,26 @@
   <Import Project="UniversalDevKit.props"
           Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
   <ItemGroup>
-    <__UniversalDevKitAvailableComponent Include="AndroidAppPreviewerPluginSdk;Diagnostic;Helpers;OpenGLESRenderer;XamlRuntime" />
+    <__UniversalDevKitAvailableComponent Include="Diagnostic;Helpers;OpenGLESRenderer;XamlRuntime" />
     <__UniversalDevKitComponent Include="$(UniversalDevKitComponents)" />
   </ItemGroup>
   <PropertyGroup>
-    <__HasUniversalDevKitAndroidAppPreviewerPluginSdk>false</__HasUniversalDevKitAndroidAppPreviewerPluginSdk>
-    <__HasUniversalDevKitAndroidAppPreviewerPluginSdk Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';AndroidAppPreviewerPluginSdk;'))">true</__HasUniversalDevKitAndroidAppPreviewerPluginSdk>
     <__HasUniversalDevKitDiagnostic>false</__HasUniversalDevKitDiagnostic>
     <__HasUniversalDevKitHelpers>false</__HasUniversalDevKitHelpers>
-    <__HasUniversalDevKitHelpers Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';AndroidAppPreviewerPluginSdk;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">true</__HasUniversalDevKitHelpers>
+    <__HasUniversalDevKitHelpers Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">true</__HasUniversalDevKitHelpers>
     <__HasUniversalDevKitOpenGLESRenderer>false</__HasUniversalDevKitOpenGLESRenderer>
-    <__HasUniversalDevKitOpenGLESRenderer Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';AndroidAppPreviewerPluginSdk;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;'))">true</__HasUniversalDevKitOpenGLESRenderer>
+    <__HasUniversalDevKitOpenGLESRenderer Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;'))">true</__HasUniversalDevKitOpenGLESRenderer>
     <__HasUniversalDevKitXamlRuntime>false</__HasUniversalDevKitXamlRuntime>
-    <__HasUniversalDevKitXamlRuntime Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';AndroidAppPreviewerPluginSdk;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">true</__HasUniversalDevKitXamlRuntime>
+    <__HasUniversalDevKitXamlRuntime Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">true</__HasUniversalDevKitXamlRuntime>
   </PropertyGroup>
-  <Import Project="AndroidAppPreviewerPluginSdk\UniversalDevKit.AndroidAppPreviewerPluginSdk.Shared.vcxitems"
-          Condition="'$(__HasUniversalDevKitAndroidAppPreviewerPluginSdk)' == 'true'"
-          Label="Shared" />
-  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';AndroidAppPreviewerPluginSdk;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
     <ProjectReference Include="$(MSBuildThisFileDirectory)Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj">
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
-      <LinkLibraryDependencies Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';AndroidAppPreviewerPluginSdk;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">true</LinkLibraryDependencies>
+      <LinkLibraryDependencies Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">true</LinkLibraryDependencies>
     </ProjectReference>
     <__UniversalDevKitRuntimeProject Include="$(MSBuildThisFileDirectory)Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj" />
   </ItemGroup>
-  <ItemDefinitionGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';AndroidAppPreviewerPluginSdk;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
+  <ItemDefinitionGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
     <ClCompile><AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\Includes\Diagnostic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile>
     <ClCompile><PreprocessorDefinitions>UNIVERSALDEVKIT_DIAGNOSTIC_DYNAMIC;%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile>
   </ItemDefinitionGroup>
@@ -51,40 +46,33 @@
           Condition="'$(__HasUniversalDevKitXamlRuntime)' == 'true'"
           Label="Shared" />
   <Import Project="UniversalDevKit.Runtime.targets" />
-  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';AndroidAppPreviewerPluginSdk;'))">
-    <__UniversalDevKitCompileRequirement Include="AndroidAppPreviewerPluginSdk">
-      <MinimumStandard>20</MinimumStandard>
-    </__UniversalDevKitCompileRequirement>
-  </ItemGroup>
-  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';AndroidAppPreviewerPluginSdk;'))">
-  </ItemGroup>
-  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';AndroidAppPreviewerPluginSdk;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
     <__UniversalDevKitCompileRequirement Include="Diagnostic">
       <MinimumStandard>20</MinimumStandard>
     </__UniversalDevKitCompileRequirement>
   </ItemGroup>
-  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';AndroidAppPreviewerPluginSdk;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
     <__UniversalDevKitCompileRequirement Include="Helpers">
       <MinimumStandard>20</MinimumStandard>
     </__UniversalDevKitCompileRequirement>
   </ItemGroup>
-  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';AndroidAppPreviewerPluginSdk;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Helpers;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
   </ItemGroup>
-  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';AndroidAppPreviewerPluginSdk;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;'))">
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;'))">
     <__UniversalDevKitCompileRequirement Include="OpenGLESRenderer">
       <MinimumStandard>20</MinimumStandard>
     </__UniversalDevKitCompileRequirement>
   </ItemGroup>
-  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';AndroidAppPreviewerPluginSdk;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;'))">
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;'))">
     <__UniversalDevKitUnsupportedSystemRequirement Include="OpenGLESRenderer"
                                                    Condition="'$(UniversalDevKitTargetOS)' == 'Android'" />
   </ItemGroup>
-  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';AndroidAppPreviewerPluginSdk;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
     <__UniversalDevKitCompileRequirement Include="XamlRuntime">
       <MinimumStandard>20</MinimumStandard>
     </__UniversalDevKitCompileRequirement>
   </ItemGroup>
-  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';AndroidAppPreviewerPluginSdk;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
+  <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
   </ItemGroup>
   <Import Project="UniversalDevKit.Requirements.targets"
           Condition="'$(__IsUniversalDevKitRequirementsImported)' != 'true'" />
@@ -92,7 +80,7 @@
           BeforeTargets="PrepareForBuild">
     <Error Condition="'$(UniversalDevKitComponents)' == ''"
            Text="UniversalDevKitComponents must be specified." />
-    <Error Condition="'%(__UniversalDevKitComponent.Identity)' != 'AndroidAppPreviewerPluginSdk' and '%(__UniversalDevKitComponent.Identity)' != 'Diagnostic' and '%(__UniversalDevKitComponent.Identity)' != 'Helpers' and '%(__UniversalDevKitComponent.Identity)' != 'OpenGLESRenderer' and '%(__UniversalDevKitComponent.Identity)' != 'XamlRuntime'"
+    <Error Condition="'%(__UniversalDevKitComponent.Identity)' != 'Diagnostic' and '%(__UniversalDevKitComponent.Identity)' != 'Helpers' and '%(__UniversalDevKitComponent.Identity)' != 'OpenGLESRenderer' and '%(__UniversalDevKitComponent.Identity)' != 'XamlRuntime'"
            Text="Unsupported UniversalDevKit component: %(__UniversalDevKitComponent.Identity)" />
     <Error Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';Diagnostic;'))"
            Text="Process-state component requires Dynamic: Diagnostic. Use Connect with a solution." />

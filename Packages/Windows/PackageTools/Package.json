@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "name": "PackageTools",
+  "versionSource": "Version.json",
+  "projects": {
+    "tool": {
+      "adapter": "files",
+      "mappings": [
+        {
+          "source": "Sources/PackageTools",
+          "destination": "tools"
+        },
+        {
+          "source": "Projects/MsBuild/PackageTools/UniversalDevKit.PackageTools.targets",
+          "destination": "build/UniversalDevKit.PackageTools.targets"
+        }
+      ],
+      "artifacts": {
+        "tool": {
+          "root": "output",
+          "path": "."
+        }
+      }
+    }
+  },
+  "contents": [
+    {
+      "project": "tool",
+      "artifact": "tool",
+      "destination": "."
+    },
+    {
+      "file": "../../../LICENSE",
+      "destination": "LICENSE.txt"
+    },
+    {
+      "file": "README.md",
+      "destination": "README.md"
+    }
+  ],
+  "deliveries": {
+    "NuGet": "Delivery/NuGet/Delivery.json"
+  }
+}

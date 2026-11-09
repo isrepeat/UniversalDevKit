@@ -1,8 +1,42 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "name": "AndroidAppKit",
-  "versionSource": "../../../Projects/Gradle/AndroidAppKit/gradle.properties",
+  "versionSource": {
+    "path": "../../../Projects/Gradle/AndroidAppKit/gradle.properties",
+    "format": "properties",
+    "property": "packageVersion"
+  },
+  "projects": {
+    "gradle": {
+      "adapter": "gradle-publish",
+      "projectDirectory": "Projects/Gradle/AndroidAppKit",
+      "tasks": [
+        ":androidappkit:publishReleasePublicationToAndroidPackagesFeedRepository"
+      ],
+      "toolchain": "Scripts/Android/ResolveToolchain.ps1",
+      "refreshDependencies": true,
+      "artifacts": {
+        "repository": {
+          "root": "output",
+          "path": "."
+        }
+      }
+    }
+  },
+  "contents": [
+    {
+      "project": "gradle",
+      "artifact": "repository",
+      "destination": "."
+    }
+  ],
   "deliveries": {
     "Android": "Delivery/Android/Delivery.json"
-  }
+  },
+  "releaseDependencies": [
+    {
+      "package": "../AndroidCoreSdk/Package.json",
+      "delivery": "Android"
+    }
+  ]
 }

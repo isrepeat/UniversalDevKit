@@ -24,7 +24,7 @@ Copy-Item -LiteralPath $workspace.Library -Destination $shortLibrary -Recurse
 $workspace.Library = $shortLibrary
 $feed = Join-Path $workspace.Library '!artifacts/packages/nuget'
 # Другой реестр и header-only цепочка обнаруживают привязку к рабочим компонентам.
-& (Join-Path $repository 'Packages/Build/NuGet/Build.ps1') -RepositoryPath $workspace.Library -Components HeaderProbe -CMake $CMake -NuGet $NuGet -LicenseFile (Join-Path $repository 'LICENSE') -OutputDirectory $feed
+& (Join-Path $repository 'Packages/Build/Build.ps1') -RepositoryPath $workspace.Library -PackagePath Packages/CrossPlatform/HeaderProbe/Package.json -CMake $CMake -NuGet $NuGet -OutputDirectory $feed
 $feed = Join-Path $feed 'HeaderProbe'
 $version = (Get-Content (Join-Path $workspace.Library 'Version.json') -Raw | ConvertFrom-Json).version
 foreach ($name in @('HeaderProbe', 'HeaderLeaf')) {

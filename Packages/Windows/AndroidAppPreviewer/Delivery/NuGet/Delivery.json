@@ -1,7 +1,0 @@
-{
-  "schemaVersion": 1,
-  "adapter": "tool",
-  "id": "UniversalDevKit.AndroidAppPreviewer",
-  "supportedPlatforms": ["Windows"],
-  "nuspec": "UniversalDevKit.AndroidAppPreviewer.nuspec"
-}

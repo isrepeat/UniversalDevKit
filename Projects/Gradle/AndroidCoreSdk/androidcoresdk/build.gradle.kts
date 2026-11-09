@@ -65,7 +65,7 @@ publishing {
             // Имя задачи публикации в общий локальный Maven feed.
             name = "AndroidPackagesFeed"
             // Каталог общего локального Maven feed для Android-пакетов.
-            url = uri(providers.gradleProperty("androidPackagesFeedPath").get())
+            url = uri(providers.gradleProperty("udkPublicationFeedPath").orElse(providers.gradleProperty("androidPackagesFeedPath")).get())
         }
     }
 }

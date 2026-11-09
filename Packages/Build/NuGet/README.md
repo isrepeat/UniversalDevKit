@@ -2,15 +2,15 @@
 
 **Навигация:** [Главная](../../../README.md) → [Пакеты](../../README.md) → Native NuGet
 
-Упаковщик Build.ps1 читает Components.json и Package.json с NuGet delivery adapter=component. По умолчанию выбираются компоненты, имеющие Windows component-adapter; составные инструменты и Preview SDK выпускаются своими Build.ps1.
+Общий PackageTools читает Package.json версии 2: projects описывает подготовку, contents — состав, Delivery/NuGet/Delivery.json — упаковку. Адаптер udk-native использует реестр компонентов для ABI, графа и интеграции; adapter=nuget упаковывает готовый payload. Preview SDK выпускается в отдельном репозитории.
 
 ## Выпуск
 
 ```powershell
-./Packages/Build/NuGet/Build.ps1 -Components Helpers,Diagnostic -LicenseFile ./LICENSE
+./Packages/Build/Build.ps1 -PackagePath Packages/CrossPlatform/Diagnostic/Package.json -Delivery NuGet
 ```
 
-Можно указать CMake, NuGet и OutputDirectory. Версия читается из корневой Version.json. Каждый корень имеет изолированный каталог в !artifacts/packages/nuget/<component>; необходимая подготовка внешних зависимостей вызывается через delivery. Для XAML и renderer используются их отдельные CMD-точки в Scripts/Packages/CrossPlatform.
+Можно указать CMake, NuGet и OutputDirectory. Версия читается через versionSource. Предварительный выпуск необходимых пакетов задаётся releaseDependencies. Для всех NuGet используйте -All -Delivery NuGet. Каждый корень имеет изолированный каталог в !artifacts/packages/nuget/<component>; необходимая подготовка внешних зависимостей вызывается через delivery. Для XAML и renderer используются их отдельные CMD-точки в Scripts/Packages/CrossPlatform.
 
 Helpers поставляется как header-only Shared. Diagnostic имеет process-state и поставляется только Dynamic с Dynamic CRT. XamlRuntime и OpenGLESRenderer имеют Static/Dynamic и используют Dynamic CRT; renderer также доставляет ANGLE. Нельзя выбирать варианты, отсутствующие в конкретном delivery.
 

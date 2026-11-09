@@ -1,12 +1,21 @@
 {
   "schemaVersion": 1,
-  "adapter": "component",
+  "adapter": "nuget",
   "id": "UniversalDevKit.Diagnostic",
-  "supportedPlatforms": ["Windows"],
-  "supportedRuntimes": ["Dynamic"],
+  "supportedPlatforms": [
+    "Windows"
+  ],
+  "supportedRuntimes": [
+    "Dynamic"
+  ],
   "nuspec": "UniversalDevKit.Diagnostic.nuspec",
   "integration": {
     "props": "UniversalDevKit.Diagnostic.props",
     "targets": "UniversalDevKit.Diagnostic.targets"
-  }
+  },
+  "dependencySource": "udk-component",
+  "noWarn": [
+    "NU5100",
+    "NU5128"
+  ]
 }

@@ -28,6 +28,8 @@
 
 `platform` содержит ОС и архитектуру, например `Windows-x64`; `build-system` — `msbuild` или `cmake`. MSBuild разделяет внутри проекта toolset, версию компилятора, CRT, конфигурацию и `bin`/`obj`. CMake presets выделяют отдельное дерево для toolset и CRT; Debug/Release выбираются при сборке.
 
+Общий сборщик [составных пакетов](PackageComposition.md) использует `projects/windows/udk/<имя-проекта>/` с отдельными `output`, `build`, `install` и `dependencies`. Файлы пакетов и staging остаются в `packages/nuget/<имя-пакета>/`.
+
 ## Пакеты
 
 На Windows сборщики NuGet, Android и XamlCompiler автоматически подключают каталог выпуска через временный `subst`-диск. Это сокращает пути сборки, установки и staging; физическое расположение файлов не меняется. Диск освобождается в `finally`, в том числе при ошибке. Для отдельного Android `BuildRoot` создаётся дополнительное подключение. На других ОС используются исходные пути.

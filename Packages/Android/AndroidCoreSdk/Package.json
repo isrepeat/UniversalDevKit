@@ -1,7 +1,35 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "name": "AndroidCoreSdk",
-  "versionSource": "../../../Projects/Gradle/AndroidCoreSdk/gradle.properties",
+  "versionSource": {
+    "path": "../../../Projects/Gradle/AndroidCoreSdk/gradle.properties",
+    "format": "properties",
+    "property": "packageVersion"
+  },
+  "projects": {
+    "gradle": {
+      "adapter": "gradle-publish",
+      "projectDirectory": "Projects/Gradle/AndroidCoreSdk",
+      "tasks": [
+        ":androidcoresdk:publishReleasePublicationToAndroidPackagesFeedRepository"
+      ],
+      "toolchain": "Scripts/Android/ResolveToolchain.ps1",
+      "refreshDependencies": false,
+      "artifacts": {
+        "repository": {
+          "root": "output",
+          "path": "."
+        }
+      }
+    }
+  },
+  "contents": [
+    {
+      "project": "gradle",
+      "artifact": "repository",
+      "destination": "."
+    }
+  ],
   "deliveries": {
     "Android": "Delivery/Android/Delivery.json"
   }

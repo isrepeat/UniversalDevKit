@@ -1,47 +1,15 @@
 {
   "schemaVersion": 1,
-  "adapter": "content",
+  "adapter": "nuget",
   "id": "AndroidBuildTools",
   "supportedPlatforms": [
     "Windows"
   ],
   "nuspec": "AndroidBuildTools.nuspec",
-  "files": [
-    {
-      "source": "Sources/Android/AndroidBuildTools/PowerShell",
-      "target": "tools"
-    },
-    {
-      "source": "Sources/Android/AndroidBuildTools/Cmake",
-      "target": "cmake"
-    },
-    {
-      "source": "Sources/Android/AndroidBuildTools/Gradle",
-      "target": "gradle"
-    },
-    {
-      "source": "Projects/Gradle/AndroidBuildTools",
-      "target": "gradle"
-    },
-    {
-      "source": "Sources/Android/AndroidBuildTools/ApplicationFramework",
-      "target": "build/native/Android/AndroidBuildTools/ApplicationFramework"
-    },
-    {
-      "source": "Includes/Android/AndroidBuildTools/UniversalDevKit/Android/AndroidBuildTools/ApplicationFramework",
-      "target": "build/native/include/UniversalDevKit/Android/AndroidBuildTools/ApplicationFramework"
-    },
-    {
-      "source": "Projects/Cmake/AndroidBuildTools/ApplicationFramework/CMakeLists.txt",
-      "target": "build/native/Android/AndroidBuildTools/ApplicationFramework/CMakeLists.txt"
-    },
-    {
-      "source": "Scripts/Android/ResolveToolchain.ps1",
-      "target": "tools/Android/ResolveToolchain.ps1"
-    },
-    {
-      "source": "Scripts/Android/Toolchain.json",
-      "target": "tools/Android/Toolchain.json"
-    }
+  "noDefaultExcludes": true,
+  "noWarn": [
+    "NU5100",
+    "NU5111",
+    "NU5128"
   ]
 }

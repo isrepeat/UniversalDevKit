@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>UniversalDevKit.CompositionProbe</id>
+    <version>{{VERSION}}</version>
+    <authors>UDK tests</authors>
+    <description>Mixed project composition fixture.</description>
+    <dependencies><group targetFramework="net8.0" /></dependencies>
+  </metadata>
+  <files><file src="payload\**\*" target="" /></files>
+</package>

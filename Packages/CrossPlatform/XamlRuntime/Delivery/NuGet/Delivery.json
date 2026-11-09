@@ -1,12 +1,21 @@
 {
   "schemaVersion": 1,
-  "adapter": "component",
+  "adapter": "nuget",
   "id": "UniversalDevKit.XamlRuntime",
-  "supportedPlatforms": ["Windows"],
-  "supportedRuntimes": ["Dynamic"],
+  "supportedPlatforms": [
+    "Windows"
+  ],
+  "supportedRuntimes": [
+    "Dynamic"
+  ],
   "nuspec": "UniversalDevKit.XamlRuntime.nuspec",
   "integration": {
     "props": "UniversalDevKit.XamlRuntime.props",
     "targets": "UniversalDevKit.XamlRuntime.targets"
-  }
+  },
+  "dependencySource": "udk-component",
+  "noWarn": [
+    "NU5100",
+    "NU5128"
+  ]
 }

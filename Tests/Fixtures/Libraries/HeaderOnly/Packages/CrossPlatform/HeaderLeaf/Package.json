@@ -1,8 +1,45 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "name": "HeaderLeaf",
-  "component": "HeaderLeaf",
   "versionSource": "../../../Version.json",
+  "projects": {
+    "windows": {
+      "adapter": "udk-native",
+      "component": "HeaderLeaf",
+      "generator": "Visual Studio 18 2026",
+      "buildDirectory": "!artifacts/packages/nuget/HeaderLeaf",
+      "artifacts": {
+        "payload": {
+          "root": "output",
+          "path": "."
+        }
+      }
+    }
+  },
+  "contents": [
+    {
+      "project": "windows",
+      "artifact": "payload",
+      "destination": ".",
+      "deliveries": [
+        "NuGet"
+      ]
+    },
+    {
+      "file": "../../../LICENSE",
+      "destination": "LICENSE.txt",
+      "deliveries": [
+        "NuGet"
+      ]
+    },
+    {
+      "file": "../../Build/NuGet/README.md",
+      "destination": "README.md",
+      "deliveries": [
+        "NuGet"
+      ]
+    }
+  ],
   "deliveries": {
     "NuGet": "Delivery/NuGet/Delivery.json"
   }

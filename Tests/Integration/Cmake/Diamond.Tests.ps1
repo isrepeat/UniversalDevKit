@@ -149,7 +149,17 @@ try {
                 }
             }
             $feed = Join-Path $library '!artifacts/packages/nuget'
-            & (Join-Path $repository 'Packages/Build/NuGet/Build.ps1') -RepositoryPath $library -Components A -LicenseFile (Join-Path $repository 'LICENSE') -OutputDirectory $feed -CMake $CMake -NuGet $NuGet | Out-Host
+            foreach ($component in @('A','B','C','D')) {
+                $definitionPath = Join-Path $library "Packages/CrossPlatform/$component/Package.json"
+                $definition = Get-Content -LiteralPath $definitionPath -Raw | ConvertFrom-Json
+                $componentDefinition = Get-Content -LiteralPath (Join-Path $library "Projects/Components/$component.json") -Raw | ConvertFrom-Json
+                $definition.contents[2].file = '../../Build/NuGet/README.md'
+                $dependencies = @($componentDefinition.dependencies | ForEach-Object { [pscustomobject]@{ package=('../' + $_.component + '/Package.json'); delivery='NuGet'; when=@('NuGet') } })
+                $definition | Add-Member -NotePropertyName releaseDependencies -NotePropertyValue $dependencies -Force
+                [IO.File]::WriteAllText($definitionPath, ($definition | ConvertTo-Json -Depth 30).TrimEnd(), [Text.UTF8Encoding]::new($false))
+            }
+            $artifacts = & (Join-Path $repository 'Packages/Build/Build.ps1') -RepositoryPath $library -PackagePath Packages/CrossPlatform/A/Package.json -OutputDirectory $feed -CMake $CMake -NuGet $NuGet
+            foreach ($artifact in $artifacts) { Copy-Item -LiteralPath $artifact -Destination $feed -Force }
             foreach ($runtime in @('Dynamic','Static')) {
                 foreach ($app in @('App1','App2')) {
                     $component = if ($app -eq 'App1') { 'A' } else { 'C' }

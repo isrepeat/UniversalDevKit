@@ -4,7 +4,6 @@
     "Projects/Components/Diagnostic.json",
     "Projects/Components/Helpers.json",
     "Projects/Components/XamlRuntime.json",
-    "Projects/Components/OpenGLESRenderer.json",
-    "Projects/Components/AndroidAppPreviewerPluginSdk.json"
+    "Projects/Components/OpenGLESRenderer.json"
   ]
 }

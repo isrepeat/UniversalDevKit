@@ -1,8 +1,45 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "name": "NativeProbe",
-  "component": "NativeProbe",
   "versionSource": "../../../Version.json",
+  "projects": {
+    "windows": {
+      "adapter": "udk-native",
+      "component": "NativeProbe",
+      "generator": "Visual Studio 18 2026",
+      "buildDirectory": "!artifacts/packages/nuget/NativeProbe",
+      "artifacts": {
+        "payload": {
+          "root": "output",
+          "path": "."
+        }
+      }
+    }
+  },
+  "contents": [
+    {
+      "project": "windows",
+      "artifact": "payload",
+      "destination": ".",
+      "deliveries": [
+        "NuGet"
+      ]
+    },
+    {
+      "file": "../../../LICENSE",
+      "destination": "LICENSE.txt",
+      "deliveries": [
+        "NuGet"
+      ]
+    },
+    {
+      "file": "README.md",
+      "destination": "README.md",
+      "deliveries": [
+        "NuGet"
+      ]
+    }
+  ],
   "deliveries": {
     "NuGet": "Delivery/NuGet/Delivery.json"
   }

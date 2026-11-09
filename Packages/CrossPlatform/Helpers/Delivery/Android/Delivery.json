@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
   "groupId": "org.universaldevkit",
-  "artifactPrefix": "universaldevkit-helpers"
+  "artifactPrefix": "universaldevkit-helpers",
+  "adapter": "maven-prefab"
 }

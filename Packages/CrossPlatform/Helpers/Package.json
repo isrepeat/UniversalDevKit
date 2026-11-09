@@ -1,8 +1,70 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "name": "Helpers",
-  "component": "Helpers",
   "versionSource": "../../../Version.json",
+  "projects": {
+    "windows": {
+      "adapter": "udk-native",
+      "component": "Helpers",
+      "generator": "Visual Studio 18 2026",
+      "buildDirectory": "!artifacts/packages/nuget/Helpers",
+      "artifacts": {
+        "payload": {
+          "root": "output",
+          "path": "."
+        }
+      }
+    },
+    "android": {
+      "adapter": "udk-prefab",
+      "component": "Helpers",
+      "configuration": "Release",
+      "abis": [
+        "arm64-v8a",
+        "x86_64"
+      ],
+      "apiLevel": 24,
+      "toolchain": "Scripts/Android/ResolveToolchain.ps1",
+      "artifacts": {
+        "prefab": {
+          "root": "output",
+          "path": "."
+        }
+      }
+    }
+  },
+  "contents": [
+    {
+      "project": "windows",
+      "artifact": "payload",
+      "destination": ".",
+      "deliveries": [
+        "NuGet"
+      ]
+    },
+    {
+      "file": "../../../LICENSE",
+      "destination": "LICENSE.txt",
+      "deliveries": [
+        "NuGet"
+      ]
+    },
+    {
+      "file": "../../Build/NuGet/README.md",
+      "destination": "README.md",
+      "deliveries": [
+        "NuGet"
+      ]
+    },
+    {
+      "project": "android",
+      "artifact": "prefab",
+      "destination": ".",
+      "deliveries": [
+        "Android"
+      ]
+    }
+  ],
   "deliveries": {
     "NuGet": "Delivery/NuGet/Delivery.json",
     "Android": "Delivery/Android/Delivery.json"
