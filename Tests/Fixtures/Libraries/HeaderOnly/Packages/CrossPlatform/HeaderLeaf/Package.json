@@ -7,7 +7,6 @@
       "adapter": "udk-native",
       "component": "HeaderLeaf",
       "generator": "Visual Studio 18 2026",
-      "buildDirectory": "!artifacts/packages/nuget/HeaderLeaf",
       "artifacts": {
         "payload": {
           "root": "output",

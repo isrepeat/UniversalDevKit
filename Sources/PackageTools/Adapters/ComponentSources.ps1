@@ -1,5 +1,5 @@
 function Invoke-UdkComponentSourcesProject($Project, $Context) {
-    # Публичные и внутренние заголовки выбираем только из реестра компонента.
+    # Select public and internal headers only from the component registry.
     $root = $Context.RepositoryPath
     $componentPath = Resolve-UdkBuildPath $root $root $Project.component -Existing
     $component = Read-UdkBuildJson $componentPath
@@ -13,24 +13,35 @@ function Invoke-UdkComponentSourcesProject($Project, $Context) {
         $public = $false
         if ($file -in $component.headers) {
             foreach ($pattern in $Project.publicHeaders) {
-                # FileSystemName-подобное сопоставление: * не пересекает каталог.
+                # Match paths like FileSystemName: * does not match across directory separators.
                 $regex = '^' + [regex]::Escape($pattern).Replace('\*', '[^/]*').Replace('\?', '[^/]') + '$'
-                if ($relative -cmatch $regex) { $public = $true; break }
+                if ($relative -cmatch $regex) {
+                    $public = $true
+                    break
+                }
             }
         }
         $destination = if ($public) {
             $headerPath = Resolve-UdkBuildPath $includeRoot $root $file -Existing
             Join-Path $Project.headerDestination $headerPath.Substring($includeRoot.Length + 1)
-        } else { Join-Path $Project.sourceDestination $relative }
+        } else {
+            Join-Path $Project.sourceDestination $relative
+        }
         $target = Resolve-UdkBuildPath $output $output $destination
-        if ($seen.ContainsKey($target)) { throw "Duplicate source distribution path: $destination" }
+        if ($seen.ContainsKey($target)) {
+            throw "Duplicate source distribution path: $destination"
+        }
         $seen[$target] = $true
         [void][IO.Directory]::CreateDirectory((Split-Path -Parent $target))
         Copy-Item -LiteralPath $source -Destination $target
     }
     $manifest = Resolve-UdkBuildPath $output $output $Project.manifestDestination
-    if ($seen.ContainsKey($manifest)) { throw 'Component manifest collides with source files.' }
+    if ($seen.ContainsKey($manifest)) {
+        throw 'Component manifest collides with source files.'
+    }
     [void][IO.Directory]::CreateDirectory((Split-Path -Parent $manifest))
     Copy-Item -LiteralPath $componentPath -Destination $manifest
-    return @{ output = $output }
+    return @{
+        output = $output
+    }
 }

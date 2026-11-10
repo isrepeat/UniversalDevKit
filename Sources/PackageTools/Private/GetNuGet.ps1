@@ -10,8 +10,13 @@ $OutputEncoding = [Text.UTF8Encoding]::new($false)
 function Get-UdkToolHash([string]$Path) {
     $algorithm = [Security.Cryptography.SHA256]::Create()
     $stream = [IO.File]::OpenRead($Path)
-    try { return [BitConverter]::ToString($algorithm.ComputeHash($stream)).Replace('-', '') }
-    finally { $stream.Dispose(); $algorithm.Dispose() }
+    try {
+        return [BitConverter]::ToString($algorithm.ComputeHash($stream)).Replace('-', '')
+    }
+    finally {
+        $stream.Dispose()
+        $algorithm.Dispose()
+    }
 }
 
 
@@ -29,7 +34,7 @@ if (Test-Path -LiteralPath $executable -PathType Leaf) {
     return $executable
 }
 
-# Загружаем во временный файл и публикуем инструмент только после проверки.
+# Download to a temporary file. Use the tool only after checking it.
 [void][IO.Directory]::CreateDirectory($toolDirectory)
 $temporaryFile = Join-Path $toolDirectory ([Guid]::NewGuid().ToString('N') + '.download')
 try {
@@ -41,6 +46,8 @@ try {
     Move-Item -LiteralPath $temporaryFile -Destination $executable
 }
 finally {
-    if (Test-Path -LiteralPath $temporaryFile) { Remove-Item -LiteralPath $temporaryFile }
+    if (Test-Path -LiteralPath $temporaryFile) {
+        Remove-Item -LiteralPath $temporaryFile
+    }
 }
 return $executable

@@ -23,7 +23,10 @@ function Invoke-UdkMavenDelivery($Plan, [string]$Stage, [string]$OutputDirectory
                 $relative = $file.FullName.Substring($variant.FullName.Length + 1).Replace('\','/')
                 [void][IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive, $file.FullName, $relative)
             }
-        } finally { $archive.Dispose(); $stream.Dispose() }
+        } finally {
+            $archive.Dispose()
+            $stream.Dispose()
+        }
         $pom = '<project xmlns="http://maven.apache.org/POM/4.0.0"><modelVersion>4.0.0</modelVersion><groupId>' + $Plan.Delivery.groupId + '</groupId><artifactId>' + $artifact + '</artifactId><version>' + $Plan.Version + '</version><packaging>aar</packaging><licenses><license><name>MIT</name><url>https://opensource.org/licenses/MIT</url></license></licenses></project>'
         [IO.File]::WriteAllText((Join-Path $destination ($artifact + '-' + $Plan.Version + '.pom')), $pom, [Text.UTF8Encoding]::new($false))
         Write-Output $aar

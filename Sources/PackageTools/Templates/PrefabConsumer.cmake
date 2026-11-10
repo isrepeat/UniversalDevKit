@@ -1,4 +1,4 @@
-# Адаптер читает контракт из восстановленного AAR, а не из checkout UDK.
+# Read release settings from the restored AAR. A UDK checkout is not needed.
 function(udk_android_link target prefab_target)
     if(NOT ANDROID OR NOT TARGET ${prefab_target})
         message(FATAL_ERROR "Use an Android Prefab target with udk_android_link")

@@ -97,7 +97,7 @@ PackageTools использует files-адаптер и собственный
 
 ## Артефакты и проверки
 
-Локальные проекты используют !artifacts/projects/<windows|android>/udk/<пакет>/<локальное-имя> с output, build, install, dependencies или packages. Поэтому одинаковые локальные имена в разных пакетах не пересекаются. Проекты внешнего реестра сохраняют прежний путь !artifacts/projects/windows/udk/<имя>. Выпуски находятся в !artifacts/packages/nuget/<имя-пакета>, staging — staging/payload. Блокировки проектов удерживаются до завершения staging. NuGet.exe хранится в !tools собираемого репозитория; загрузка проверяется по закреплённому SHA-256.
+Все проекты используют !artifacts/package-tools/<пакет>/<имя-проекта> с output, build, install, dependencies или packages. Поэтому одинаковые локальные имена в разных пакетах не пересекаются. Путь одинаково формируется для локальных проектов и проектов внешнего реестра и не зависит от доставки. Адаптеры получают общий WorkDirectory; buildDirectory в описаниях проектов не поддерживается. Выпуски находятся в !artifacts/packages/nuget/<имя-пакета>, staging — staging/payload. Блокировки проектов удерживаются до завершения staging. NuGet.exe хранится в !tools собираемого репозитория; загрузка проверяется по закреплённому SHA-256.
 
 Tests/Integration/Packages/PackageComposition.Tests.ps1 проверяет смешанный пакет, внешний корень, ошибки контрактов, восстановление NuGet-зависимости и конфликтующие файлы. Параметр PackageToolsPackage запускает тот же сценарий установленным инструментом из настоящего nupkg. Проверки конкретного PluginSDK принадлежат репозиторию Previewer.
 
@@ -110,7 +110,7 @@ versionSource может быть строкой с JSON-путём либо о�
 | Проект | Назначение |
 |---|---|
 | cmake-build | sourceDirectory, generator, configurations; корень build, без install |
-| udk-native | component, generator, buildDirectory; корень output с native NuGet payload |
+| udk-native | component, generator; корень output с native NuGet payload |
 | udk-prefab | component, toolchain, configuration, abis, apiLevel; корень output с вариантами Prefab |
 | gradle-publish | projectDirectory, toolchain, tasks, refreshDependencies; корень output с Maven-публикацией |
 

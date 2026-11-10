@@ -25,54 +25,112 @@ $env:VSLANG = '1033'
 [Console]::InputEncoding = [Text.UTF8Encoding]::new($false)
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
 $OutputEncoding = [Text.UTF8Encoding]::new($false)
-if (-not $RepositoryPath) { $RepositoryPath = (Get-Location).Path }
+if (-not $RepositoryPath) {
+    $RepositoryPath = (Get-Location).Path
+}
 . (Join-Path $PSScriptRoot 'Private/Contract.ps1')
 . (Join-Path $PSScriptRoot 'Private/ArtifactDirectories.ps1')
 . (Join-Path $PSScriptRoot 'Private/Tools.ps1')
-foreach ($adapter in @('DotNet', 'ComponentSources', 'CMakeInstall', 'Files', 'NuGetRestore', 'NuGet', 'UdkNative', 'UdkPrefab', 'GradlePublish', 'Maven')) { . (Join-Path $PSScriptRoot "Adapters/$adapter.ps1") }
+foreach ($adapter in @('DotNet', 'ComponentSources', 'CMakeInstall', 'Files', 'NuGetRestore', 'NuGet', 'UdkNative', 'UdkPrefab', 'GradlePublish', 'Maven')) {
+    . (Join-Path $PSScriptRoot "Adapters/$adapter.ps1")
+}
 
 function Invoke-UdkBuildTool([string]$Tool, [string[]]$Arguments) {
     & $Tool @Arguments | Out-Host
-    if ($LASTEXITCODE -ne 0) { throw "$Tool failed with exit code $LASTEXITCODE." }
+    if ($LASTEXITCODE -ne 0) {
+        throw "$Tool failed with exit code $LASTEXITCODE."
+    }
 }
 
 $buildPlan = Get-UdkPackagePlan $RepositoryPath $PackagePath $Delivery
-$platform = if ($buildPlan.Delivery.adapter -eq 'nuget') { 'windows' } else { 'android' }
-$projectDirectory = Join-Path $buildPlan.RepositoryPath "!artifacts/projects/$platform/udk"
-if ($buildPlan.ProjectScope) { $projectDirectory = Join-Path $projectDirectory $buildPlan.ProjectScope }
+$projectDirectory = Join-Path $buildPlan.RepositoryPath ('!artifacts/package-tools/' + $buildPlan.Package.name)
 foreach ($property in $Properties.Keys) {
-    $owners = @($buildPlan.Order | Where-Object { $property -cin $buildPlan.Projects[$_].preparation.properties })
-    if (-not $owners.Count) { throw "Unknown build property: $property" }
+    $owners = @($buildPlan.Order | Where-Object {
+        $property -cin $buildPlan.Projects[$_].preparation.properties
+    })
+    if (-not $owners.Count) {
+        throw "Unknown build property: $property"
+    }
 }
-if ($Plan) { return $buildPlan }
-if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT) { throw 'This build profile requires Windows.' }
-if (-not $ReleaseState.ContainsKey('results')) { $ReleaseState.results = @{} }
+if ($Plan) {
+    return $buildPlan
+}
+if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT) {
+    throw 'This build profile requires Windows.'
+}
+if (-not $ReleaseState.ContainsKey('results')) {
+    $ReleaseState.results = @{}
+}
 $releaseKey = $buildPlan.PackagePath + '|' + $buildPlan.DeliveryName
-if ($ReleaseState.results.ContainsKey($releaseKey)) { return $ReleaseState.results[$releaseKey] }
+if ($ReleaseState.results.ContainsKey($releaseKey)) {
+    return $ReleaseState.results[$releaseKey]
+}
 $isNuGet = $buildPlan.Delivery.adapter -eq 'nuget'
-if (-not $OutputDirectory) { $OutputDirectory = Join-Path $buildPlan.RepositoryPath $(if ($isNuGet) { '!artifacts/packages/nuget' } else { '!artifacts/packages/maven' }) }
+if (-not $OutputDirectory) {
+    $OutputDirectory = Join-Path $buildPlan.RepositoryPath $(if ($isNuGet) {
+        '!artifacts/packages/nuget'
+        } else {
+            '!artifacts/packages/maven'
+    })
+}
 $baseOutput = [IO.Path]::GetFullPath($OutputDirectory)
-$output = if ($isNuGet) { Join-Path $baseOutput $buildPlan.Package.name } else { $baseOutput }
+$output = if ($isNuGet) {
+    Join-Path $baseOutput $buildPlan.Package.name
+} else {
+    $baseOutput
+}
 $dependencyArtifacts = @()
 foreach ($dependency in $buildPlan.ReleaseDependencies) {
-    $arguments = @{ PackagePath=$dependency.PackagePath.Substring($buildPlan.RepositoryPath.Length+1); RepositoryPath=$buildPlan.RepositoryPath; Delivery=$dependency.DeliveryName; OutputDirectory=$baseOutput; CMake=$CMake; NuGet=$NuGet; PackageSources=$PackageSources; Properties=$Properties; AndroidNdk=$AndroidNdk; AndroidSdk=$AndroidSdk; JavaHome=$JavaHome; Gradle=$Gradle; Ninja=$Ninja; Configuration=$Configuration; Abi=$Abi; ApiLevel=$ApiLevel; ReleaseState=$ReleaseState }
-    foreach ($key in @('Abi','Configuration','ApiLevel')) { if (-not $arguments[$key]) { $arguments.Remove($key) } }
+    $arguments = @{
+        PackagePath=$dependency.PackagePath.Substring($buildPlan.RepositoryPath.Length+1)
+        RepositoryPath=$buildPlan.RepositoryPath
+        Delivery=$dependency.DeliveryName
+        OutputDirectory=$baseOutput
+        CMake=$CMake
+        NuGet=$NuGet
+        PackageSources=$PackageSources
+        Properties=$Properties
+        AndroidNdk=$AndroidNdk
+        AndroidSdk=$AndroidSdk
+        JavaHome=$JavaHome
+        Gradle=$Gradle
+        Ninja=$Ninja
+        Configuration=$Configuration
+        Abi=$Abi
+        ApiLevel=$ApiLevel
+        ReleaseState=$ReleaseState
+    }
+    foreach ($key in @('Abi','Configuration','ApiLevel')) {
+        if (-not $arguments[$key]) {
+            $arguments.Remove($key)
+        }
+    }
     $dependencyArtifacts += @(& $PSCommandPath @arguments)
 }
 [void][IO.Directory]::CreateDirectory($output)
-$lockPath = if ($isNuGet) { Join-Path $output '.build.lock' } else { Join-Path $output ('.' + $buildPlan.Package.name + '.build.lock') }
+$lockPath = if ($isNuGet) {
+    Join-Path $output '.build.lock'
+} else {
+    Join-Path $output ('.' + $buildPlan.Package.name + '.build.lock')
+}
 $lock = [IO.File]::Open($lockPath, 'OpenOrCreate', 'ReadWrite', 'None')
 try {
-    # Сначала строим граф проектов, затем собираем пакет из именованных результатов.
-    if ($isNuGet) { $NuGet = & (Join-Path $PSScriptRoot 'Private/GetNuGet.ps1') -LocalPath $NuGet -CacheDirectory (Join-Path $buildPlan.RepositoryPath '!tools') }
-    $stagePath = if ($isNuGet) { Join-Path $output 'staging' } else { Join-Path $output ('staging/' + $buildPlan.Package.name) }
+    # Build the required projects, then use their named results to create the package.
+    if ($isNuGet) {
+        $NuGet = & (Join-Path $PSScriptRoot 'Private/GetNuGet.ps1') -LocalPath $NuGet -CacheDirectory (Join-Path $buildPlan.RepositoryPath '!tools')
+    }
+    $stagePath = if ($isNuGet) {
+        Join-Path $output 'staging'
+    } else {
+        Join-Path $output ('staging/' + $buildPlan.Package.name)
+    }
     $stage = Reset-UdkArtifactDirectory -Root $output -Path $stagePath
     $payload = Join-Path $stage 'payload'
     [void][IO.Directory]::CreateDirectory($payload)
     $results = @{}
     $projectLocks = [Collections.Generic.List[IO.FileStream]]::new()
     try {
-        # Держим блокировки до окончания staging, чтобы другой выпуск не удалил результат.
+        # Keep locks until all files are copied so another build cannot delete the results.
         foreach ($name in ($buildPlan.Order | Sort-Object)) {
             $work = Join-Path $projectDirectory $name
             [void][IO.Directory]::CreateDirectory($work)
@@ -90,18 +148,45 @@ try {
                 Delivery = $buildPlan.Delivery
                 Version = $buildPlan.Version
                 OutputDirectory = $output
-                Options = @{ AndroidNdk=$AndroidNdk; AndroidSdk=$AndroidSdk; JavaHome=$JavaHome; Gradle=$Gradle; Ninja=$Ninja; Configuration=$Configuration; Abi=$Abi; ApiLevel=$ApiLevel }
+                Options = @{
+                    AndroidNdk=$AndroidNdk
+                    AndroidSdk=$AndroidSdk
+                    JavaHome=$JavaHome
+                    Gradle=$Gradle
+                    Ninja=$Ninja
+                    Configuration=$Configuration
+                    Abi=$Abi
+                    ApiLevel=$ApiLevel
+                }
             }
             Write-Host "Building project $name ($($project.adapter))..."
             $roots = switch ($project.adapter) {
-                'dotnet' { Invoke-UdkDotNetProject $project $context }
-                'component-sources' { Invoke-UdkComponentSourcesProject $project $context }
-                { $_ -in @('cmake-install','cmake-build') } { Invoke-UdkCMakeInstallProject $project $context }
-                'udk-native' { Invoke-UdkNativeProject $project $context }
-                'udk-prefab' { Invoke-UdkPrefabProject $project $context }
-                'gradle-publish' { Invoke-UdkGradlePublishProject $project $context }
-                'files' { Invoke-UdkFilesProject $project $context }
-                'nuget-restore' { Invoke-UdkNuGetRestoreProject $project $context }
+                'dotnet' {
+                    Invoke-UdkDotNetProject $project $context
+                }
+                'component-sources' {
+                    Invoke-UdkComponentSourcesProject $project $context
+                }
+                {
+                    $_ -in @('cmake-install','cmake-build')
+                } {
+                    Invoke-UdkCMakeInstallProject $project $context
+                }
+                'udk-native' {
+                    Invoke-UdkNativeProject $project $context
+                }
+                'udk-prefab' {
+                    Invoke-UdkPrefabProject $project $context
+                }
+                'gradle-publish' {
+                    Invoke-UdkGradlePublishProject $project $context
+                }
+                'files' {
+                    Invoke-UdkFilesProject $project $context
+                }
+                'nuget-restore' {
+                    Invoke-UdkNuGetRestoreProject $project $context
+                }
             }
             $artifacts = @{}
             foreach ($artifact in $project.artifacts.PSObject.Properties) {
@@ -112,7 +197,9 @@ try {
         }
         $destinations = @{}
         function Copy-UdkPackageFile([string]$Source, [string]$Destination) {
-            if ($destinations.ContainsKey($Destination)) { throw "Package content collision: $Destination" }
+            if ($destinations.ContainsKey($Destination)) {
+                throw "Package content collision: $Destination"
+            }
             $destinations[$Destination] = $true
             [void][IO.Directory]::CreateDirectory((Split-Path -Parent $Destination))
             Copy-Item -LiteralPath $Source -Destination $Destination
@@ -126,13 +213,21 @@ try {
             }
             $source = $results[$entry.project][$entry.artifact]
             if (Test-Path -LiteralPath $source -PathType Leaf) {
-                $fileName = if ($entry.rename) { $entry.rename } else { Split-Path -Leaf $source }
+                $fileName = if ($entry.rename) {
+                    $entry.rename
+                } else {
+                    Split-Path -Leaf $source
+                }
                 $target = Resolve-UdkBuildPath $payload $destination $fileName
                 Copy-UdkPackageFile $source $target
             } else {
-                if ($entry.rename) { throw 'rename is only supported for file artifacts.' }
+                if ($entry.rename) {
+                    throw 'rename is only supported for file artifacts.'
+                }
                 $files = @(Get-ChildItem -LiteralPath $source -Recurse -File -Force)
-                if (-not $files.Count) { throw "Empty directory artifact: $($entry.project)/$($entry.artifact)" }
+                if (-not $files.Count) {
+                    throw "Empty directory artifact: $($entry.project)/$($entry.artifact)"
+                }
                 foreach ($file in $files) {
                     $relative = $file.FullName.Substring($source.TrimEnd('\', '/').Length + 1)
                     $target = Resolve-UdkBuildPath $payload $destination $relative
@@ -140,18 +235,30 @@ try {
                 }
             }
         }
-    } finally { foreach ($projectLock in $projectLocks) { $projectLock.Dispose() } }
-    # Формат доставки не участвует в выборе и сборке проектов.
+    } finally {
+        foreach ($projectLock in $projectLocks) {
+            $projectLock.Dispose()
+        }
+    }
+    # Package the prepared files in the selected delivery format.
     $results = @()
     if ($isNuGet) {
         foreach ($dependencyArtifact in ($dependencyArtifacts | Sort-Object -Unique)) {
-            if ($dependencyArtifact -notlike '*.nupkg') { continue }
+            if ($dependencyArtifact -notlike '*.nupkg') {
+                continue
+            }
             $target = Join-Path $output (Split-Path -Leaf $dependencyArtifact)
-            if ([IO.Path]::GetFullPath($dependencyArtifact) -ine [IO.Path]::GetFullPath($target)) { Copy-Item -LiteralPath $dependencyArtifact -Destination $target -Force }
+            if ([IO.Path]::GetFullPath($dependencyArtifact) -ine [IO.Path]::GetFullPath($target)) {
+                Copy-Item -LiteralPath $dependencyArtifact -Destination $target -Force
+            }
             $results += $target
         }
         $results += Invoke-UdkNuGetDelivery $buildPlan $stage $output $NuGet
-    } else { $results += @(Invoke-UdkMavenDelivery $buildPlan $stage $output) }
+    } else {
+        $results += @(Invoke-UdkMavenDelivery $buildPlan $stage $output)
+    }
     $ReleaseState.results[$releaseKey] = @($results | Sort-Object -Unique)
     Write-Output $ReleaseState.results[$releaseKey]
-} finally { $lock.Dispose() }
+} finally {
+    $lock.Dispose()
+}

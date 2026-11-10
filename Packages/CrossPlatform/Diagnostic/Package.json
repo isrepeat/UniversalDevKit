@@ -7,7 +7,6 @@
       "adapter": "udk-native",
       "component": "Diagnostic",
       "generator": "Visual Studio 18 2026",
-      "buildDirectory": "!artifacts/packages/nuget/Diagnostic",
       "artifacts": {
         "payload": {
           "root": "output",

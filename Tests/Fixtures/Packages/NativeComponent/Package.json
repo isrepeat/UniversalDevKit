@@ -7,7 +7,6 @@
       "adapter": "udk-native",
       "component": "NativeProbe",
       "generator": "Visual Studio 18 2026",
-      "buildDirectory": "!artifacts/packages/nuget/NativeProbe",
       "artifacts": {
         "payload": {
           "root": "output",

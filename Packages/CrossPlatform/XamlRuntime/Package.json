@@ -7,7 +7,6 @@
       "adapter": "udk-native",
       "component": "XamlRuntime",
       "generator": "Visual Studio 18 2026",
-      "buildDirectory": "!artifacts/packages/nuget/XamlRuntime",
       "artifacts": {
         "payload": {
           "root": "output",

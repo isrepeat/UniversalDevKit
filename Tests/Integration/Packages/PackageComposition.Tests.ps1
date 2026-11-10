@@ -137,7 +137,11 @@ $inlinePlan = & $builder -RepositoryPath $external -PackagePath Package.json -Pl
 if ($inlinePlan.ProjectScope -cne 'InlineProbe' -or ($inlinePlan.Order -join ',') -cne 'Managed,Native,CMake') { throw 'Incorrect inline project scope or dependency order.' }
 $inlinePackage = & $builder -RepositoryPath $external -PackagePath Package.json -OutputDirectory (Join-Path $run 'inline') -CMake $CMake -NuGet $NuGet
 Assert-PackageEntries $inlinePackage @('lib/net8.0/Probe.dll', 'include/Probe/Probe.h', 'src/Internal/Hidden.h', 'native/share/marker.txt')
-if (-not (Test-Path -LiteralPath (Join-Path $external '!artifacts/projects/windows/udk/InlineProbe/Managed/output/Probe.dll'))) { throw 'Inline project outputs were not isolated by package.' }
+if (-not (Test-Path -LiteralPath (Join-Path $external '!artifacts/package-tools/InlineProbe/Managed/output/Probe.dll'))) { throw 'Inline project outputs were not isolated by package.' }
+$inline.projects.CMake | Add-Member buildDirectory '!artifacts/custom-build'
+Write-TestJson 'Package.json' $inline
+Expect-Failure { & $builder -RepositoryPath $external -PackagePath Package.json -Plan } 'Unknown field'
+$inline.projects.CMake.PSObject.Properties.Remove('buildDirectory')
 $inline.projects.Managed | Add-Member name 'ConflictingName'
 Write-TestJson 'Package.json' $inline
 Expect-Failure { & $builder -RepositoryPath $external -PackagePath Package.json -Plan } 'Inline project name and schemaVersion are implicit'

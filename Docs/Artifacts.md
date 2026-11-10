@@ -1,23 +1,23 @@
 # Каталоги артефактов
 
-В корне `!artifacts` допускаются только `projects`, `packages`, `tests` и `cache`. Логи размещаются внутри соответствующей сборки или теста. Каталоги запусков с GUID и датой не создаются; одинаковые рабочие каталоги нельзя использовать параллельно.
+В корне `!artifacts` допускаются только `projects`, `package-tools`, `packages`, `tests` и `cache`. Логи размещаются внутри соответствующей сборки или теста. Каталоги запусков с GUID и датой не создаются; одинаковые рабочие каталоги нельзя использовать параллельно.
 
 ```text
 !tools/
 !artifacts/
   projects/<platform>/<build-system>/<project>/
+  package-tools/<package>/<project>/
+    build/
+    install/
+    dependencies/
+    output/
+    staging/
   packages/nuget/
     <root-component>/
-      build/<runtime>/
-      install/<runtime>/
-      dependencies/<dependency-name>/<runtime>/
-      staging/<component>/payload/
-      build.log
+      staging/payload/
       <package-files>
   packages/maven/
-    build-native/
-    build-gradle/<package>/
-    staging/<artifact>/
+    staging/<package>/payload/
     <group-path>/<artifact>/<version>/
   tests/<test-name>/
   cache/vcpkg/downloads/
@@ -28,11 +28,11 @@
 
 `platform` содержит ОС и архитектуру, например `Windows-x64`; `build-system` — `msbuild` или `cmake`. MSBuild разделяет внутри проекта toolset, версию компилятора, CRT, конфигурацию и `bin`/`obj`. CMake presets выделяют отдельное дерево для toolset и CRT; Debug/Release выбираются при сборке.
 
-Общий сборщик [составных пакетов](PackageComposition.md) использует `projects/windows/udk/<имя-проекта>/` с отдельными `output`, `build`, `install` и `dependencies`. Файлы пакетов и staging остаются в `packages/nuget/<имя-пакета>/`.
+Общий сборщик [составных пакетов](PackageComposition.md) использует `package-tools/<имя-пакета>/<имя-проекта>/` с отдельными `output`, `build`, `install` и `dependencies`. Файлы пакетов и staging остаются в `packages/nuget/<имя-пакета>/`.
 
 ## Пакеты
 
-На Windows сборщики NuGet, Android и XamlCompiler автоматически подключают каталог выпуска через временный `subst`-диск. Это сокращает пути сборки, установки и staging; физическое расположение файлов не меняется. Диск освобождается в `finally`, в том числе при ошибке. Для отдельного Android `BuildRoot` создаётся дополнительное подключение. На других ОС используются исходные пути.
+На Windows адаптеры `udk-native` и `udk-prefab` подключают рабочий каталог проекта через временный `subst`-диск. Это сокращает пути сборки, установки и staging; физическое расположение файлов не меняется. Диск освобождается в `finally`, в том числе при ошибке. Готовые пакеты сохраняются в прежних каталогах `packages/nuget` и `packages/maven`.
 
 При первом запуске выбирается свободная буква от Z до D и сохраняется в `.udk-build-drive` внутри каталога выпуска: CMake сохраняет абсолютные пути в инкрементальном кеше. Если сохранённая буква занята другим каталогом или устройством, сборка завершается с сообщением; чужие подключения не удаляются. Чтобы выбрать другую букву, нужно удалить маркер вместе с рабочими деревьями CMake. После перехода с полных путей на короткие существующие `build-*` следует очистить перед первой сборкой. Инструменты, раскрывающие `subst` в физический путь, всё ещё могут требовать короткого пути самого репозитория. Этот механизм применяется к упаковщикам; прямой запуск CMake/MSBuild его не включает.
 

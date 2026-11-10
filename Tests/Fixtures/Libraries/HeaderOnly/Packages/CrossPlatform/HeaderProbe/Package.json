@@ -7,7 +7,6 @@
       "adapter": "udk-native",
       "component": "HeaderProbe",
       "generator": "Visual Studio 18 2026",
-      "buildDirectory": "!artifacts/packages/nuget/HeaderProbe",
       "artifacts": {
         "payload": {
           "root": "output",
