@@ -10,7 +10,7 @@
 - [Native PackageReference](Integration/Packages/NuGet.PackageReference.Tests.ps1) проверяет Helpers и Diagnostic, а при явном выборе — XamlRuntime/OpenGLESRenderer.
 - [Android Prefab](Integration/Packages/AndroidPrefab.Tests.ps1) проверяет APK и SO для Helpers/Diagnostic, с отдельным запуском на устройстве.
 - [Kotlin Maven](Integration/Packages/AndroidKotlin.Tests.ps1) проверяет AndroidCoreSdk/AndroidAppKit и зависимости.
-- [Windows preview](Windows/AndroidAppPreviewer/README.md) проверяет ABI плагина, навигацию, ANGLE и hot reload.
+- Проверки Windows Previewer перенесены в отдельный репозиторий [AndroidAppPreviewer](https://github.com/isrepeat/AndroidAppPreviewer): Tests/PreviewerSmoke проверяет ABI плагина, навигацию, ANGLE и hot reload, а Tests/PackageRelease.Tests.ps1 — готовый PluginSDK и его NuGet-зависимости.
 - [XamlRuntime](XamlRuntime/README.md) имеет отдельные проверки runtime и анимаций.
 
 ## Инфраструктура и независимые fixtures

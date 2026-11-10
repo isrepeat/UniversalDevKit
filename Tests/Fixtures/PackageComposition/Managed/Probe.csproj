@@ -1,11 +1,11 @@
 <Project>
   <PropertyGroup>
-    <BaseIntermediateOutputPath>../!artifacts/projects/windows/msbuild/Probe/obj/</BaseIntermediateOutputPath>
+    <BaseIntermediateOutputPath>../!artifacts/projects/Windows-x64/msbuild/Probe/obj/</BaseIntermediateOutputPath>
   </PropertyGroup>
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <OutputPath>../!artifacts/projects/windows/msbuild/Probe/bin/</OutputPath>
+    <OutputPath>../!artifacts/projects/Windows-x64/msbuild/Probe/bin/</OutputPath>
   </PropertyGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>
