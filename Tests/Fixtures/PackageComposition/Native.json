@@ -5,9 +5,10 @@
   "component": "Native/Component.json",
   "sourceRoot": "Native/Probe",
   "includeRoot": "Native",
-  "publicHeaders": ["*.h"],
+  "publicHeaders": [
+    "*.h"
+  ],
   "headerDestination": "include",
   "sourceDestination": "src",
-  "manifestDestination": "cmake/Component.json",
-  "artifacts": { "sources": { "root": "output", "path": "." } }
+  "manifestDestination": "cmake/Component.json"
 }

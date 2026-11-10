@@ -12,24 +12,29 @@
         "Release"
       ],
       "parallel": 2,
-      "variables": {},
-      "artifacts": {
-        "executable": {
-          "root": "build",
-          "path": "Release/XamlCompiler.exe"
-        }
-      }
+      "variables": {}
     }
   },
   "contents": [
     {
       "project": "compiler",
-      "artifact": "executable",
+      "root": "build",
+      "path": "Release",
+      "include": [
+        "XamlCompiler.exe"
+      ],
       "destination": "tools/win-x64"
     },
     {
-      "file": "../../../LICENSE",
-      "destination": "LICENSE.txt"
+      "source": ".",
+      "include": [
+        "LICENSE"
+      ],
+      "destination": ".",
+      "preserveHierarchy": false,
+      "rename": {
+        "LICENSE": "LICENSE.txt"
+      }
     }
   ],
   "deliveries": {

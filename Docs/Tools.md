@@ -9,7 +9,7 @@
 
 ## Подготовка инструментов
 
-После клонирования запустите `Scripts/Setup.cmd` или `pwsh -File Scripts/PowerShell/Setup.ps1`. Скрипт подготавливает SolutionInjector и NuGet в игнорируемом `!tools/`; EXE не включаются в Git. Версии, URL и SHA-256 закреплены в `Scripts/Tools/SolutionInjector.json` и `Sources/PackageTools/Private/NuGet.json`. Visual Studio, CMake и SDK этот скрипт не устанавливает.
+После клонирования запустите `Scripts/Setup.cmd` или `pwsh -File Scripts/PowerShell/Setup.ps1`. Скрипт подготавливает SolutionInjector и NuGet в игнорируемом `!tools/`; EXE не включаются в Git. Версии, URL и SHA-256 закреплены в `Scripts/Tools/SolutionInjector.json` и `Sources/Windows/PackageTools/Private/NuGet.json`. Visual Studio, CMake и SDK этот скрипт не устанавливает.
 
 SolutionInjector хранится в `!tools/SolutionInjector/<версия>/`, NuGet — в `!tools/NuGet/<версия>/nuget.exe`. Готовый NuGet проверяется и используется повторно без загрузки или перезаписи. Новый файл сначала скачивается во временный файл и переносится на итоговый путь только после проверки SHA-256. Несовпадение хеша останавливает операцию.
 

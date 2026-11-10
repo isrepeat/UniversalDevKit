@@ -14,19 +14,13 @@
         ":androidappkit:publishReleasePublicationToAndroidPackagesFeedRepository"
       ],
       "toolchain": "Scripts/Android/ResolveToolchain.ps1",
-      "refreshDependencies": true,
-      "artifacts": {
-        "repository": {
-          "root": "output",
-          "path": "."
-        }
-      }
+      "refreshDependencies": true
     }
   },
   "contents": [
     {
       "project": "gradle",
-      "artifact": "repository",
+      "root": "output",
       "destination": "."
     }
   ],

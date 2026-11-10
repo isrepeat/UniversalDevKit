@@ -153,7 +153,7 @@ try {
                 $definitionPath = Join-Path $library "Packages/CrossPlatform/$component/Package.json"
                 $definition = Get-Content -LiteralPath $definitionPath -Raw | ConvertFrom-Json
                 $componentDefinition = Get-Content -LiteralPath (Join-Path $library "Projects/Components/$component.json") -Raw | ConvertFrom-Json
-                $definition.contents[2].file = '../../Build/NuGet/README.md'
+                $definition.contents[1].include[1] = 'Packages/Build/NuGet/README.md'
                 $dependencies = @($componentDefinition.dependencies | ForEach-Object { [pscustomobject]@{ package=('../' + $_.component + '/Package.json'); delivery='NuGet'; when=@('NuGet') } })
                 $definition | Add-Member -NotePropertyName releaseDependencies -NotePropertyValue $dependencies -Force
                 [IO.File]::WriteAllText($definitionPath, ($definition | ConvertTo-Json -Depth 30).TrimEnd(), [Text.UTF8Encoding]::new($false))

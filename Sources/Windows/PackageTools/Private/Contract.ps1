@@ -46,6 +46,63 @@ function Test-UdkSchemaVersion($Value, [int]$Expected) {
     return (($Value -is [int] -or $Value -is [long]) -and $Value -eq $Expected)
 }
 
+function ConvertTo-UdkContentPattern($Pattern) {
+    if ($Pattern -isnot [string] -or [string]::IsNullOrWhiteSpace($Pattern)) {
+        throw 'Content patterns must be nonempty strings.'
+    }
+    $normalized = $Pattern.Replace('\', '/')
+    if ($normalized.StartsWith('/') -or $normalized -match '[:?\[\]]') {
+        throw "Invalid content pattern: $Pattern"
+    }
+    $segments = $normalized.Split('/')
+    $expression = '^'
+    for ($index = 0; $index -lt $segments.Length; $index++) {
+        $segment = $segments[$index]
+        if ($segment -in @('', '.', '..') -or ($segment.Contains('**') -and $segment -ne '**')) {
+            throw "Invalid content pattern: $Pattern"
+        }
+        if ($segment -eq '**') {
+            $expression += if ($index -eq $segments.Length - 1) {
+                '.*'
+            } else {
+                '(?:[^/]+/)*'
+            }
+        } else {
+            $expression += [regex]::Escape($segment).Replace('\*', '[^/]*')
+            if ($index -lt $segments.Length - 1) {
+                $expression += '/'
+            }
+        }
+    }
+    return $expression + '$'
+}
+
+function Get-UdkContentRenames($Entry) {
+    $renames = @{}
+    if ($Entry.PSObject.Properties.Name -notcontains 'rename') {
+        return $renames
+    }
+    if ($Entry.rename -isnot [pscustomobject]) {
+        throw 'rename must be an object mapping relative file paths to file names.'
+    }
+    foreach ($mapping in $Entry.rename.PSObject.Properties) {
+        [void](ConvertTo-UdkContentPattern $mapping.Name)
+        if ($mapping.Name.Contains('*')) {
+            throw 'rename keys must be exact relative file paths.'
+        }
+        $key = $mapping.Name.Replace('\', '/')
+        if ($renames.ContainsKey($key)) {
+            throw "Duplicate rename source: $key"
+        }
+        $name = $mapping.Value
+        if ($name -isnot [string] -or [string]::IsNullOrWhiteSpace($name) -or $name -match '[\\/:*?"<>|\x00-\x1F]' -or $name.EndsWith('.') -or $name.EndsWith(' ')) {
+            throw "rename target must be a file name: $key"
+        }
+        $renames[$key] = $name
+    }
+    return $renames
+}
+
 function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [string]$DeliveryName, [hashtable]$ReleaseStack = @{}) {
     # Check all settings before running build tools.
     $root = (Resolve-Path -LiteralPath $RepositoryPath).Path
@@ -193,7 +250,7 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
                 Project = (Read-UdkBuildJson $projectPath)
             })
         }
-    } elseif ($package.projects -is [pscustomobject] -and @($package.projects.PSObject.Properties).Count) {
+    } elseif ($package.projects -is [pscustomobject]) {
         # Use object keys as local names. Give each package its own work directory.
         $projectScope = $package.name
         foreach ($entry in $package.projects.PSObject.Properties) {
@@ -217,13 +274,14 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
             })
         }
     } else {
-        throw 'projects must be a registry path or a nonempty object of local project definitions.'
+        throw 'projects must be a registry path or an object of local project definitions.'
     }
     $projects = @{}
+    $projectRoots = @{}
     foreach ($definition in $definitions) {
         $projectPath = $definition.Label
         $project = $definition.Project
-        $common = @('schemaVersion', 'name', 'adapter', 'dependencies', 'artifacts')
+        $common = @('schemaVersion', 'name', 'adapter', 'dependencies')
         $specific = switch ($project.adapter) {
             'dotnet' {
                 @('project', 'operation', 'configuration', 'runtime', 'selfContained')
@@ -255,7 +313,7 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
                 throw "Unknown project adapter: $($project.adapter)"
             }
         }
-        Assert-UdkFields $project ($common + $specific) @('schemaVersion', 'name', 'adapter', 'artifacts') $projectPath
+        Assert-UdkFields $project ($common + $specific) @('schemaVersion', 'name', 'adapter') $projectPath
         if (-not (Test-UdkSchemaVersion $project.schemaVersion 1)) {
             throw "Unsupported project schemaVersion: $projectPath"
         }
@@ -265,9 +323,6 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
         }
         if ($null -ne $project.dependencies -and $project.dependencies -isnot [array]) {
             throw 'Project dependencies must be an array.'
-        }
-        if ($project.artifacts -isnot [pscustomobject] -or -not @($project.artifacts.PSObject.Properties).Count) {
-            throw 'Project requires named artifacts.'
         }
         $roots = @('output')
         switch ($project.adapter) {
@@ -378,15 +433,8 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
                 throw 'Gradle tasks must be a nonempty array.'
             }
         }
-        foreach ($artifact in $project.artifacts.PSObject.Properties) {
-            Assert-UdkBuildName $artifact.Name
-            Assert-UdkFields $artifact.Value @('root', 'path') @('root', 'path') "artifact $($artifact.Name)"
-            if ($artifact.Value.root -cnotin $roots) {
-                throw "Unknown artifact root: $($artifact.Value.root)"
-            }
-            [void](Resolve-UdkBuildPath $root $root $artifact.Value.path)
-        }
         $projects[$project.name] = $project
+        $projectRoots[$project.name] = @($roots)
     }
     $selectedContents = [Collections.Generic.List[object]]::new()
     foreach ($entry in $package.contents) {
@@ -401,21 +449,47 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
             }
         }
         $selectedContents.Add($entry)
-        if ($entry.PSObject.Properties.Name -contains 'file') {
-            Assert-UdkFields $entry @('file', 'destination','deliveries') @('file', 'destination') 'file content'
-            $file = Resolve-UdkBuildPath $root $packageRoot $entry.file -Existing
-            if (-not (Test-Path -LiteralPath $file -PathType Leaf)) {
-                throw 'File content must reference a file.'
+        $fields = @($entry.PSObject.Properties.Name)
+        $common = @('destination', 'rename', 'deliveries', 'include', 'exclude', 'preserveHierarchy')
+        if ('source' -in $fields) {
+            Assert-UdkFields $entry ($common + @('source')) @('source', 'destination') 'source content'
+            $sourceDirectory = Resolve-UdkBuildPath $root $root $entry.source -Existing
+            if (-not (Test-Path -LiteralPath $sourceDirectory -PathType Container)) {
+                throw 'contents.source must reference a directory.'
             }
         } else {
-            Assert-UdkFields $entry @('project', 'artifact', 'destination', 'rename','deliveries') @('project', 'artifact', 'destination') 'artifact content'
-            if (-not $projects.ContainsKey($entry.project) -or $null -eq $projects[$entry.project].artifacts.($entry.artifact)) {
-                throw "Unknown project artifact: $($entry.project)/$($entry.artifact)"
+            Assert-UdkFields $entry ($common + @('project', 'root', 'path')) @('project', 'destination') 'project content'
+            if (-not $projects.ContainsKey($entry.project)) {
+                throw "Unknown project: $($entry.project)"
             }
-            if ($entry.rename -and ($entry.rename -match '[/\\]' -or $entry.rename -in @('.', '..'))) {
-                throw 'rename must be a file name.'
+            $fields = @($entry.PSObject.Properties.Name)
+            $sourceRoot = if ('root' -in $fields) {
+                $entry.root
+            } else {
+                'output'
+            }
+            if ($sourceRoot -cnotin $projectRoots[$entry.project]) {
+                throw "Unknown project root: $($entry.project)/$sourceRoot"
+            }
+            if ('path' -in $fields) {
+                [void](Resolve-UdkBuildPath $root $root $entry.path)
             }
         }
+        foreach ($field in @('include', 'exclude')) {
+            if ($field -notin $fields) {
+                continue
+            }
+            if ($entry.$field -isnot [array] -or ($field -eq 'include' -and -not $entry.$field.Count)) {
+                throw "contents.$field must be an array of patterns; include must not be empty."
+            }
+            foreach ($pattern in $entry.$field) {
+                [void](ConvertTo-UdkContentPattern $pattern)
+            }
+        }
+        if ('preserveHierarchy' -in $fields -and $entry.preserveHierarchy -isnot [bool]) {
+            throw 'preserveHierarchy must be a boolean.'
+        }
+        [void](Get-UdkContentRenames $entry)
         [void](Resolve-UdkBuildPath $root $root $entry.destination)
     }
     if (-not $selectedContents.Count) {
@@ -481,6 +555,7 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
         Delivery = $delivery
         Nuspec = $nuspec
         Projects = $projects
+        ProjectRoots = $projectRoots
         ProjectScope = $projectScope
         Order = @($order.ToArray())
     }

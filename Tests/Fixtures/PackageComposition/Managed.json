@@ -4,6 +4,5 @@
   "adapter": "dotnet",
   "project": "Managed/Probe.csproj",
   "operation": "build",
-  "configuration": "Release",
-  "artifacts": { "assembly": { "root": "output", "path": "Probe.dll" } }
+  "configuration": "Release"
 }

@@ -21,12 +21,12 @@ if ($LASTEXITCODE -ne 0) { throw 'NuGet could not run.' }
 . (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
 $run = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/TestRepositoryTools')
 $scripts = Join-Path $run 'Scripts/PowerShell'
-$manifests = Join-Path $run 'Sources/PackageTools/Private'
+$manifests = Join-Path $run 'Sources/Windows/PackageTools/Private'
 [void][IO.Directory]::CreateDirectory($scripts)
 [void][IO.Directory]::CreateDirectory($manifests)
 Copy-Item -LiteralPath $loader -Destination $scripts
-Copy-Item -LiteralPath (Join-Path $repository 'Sources/PackageTools/Private/NuGet.json') -Destination $manifests
-Copy-Item -LiteralPath (Join-Path $repository 'Sources/PackageTools/Private/GetNuGet.ps1') -Destination $manifests
+Copy-Item -LiteralPath (Join-Path $repository 'Sources/Windows/PackageTools/Private/NuGet.json') -Destination $manifests
+Copy-Item -LiteralPath (Join-Path $repository 'Sources/Windows/PackageTools/Private/GetNuGet.ps1') -Destination $manifests
 $manifest = Get-Content -LiteralPath (Join-Path $manifests 'NuGet.json') -Raw | ConvertFrom-Json
 $cache = Join-Path $run ('!tools/NuGet/' + $manifest.version)
 [void][IO.Directory]::CreateDirectory($cache)

@@ -1,12 +1,12 @@
 # Каталоги артефактов
 
-В корне `!artifacts` допускаются только `projects`, `package-tools`, `packages`, `tests` и `cache`. Логи размещаются внутри соответствующей сборки или теста. Каталоги запусков с GUID и датой не создаются; одинаковые рабочие каталоги нельзя использовать параллельно.
+В корне `!artifacts` допускаются только `projects`, `package-build`, `packages`, `tests` и `cache`. Логи размещаются внутри соответствующей сборки или теста. Каталоги запусков с GUID и датой не создаются; одинаковые рабочие каталоги нельзя использовать параллельно.
 
 ```text
 !tools/
 !artifacts/
   projects/<platform>/<build-system>/<project>/
-  package-tools/<package>/<project>/
+  package-build/<package>/<project>/
     build/
     install/
     dependencies/
@@ -28,7 +28,7 @@
 
 `platform` содержит ОС и архитектуру, например `Windows-x64`; `build-system` — `msbuild` или `cmake`. MSBuild разделяет внутри проекта toolset, версию компилятора, CRT, конфигурацию и `bin`/`obj`. CMake presets выделяют отдельное дерево для toolset и CRT; Debug/Release выбираются при сборке.
 
-Общий сборщик [составных пакетов](PackageComposition.md) использует `package-tools/<имя-пакета>/<имя-проекта>/` с отдельными `output`, `build`, `install` и `dependencies`. Файлы пакетов и staging остаются в `packages/nuget/<имя-пакета>/`.
+Общий сборщик [составных пакетов](PackageComposition.md) использует `package-build/<имя-пакета>/<имя-проекта>/` с отдельными `output`, `build`, `install` и `dependencies`. Файлы пакетов и staging остаются в `packages/nuget/<имя-пакета>/`.
 
 ## Пакеты
 

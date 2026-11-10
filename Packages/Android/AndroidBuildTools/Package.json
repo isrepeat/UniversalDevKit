@@ -42,28 +42,26 @@
           "source": "Scripts/Android/Toolchain.json",
           "destination": "tools/Android/Toolchain.json"
         }
-      ],
-      "artifacts": {
-        "payload": {
-          "root": "output",
-          "path": "."
-        }
-      }
+      ]
     }
   },
   "contents": [
     {
       "project": "files",
-      "artifact": "payload",
+      "root": "output",
       "destination": "."
     },
     {
-      "file": "../../../LICENSE",
-      "destination": "LICENSE.txt"
-    },
-    {
-      "file": "README.md",
-      "destination": "README.md"
+      "source": ".",
+      "include": [
+        "LICENSE",
+        "Packages/Android/AndroidBuildTools/README.md"
+      ],
+      "destination": ".",
+      "preserveHierarchy": false,
+      "rename": {
+        "LICENSE": "LICENSE.txt"
+      }
     }
   ],
   "deliveries": {

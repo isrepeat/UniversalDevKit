@@ -262,7 +262,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{066DAD5F-063F-43BF-8ADC-0E76A36CA54D}"
 	ProjectSection(SolutionItems) = preProject
 		Packages\README.md = Packages\README.md
-		Packages\Build.csproj = Packages\Build.csproj
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{D299E483-C236-42DA-9F90-8447C3B007D1}"
@@ -885,39 +884,35 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{9DFA8DD9
 	ProjectSection(SolutionItems) = preProject
 		Packages\Windows\PackageTools\Delivery\NuGet\Delivery.json = Packages\Windows\PackageTools\Delivery\NuGet\Delivery.json
 		Packages\Windows\PackageTools\Delivery\NuGet\UniversalDevKit.PackageTools.nuspec = Packages\Windows\PackageTools\Delivery\NuGet\UniversalDevKit.PackageTools.nuspec
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PackageTools", "PackageTools", "{6B50C85D-64CA-3219-FDA8-D97A1B0DE965}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\MsBuild\PackageTools\UniversalDevKit.PackageTools.targets = Projects\MsBuild\PackageTools\UniversalDevKit.PackageTools.targets
+		Packages\Windows\PackageTools\Delivery\NuGet\UniversalDevKit.PackageTools.targets = Packages\Windows\PackageTools\Delivery\NuGet\UniversalDevKit.PackageTools.targets
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PackageTools", "PackageTools", "{D7274C99-03B8-37D0-1088-3C5B52ABF346}"
 	ProjectSection(SolutionItems) = preProject
-		Sources\PackageTools\Build.ps1 = Sources\PackageTools\Build.ps1
+		Sources\Windows\PackageTools\Build.ps1 = Sources\Windows\PackageTools\Build.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "Adapters", "{07C10469-FD4A-A594-ABEF-29C813652D1B}"
 	ProjectSection(SolutionItems) = preProject
-		Sources\PackageTools\Adapters\CMakeInstall.ps1 = Sources\PackageTools\Adapters\CMakeInstall.ps1
-		Sources\PackageTools\Adapters\ComponentSources.ps1 = Sources\PackageTools\Adapters\ComponentSources.ps1
-		Sources\PackageTools\Adapters\DotNet.ps1 = Sources\PackageTools\Adapters\DotNet.ps1
-		Sources\PackageTools\Adapters\Files.ps1 = Sources\PackageTools\Adapters\Files.ps1
-		Sources\PackageTools\Adapters\NuGet.ps1 = Sources\PackageTools\Adapters\NuGet.ps1
-		Sources\PackageTools\Adapters\NuGetRestore.ps1 = Sources\PackageTools\Adapters\NuGetRestore.ps1
-		Sources\PackageTools\Adapters\UdkNative.ps1 = Sources\PackageTools\Adapters\UdkNative.ps1
-		Sources\PackageTools\Adapters\UdkPrefab.ps1 = Sources\PackageTools\Adapters\UdkPrefab.ps1
-		Sources\PackageTools\Adapters\GradlePublish.ps1 = Sources\PackageTools\Adapters\GradlePublish.ps1
-		Sources\PackageTools\Adapters\Maven.ps1 = Sources\PackageTools\Adapters\Maven.ps1
+		Sources\Windows\PackageTools\Adapters\CMakeInstall.ps1 = Sources\Windows\PackageTools\Adapters\CMakeInstall.ps1
+		Sources\Windows\PackageTools\Adapters\ComponentSources.ps1 = Sources\Windows\PackageTools\Adapters\ComponentSources.ps1
+		Sources\Windows\PackageTools\Adapters\DotNet.ps1 = Sources\Windows\PackageTools\Adapters\DotNet.ps1
+		Sources\Windows\PackageTools\Adapters\Files.ps1 = Sources\Windows\PackageTools\Adapters\Files.ps1
+		Sources\Windows\PackageTools\Adapters\NuGet.ps1 = Sources\Windows\PackageTools\Adapters\NuGet.ps1
+		Sources\Windows\PackageTools\Adapters\NuGetRestore.ps1 = Sources\Windows\PackageTools\Adapters\NuGetRestore.ps1
+		Sources\Windows\PackageTools\Adapters\UdkNative.ps1 = Sources\Windows\PackageTools\Adapters\UdkNative.ps1
+		Sources\Windows\PackageTools\Adapters\UdkPrefab.ps1 = Sources\Windows\PackageTools\Adapters\UdkPrefab.ps1
+		Sources\Windows\PackageTools\Adapters\GradlePublish.ps1 = Sources\Windows\PackageTools\Adapters\GradlePublish.ps1
+		Sources\Windows\PackageTools\Adapters\Maven.ps1 = Sources\Windows\PackageTools\Adapters\Maven.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{CF4766B5-C3CE-1EBF-CD69-67BABDC0EBEF}"
 	ProjectSection(SolutionItems) = preProject
-		Sources\PackageTools\Private\ArtifactDirectories.ps1 = Sources\PackageTools\Private\ArtifactDirectories.ps1
-		Sources\PackageTools\Private\Contract.ps1 = Sources\PackageTools\Private\Contract.ps1
-		Sources\PackageTools\Private\GetNuGet.ps1 = Sources\PackageTools\Private\GetNuGet.ps1
-		Sources\PackageTools\Private\NuGet.json = Sources\PackageTools\Private\NuGet.json
-		Sources\PackageTools\Private\Tools.ps1 = Sources\PackageTools\Private\Tools.ps1
+		Sources\Windows\PackageTools\Private\ArtifactDirectories.ps1 = Sources\Windows\PackageTools\Private\ArtifactDirectories.ps1
+		Sources\Windows\PackageTools\Private\Contract.ps1 = Sources\Windows\PackageTools\Private\Contract.ps1
+		Sources\Windows\PackageTools\Private\GetNuGet.ps1 = Sources\Windows\PackageTools\Private\GetNuGet.ps1
+		Sources\Windows\PackageTools\Private\NuGet.json = Sources\Windows\PackageTools\Private\NuGet.json
+		Sources\Windows\PackageTools\Private\Tools.ps1 = Sources\Windows\PackageTools\Private\Tools.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9315E867-4526-9C38-A100-BB380E93098F}"
@@ -1708,6 +1703,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{0D
 		Tests\Integration\Packages\NuGet.PackageReference.Tests.ps1 = Tests\Integration\Packages\NuGet.PackageReference.Tests.ps1
 		Tests\Integration\Packages\NuGet.Registry.Tests.ps1 = Tests\Integration\Packages\NuGet.Registry.Tests.ps1
 		Tests\Integration\Packages\PackageComposition.Tests.ps1 = Tests\Integration\Packages\PackageComposition.Tests.ps1
+		Tests\Integration\Packages\PackageContents.Tests.ps1 = Tests\Integration\Packages\PackageContents.Tests.ps1
 		Tests\Integration\Packages\PackageDelivery.Tests.ps1 = Tests\Integration\Packages\PackageDelivery.Tests.ps1
 		Tests\Integration\Packages\README.md = Tests\Integration\Packages\README.md
 		Tests\Integration\Packages\PackageTools.Migration.Tests.ps1 = Tests\Integration\Packages\PackageTools.Migration.Tests.ps1
@@ -1794,7 +1790,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cmake", "cmake", "{6EC553D8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{A33D8A01-8AFF-75D4-37A1-7659C13C021C}"
 	ProjectSection(SolutionItems) = preProject
-		Sources\PackageTools\Templates\PrefabConsumer.cmake = Sources\PackageTools\Templates\PrefabConsumer.cmake
+		Sources\Windows\PackageTools\Templates\PrefabConsumer.cmake = Sources\Windows\PackageTools\Templates\PrefabConsumer.cmake
 	EndProjectSection
 EndProject
 Global
@@ -1836,8 +1832,7 @@ Global
 		{D7F020F8-ED67-EA28-7A50-A160CA8B9554} = {45569702-BF11-421C-A43A-03D1364E3C95}
 		{9F537FBC-3641-B48E-6E02-3CC1AC523A09} = {D7F020F8-ED67-EA28-7A50-A160CA8B9554}
 		{9DFA8DD9-A595-773B-B68B-E71B493C5B49} = {9F537FBC-3641-B48E-6E02-3CC1AC523A09}
-		{6B50C85D-64CA-3219-FDA8-D97A1B0DE965} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
-		{D7274C99-03B8-37D0-1088-3C5B52ABF346} = {A9963E0C-F9B5-4635-505D-54E094B1F113}
+		{D7274C99-03B8-37D0-1088-3C5B52ABF346} = {91C1626E-08D0-D15F-E92C-49D0A474AFDC}
 		{07C10469-FD4A-A594-ABEF-29C813652D1B} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
 		{CF4766B5-C3CE-1EBF-CD69-67BABDC0EBEF} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
 		{013748EA-6701-12BC-3730-1FFD5A485470} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}

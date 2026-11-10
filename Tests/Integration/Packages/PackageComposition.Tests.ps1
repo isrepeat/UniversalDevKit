@@ -57,10 +57,10 @@ Write-TestJson 'Package.json' $package
 Expect-Failure { & $builder -RepositoryPath $external -PackagePath Package.json -Plan } 'Unknown field'
 $package = Read-TestJson 'Package.json'
 $package.PSObject.Properties.Remove('typo')
-$package.contents[0].artifact = 'missing'
+$package.contents[0].root = 'missing'
 Write-TestJson 'Package.json' $package
-Expect-Failure { & $builder -RepositoryPath $external -PackagePath Package.json -Plan } 'Unknown project artifact'
-$package.contents[0].artifact = 'assembly'
+Expect-Failure { & $builder -RepositoryPath $external -PackagePath Package.json -Plan } 'Unknown project root'
+$package.contents[0].root = 'output'
 $package.contents[0].destination = '../outside'
 Write-TestJson 'Package.json' $package
 Expect-Failure { & $builder -RepositoryPath $external -PackagePath Package.json -Plan } 'Path escapes'
@@ -94,11 +94,10 @@ Write-TestJson 'Restored.json' ([pscustomobject]@{
     adapter = 'nuget-restore'
     id = 'UniversalDevKit.CompositionProbe'
     version = '1.0.0'
-    artifacts = [pscustomobject]@{ assembly = [pscustomobject]@{ root = 'package'; path = 'lib/net8.0/Probe.dll' } }
 })
 $package = Read-TestJson 'Package.json'
 $package.name = 'RestoredProbe'
-$package.contents = @([pscustomobject]@{ project = 'Restored'; artifact = 'assembly'; destination = 'lib/net8.0' })
+$package.contents = @([pscustomobject]@{ project = 'Restored'; root = 'package'; path = 'lib/net8.0/Probe.dll'; destination = 'lib/net8.0' })
 Write-TestJson 'Package.json' $package
 $delivery = Read-TestJson 'Delivery.json'
 $delivery.id = 'UniversalDevKit.CompositionConsumer'
@@ -137,7 +136,7 @@ $inlinePlan = & $builder -RepositoryPath $external -PackagePath Package.json -Pl
 if ($inlinePlan.ProjectScope -cne 'InlineProbe' -or ($inlinePlan.Order -join ',') -cne 'Managed,Native,CMake') { throw 'Incorrect inline project scope or dependency order.' }
 $inlinePackage = & $builder -RepositoryPath $external -PackagePath Package.json -OutputDirectory (Join-Path $run 'inline') -CMake $CMake -NuGet $NuGet
 Assert-PackageEntries $inlinePackage @('lib/net8.0/Probe.dll', 'include/Probe/Probe.h', 'src/Internal/Hidden.h', 'native/share/marker.txt')
-if (-not (Test-Path -LiteralPath (Join-Path $external '!artifacts/package-tools/InlineProbe/Managed/output/Probe.dll'))) { throw 'Inline project outputs were not isolated by package.' }
+if (-not (Test-Path -LiteralPath (Join-Path $external '!artifacts/package-build/InlineProbe/Managed/output/Probe.dll'))) { throw 'Inline project outputs were not isolated by package.' }
 $inline.projects.CMake | Add-Member buildDirectory '!artifacts/custom-build'
 Write-TestJson 'Package.json' $inline
 Expect-Failure { & $builder -RepositoryPath $external -PackagePath Package.json -Plan } 'Unknown field'
@@ -162,9 +161,7 @@ $package.contents = @($package.contents[1], $package.contents[1])
 Write-TestJson 'Package.json' $package
 Expect-Failure { & $builder -RepositoryPath $external -PackagePath Package.json -OutputDirectory (Join-Path $run 'collision') -NuGet $NuGet } 'Package content collision'
 $package.contents = @($originalPackage.contents[1])
-$native = Read-TestJson 'Native.json'
-$native.artifacts.sources.path = 'missing'
-Write-TestJson 'Native.json' $native
+$package.contents[0] | Add-Member path 'missing'
 Write-TestJson 'Package.json' $package
 Expect-Failure { & $builder -RepositoryPath $external -PackagePath Package.json -OutputDirectory (Join-Path $run 'missing') -NuGet $NuGet } 'Missing path'
 
@@ -174,7 +171,7 @@ $package = Read-TestJson 'Package.json'
 $package.deliveries | Add-Member Android 'Maven.json'
 Write-TestJson 'Maven.json' ([pscustomobject]@{ schemaVersion=1; adapter='maven-repository'; groupId='org.probe'; artifactId='probe' })
 foreach ($content in $package.contents) { $content | Add-Member deliveries @('NuGet') }
-$package.contents += [pscustomobject]@{ project='Native'; artifact='sources'; destination='.'; deliveries=@('Android') }
+$package.contents += [pscustomobject]@{ project='Native'; root='output'; destination='.'; deliveries=@('Android') }
 [IO.File]::WriteAllText((Join-Path $external 'version.properties'), 'packageVersion=1.2.3', [Text.UTF8Encoding]::new($false))
 $package.versionSource = [pscustomobject]@{ path='version.properties'; format='properties'; property='packageVersion' }
 Write-TestJson 'Package.json' $package

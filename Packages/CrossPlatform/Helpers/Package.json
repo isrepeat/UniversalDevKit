@@ -6,13 +6,7 @@
     "windows": {
       "adapter": "udk-native",
       "component": "Helpers",
-      "generator": "Visual Studio 18 2026",
-      "artifacts": {
-        "payload": {
-          "root": "output",
-          "path": "."
-        }
-      }
+      "generator": "Visual Studio 18 2026"
     },
     "android": {
       "adapter": "udk-prefab",
@@ -23,41 +17,36 @@
         "x86_64"
       ],
       "apiLevel": 24,
-      "toolchain": "Scripts/Android/ResolveToolchain.ps1",
-      "artifacts": {
-        "prefab": {
-          "root": "output",
-          "path": "."
-        }
-      }
+      "toolchain": "Scripts/Android/ResolveToolchain.ps1"
     }
   },
   "contents": [
     {
       "project": "windows",
-      "artifact": "payload",
+      "root": "output",
       "destination": ".",
       "deliveries": [
         "NuGet"
       ]
     },
     {
-      "file": "../../../LICENSE",
-      "destination": "LICENSE.txt",
-      "deliveries": [
-        "NuGet"
-      ]
-    },
-    {
-      "file": "../../Build/NuGet/README.md",
-      "destination": "README.md",
+      "source": ".",
+      "include": [
+        "LICENSE",
+        "Packages/Build/NuGet/README.md"
+      ],
+      "destination": ".",
+      "preserveHierarchy": false,
+      "rename": {
+        "LICENSE": "LICENSE.txt"
+      },
       "deliveries": [
         "NuGet"
       ]
     },
     {
       "project": "android",
-      "artifact": "prefab",
+      "root": "output",
       "destination": ".",
       "deliveries": [
         "Android"

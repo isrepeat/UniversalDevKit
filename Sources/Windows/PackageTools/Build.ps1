@@ -43,7 +43,7 @@ function Invoke-UdkBuildTool([string]$Tool, [string[]]$Arguments) {
 }
 
 $buildPlan = Get-UdkPackagePlan $RepositoryPath $PackagePath $Delivery
-$projectDirectory = Join-Path $buildPlan.RepositoryPath ('!artifacts/package-tools/' + $buildPlan.Package.name)
+$projectDirectory = Join-Path $buildPlan.RepositoryPath ('!artifacts/package-build/' + $buildPlan.Package.name)
 foreach ($property in $Properties.Keys) {
     $owners = @($buildPlan.Order | Where-Object {
         $property -cin $buildPlan.Projects[$_].preparation.properties
@@ -188,12 +188,7 @@ try {
                     Invoke-UdkNuGetRestoreProject $project $context
                 }
             }
-            $artifacts = @{}
-            foreach ($artifact in $project.artifacts.PSObject.Properties) {
-                $base = $roots[$artifact.Value.root]
-                $artifacts[$artifact.Name] = Resolve-UdkBuildPath $base $base $artifact.Value.path -Existing
-            }
-            $results[$name] = $artifacts
+            $results[$name] = $roots
         }
         $destinations = @{}
         function Copy-UdkPackageFile([string]$Source, [string]$Destination) {
@@ -206,32 +201,88 @@ try {
         }
         foreach ($entry in $buildPlan.Package.contents) {
             $destination = Resolve-UdkBuildPath $payload $payload $entry.destination
-            if ($entry.file) {
-                $source = Resolve-UdkBuildPath $buildPlan.RepositoryPath $buildPlan.PackageRoot $entry.file -Existing
-                Copy-UdkPackageFile $source $destination
-                continue
-            }
-            $source = $results[$entry.project][$entry.artifact]
-            if (Test-Path -LiteralPath $source -PathType Leaf) {
-                $fileName = if ($entry.rename) {
-                    $entry.rename
-                } else {
-                    Split-Path -Leaf $source
-                }
-                $target = Resolve-UdkBuildPath $payload $destination $fileName
-                Copy-UdkPackageFile $source $target
+            $fields = @($entry.PSObject.Properties.Name)
+            $source = if ('source' -in $fields) {
+                Resolve-UdkBuildPath $buildPlan.RepositoryPath $buildPlan.RepositoryPath $entry.source -Existing
             } else {
-                if ($entry.rename) {
-                    throw 'rename is only supported for file artifacts.'
+                $sourceRoot = if ('root' -in $fields) {
+                    $entry.root
+                } else {
+                    'output'
                 }
-                $files = @(Get-ChildItem -LiteralPath $source -Recurse -File -Force)
-                if (-not $files.Count) {
-                    throw "Empty directory artifact: $($entry.project)/$($entry.artifact)"
+                $sourcePath = if ('path' -in $fields) {
+                    $entry.path
+                } else {
+                    '.'
                 }
-                foreach ($file in $files) {
-                    $relative = $file.FullName.Substring($source.TrimEnd('\', '/').Length + 1)
-                    $target = Resolve-UdkBuildPath $payload $destination $relative
-                    Copy-UdkPackageFile $file.FullName $target
+                $base = $results[$entry.project][$sourceRoot]
+                Resolve-UdkBuildPath $base $base $sourcePath -Existing
+            }
+            $isFile = Test-Path -LiteralPath $source -PathType Leaf
+            if ($isFile -and ('include' -in $fields -or 'exclude' -in $fields)) {
+                throw 'include/exclude require a directory source.'
+            }
+            $includes = if ('include' -in $fields) {
+                @($entry.include)
+            } else {
+                @('**/*')
+            }
+            $includePatterns = @($includes | ForEach-Object { ConvertTo-UdkContentPattern $_ })
+            $files = if ($isFile) {
+                @(Get-Item -LiteralPath $source -Force)
+            } elseif (-not @($includes | Where-Object { $_.Contains('*') }).Count) {
+                # Exact paths avoid scanning the entire repository for LICENSE and README.
+                $candidates = @{}
+                foreach ($include in $includes) {
+                    $candidate = Resolve-UdkBuildPath $source $source $include
+                    if (Test-Path -LiteralPath $candidate -PathType Leaf) {
+                        $candidates[$candidate] = Get-Item -LiteralPath $candidate -Force
+                    }
+                }
+                @($candidates.Values | Sort-Object FullName)
+            } else {
+                @(Get-ChildItem -LiteralPath $source -Recurse -File -Force)
+            }
+            $excludePatterns = if ('exclude' -in $fields) {
+                @($entry.exclude | ForEach-Object { ConvertTo-UdkContentPattern $_ })
+            } else {
+                @()
+            }
+            $renames = Get-UdkContentRenames $entry
+            $usedRenames = @{}
+            $preserveHierarchy = 'preserveHierarchy' -notin $fields -or $entry.preserveHierarchy
+            $selectedCount = 0
+            foreach ($file in $files) {
+                $relative = if ($isFile) {
+                    $file.Name
+                } else {
+                    $file.FullName.Substring($source.TrimEnd('\', '/').Length + 1).Replace('\', '/')
+                }
+                $included = @($includePatterns | Where-Object { $relative -imatch $_ }).Count -gt 0
+                $excluded = @($excludePatterns | Where-Object { $relative -imatch $_ }).Count -gt 0
+                if (-not $included -or $excluded) {
+                    continue
+                }
+                $selectedCount++
+                $fileName = $file.Name
+                if ($renames.ContainsKey($relative)) {
+                    $fileName = $renames[$relative]
+                    $usedRenames[$relative] = $true
+                }
+                $targetPath = if ($preserveHierarchy) {
+                    $relative.Substring(0, $relative.LastIndexOf('/') + 1) + $fileName
+                } else {
+                    $fileName
+                }
+                $target = Resolve-UdkBuildPath $payload $destination $targetPath
+                Copy-UdkPackageFile $file.FullName $target
+            }
+            if (-not $selectedCount) {
+                throw "No files selected by contents: $source"
+            }
+            foreach ($key in $renames.Keys) {
+                if (-not $usedRenames.ContainsKey($key)) {
+                    throw "Unused rename source: $key"
                 }
             }
         }

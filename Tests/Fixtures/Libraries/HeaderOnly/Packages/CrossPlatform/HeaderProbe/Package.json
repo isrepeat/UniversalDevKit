@@ -6,34 +6,29 @@
     "windows": {
       "adapter": "udk-native",
       "component": "HeaderProbe",
-      "generator": "Visual Studio 18 2026",
-      "artifacts": {
-        "payload": {
-          "root": "output",
-          "path": "."
-        }
-      }
+      "generator": "Visual Studio 18 2026"
     }
   },
   "contents": [
     {
       "project": "windows",
-      "artifact": "payload",
+      "root": "output",
       "destination": ".",
       "deliveries": [
         "NuGet"
       ]
     },
     {
-      "file": "../../../LICENSE",
-      "destination": "LICENSE.txt",
-      "deliveries": [
-        "NuGet"
-      ]
-    },
-    {
-      "file": "../../Build/NuGet/README.md",
-      "destination": "README.md",
+      "source": ".",
+      "include": [
+        "LICENSE",
+        "Packages/Build/NuGet/README.md"
+      ],
+      "destination": ".",
+      "preserveHierarchy": false,
+      "rename": {
+        "LICENSE": "LICENSE.txt"
+      },
       "deliveries": [
         "NuGet"
       ]

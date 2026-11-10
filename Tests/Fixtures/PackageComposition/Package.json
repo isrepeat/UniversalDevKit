@@ -4,10 +4,35 @@
   "versionSource": "Version.json",
   "projects": "Projects.json",
   "contents": [
-    { "project": "Managed", "artifact": "assembly", "destination": "lib/net8.0" },
-    { "project": "Native", "artifact": "sources", "destination": "." },
-    { "project": "CMake", "artifact": "installation", "destination": "native" },
-    { "file": "CMake/marker.txt", "destination": "README.txt" }
+    {
+      "project": "Managed",
+      "root": "output",
+      "path": "Probe.dll",
+      "destination": "lib/net8.0"
+    },
+    {
+      "project": "Native",
+      "root": "output",
+      "destination": "."
+    },
+    {
+      "project": "CMake",
+      "root": "install",
+      "destination": "native"
+    },
+    {
+      "source": ".",
+      "include": [
+        "CMake/marker.txt"
+      ],
+      "destination": ".",
+      "preserveHierarchy": false,
+      "rename": {
+        "CMake/marker.txt": "README.txt"
+      }
+    }
   ],
-  "deliveries": { "NuGet": "Delivery.json" }
+  "deliveries": {
+    "NuGet": "Delivery.json"
+  }
 }

@@ -2,12 +2,15 @@
   "schemaVersion": 1,
   "name": "CMake",
   "adapter": "cmake-install",
-  "dependencies": ["Native"],
+  "dependencies": [
+    "Native"
+  ],
   "sourceDirectory": "CMake",
   "generator": "Visual Studio 18 2026",
   "architecture": "x64",
-  "configurations": ["Release"],
+  "configurations": [
+    "Release"
+  ],
   "parallel": 2,
-  "variables": {},
-  "artifacts": { "installation": { "root": "install", "path": "." } }
+  "variables": {}
 }
