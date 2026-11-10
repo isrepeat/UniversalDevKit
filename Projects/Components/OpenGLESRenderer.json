@@ -33,14 +33,11 @@
   },
   "msbuildGuid": "{364E96CB-9D8A-40B0-8455-6A31A15A36B0}",
   "headers": [
-    "Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/Config.h",
-    "Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/Export.h",
-    "Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/OpenGlRenderer.h",
-    "Sources/OpenGLESRenderer/StandardShaders.h"
+    "Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/**/*.h",
+    "Sources/OpenGLESRenderer/**/*.h"
   ],
   "sources": [
-    "Sources/OpenGLESRenderer/OpenGlRenderer.cpp",
-    "Sources/OpenGLESRenderer/StandardShaders.cpp"
+    "Sources/OpenGLESRenderer/**/*.cpp"
   ],
   "buildExtensions": {
     "cmake": "Projects/Cmake/OpenGLESRenderer/Build.cmake",

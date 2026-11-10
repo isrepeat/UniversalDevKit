@@ -14,21 +14,13 @@
   },
   "msbuildGuid": "{AB97876A-F25A-4AAE-BACD-D32C776BB261}",
   "headers": [
-    "Includes/Diagnostic/UniversalDevKit/Diagnostic/Logging.h",
-    "Sources/Diagnostic/PlatformBackend.h"
+    "Includes/Diagnostic/UniversalDevKit/Diagnostic/**/*.h",
+    "Sources/Diagnostic/**/*.h"
   ],
+  "excludeHeaders": ["Includes/Diagnostic/UniversalDevKit/Diagnostic/Export.h"],
   "sources": [
-    "Sources/Diagnostic/Logging.cpp",
-    "Sources/Diagnostic/platform/windows/PlatformBackendWindows.cpp",
-    "Sources/Diagnostic/platform/android/PlatformBackendAndroid.cpp",
-    "Sources/Diagnostic/platform/linux/PlatformBackendLinux.cpp",
-    "ThirdParty/spdlog/src/spdlog.cpp",
-    "ThirdParty/spdlog/src/stdout_sinks.cpp",
-    "ThirdParty/spdlog/src/color_sinks.cpp",
-    "ThirdParty/spdlog/src/file_sinks.cpp",
-    "ThirdParty/spdlog/src/async.cpp",
-    "ThirdParty/spdlog/src/cfg.cpp",
-    "ThirdParty/spdlog/src/bundled_fmtlib_format.cpp"
+    "Sources/Diagnostic/**/*.cpp",
+    "ThirdParty/spdlog/src/*.cpp"
   ],
   "compile": {
     "includeDirectories": ["ThirdParty/spdlog/include"],

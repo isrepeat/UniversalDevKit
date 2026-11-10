@@ -1,6 +1,7 @@
 # JSON задаёт исходники и зависимости; файлы компонентов расширяют системные настройки.
 include("${CMAKE_CURRENT_LIST_DIR}/ComponentRequirements.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/RegistryContract.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/ComponentFiles.cmake")
 
 # 1. Проверяем корневой реестр до чтения описаний и создания targets.
 file(READ "${PROJECT_SOURCE_DIR}/Components.json" registryManifest)
@@ -30,6 +31,7 @@ foreach(registryEntryIndex RANGE ${registryEntryLastIndex})
     endif()
     list(APPEND registeredComponentPaths "${componentRegistryEntryPath}")
     file(READ "${PROJECT_SOURCE_DIR}/${componentRegistryEntryPath}" componentDefinitionJson)
+    udkResolveComponentFiles("${componentDefinitionJson}" componentDefinitionJson)
     udkCheckComponentContract("${componentDefinitionJson}")
     string(JSON componentGuid GET "${componentDefinitionJson}" msbuildGuid)
     string(TOLOWER "${componentGuid}" componentGuid)

@@ -40,24 +40,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\RenderEngine.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\ScrollController.h">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\Storyboard.h">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\UserControl.h">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\VisualState.h">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\XamlAttribute.h">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\XamlLayout.h">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\RuntimeMarkup\IRuntimeReloadableControl.h">
       <__UniversalDevKitFilter>RuntimeMarkup</__UniversalDevKitFilter>
     </ClInclude>
@@ -88,6 +70,24 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\RuntimeMarkup\XamlSchemaValidator.h">
       <__UniversalDevKitFilter>RuntimeMarkup</__UniversalDevKitFilter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\ScrollController.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\Storyboard.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\UserControl.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\VisualState.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\XamlAttribute.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\XamlLayout.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\Animation.cpp">
       <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
@@ -116,26 +116,6 @@
       <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\ScrollController.cpp">
-      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\UserControl.cpp">
-      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\VisualState.cpp">
-      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\XamlAttribute.cpp">
-      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\XamlLayout.cpp">
-      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\RuntimeMarkup\RuntimeBindingRegistry.cpp">
       <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>RuntimeMarkup</__UniversalDevKitFilter>
@@ -155,6 +135,26 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\RuntimeMarkup\XamlSchemaValidator.cpp">
       <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>RuntimeMarkup</__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\ScrollController.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\UserControl.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\VisualState.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\XamlAttribute.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\XamlRuntime\XamlLayout.cpp">
+      <__UniversalDevKitComponent>XamlRuntime</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -24,7 +24,7 @@ function(udkCheckRegistryPath path)
 endfunction()
 
 function(udkCheckComponentContract json)
-    udkCheckObjectKeys("${json}" "name;msbuildGuid;headers;sources;filters;dependencies;supportedPlatforms;platformSources;stateScope;requirements;platformRequirements;buildExtensions;compile;sourceSettings;kind" component)
+    udkCheckObjectKeys("${json}" "name;msbuildGuid;headers;sources;excludeHeaders;excludeSources;filters;dependencies;supportedPlatforms;platformSources;stateScope;requirements;platformRequirements;buildExtensions;compile;sourceSettings;kind" component)
     udkCheckComponentCompile("${json}")
     foreach(key IN ITEMS name msbuildGuid)
         string(JSON type TYPE "${json}" ${key})

@@ -12,18 +12,6 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Text\Unicode.h">
-      <__UniversalDevKitFilter>Text</__UniversalDevKitFilter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\System\ApplicationPaths.h">
-      <__UniversalDevKitFilter>System</__UniversalDevKitFilter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\System\Thread.h">
-      <__UniversalDevKitFilter>System</__UniversalDevKitFilter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Preprocessor.h">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Collection\Algorithms.h">
       <__UniversalDevKitFilter>Collection</__UniversalDevKitFilter>
     </ClInclude>
@@ -42,10 +30,19 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Event\Signal.h">
       <__UniversalDevKitFilter>Event</__UniversalDevKitFilter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Color.h">
+      <__UniversalDevKitFilter>Math</__UniversalDevKitFilter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Differentiation.h">
       <__UniversalDevKitFilter>Math</__UniversalDevKitFilter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Function1D.h">
+      <__UniversalDevKitFilter>Math</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Geometry.h">
+      <__UniversalDevKitFilter>Math</__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Motion.h">
       <__UniversalDevKitFilter>Math</__UniversalDevKitFilter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Rect.h">
@@ -87,6 +84,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Patterns\Singleton.h">
       <__UniversalDevKitFilter>Patterns</__UniversalDevKitFilter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Preprocessor.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Regex\Regex.h">
+      <__UniversalDevKitFilter>Regex</__UniversalDevKitFilter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Config.h">
       <__UniversalDevKitFilter>StdExt</__UniversalDevKitFilter>
     </ClInclude>
@@ -102,9 +105,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Extensions\rangesEx.h">
       <__UniversalDevKitFilter>StdExt\Extensions</__UniversalDevKitFilter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Extensions\rangesEx\Tools.h">
-      <__UniversalDevKitFilter>StdExt\Extensions\rangesEx</__UniversalDevKitFilter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Extensions\rangesEx\ranges_concat.h">
       <__UniversalDevKitFilter>StdExt\Extensions\rangesEx</__UniversalDevKitFilter>
     </ClInclude>
@@ -117,11 +117,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Extensions\rangesEx\ranges_to.h">
       <__UniversalDevKitFilter>StdExt\Extensions\rangesEx</__UniversalDevKitFilter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Extensions\rangesEx\Tools.h">
+      <__UniversalDevKitFilter>StdExt\Extensions\rangesEx</__UniversalDevKitFilter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\FormatSpecializations.h">
       <__UniversalDevKitFilter>StdExt</__UniversalDevKitFilter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Regex\Regex.h">
-      <__UniversalDevKitFilter>Regex</__UniversalDevKitFilter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Stream\StreamHelpers.h">
       <__UniversalDevKitFilter>Stream</__UniversalDevKitFilter>
@@ -132,14 +132,14 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Stream\StreamLineViewer.h">
       <__UniversalDevKitFilter>Stream</__UniversalDevKitFilter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Geometry.h">
-      <__UniversalDevKitFilter>Math</__UniversalDevKitFilter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\System\ApplicationPaths.h">
+      <__UniversalDevKitFilter>System</__UniversalDevKitFilter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Color.h">
-      <__UniversalDevKitFilter>Math</__UniversalDevKitFilter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\System\Thread.h">
+      <__UniversalDevKitFilter>System</__UniversalDevKitFilter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Motion.h">
-      <__UniversalDevKitFilter>Math</__UniversalDevKitFilter>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Text\Unicode.h">
+      <__UniversalDevKitFilter>Text</__UniversalDevKitFilter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Text\Utf8.h">
       <__UniversalDevKitFilter>Text</__UniversalDevKitFilter>

@@ -20,10 +20,6 @@
       <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\platform\windows\PlatformBackendWindows.cpp">
-      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
-      <__UniversalDevKitFilter>platform\windows</__UniversalDevKitFilter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\platform\android\PlatformBackendAndroid.cpp">
       <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>platform\android</__UniversalDevKitFilter>
@@ -32,11 +28,19 @@
       <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>platform\linux</__UniversalDevKitFilter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\spdlog.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\Sources\Diagnostic\platform\windows\PlatformBackendWindows.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter>platform\windows</__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\async.cpp">
       <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\stdout_sinks.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\bundled_fmtlib_format.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\cfg.cpp">
       <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
     </ClCompile>
@@ -48,15 +52,11 @@
       <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\async.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\spdlog.cpp">
       <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\cfg.cpp">
-      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
-      <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\bundled_fmtlib_format.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\ThirdParty\spdlog\src\stdout_sinks.cpp">
       <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>ThirdParty\spdlog\src</__UniversalDevKitFilter>
     </ClCompile>
