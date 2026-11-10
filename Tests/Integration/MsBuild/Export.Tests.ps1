@@ -12,7 +12,7 @@ foreach ($directory in @('Includes', 'Sources', 'Projects')) {
 }
 Copy-Item -LiteralPath (Join-Path $fixture 'Components.json') -Destination $Workspace.Library -Force
 Copy-Item -LiteralPath (Join-Path $fixture 'Main.cpp') -Destination (Join-Path $Workspace.Consumer 'App1/Main.cpp') -Force
-& (Join-Path $Workspace.Library 'Scripts/PowerShell/GenerateComponentProjects.ps1') | Out-Host
+& (Join-Path $Workspace.Library 'Sources/Windows/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $Workspace.Library 'Components.json') | Out-Host
 
 # Check consistency with the single release version source.
 $version = Get-Content -LiteralPath (Join-Path $Workspace.Library 'Version.json') -Raw | ConvertFrom-Json

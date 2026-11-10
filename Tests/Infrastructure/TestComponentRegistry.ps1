@@ -9,7 +9,7 @@ $repository = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $fixture = Join-Path $repository 'Tests/Fixtures/Libraries/Registry'
 
 # Calculate changes without writing to the fixture or the main repository.
-$updates = @(& (Join-Path $repository 'Scripts/PowerShell/GenerateComponentProjects.ps1') -RepositoryRoot $fixture -PassThru)
+$updates = @(& (Join-Path $repository 'Sources/Windows/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $fixture 'Components.json') -PassThru)
 $solution = @($updates | Where-Object RelativePath -eq 'UniversalDevKit.sln')
 if ($solution.Count -ne 1) {
     throw 'Missing solution update'

@@ -23,7 +23,7 @@ $shortLibrary = Join-Path $workspace.Root 'L'
 Copy-Item -LiteralPath $library -Destination $shortLibrary -Recurse
 $library = $shortLibrary
 $buildRoot = Join-Path $library '!artifacts/tests/ABI'
-& (Join-Path $library 'Scripts/PowerShell/GenerateComponentProjects.ps1') -RepositoryRoot $library
+& (Join-Path $library 'Sources/Windows/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $library 'Components.json')
 function InvokeCMake([string[]]$Arguments) {
     & $CMake @Arguments | Out-Host
     if ($LASTEXITCODE -ne 0) { throw "CMake failed: $($Arguments -join ' ')" }

@@ -13,7 +13,7 @@ $repository = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $workspace = New-TestWorkspace $repository WorkingTree HEAD
 $fixture = Join-Path $repository 'Tests/Fixtures/Libraries/HeaderOnly'
 Get-ChildItem -LiteralPath $fixture -Force | Copy-Item -Destination $workspace.Library -Recurse -Force
-$generator = Join-Path $workspace.Library 'Scripts/PowerShell/GenerateComponentProjects.ps1'
+$generator = Join-Path $workspace.Library 'Sources/Windows/ProjectTools/Generate.ps1'
 
 function InvokeChecked([string]$Tool, [string[]]$Arguments) {
     & $Tool @Arguments | Out-Host
@@ -22,7 +22,7 @@ function InvokeChecked([string]$Tool, [string[]]$Arguments) {
 
 try {
     # 1. Header-only creates Shared and INTERFACE targets without empty archives or DLLs.
-    & $generator -RepositoryRoot $workspace.Library
+    & $generator -ManifestPath (Join-Path $workspace.Library 'Components.json')
     . (Join-Path $workspace.Library 'Scripts/PowerShell/Modules/Module.Udk.Connection/Private/ConnectionPlan.ps1')
     $registry = @{
         HeaderProbe = [pscustomobject]@{ Kind = 'headerOnly'; Dependencies = @() }
@@ -54,7 +54,7 @@ try {
     foreach ($case in Get-ChildItem (Join-Path $repository 'Tests/Fixtures/RegistryContract') -Filter '*.json') {
         Copy-Item -LiteralPath $case.FullName -Destination (Join-Path $workspace.Library 'Projects/Components/HeaderProbe.json') -Force
         $rejected = $false
-        try { & $generator -RepositoryRoot $workspace.Library -Check } catch { $rejected = $true }
+        try { & $generator -ManifestPath (Join-Path $workspace.Library 'Components.json') -Check } catch { $rejected = $true }
         if (-not $rejected) { throw "MSBuild accepted $($case.Name)" }
         & $CMake '-S' $workspace.Library '-B' $build | Out-Host
         if ($LASTEXITCODE -eq 0) { throw "CMake accepted $($case.Name)" }
@@ -64,7 +64,7 @@ try {
     foreach ($case in Get-ChildItem (Join-Path $repository 'Tests/Fixtures/RegistryContract/Manifest') -Filter '*.json') {
         Copy-Item -LiteralPath $case.FullName -Destination (Join-Path $workspace.Library 'Components.json') -Force
         $rejected = $false
-        try { & $generator -RepositoryRoot $workspace.Library -Check } catch { $rejected = $true }
+        try { & $generator -ManifestPath (Join-Path $workspace.Library 'Components.json') -Check } catch { $rejected = $true }
         if (-not $rejected) { throw "MSBuild accepted manifest $($case.Name)" }
         & $CMake '-S' $workspace.Library '-B' $build | Out-Host
         if ($LASTEXITCODE -eq 0) { throw "CMake accepted manifest $($case.Name)" }

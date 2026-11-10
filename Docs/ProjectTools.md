@@ -9,7 +9,7 @@ pwsh -File Sources/Windows/ProjectTools/Generate.ps1 -ManifestPath Components.js
 pwsh -File Sources/Windows/ProjectTools/Generate.ps1 -ManifestPath Components.json -Check
 ```
 
-Scripts/PowerShell/GenerateComponentProjects.ps1 сохранён только для совместимости существующих проверок и Connect. Реализация перенесена в поставку ProjectTools. Connect и его контракт не изменены.
+CMD, проверки и Connect вызывают Sources/Windows/ProjectTools/Generate.ps1 напрямую с параметром -ManifestPath. Обёртка Scripts/PowerShell больше не используется. Логика Connect и его контракт не изменены.
 
 Shared и метаданные UDK формирует профиль UDK; библиотечные проекты и обновление solution выполняются общей точкой входа. Static/Dynamic теперь полностью генерируются. Существующие GUID сохраняются. Пользовательские настройки выносятся в buildExtensions. Изменение шаблона обновляет существующие проекты при следующем запуске.
 

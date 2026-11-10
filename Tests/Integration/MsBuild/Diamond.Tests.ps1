@@ -24,7 +24,7 @@ foreach ($variant in @('Shared', 'Static', 'Dynamic', 'PrivateStatic')) {
     foreach ($app in @('App1', 'App2')) {
         Copy-Item -LiteralPath (Join-Path $fixture "Consumer/$app/Main.cpp") -Destination (Join-Path $case.Consumer "$app/Main.cpp") -Force
     }
-    & (Join-Path $case.Library 'Scripts/PowerShell/GenerateComponentProjects.ps1') | Out-Host
+    & (Join-Path $case.Library 'Sources/Windows/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $case.Library 'Components.json') | Out-Host
     $mode = if ($variant -eq 'PrivateStatic') { 'Dynamic' } else { $variant }
     $connect = Join-Path $case.Library 'Scripts/PowerShell/Connect.ps1'
     $solution = Join-Path $case.Consumer 'Consumer.sln'
