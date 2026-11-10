@@ -86,6 +86,8 @@ Delivery.json версии 1 выбирает adapter=nuget, id, supportedPlatfo
 
 ## Отбор файлов в contents
 
+В описаниях пакетов сначала перечисляются все записи contents с project, затем записи с source. Порядок внутри каждой группы сохраняется.
+
 В PackageTools 0.4.0 отбор выполняется только напрямую в contents: root по умолчанию равен output, path — точке. Для CMake укажите root=build или root=install, для nuget-restore — root=package. Корень проверяется при построении плана; его существование и файлы — после выполнения проекта. Маски include/exclude появились в версии 0.3.0 и сохраняют прежние правила.
 
 ```json

@@ -30,6 +30,14 @@
       ]
     },
     {
+      "project": "android",
+      "root": "output",
+      "destination": ".",
+      "deliveries": [
+        "Android"
+      ]
+    },
+    {
       "source": ".",
       "include": [
         "LICENSE",
@@ -42,14 +50,6 @@
       },
       "deliveries": [
         "NuGet"
-      ]
-    },
-    {
-      "project": "android",
-      "root": "output",
-      "destination": ".",
-      "deliveries": [
-        "Android"
       ]
     }
   ],
