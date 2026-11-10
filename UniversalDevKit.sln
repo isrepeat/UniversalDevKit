@@ -2,104 +2,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.10.12224.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Repository", "!Repository", "{01643071-A00B-441F-B890-826B2408BC9D}"
 	ProjectSection(SolutionItems) = preProject
-		Scripts\Connect.cmd = Scripts\Connect.cmd
-		Scripts\GenerateComponentProjects.cmd = Scripts\GenerateComponentProjects.cmd
-		Scripts\ResetBuildDrives.cmd = Scripts\ResetBuildDrives.cmd
-		Scripts\Setup.cmd = Scripts\Setup.cmd
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{D832A37F-03A2-4EBD-9FF9-BC27D415378B}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\PowerShell\AutoPrMerge.ps1 = Scripts\PowerShell\AutoPrMerge.ps1
-		Scripts\PowerShell\Connect.ps1 = Scripts\PowerShell\Connect.ps1
-		Scripts\PowerShell\Connect.Tests.ps1 = Scripts\PowerShell\Connect.Tests.ps1
-		Scripts\PowerShell\ConnectConsole.ps1 = Scripts\PowerShell\ConnectConsole.ps1
-		Scripts\PowerShell\FormatXmlAttributes.ps1 = Scripts\PowerShell\FormatXmlAttributes.ps1
-		Scripts\PowerShell\GenerateComponentProjects.ps1 = Scripts\PowerShell\GenerateComponentProjects.ps1
-		Scripts\PowerShell\GetSolutionInjector.ps1 = Scripts\PowerShell\GetSolutionInjector.ps1
-		Scripts\PowerShell\SyncRuntimeLibraries.ps1 = Scripts\PowerShell\SyncRuntimeLibraries.ps1
-		Scripts\PowerShell\UpdateProjectFilters.ps1 = Scripts\PowerShell\UpdateProjectFilters.ps1
-		Scripts\PowerShell\ArtifactDirectories.ps1 = Scripts\PowerShell\ArtifactDirectories.ps1
-		Scripts\PowerShell\GetNuGet.ps1 = Scripts\PowerShell\GetNuGet.ps1
-		Scripts\PowerShell\ResetBuildDrives.ps1 = Scripts\PowerShell\ResetBuildDrives.ps1
-		Scripts\PowerShell\Setup.ps1 = Scripts\PowerShell\Setup.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{13DA8639-4234-4E82-9423-056A19840860}"
-	ProjectSection(SolutionItems) = preProject
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4-1E80-4386-ACBA-A8B9D984FC44}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\BinaryReleasePolicy.cmake = Projects\Cmake\BinaryReleasePolicy.cmake
-		Projects\Cmake\BuildIdentity.cmake = Projects\Cmake\BuildIdentity.cmake
-		Projects\Cmake\BuildIdentity.txt.in = Projects\Cmake\BuildIdentity.txt.in
-		Projects\Cmake\ComponentDependencies.cmake = Projects\Cmake\ComponentDependencies.cmake
-		Projects\Cmake\ComponentRequirements.cmake = Projects\Cmake\ComponentRequirements.cmake
-		Projects\Cmake\InstallPackageGuard.cmake.in = Projects\Cmake\InstallPackageGuard.cmake.in
-		Projects\Cmake\PackageAbi.h.in = Projects\Cmake\PackageAbi.h.in
-		Projects\Cmake\PackageCompatibility.cmake.in = Projects\Cmake\PackageCompatibility.cmake.in
-		Projects\Cmake\PackageMetadata.cmake = Projects\Cmake\PackageMetadata.cmake
-		Projects\Cmake\RegistryContract.cmake = Projects\Cmake\RegistryContract.cmake
-		Projects\Cmake\UniversalDevKitConfig.cmake.in = Projects\Cmake\UniversalDevKitConfig.cmake.in
-		Projects\Cmake\Version.cmake = Projects\Cmake\Version.cmake
-		Projects\Cmake\ComponentCompile.cmake = Projects\Cmake\ComponentCompile.cmake
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{8CB5D103-21B9-4651-A4A1-671107F28847}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Components\Diagnostic.json = Projects\Components\Diagnostic.json
-		Projects\Components\Helpers.json = Projects\Components\Helpers.json
-		Projects\Components\OpenGLESRenderer.json = Projects\Components\OpenGLESRenderer.json
-		Projects\Components\XamlRuntime.json = Projects\Components\XamlRuntime.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\MsBuild\BuildLayout.props = Projects\MsBuild\BuildLayout.props
-		Projects\MsBuild\UniversalDevKit.props = Projects\MsBuild\UniversalDevKit.props
-		Projects\MsBuild\UniversalDevKit.Requirements.targets = Projects\MsBuild\UniversalDevKit.Requirements.targets
-		Projects\MsBuild\UniversalDevKit.Runtime.targets = Projects\MsBuild\UniversalDevKit.Runtime.targets
-		Projects\MsBuild\UniversalDevKit.Sources.targets = Projects\MsBuild\UniversalDevKit.Sources.targets
-		Projects\MsBuild\UniversalDevKit.Version.props = Projects\MsBuild\UniversalDevKit.Version.props
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{8B6A058C-7402-4392-8956-6B1489D9E118}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Module.Udk.Connection", "Module.Udk.Connection", "{18F6F60D-7635-4701-A27F-616A9A9C251A}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\PowerShell\Modules\Module.Udk.Connection\Module.Udk.Connection.psm1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Module.Udk.Connection.psm1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{BB4173F9-2ECC-455A-AE66-4115A51C9396}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ComponentRegistry.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ComponentRegistry.ps1
-		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionPlan.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionPlan.ps1
-		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionState.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionState.ps1
-		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionTransaction.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionTransaction.ps1
-		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ProjectIntegration.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ProjectIntegration.ps1
-		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\Requirements.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\Requirements.ps1
-		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\SolutionIntegration.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\SolutionIntegration.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Module.Udk.Console", "Module.Udk.Console", "{D9146E66-5EB7-4919-B6CC-F36544D8ACE4}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\PowerShell\Modules\Module.Udk.Console\Module.Udk.Console.psm1 = Scripts\PowerShell\Modules\Module.Udk.Console\Module.Udk.Console.psm1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{7DAB2C47-91F8-4085-8786-94437B89820E}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\PowerShell\Modules\Module.Udk.Console\Private\Menus.ps1 = Scripts\PowerShell\Modules\Module.Udk.Console\Private\Menus.ps1
-		Scripts\PowerShell\Modules\Module.Udk.Console\Private\Style.ps1 = Scripts\PowerShell\Modules\Module.Udk.Console\Private\Style.ps1
-		Scripts\PowerShell\Modules\Module.Udk.Console\Private\Wizard.ps1 = Scripts\PowerShell\Modules\Module.Udk.Console\Private\Wizard.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{CB7EEAB5-39FB-49B2-95A1-72774A80F5B8}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\Tools\README.md = Scripts\Tools\README.md
-		Scripts\Tools\SolutionInjector.json = Scripts\Tools\SolutionInjector.json
+		.gitignore = .gitignore
+		AGENTS.md = AGENTS.md
+		AutoPrMerge.bat = AutoPrMerge.bat
+		BinaryReleasePolicy.json = BinaryReleasePolicy.json
+		CMakeLists.txt = CMakeLists.txt
+		CMakePresets.json = CMakePresets.json
+		Components.json = Components.json
+		LICENSE = LICENSE
+		README.md = README.md
+		TODO.md = TODO.md
+		Version.json = Version.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{0458F395-ECF0-44BA-9C83-38D6F7E56AF3}"
@@ -131,132 +46,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{0458F395-E
 		Docs\Artifacts.md = Docs\Artifacts.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Repository", "!Repository", "{01643071-A00B-441F-B890-826B2408BC9D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Includes", "Includes", "{CC3C64B5-A5FC-8F8E-720E-921A21F00229}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{71FB51E6-F9B0-937E-39F6-38EFD7C91189}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{9D17877F-6145-90EC-14CD-F14A1A24D13C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniversalDevKit", "UniversalDevKit", "{6625778A-E44C-F016-70B3-507A374B34BF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{244E0458-C3ED-6881-0EF2-37E679480FF3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{55C13CE1-FBB1-5BD5-BD41-2250C3A423B1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApplicationFramework", "ApplicationFramework", "{DCEE23F9-A0C0-19CB-258B-9D2A5A9171DD}"
 	ProjectSection(SolutionItems) = preProject
-		.gitignore = .gitignore
-		AGENTS.md = AGENTS.md
-		AutoPrMerge.bat = AutoPrMerge.bat
-		BinaryReleasePolicy.json = BinaryReleasePolicy.json
-		CMakeLists.txt = CMakeLists.txt
-		CMakePresets.json = CMakePresets.json
-		Components.json = Components.json
-		LICENSE = LICENSE
-		README.md = README.md
-		TODO.md = TODO.md
-		Version.json = Version.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{A2BAABAE-02D4-4685-9081-F599C5AF7D30}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\PowerShell\Templates\Component.vcxproj.in = Scripts\PowerShell\Templates\Component.vcxproj.in
-		Scripts\PowerShell\Templates\ComponentExport.h.in = Scripts\PowerShell\Templates\ComponentExport.h.in
-		Scripts\PowerShell\Templates\Export.h.in = Scripts\PowerShell\Templates\Export.h.in
-		Scripts\PowerShell\Templates\HeaderCheck.cpp.in = Scripts\PowerShell\Templates\HeaderCheck.cpp.in
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{DC091494-5AC6-46E6-BA6D-61441682BB62}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatform", "{CA7AB659-38EB-4E98-99A7-95A777DCD074}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\Packages\CrossPlatform\Pack.Diagnostic.cmd = Scripts\Packages\CrossPlatform\Pack.Diagnostic.cmd
-		Scripts\Packages\CrossPlatform\Pack.Helpers.cmd = Scripts\Packages\CrossPlatform\Pack.Helpers.cmd
-		Scripts\Packages\CrossPlatform\Pack.OpenGLESRenderer.cmd = Scripts\Packages\CrossPlatform\Pack.OpenGLESRenderer.cmd
-		Scripts\Packages\CrossPlatform\Pack.XamlRuntime.cmd = Scripts\Packages\CrossPlatform\Pack.XamlRuntime.cmd
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MessagingModule", "MessagingModule", "{BC0651B9-7642-4436-BF89-5D8B8BD4F4A0}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\PowerShell\Modules\MessagingModule\MessagingModule.psm1 = Scripts\PowerShell\Modules\MessagingModule\MessagingModule.psm1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000300}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\Android\ResolveToolchain.ps1 = Scripts\Android\ResolveToolchain.ps1
-		Scripts\Android\Toolchain.json = Scripts\Android\Toolchain.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{A63D24B8-5B7A-45B8-9C11-000000000301}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.jar = Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.jar
-		Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.properties = Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.properties
-		Scripts\Android\Gradle\gradlew = Scripts\Android\Gradle\gradlew
-		Scripts\Android\Gradle\gradlew.bat = Scripts\Android\Gradle\gradlew.bat
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Shared", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems", "{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{50CDBD24-894E-0FD6-7C08-442980AADBB7}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.HeaderCheck", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj", "{E21B97A1-D847-2938-4E29-760523C97389}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\MsBuild\Diagnostic\Spdlog.targets = Projects\MsBuild\Diagnostic\Spdlog.targets
-		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dependencies.props = Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dependencies.props
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Dynamic", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj", "{F104C833-785D-E25F-5F10-B46284462A11}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Shared", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems", "{AB97876A-F25A-4AAE-BACD-D32C776BB261}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLESRenderer", "{1C920419-6FCA-97AA-DE2F-11C8037C1EF6}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\MsBuild\OpenGLESRenderer\Build.targets = Projects\MsBuild\OpenGLESRenderer\Build.targets
-		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dependencies.props = Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dependencies.props
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlRuntime", "XamlRuntime", "{A62B830A-BE58-54F9-6766-E95D2B04A2A8}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\MsBuild\XamlRuntime\Build.targets = Projects\MsBuild\XamlRuntime\Build.targets
-		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dependencies.props = Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dependencies.props
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Shared", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems", "{364E96CB-9D8A-40B0-8455-6A31A15A36B0}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Static", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Static.vcxproj", "{220B0789-1F04-54D3-18E5-5DB99E91172F}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Dynamic", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dynamic.vcxproj", "{77311056-84A3-4B57-AEF1-7A76F17C500C}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Shared", "Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems", "{3E00A02D-46F3-432B-91C8-5D459F70C525}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Static", "Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Static.vcxproj", "{6CBDC266-9B42-F741-03EB-F610AB72E1B1}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Dynamic", "Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dynamic.vcxproj", "{FA67D7FD-393A-E9BC-F2A4-2570B2929973}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{03C0B81C-6B57-4791-B5F3-9D2D48CE2544}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\Diagnostic\Spdlog.cmake = Projects\Cmake\Diagnostic\Spdlog.cmake
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLESRenderer", "{A82C4E93-051E-4C0B-B705-5875F748742C}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\OpenGLESRenderer\AngleConfig.cmake.in = Projects\Cmake\OpenGLESRenderer\AngleConfig.cmake.in
-		Projects\Cmake\OpenGLESRenderer\Build.cmake = Projects\Cmake\OpenGLESRenderer\Build.cmake
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{923F42D8-57A1-4A1B-8FB9-35B5D73A7F8A}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\XamlCompiler\CMakeLists.txt = Projects\Cmake\XamlCompiler\CMakeLists.txt
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlRuntime", "XamlRuntime", "{189A1B26-8EB9-4D78-A955-CF1E45F39257}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\XamlRuntime\Build.cmake = Projects\Cmake\XamlRuntime\Build.cmake
-		Projects\Cmake\XamlRuntime\Consumer.cmake = Projects\Cmake\XamlRuntime\Consumer.cmake
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{5E16CA24-F8A2-436C-86B6-6511A703FB82}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\Packages\Android\Pack.AndroidAppKit.cmd = Scripts\Packages\Android\Pack.AndroidAppKit.cmd
-		Scripts\Packages\Android\Pack.AndroidBuildTools.cmd = Scripts\Packages\Android\Pack.AndroidBuildTools.cmd
-		Scripts\Packages\Android\Pack.AndroidCoreSdk.cmd = Scripts\Packages\Android\Pack.AndroidCoreSdk.cmd
-		Scripts\Packages\Android\Pack.AndroidTemplates.cmd = Scripts\Packages\Android\Pack.AndroidTemplates.cmd
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{1B943F80-0EB6-4134-A02A-2F1FF121CFEC}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\Packages\Windows\Pack.XamlCompiler.cmd = Scripts\Packages\Windows\Pack.XamlCompiler.cmd
-		Scripts\Packages\Windows\Pack.PackageTools.cmd = Scripts\Packages\Windows\Pack.PackageTools.cmd
+		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\ApplicationSessionBase.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\ApplicationSessionBase.h
+		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\AppSessionControllerBase.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\AppSessionControllerBase.h
+		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.h
+		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\PageManagerBase.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\PageManagerBase.h
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{066DAD5F-063F-43BF-8ADC-0E76A36CA54D}"
@@ -424,6 +231,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{59FB48FD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{45569702-BF11-421C-A43A-03D1364E3C95}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PackageTools", "PackageTools", "{D7F020F8-ED67-EA28-7A50-A160CA8B9554}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Windows\PackageTools\Package.json = Packages\Windows\PackageTools\Package.json
+		Packages\Windows\PackageTools\README.md = Packages\Windows\PackageTools\README.md
+		Packages\Windows\PackageTools\Version.json = Packages\Windows\PackageTools\Version.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{9F537FBC-3641-B48E-6E02-3CC1AC523A09}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{9DFA8DD9-A595-773B-B68B-E71B493C5B49}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\Windows\PackageTools\Delivery\NuGet\Delivery.json = Packages\Windows\PackageTools\Delivery\NuGet\Delivery.json
+		Packages\Windows\PackageTools\Delivery\NuGet\UniversalDevKit.PackageTools.nuspec = Packages\Windows\PackageTools\Delivery\NuGet\UniversalDevKit.PackageTools.nuspec
+		Packages\Windows\PackageTools\Delivery\NuGet\UniversalDevKit.PackageTools.targets = Packages\Windows\PackageTools\Delivery\NuGet\UniversalDevKit.PackageTools.targets
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{C25B8C43-91C7-4F23-B186-05E37C145720}"
 	ProjectSection(SolutionItems) = preProject
 		Packages\Windows\XamlCompiler\Package.json = Packages\Windows\XamlCompiler\Package.json
@@ -437,11 +260,62 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{B398F253
 		Packages\Windows\XamlCompiler\Delivery\NuGet\UniversalDevKit.XamlCompiler.nuspec = Packages\Windows\XamlCompiler\Delivery\NuGet\UniversalDevKit.XamlCompiler.nuspec
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{13DA8639-4234-4E82-9423-056A19840860}"
+	ProjectSection(SolutionItems) = preProject
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4-1E80-4386-ACBA-A8B9D984FC44}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\BinaryReleasePolicy.cmake = Projects\Cmake\BinaryReleasePolicy.cmake
+		Projects\Cmake\BuildIdentity.cmake = Projects\Cmake\BuildIdentity.cmake
+		Projects\Cmake\BuildIdentity.txt.in = Projects\Cmake\BuildIdentity.txt.in
+		Projects\Cmake\ComponentDependencies.cmake = Projects\Cmake\ComponentDependencies.cmake
+		Projects\Cmake\ComponentRequirements.cmake = Projects\Cmake\ComponentRequirements.cmake
+		Projects\Cmake\InstallPackageGuard.cmake.in = Projects\Cmake\InstallPackageGuard.cmake.in
+		Projects\Cmake\PackageAbi.h.in = Projects\Cmake\PackageAbi.h.in
+		Projects\Cmake\PackageCompatibility.cmake.in = Projects\Cmake\PackageCompatibility.cmake.in
+		Projects\Cmake\PackageMetadata.cmake = Projects\Cmake\PackageMetadata.cmake
+		Projects\Cmake\RegistryContract.cmake = Projects\Cmake\RegistryContract.cmake
+		Projects\Cmake\UniversalDevKitConfig.cmake.in = Projects\Cmake\UniversalDevKitConfig.cmake.in
+		Projects\Cmake\Version.cmake = Projects\Cmake\Version.cmake
+		Projects\Cmake\ComponentCompile.cmake = Projects\Cmake\ComponentCompile.cmake
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{ADBA3BA9-F6AC-7A5C-7A27-59AE40606576}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApplicationFramework", "ApplicationFramework", "{E2BB8948-A33B-7D06-CADA-F3B535F84401}"
 	ProjectSection(SolutionItems) = preProject
 		Projects\Cmake\AndroidBuildTools\ApplicationFramework\CMakeLists.txt = Projects\Cmake\AndroidBuildTools\ApplicationFramework\CMakeLists.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{03C0B81C-6B57-4791-B5F3-9D2D48CE2544}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\Diagnostic\Spdlog.cmake = Projects\Cmake\Diagnostic\Spdlog.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLESRenderer", "{A82C4E93-051E-4C0B-B705-5875F748742C}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\OpenGLESRenderer\AngleConfig.cmake.in = Projects\Cmake\OpenGLESRenderer\AngleConfig.cmake.in
+		Projects\Cmake\OpenGLESRenderer\Build.cmake = Projects\Cmake\OpenGLESRenderer\Build.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{923F42D8-57A1-4A1B-8FB9-35B5D73A7F8A}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\XamlCompiler\CMakeLists.txt = Projects\Cmake\XamlCompiler\CMakeLists.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlRuntime", "XamlRuntime", "{189A1B26-8EB9-4D78-A955-CF1E45F39257}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Cmake\XamlRuntime\Build.cmake = Projects\Cmake\XamlRuntime\Build.cmake
+		Projects\Cmake\XamlRuntime\Consumer.cmake = Projects\Cmake\XamlRuntime\Consumer.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{8CB5D103-21B9-4651-A4A1-671107F28847}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Components\Diagnostic.json = Projects\Components\Diagnostic.json
+		Projects\Components\Helpers.json = Projects\Components\Helpers.json
+		Projects\Components\OpenGLESRenderer.json = Projects\Components\OpenGLESRenderer.json
+		Projects\Components\XamlRuntime.json = Projects\Components\XamlRuntime.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{D2E0D44F-71F1-1478-F989-466955EC6F80}"
@@ -477,24 +351,166 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidcoresdk", "androidco
 		Projects\Gradle\AndroidCoreSdk\androidcoresdk\build.gradle.kts = Projects\Gradle\AndroidCoreSdk\androidcoresdk\build.gradle.kts
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Includes", "Includes", "{CC3C64B5-A5FC-8F8E-720E-921A21F00229}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{71FB51E6-F9B0-937E-39F6-38EFD7C91189}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{9D17877F-6145-90EC-14CD-F14A1A24D13C}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniversalDevKit", "UniversalDevKit", "{6625778A-E44C-F016-70B3-507A374B34BF}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{244E0458-C3ED-6881-0EF2-37E679480FF3}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{55C13CE1-FBB1-5BD5-BD41-2250C3A423B1}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApplicationFramework", "ApplicationFramework", "{DCEE23F9-A0C0-19CB-258B-9D2A5A9171DD}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}"
 	ProjectSection(SolutionItems) = preProject
-		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\ApplicationSessionBase.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\ApplicationSessionBase.h
-		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\AppSessionControllerBase.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\AppSessionControllerBase.h
-		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.h
-		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\PageManagerBase.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\PageManagerBase.h
+		Projects\MsBuild\BuildLayout.props = Projects\MsBuild\BuildLayout.props
+		Projects\MsBuild\UniversalDevKit.props = Projects\MsBuild\UniversalDevKit.props
+		Projects\MsBuild\UniversalDevKit.Requirements.targets = Projects\MsBuild\UniversalDevKit.Requirements.targets
+		Projects\MsBuild\UniversalDevKit.Runtime.targets = Projects\MsBuild\UniversalDevKit.Runtime.targets
+		Projects\MsBuild\UniversalDevKit.Sources.targets = Projects\MsBuild\UniversalDevKit.Sources.targets
+		Projects\MsBuild\UniversalDevKit.Version.props = Projects\MsBuild\UniversalDevKit.Version.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\MsBuild\Diagnostic\Spdlog.targets = Projects\MsBuild\Diagnostic\Spdlog.targets
+		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dependencies.props = Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dependencies.props
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Dynamic", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj", "{F104C833-785D-E25F-5F10-B46284462A11}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Shared", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems", "{AB97876A-F25A-4AAE-BACD-D32C776BB261}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{50CDBD24-894E-0FD6-7C08-442980AADBB7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.HeaderCheck", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj", "{E21B97A1-D847-2938-4E29-760523C97389}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Shared", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems", "{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLESRenderer", "{1C920419-6FCA-97AA-DE2F-11C8037C1EF6}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\MsBuild\OpenGLESRenderer\Build.targets = Projects\MsBuild\OpenGLESRenderer\Build.targets
+		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dependencies.props = Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dependencies.props
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Dynamic", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dynamic.vcxproj", "{77311056-84A3-4B57-AEF1-7A76F17C500C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Static", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Static.vcxproj", "{220B0789-1F04-54D3-18E5-5DB99E91172F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Shared", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems", "{364E96CB-9D8A-40B0-8455-6A31A15A36B0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlRuntime", "XamlRuntime", "{A62B830A-BE58-54F9-6766-E95D2B04A2A8}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\MsBuild\XamlRuntime\Build.targets = Projects\MsBuild\XamlRuntime\Build.targets
+		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dependencies.props = Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dependencies.props
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Dynamic", "Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dynamic.vcxproj", "{FA67D7FD-393A-E9BC-F2A4-2570B2929973}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Static", "Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Static.vcxproj", "{6CBDC266-9B42-F741-03EB-F610AB72E1B1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Shared", "Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems", "{3E00A02D-46F3-432B-91C8-5D459F70C525}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Connect.cmd = Scripts\Connect.cmd
+		Scripts\GenerateComponentProjects.cmd = Scripts\GenerateComponentProjects.cmd
+		Scripts\ResetBuildDrives.cmd = Scripts\ResetBuildDrives.cmd
+		Scripts\Setup.cmd = Scripts\Setup.cmd
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{A63D24B8-5B7A-45B8-9C11-000000000300}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Android\ResolveToolchain.ps1 = Scripts\Android\ResolveToolchain.ps1
+		Scripts\Android\Toolchain.json = Scripts\Android\Toolchain.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{A63D24B8-5B7A-45B8-9C11-000000000301}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.jar = Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.jar
+		Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.properties = Scripts\Android\Gradle\gradle\wrapper\gradle-wrapper.properties
+		Scripts\Android\Gradle\gradlew = Scripts\Android\Gradle\gradlew
+		Scripts\Android\Gradle\gradlew.bat = Scripts\Android\Gradle\gradlew.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{DC091494-5AC6-46E6-BA6D-61441682BB62}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{5E16CA24-F8A2-436C-86B6-6511A703FB82}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Packages\Android\Pack.AndroidAppKit.cmd = Scripts\Packages\Android\Pack.AndroidAppKit.cmd
+		Scripts\Packages\Android\Pack.AndroidBuildTools.cmd = Scripts\Packages\Android\Pack.AndroidBuildTools.cmd
+		Scripts\Packages\Android\Pack.AndroidCoreSdk.cmd = Scripts\Packages\Android\Pack.AndroidCoreSdk.cmd
+		Scripts\Packages\Android\Pack.AndroidTemplates.cmd = Scripts\Packages\Android\Pack.AndroidTemplates.cmd
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatform", "{CA7AB659-38EB-4E98-99A7-95A777DCD074}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Packages\CrossPlatform\Pack.Diagnostic.cmd = Scripts\Packages\CrossPlatform\Pack.Diagnostic.cmd
+		Scripts\Packages\CrossPlatform\Pack.Helpers.cmd = Scripts\Packages\CrossPlatform\Pack.Helpers.cmd
+		Scripts\Packages\CrossPlatform\Pack.OpenGLESRenderer.cmd = Scripts\Packages\CrossPlatform\Pack.OpenGLESRenderer.cmd
+		Scripts\Packages\CrossPlatform\Pack.XamlRuntime.cmd = Scripts\Packages\CrossPlatform\Pack.XamlRuntime.cmd
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{1B943F80-0EB6-4134-A02A-2F1FF121CFEC}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Packages\Windows\Pack.XamlCompiler.cmd = Scripts\Packages\Windows\Pack.XamlCompiler.cmd
+		Scripts\Packages\Windows\Pack.PackageTools.cmd = Scripts\Packages\Windows\Pack.PackageTools.cmd
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{D832A37F-03A2-4EBD-9FF9-BC27D415378B}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\PowerShell\AutoPrMerge.ps1 = Scripts\PowerShell\AutoPrMerge.ps1
+		Scripts\PowerShell\Connect.ps1 = Scripts\PowerShell\Connect.ps1
+		Scripts\PowerShell\Connect.Tests.ps1 = Scripts\PowerShell\Connect.Tests.ps1
+		Scripts\PowerShell\ConnectConsole.ps1 = Scripts\PowerShell\ConnectConsole.ps1
+		Scripts\PowerShell\FormatXmlAttributes.ps1 = Scripts\PowerShell\FormatXmlAttributes.ps1
+		Scripts\PowerShell\GenerateComponentProjects.ps1 = Scripts\PowerShell\GenerateComponentProjects.ps1
+		Scripts\PowerShell\GetSolutionInjector.ps1 = Scripts\PowerShell\GetSolutionInjector.ps1
+		Scripts\PowerShell\SyncRuntimeLibraries.ps1 = Scripts\PowerShell\SyncRuntimeLibraries.ps1
+		Scripts\PowerShell\UpdateProjectFilters.ps1 = Scripts\PowerShell\UpdateProjectFilters.ps1
+		Scripts\PowerShell\ArtifactDirectories.ps1 = Scripts\PowerShell\ArtifactDirectories.ps1
+		Scripts\PowerShell\GetNuGet.ps1 = Scripts\PowerShell\GetNuGet.ps1
+		Scripts\PowerShell\ResetBuildDrives.ps1 = Scripts\PowerShell\ResetBuildDrives.ps1
+		Scripts\PowerShell\Setup.ps1 = Scripts\PowerShell\Setup.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{8B6A058C-7402-4392-8956-6B1489D9E118}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MessagingModule", "MessagingModule", "{BC0651B9-7642-4436-BF89-5D8B8BD4F4A0}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\PowerShell\Modules\MessagingModule\MessagingModule.psm1 = Scripts\PowerShell\Modules\MessagingModule\MessagingModule.psm1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Module.Udk.Connection", "Module.Udk.Connection", "{18F6F60D-7635-4701-A27F-616A9A9C251A}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Module.Udk.Connection.psm1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Module.Udk.Connection.psm1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{BB4173F9-2ECC-455A-AE66-4115A51C9396}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ComponentRegistry.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ComponentRegistry.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionPlan.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionPlan.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionState.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionState.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionTransaction.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ConnectionTransaction.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ProjectIntegration.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\ProjectIntegration.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\Requirements.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\Requirements.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Connection\Private\SolutionIntegration.ps1 = Scripts\PowerShell\Modules\Module.Udk.Connection\Private\SolutionIntegration.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Module.Udk.Console", "Module.Udk.Console", "{D9146E66-5EB7-4919-B6CC-F36544D8ACE4}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\PowerShell\Modules\Module.Udk.Console\Module.Udk.Console.psm1 = Scripts\PowerShell\Modules\Module.Udk.Console\Module.Udk.Console.psm1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{7DAB2C47-91F8-4085-8786-94437B89820E}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\PowerShell\Modules\Module.Udk.Console\Private\Menus.ps1 = Scripts\PowerShell\Modules\Module.Udk.Console\Private\Menus.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Console\Private\Style.ps1 = Scripts\PowerShell\Modules\Module.Udk.Console\Private\Style.ps1
+		Scripts\PowerShell\Modules\Module.Udk.Console\Private\Wizard.ps1 = Scripts\PowerShell\Modules\Module.Udk.Console\Private\Wizard.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{A2BAABAE-02D4-4685-9081-F599C5AF7D30}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\PowerShell\Templates\Component.vcxproj.in = Scripts\PowerShell\Templates\Component.vcxproj.in
+		Scripts\PowerShell\Templates\ComponentExport.h.in = Scripts\PowerShell\Templates\ComponentExport.h.in
+		Scripts\PowerShell\Templates\Export.h.in = Scripts\PowerShell\Templates\Export.h.in
+		Scripts\PowerShell\Templates\HeaderCheck.cpp.in = Scripts\PowerShell\Templates\HeaderCheck.cpp.in
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{CB7EEAB5-39FB-49B2-95A1-72774A80F5B8}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Tools\README.md = Scripts\Tools\README.md
+		Scripts\Tools\SolutionInjector.json = Scripts\Tools\SolutionInjector.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{A9963E0C-F9B5-4635-505D-54E094B1F113}"
@@ -690,6 +706,43 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application"
 		Sources\Android\AndroidTemplates\Templates\Application\version.properties = Sources\Android\AndroidTemplates\Templates\Application\version.properties
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cmake", "cmake", "{0B0BF4AA-D150-0D6A-5F07-8FBEA5294145}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\cmake\AndroidToolchain.cmake = Sources\Android\AndroidTemplates\Templates\Application\cmake\AndroidToolchain.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{5134BE1A-F783-8202-D25D-A30A9D58EEC7}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.debug.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.debug.bat
+		Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.release.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.release.bat
+		Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-debug.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-debug.bat
+		Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-release.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-release.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{16EB1208-65C9-97CC-F7EE-91D4F6183B54}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\Scripts\PowerShell\ensure-apk-updater.ps1 = Sources\Android\AndroidTemplates\Templates\Application\Scripts\PowerShell\ensure-apk-updater.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{954721D1-E3F2-CE5D-E92C-D6B6FF3DA750}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{A9D15F6F-E8E6-215E-B4A8-4EEF838A4827}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\build.gradle.kts = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\build.gradle.kts
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle.properties = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle.properties
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew.bat = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew.bat
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\settings.gradle.kts = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\settings.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gradle", "gradle", "{2D6239A5-1257-7085-A746-2B83BF5833B3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wrapper", "wrapper", "{5F8285EB-50A6-72A5-EC22-272252A78342}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.jar = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.jar
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.properties = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.properties
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "{{Application}}.Android", "{{Application}}.Android", "{B7217065-2D8A-8851-0B4F-46E7CEB4D4F0}"
 	ProjectSection(SolutionItems) = preProject
 		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\build.gradle.kts = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\build.gradle.kts
@@ -719,14 +772,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "drawable", "drawable", "{6D
 		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\drawable\splash_screen.xml = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\drawable\splash_screen.xml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "values-v31", "values-v31", "{3E60607C-2159-1178-7D1D-D2F895A93ECE}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values-v31\themes.xml = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values-v31\themes.xml
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "values", "values", "{1F362129-FF56-E9DA-4626-9846358035F0}"
 	ProjectSection(SolutionItems) = preProject
 		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values\themes.xml = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values\themes.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "values-v31", "values-v31", "{3E60607C-2159-1178-7D1D-D2F895A93ECE}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values-v31\themes.xml = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values-v31\themes.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "xml", "xml", "{3A28BDCD-290B-8EAE-5201-F926C15FA315}"
@@ -827,65 +880,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Control", "Control", "{3424
 		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.UI\Control\.gitkeep = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.UI\Control\.gitkeep
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cmake", "cmake", "{0B0BF4AA-D150-0D6A-5F07-8FBEA5294145}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Android\AndroidTemplates\Templates\Application\cmake\AndroidToolchain.cmake = Sources\Android\AndroidTemplates\Templates\Application\cmake\AndroidToolchain.cmake
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{5134BE1A-F783-8202-D25D-A30A9D58EEC7}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.debug.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.debug.bat
-		Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.release.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.release.bat
-		Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-debug.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-debug.bat
-		Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-release.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-release.bat
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{16EB1208-65C9-97CC-F7EE-91D4F6183B54}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Android\AndroidTemplates\Templates\Application\Scripts\PowerShell\ensure-apk-updater.ps1 = Sources\Android\AndroidTemplates\Templates\Application\Scripts\PowerShell\ensure-apk-updater.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{954721D1-E3F2-CE5D-E92C-D6B6FF3DA750}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{A9D15F6F-E8E6-215E-B4A8-4EEF838A4827}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\build.gradle.kts = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\build.gradle.kts
-		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle.properties = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle.properties
-		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew
-		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew.bat = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew.bat
-		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\settings.gradle.kts = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\settings.gradle.kts
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gradle", "gradle", "{2D6239A5-1257-7085-A746-2B83BF5833B3}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wrapper", "wrapper", "{5F8285EB-50A6-72A5-EC22-272252A78342}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.jar = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.jar
-		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.properties = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.properties
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{91C1626E-08D0-D15F-E92C-49D0A474AFDC}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{15C9DD02-133A-0D54-8BE8-73206CCE738F}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\XamlCompiler\Main.cpp = Sources\Windows\XamlCompiler\Main.cpp
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PackageTools", "PackageTools", "{D7F020F8-ED67-EA28-7A50-A160CA8B9554}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\Windows\PackageTools\Package.json = Packages\Windows\PackageTools\Package.json
-		Packages\Windows\PackageTools\README.md = Packages\Windows\PackageTools\README.md
-		Packages\Windows\PackageTools\Version.json = Packages\Windows\PackageTools\Version.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{9F537FBC-3641-B48E-6E02-3CC1AC523A09}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{9DFA8DD9-A595-773B-B68B-E71B493C5B49}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\Windows\PackageTools\Delivery\NuGet\Delivery.json = Packages\Windows\PackageTools\Delivery\NuGet\Delivery.json
-		Packages\Windows\PackageTools\Delivery\NuGet\UniversalDevKit.PackageTools.nuspec = Packages\Windows\PackageTools\Delivery\NuGet\UniversalDevKit.PackageTools.nuspec
-		Packages\Windows\PackageTools\Delivery\NuGet\UniversalDevKit.PackageTools.targets = Packages\Windows\PackageTools\Delivery\NuGet\UniversalDevKit.PackageTools.targets
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PackageTools", "PackageTools", "{D7274C99-03B8-37D0-1088-3C5B52ABF346}"
 	ProjectSection(SolutionItems) = preProject
@@ -913,6 +908,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{CF47
 		Sources\Windows\PackageTools\Private\GetNuGet.ps1 = Sources\Windows\PackageTools\Private\GetNuGet.ps1
 		Sources\Windows\PackageTools\Private\NuGet.json = Sources\Windows\PackageTools\Private\NuGet.json
 		Sources\Windows\PackageTools\Private\Tools.ps1 = Sources\Windows\PackageTools\Private\Tools.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{A33D8A01-8AFF-75D4-37A1-7659C13C021C}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\PackageTools\Templates\PrefabConsumer.cmake = Sources\Windows\PackageTools\Templates\PrefabConsumer.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{15C9DD02-133A-0D54-8BE8-73206CCE738F}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\XamlCompiler\Main.cpp = Sources\Windows\XamlCompiler\Main.cpp
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9315E867-4526-9C38-A100-BB380E93098F}"
@@ -1788,213 +1793,208 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cmake", "cmake", "{6EC553D8
 		ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\cmake\WebKitMacros-minimal.cmake = ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\cmake\WebKitMacros-minimal.cmake
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{A33D8A01-8AFF-75D4-37A1-7659C13C021C}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\PackageTools\Templates\PrefabConsumer.cmake = Sources\Windows\PackageTools\Templates\PrefabConsumer.cmake
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E21B97A1-D847-2938-4E29-760523C97389}.Debug|x64.ActiveCfg = Debug|x64
-		{E21B97A1-D847-2938-4E29-760523C97389}.Debug|x64.Build.0 = Debug|x64
-		{E21B97A1-D847-2938-4E29-760523C97389}.Release|x64.ActiveCfg = Release|x64
-		{E21B97A1-D847-2938-4E29-760523C97389}.Release|x64.Build.0 = Release|x64
 		{F104C833-785D-E25F-5F10-B46284462A11}.Debug|x64.ActiveCfg = Debug|x64
 		{F104C833-785D-E25F-5F10-B46284462A11}.Debug|x64.Build.0 = Debug|x64
 		{F104C833-785D-E25F-5F10-B46284462A11}.Release|x64.ActiveCfg = Release|x64
 		{F104C833-785D-E25F-5F10-B46284462A11}.Release|x64.Build.0 = Release|x64
-		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Debug|x64.ActiveCfg = Debug|x64
-		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Debug|x64.Build.0 = Debug|x64
-		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Release|x64.ActiveCfg = Release|x64
-		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Release|x64.Build.0 = Release|x64
+		{E21B97A1-D847-2938-4E29-760523C97389}.Debug|x64.ActiveCfg = Debug|x64
+		{E21B97A1-D847-2938-4E29-760523C97389}.Debug|x64.Build.0 = Debug|x64
+		{E21B97A1-D847-2938-4E29-760523C97389}.Release|x64.ActiveCfg = Release|x64
+		{E21B97A1-D847-2938-4E29-760523C97389}.Release|x64.Build.0 = Release|x64
 		{77311056-84A3-4B57-AEF1-7A76F17C500C}.Debug|x64.ActiveCfg = Debug|x64
 		{77311056-84A3-4B57-AEF1-7A76F17C500C}.Debug|x64.Build.0 = Debug|x64
 		{77311056-84A3-4B57-AEF1-7A76F17C500C}.Release|x64.ActiveCfg = Release|x64
 		{77311056-84A3-4B57-AEF1-7A76F17C500C}.Release|x64.Build.0 = Release|x64
-		{6CBDC266-9B42-F741-03EB-F610AB72E1B1}.Debug|x64.ActiveCfg = Debug|x64
-		{6CBDC266-9B42-F741-03EB-F610AB72E1B1}.Debug|x64.Build.0 = Debug|x64
-		{6CBDC266-9B42-F741-03EB-F610AB72E1B1}.Release|x64.ActiveCfg = Release|x64
-		{6CBDC266-9B42-F741-03EB-F610AB72E1B1}.Release|x64.Build.0 = Release|x64
+		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Debug|x64.ActiveCfg = Debug|x64
+		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Debug|x64.Build.0 = Debug|x64
+		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Release|x64.ActiveCfg = Release|x64
+		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Release|x64.Build.0 = Release|x64
 		{FA67D7FD-393A-E9BC-F2A4-2570B2929973}.Debug|x64.ActiveCfg = Debug|x64
 		{FA67D7FD-393A-E9BC-F2A4-2570B2929973}.Debug|x64.Build.0 = Debug|x64
 		{FA67D7FD-393A-E9BC-F2A4-2570B2929973}.Release|x64.ActiveCfg = Release|x64
 		{FA67D7FD-393A-E9BC-F2A4-2570B2929973}.Release|x64.Build.0 = Release|x64
+		{6CBDC266-9B42-F741-03EB-F610AB72E1B1}.Debug|x64.ActiveCfg = Debug|x64
+		{6CBDC266-9B42-F741-03EB-F610AB72E1B1}.Debug|x64.Build.0 = Debug|x64
+		{6CBDC266-9B42-F741-03EB-F610AB72E1B1}.Release|x64.ActiveCfg = Release|x64
+		{6CBDC266-9B42-F741-03EB-F610AB72E1B1}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{A33D8A01-8AFF-75D4-37A1-7659C13C021C} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
+		{71FB51E6-F9B0-937E-39F6-38EFD7C91189} = {CC3C64B5-A5FC-8F8E-720E-921A21F00229}
+		{9D17877F-6145-90EC-14CD-F14A1A24D13C} = {71FB51E6-F9B0-937E-39F6-38EFD7C91189}
+		{6625778A-E44C-F016-70B3-507A374B34BF} = {9D17877F-6145-90EC-14CD-F14A1A24D13C}
+		{244E0458-C3ED-6881-0EF2-37E679480FF3} = {6625778A-E44C-F016-70B3-507A374B34BF}
+		{55C13CE1-FBB1-5BD5-BD41-2250C3A423B1} = {244E0458-C3ED-6881-0EF2-37E679480FF3}
+		{DCEE23F9-A0C0-19CB-258B-9D2A5A9171DD} = {55C13CE1-FBB1-5BD5-BD41-2250C3A423B1}
+		{D299E483-C236-42DA-9F90-8447C3B007D1} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
+		{C45C681B-A5F9-4F56-8DBE-70193C735CAB} = {D299E483-C236-42DA-9F90-8447C3B007D1}
+		{DE87C8F7-02CD-48E0-8FB9-916978A13394} = {C45C681B-A5F9-4F56-8DBE-70193C735CAB}
+		{E2ADF44C-9D50-4B96-BA2B-1A97992C5C8E} = {DE87C8F7-02CD-48E0-8FB9-916978A13394}
+		{B30EC563-478C-BAFB-6574-559B0E97A3BA} = {D299E483-C236-42DA-9F90-8447C3B007D1}
+		{F14DE294-71C4-BF70-A2DA-80F47CB2AE6C} = {B30EC563-478C-BAFB-6574-559B0E97A3BA}
+		{4762FEDE-2D5B-136F-22B0-F9E8A6BF1E50} = {F14DE294-71C4-BF70-A2DA-80F47CB2AE6C}
+		{59895D38-CDF4-4147-9A04-43A9272774B2} = {D299E483-C236-42DA-9F90-8447C3B007D1}
+		{99D94B10-047C-480C-9CF4-3C47E7925870} = {59895D38-CDF4-4147-9A04-43A9272774B2}
+		{80A2525D-699A-419F-82E8-B26BBFDFBFB8} = {99D94B10-047C-480C-9CF4-3C47E7925870}
+		{3FA9D130-CBA4-CA5F-B93E-6D5470AE8CC9} = {D299E483-C236-42DA-9F90-8447C3B007D1}
+		{12C09B2F-C78B-CC22-D2D7-E3B64300C265} = {3FA9D130-CBA4-CA5F-B93E-6D5470AE8CC9}
+		{E9D989EE-D136-4BE0-E95F-EC2543481E3D} = {12C09B2F-C78B-CC22-D2D7-E3B64300C265}
+		{8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
+		{A63D24B8-5B7A-45B8-9C11-000000000100} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
+		{BE41E66B-A170-480D-9D80-1C69E83390BA} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
+		{907E880C-10F6-4C85-9DF8-5C73F54646DB} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
+		{B690A596-AD03-40E3-B875-6722D2397011} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{1833675A-E63B-4FD3-8C8E-B7732DA73438} = {B690A596-AD03-40E3-B875-6722D2397011}
+		{941FD4A9-CB23-4415-8DC3-67D60AEC425D} = {1833675A-E63B-4FD3-8C8E-B7732DA73438}
+		{2AE8945D-4EE8-4892-8D2D-D00485AF3079} = {1833675A-E63B-4FD3-8C8E-B7732DA73438}
+		{878DA696-AD56-4739-84BB-D9A8E4BC5A48} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{2E147DA9-AE28-4EEF-A4FF-AAE6F92E322B} = {878DA696-AD56-4739-84BB-D9A8E4BC5A48}
+		{4845DF03-5C01-4E8B-842A-4EC0A9C0D15D} = {2E147DA9-AE28-4EEF-A4FF-AAE6F92E322B}
+		{6886A40C-C0AA-4E2C-B04C-640DE620DDB6} = {2E147DA9-AE28-4EEF-A4FF-AAE6F92E322B}
+		{299A0CF7-250D-4E08-B628-B84DABF5ABF8} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{B7214789-B7E7-4F88-A6DE-F367B65F9BDF} = {299A0CF7-250D-4E08-B628-B84DABF5ABF8}
+		{861E01E1-D689-40B3-BE1D-E0F7FF11DD73} = {B7214789-B7E7-4F88-A6DE-F367B65F9BDF}
+		{BF01194B-04FD-4A07-B85F-2781C7237D5D} = {B7214789-B7E7-4F88-A6DE-F367B65F9BDF}
+		{42F9EF9D-C14A-41EB-9DB4-E80213A4DF7B} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
+		{0CF0E8F4-117A-457B-8BE3-40FEEC842EEB} = {42F9EF9D-C14A-41EB-9DB4-E80213A4DF7B}
+		{9FE6730F-C6F4-44B7-981B-BDC489FF202C} = {0CF0E8F4-117A-457B-8BE3-40FEEC842EEB}
+		{59FB48FD-1E1A-499E-BAD5-B16AE1E29194} = {0CF0E8F4-117A-457B-8BE3-40FEEC842EEB}
+		{45569702-BF11-421C-A43A-03D1364E3C95} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
 		{D7F020F8-ED67-EA28-7A50-A160CA8B9554} = {45569702-BF11-421C-A43A-03D1364E3C95}
 		{9F537FBC-3641-B48E-6E02-3CC1AC523A09} = {D7F020F8-ED67-EA28-7A50-A160CA8B9554}
 		{9DFA8DD9-A595-773B-B68B-E71B493C5B49} = {9F537FBC-3641-B48E-6E02-3CC1AC523A09}
+		{C25B8C43-91C7-4F23-B186-05E37C145720} = {45569702-BF11-421C-A43A-03D1364E3C95}
+		{6332D45B-9105-4EA4-BB61-65D494AF4CE0} = {C25B8C43-91C7-4F23-B186-05E37C145720}
+		{B398F253-412C-49AA-B2EF-D5F164B8ACF2} = {6332D45B-9105-4EA4-BB61-65D494AF4CE0}
+		{26DC63D4-1E80-4386-ACBA-A8B9D984FC44} = {13DA8639-4234-4E82-9423-056A19840860}
+		{ADBA3BA9-F6AC-7A5C-7A27-59AE40606576} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{E2BB8948-A33B-7D06-CADA-F3B535F84401} = {ADBA3BA9-F6AC-7A5C-7A27-59AE40606576}
+		{03C0B81C-6B57-4791-B5F3-9D2D48CE2544} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{A82C4E93-051E-4C0B-B705-5875F748742C} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{923F42D8-57A1-4A1B-8FB9-35B5D73A7F8A} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{189A1B26-8EB9-4D78-A955-CF1E45F39257} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{8CB5D103-21B9-4651-A4A1-671107F28847} = {13DA8639-4234-4E82-9423-056A19840860}
+		{D2E0D44F-71F1-1478-F989-466955EC6F80} = {13DA8639-4234-4E82-9423-056A19840860}
+		{7E765BF6-D902-9F4E-CD6C-90C614044B91} = {D2E0D44F-71F1-1478-F989-466955EC6F80}
+		{7FA23122-0EF3-554B-F66F-7011C69C51C4} = {7E765BF6-D902-9F4E-CD6C-90C614044B91}
+		{6F7F63BC-5509-E8FD-57DB-35CDFDCAF744} = {D2E0D44F-71F1-1478-F989-466955EC6F80}
+		{0A281F7B-C6D3-D687-5485-F34DEF383257} = {D2E0D44F-71F1-1478-F989-466955EC6F80}
+		{832B5C4F-3EB0-0B68-2891-21F9C30AE7D2} = {0A281F7B-C6D3-D687-5485-F34DEF383257}
+		{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83} = {13DA8639-4234-4E82-9423-056A19840860}
+		{DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{F104C833-785D-E25F-5F10-B46284462A11} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
+		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
+		{50CDBD24-894E-0FD6-7C08-442980AADBB7} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{E21B97A1-D847-2938-4E29-760523C97389} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
+		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
+		{1C920419-6FCA-97AA-DE2F-11C8037C1EF6} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{77311056-84A3-4B57-AEF1-7A76F17C500C} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
+		{220B0789-1F04-54D3-18E5-5DB99E91172F} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
+		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
+		{A62B830A-BE58-54F9-6766-E95D2B04A2A8} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
+		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
+		{3E00A02D-46F3-432B-91C8-5D459F70C525} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
+		{A63D24B8-5B7A-45B8-9C11-000000000300} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
+		{A63D24B8-5B7A-45B8-9C11-000000000301} = {A63D24B8-5B7A-45B8-9C11-000000000300}
+		{DC091494-5AC6-46E6-BA6D-61441682BB62} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
+		{5E16CA24-F8A2-436C-86B6-6511A703FB82} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
+		{CA7AB659-38EB-4E98-99A7-95A777DCD074} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
+		{1B943F80-0EB6-4134-A02A-2F1FF121CFEC} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
+		{D832A37F-03A2-4EBD-9FF9-BC27D415378B} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
+		{8B6A058C-7402-4392-8956-6B1489D9E118} = {D832A37F-03A2-4EBD-9FF9-BC27D415378B}
+		{BC0651B9-7642-4436-BF89-5D8B8BD4F4A0} = {8B6A058C-7402-4392-8956-6B1489D9E118}
+		{18F6F60D-7635-4701-A27F-616A9A9C251A} = {8B6A058C-7402-4392-8956-6B1489D9E118}
+		{BB4173F9-2ECC-455A-AE66-4115A51C9396} = {18F6F60D-7635-4701-A27F-616A9A9C251A}
+		{D9146E66-5EB7-4919-B6CC-F36544D8ACE4} = {8B6A058C-7402-4392-8956-6B1489D9E118}
+		{7DAB2C47-91F8-4085-8786-94437B89820E} = {D9146E66-5EB7-4919-B6CC-F36544D8ACE4}
+		{A2BAABAE-02D4-4685-9081-F599C5AF7D30} = {D832A37F-03A2-4EBD-9FF9-BC27D415378B}
+		{CB7EEAB5-39FB-49B2-95A1-72774A80F5B8} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
+		{D2288D3A-B06E-9A12-3C08-06E8689CF6A8} = {A9963E0C-F9B5-4635-505D-54E094B1F113}
+		{62BB4FD3-461F-9188-4888-44C68D0ED548} = {D2288D3A-B06E-9A12-3C08-06E8689CF6A8}
+		{30C6ED4F-6B52-2F4E-2094-8D0A1261E8EC} = {62BB4FD3-461F-9188-4888-44C68D0ED548}
+		{10D9F55F-8C24-CD83-4800-C15419867BF2} = {30C6ED4F-6B52-2F4E-2094-8D0A1261E8EC}
+		{2287AD25-6609-017D-CE21-82CBCD8794A9} = {10D9F55F-8C24-CD83-4800-C15419867BF2}
+		{2EBC7002-F2CD-D818-C6B9-E2522FC6E793} = {2287AD25-6609-017D-CE21-82CBCD8794A9}
+		{70784D89-0A75-0366-7174-BEE862B9AFC2} = {2EBC7002-F2CD-D818-C6B9-E2522FC6E793}
+		{B0918D5C-3B09-C8F7-F0ED-764BD3B50846} = {70784D89-0A75-0366-7174-BEE862B9AFC2}
+		{FD8E4341-008D-D47E-74BC-857A2385FB25} = {B0918D5C-3B09-C8F7-F0ED-764BD3B50846}
+		{1780E0FF-5393-0368-9F5F-A45E94275AC7} = {B0918D5C-3B09-C8F7-F0ED-764BD3B50846}
+		{57653CA8-8A75-118F-DC80-3EBC71559550} = {B0918D5C-3B09-C8F7-F0ED-764BD3B50846}
+		{6C51D135-2DDF-FC35-0708-A289D9BDE33A} = {B0918D5C-3B09-C8F7-F0ED-764BD3B50846}
+		{96EB236F-1DA2-3CE9-BB64-D02FAE2393A9} = {D2288D3A-B06E-9A12-3C08-06E8689CF6A8}
+		{B1134F64-5AC3-5777-C8DC-87B904646C91} = {96EB236F-1DA2-3CE9-BB64-D02FAE2393A9}
+		{ABDB27EA-51AF-8FD4-C199-EED7FB927000} = {96EB236F-1DA2-3CE9-BB64-D02FAE2393A9}
+		{C9FA28BE-811A-821C-36B5-541DDABEA455} = {96EB236F-1DA2-3CE9-BB64-D02FAE2393A9}
+		{54759879-4933-7741-25DA-A95FC7B5B6E4} = {C9FA28BE-811A-821C-36B5-541DDABEA455}
+		{DB514C30-5601-82E1-CDE1-701ADA43A9BE} = {54759879-4933-7741-25DA-A95FC7B5B6E4}
+		{63F4DEE8-3B65-353E-BE35-5E4AE270E5BA} = {DB514C30-5601-82E1-CDE1-701ADA43A9BE}
+		{66E6F059-15CC-E73D-631D-D37626A53A9E} = {63F4DEE8-3B65-353E-BE35-5E4AE270E5BA}
+		{1CB3D83B-053E-C090-B11A-3D549CAE5D02} = {66E6F059-15CC-E73D-631D-D37626A53A9E}
+		{42F1061C-608C-B995-DA40-CCDC28562784} = {1CB3D83B-053E-C090-B11A-3D549CAE5D02}
+		{4E95EF45-F0E9-25F3-42D1-46CE1983D834} = {96EB236F-1DA2-3CE9-BB64-D02FAE2393A9}
+		{C107C931-3488-14EB-5D4A-E3550F9BEF90} = {4E95EF45-F0E9-25F3-42D1-46CE1983D834}
+		{FD5EB6FB-8E3E-612D-6EA7-6A98EFF87A76} = {C107C931-3488-14EB-5D4A-E3550F9BEF90}
+		{E742837F-6B59-8FB2-A0A2-A595262A3096} = {D2288D3A-B06E-9A12-3C08-06E8689CF6A8}
+		{4EC19DE5-86B2-F917-EDBE-0853570B42C8} = {E742837F-6B59-8FB2-A0A2-A595262A3096}
+		{9A43C79B-ED5A-7282-DF3B-F27B77DD2EA1} = {4EC19DE5-86B2-F917-EDBE-0853570B42C8}
+		{EE0699C4-AF73-7691-6CA6-84054809308A} = {9A43C79B-ED5A-7282-DF3B-F27B77DD2EA1}
+		{BD39C8CE-C2B3-E621-63FE-823BF42FD280} = {EE0699C4-AF73-7691-6CA6-84054809308A}
+		{E2174583-0F9E-9F9C-BC44-62107766E1C4} = {BD39C8CE-C2B3-E621-63FE-823BF42FD280}
+		{9395B0E3-017F-7F84-FB1C-A6CBED930E09} = {E2174583-0F9E-9F9C-BC44-62107766E1C4}
+		{F980E824-E22F-AD62-3F6C-1C68F2150D95} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
+		{0D3A7DCE-A63D-E9E2-D3E2-F164BE1908A2} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
+		{4A70DDFC-457B-5612-55F0-FD1DD01C84A1} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
+		{D0232E88-555A-715D-6447-52CCBAD305FC} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
+		{013748EA-6701-12BC-3730-1FFD5A485470} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
+		{219E05B7-6343-C810-FB04-31E430BD5184} = {D2288D3A-B06E-9A12-3C08-06E8689CF6A8}
+		{A2A1771D-A861-1285-43E2-9EBFD04BFCC1} = {219E05B7-6343-C810-FB04-31E430BD5184}
+		{BF6E01A3-B5FA-4885-DDF6-04EBC39A937F} = {219E05B7-6343-C810-FB04-31E430BD5184}
+		{53CCF09D-3A31-CC46-3125-C7A20C83157C} = {BF6E01A3-B5FA-4885-DDF6-04EBC39A937F}
+		{0B0BF4AA-D150-0D6A-5F07-8FBEA5294145} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
+		{5134BE1A-F783-8202-D25D-A30A9D58EEC7} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
+		{16EB1208-65C9-97CC-F7EE-91D4F6183B54} = {5134BE1A-F783-8202-D25D-A30A9D58EEC7}
+		{954721D1-E3F2-CE5D-E92C-D6B6FF3DA750} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
+		{A9D15F6F-E8E6-215E-B4A8-4EEF838A4827} = {954721D1-E3F2-CE5D-E92C-D6B6FF3DA750}
+		{2D6239A5-1257-7085-A746-2B83BF5833B3} = {A9D15F6F-E8E6-215E-B4A8-4EEF838A4827}
+		{5F8285EB-50A6-72A5-EC22-272252A78342} = {2D6239A5-1257-7085-A746-2B83BF5833B3}
+		{B7217065-2D8A-8851-0B4F-46E7CEB4D4F0} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
+		{30501EDF-7220-1290-983B-ED3AD395DAB9} = {B7217065-2D8A-8851-0B4F-46E7CEB4D4F0}
+		{53D85186-4F21-7AF4-966E-0BFE3529E387} = {30501EDF-7220-1290-983B-ED3AD395DAB9}
+		{7E6A17D1-EC6E-9802-06EB-AC9B75B11339} = {53D85186-4F21-7AF4-966E-0BFE3529E387}
+		{DFDA3D21-D9F6-7EC5-DC03-983844BB8450} = {7E6A17D1-EC6E-9802-06EB-AC9B75B11339}
+		{A5F21C3D-5BE7-7CE7-8DA7-E727F8333062} = {53D85186-4F21-7AF4-966E-0BFE3529E387}
+		{6DEB47AB-1056-3133-6922-0C428B9ECD52} = {A5F21C3D-5BE7-7CE7-8DA7-E727F8333062}
+		{1F362129-FF56-E9DA-4626-9846358035F0} = {A5F21C3D-5BE7-7CE7-8DA7-E727F8333062}
+		{3E60607C-2159-1178-7D1D-D2F895A93ECE} = {A5F21C3D-5BE7-7CE7-8DA7-E727F8333062}
+		{3A28BDCD-290B-8EAE-5201-F926C15FA315} = {A5F21C3D-5BE7-7CE7-8DA7-E727F8333062}
+		{BA51EB65-9FFD-B105-4679-3BC400E9F983} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
+		{73D7F203-E36F-1FD4-ADB2-149FDB43BD7C} = {BA51EB65-9FFD-B105-4679-3BC400E9F983}
+		{B569FD6A-798F-1FA3-BA02-38D11F7B1747} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
+		{1069A91B-23EB-1074-9B12-F771B287424E} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
+		{8C2CF08B-7E03-796A-7D77-8F40A51B3827} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
+		{B14DAB6E-86A3-4998-20B8-E7AF79E61621} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
+		{5A3097F9-84D7-8CA6-4986-8CDA0E26D227} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
+		{D693EE1E-DC42-D1C1-7685-7768CDA90754} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
+		{4BEDE627-6948-17E9-7D2A-FAC4AF0BB55F} = {D693EE1E-DC42-D1C1-7685-7768CDA90754}
+		{B241A093-3EF2-C381-34F0-E038AA6C2CBE} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
+		{2D8A0564-40F7-A6CD-5212-7A085383443E} = {B241A093-3EF2-C381-34F0-E038AA6C2CBE}
+		{29D7CAB4-B2E3-541B-0D13-40F66C92226D} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
+		{34242C6D-6418-92C1-647F-5E73461A6CFE} = {29D7CAB4-B2E3-541B-0D13-40F66C92226D}
+		{91C1626E-08D0-D15F-E92C-49D0A474AFDC} = {A9963E0C-F9B5-4635-505D-54E094B1F113}
 		{D7274C99-03B8-37D0-1088-3C5B52ABF346} = {91C1626E-08D0-D15F-E92C-49D0A474AFDC}
 		{07C10469-FD4A-A594-ABEF-29C813652D1B} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
 		{CF4766B5-C3CE-1EBF-CD69-67BABDC0EBEF} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
-		{013748EA-6701-12BC-3730-1FFD5A485470} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
-		{03C0B81C-6B57-4791-B5F3-9D2D48CE2544} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
-		{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83} = {13DA8639-4234-4E82-9423-056A19840860}
-		{0A281F7B-C6D3-D687-5485-F34DEF383257} = {D2E0D44F-71F1-1478-F989-466955EC6F80}
-		{0B0BF4AA-D150-0D6A-5F07-8FBEA5294145} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
-		{0CF0E8F4-117A-457B-8BE3-40FEEC842EEB} = {42F9EF9D-C14A-41EB-9DB4-E80213A4DF7B}
-		{0D3A7DCE-A63D-E9E2-D3E2-F164BE1908A2} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
-		{1069A91B-23EB-1074-9B12-F771B287424E} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
-		{10D9F55F-8C24-CD83-4800-C15419867BF2} = {30C6ED4F-6B52-2F4E-2094-8D0A1261E8EC}
-		{12C09B2F-C78B-CC22-D2D7-E3B64300C265} = {3FA9D130-CBA4-CA5F-B93E-6D5470AE8CC9}
+		{A33D8A01-8AFF-75D4-37A1-7659C13C021C} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
 		{15C9DD02-133A-0D54-8BE8-73206CCE738F} = {91C1626E-08D0-D15F-E92C-49D0A474AFDC}
-		{16EB1208-65C9-97CC-F7EE-91D4F6183B54} = {5134BE1A-F783-8202-D25D-A30A9D58EEC7}
-		{1780E0FF-5393-0368-9F5F-A45E94275AC7} = {B0918D5C-3B09-C8F7-F0ED-764BD3B50846}
-		{1833675A-E63B-4FD3-8C8E-B7732DA73438} = {B690A596-AD03-40E3-B875-6722D2397011}
-		{189A1B26-8EB9-4D78-A955-CF1E45F39257} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
-		{18F6F60D-7635-4701-A27F-616A9A9C251A} = {8B6A058C-7402-4392-8956-6B1489D9E118}
-		{1B943F80-0EB6-4134-A02A-2F1FF121CFEC} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
-		{1C920419-6FCA-97AA-DE2F-11C8037C1EF6} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
-		{1CB3D83B-053E-C090-B11A-3D549CAE5D02} = {66E6F059-15CC-E73D-631D-D37626A53A9E}
-		{1F362129-FF56-E9DA-4626-9846358035F0} = {A5F21C3D-5BE7-7CE7-8DA7-E727F8333062}
-		{219E05B7-6343-C810-FB04-31E430BD5184} = {D2288D3A-B06E-9A12-3C08-06E8689CF6A8}
-		{220B0789-1F04-54D3-18E5-5DB99E91172F} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
-		{2287AD25-6609-017D-CE21-82CBCD8794A9} = {10D9F55F-8C24-CD83-4800-C15419867BF2}
-		{244E0458-C3ED-6881-0EF2-37E679480FF3} = {6625778A-E44C-F016-70B3-507A374B34BF}
-		{26DC63D4-1E80-4386-ACBA-A8B9D984FC44} = {13DA8639-4234-4E82-9423-056A19840860}
-		{299A0CF7-250D-4E08-B628-B84DABF5ABF8} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
-		{29D7CAB4-B2E3-541B-0D13-40F66C92226D} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
-		{2AE8945D-4EE8-4892-8D2D-D00485AF3079} = {1833675A-E63B-4FD3-8C8E-B7732DA73438}
-		{2D6239A5-1257-7085-A746-2B83BF5833B3} = {A9D15F6F-E8E6-215E-B4A8-4EEF838A4827}
-		{2D8A0564-40F7-A6CD-5212-7A085383443E} = {B241A093-3EF2-C381-34F0-E038AA6C2CBE}
-		{2E147DA9-AE28-4EEF-A4FF-AAE6F92E322B} = {878DA696-AD56-4739-84BB-D9A8E4BC5A48}
-		{2EBC7002-F2CD-D818-C6B9-E2522FC6E793} = {2287AD25-6609-017D-CE21-82CBCD8794A9}
-		{30501EDF-7220-1290-983B-ED3AD395DAB9} = {B7217065-2D8A-8851-0B4F-46E7CEB4D4F0}
-		{30C6ED4F-6B52-2F4E-2094-8D0A1261E8EC} = {62BB4FD3-461F-9188-4888-44C68D0ED548}
-		{34242C6D-6418-92C1-647F-5E73461A6CFE} = {29D7CAB4-B2E3-541B-0D13-40F66C92226D}
-		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
-		{3A28BDCD-290B-8EAE-5201-F926C15FA315} = {A5F21C3D-5BE7-7CE7-8DA7-E727F8333062}
-		{3E00A02D-46F3-432B-91C8-5D459F70C525} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
-		{3E60607C-2159-1178-7D1D-D2F895A93ECE} = {A5F21C3D-5BE7-7CE7-8DA7-E727F8333062}
-		{3FA9D130-CBA4-CA5F-B93E-6D5470AE8CC9} = {D299E483-C236-42DA-9F90-8447C3B007D1}
-		{42F1061C-608C-B995-DA40-CCDC28562784} = {1CB3D83B-053E-C090-B11A-3D549CAE5D02}
-		{42F9EF9D-C14A-41EB-9DB4-E80213A4DF7B} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
-		{45569702-BF11-421C-A43A-03D1364E3C95} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
-		{4762FEDE-2D5B-136F-22B0-F9E8A6BF1E50} = {F14DE294-71C4-BF70-A2DA-80F47CB2AE6C}
-		{4845DF03-5C01-4E8B-842A-4EC0A9C0D15D} = {2E147DA9-AE28-4EEF-A4FF-AAE6F92E322B}
-		{4A70DDFC-457B-5612-55F0-FD1DD01C84A1} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
-		{4BEDE627-6948-17E9-7D2A-FAC4AF0BB55F} = {D693EE1E-DC42-D1C1-7685-7768CDA90754}
-		{4E95EF45-F0E9-25F3-42D1-46CE1983D834} = {96EB236F-1DA2-3CE9-BB64-D02FAE2393A9}
-		{4EC19DE5-86B2-F917-EDBE-0853570B42C8} = {E742837F-6B59-8FB2-A0A2-A595262A3096}
-		{50CDBD24-894E-0FD6-7C08-442980AADBB7} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
-		{5134BE1A-F783-8202-D25D-A30A9D58EEC7} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
-		{53CCF09D-3A31-CC46-3125-C7A20C83157C} = {BF6E01A3-B5FA-4885-DDF6-04EBC39A937F}
-		{53D85186-4F21-7AF4-966E-0BFE3529E387} = {30501EDF-7220-1290-983B-ED3AD395DAB9}
-		{54759879-4933-7741-25DA-A95FC7B5B6E4} = {C9FA28BE-811A-821C-36B5-541DDABEA455}
-		{55C13CE1-FBB1-5BD5-BD41-2250C3A423B1} = {244E0458-C3ED-6881-0EF2-37E679480FF3}
-		{57653CA8-8A75-118F-DC80-3EBC71559550} = {B0918D5C-3B09-C8F7-F0ED-764BD3B50846}
-		{59895D38-CDF4-4147-9A04-43A9272774B2} = {D299E483-C236-42DA-9F90-8447C3B007D1}
-		{59FB48FD-1E1A-499E-BAD5-B16AE1E29194} = {0CF0E8F4-117A-457B-8BE3-40FEEC842EEB}
-		{5A3097F9-84D7-8CA6-4986-8CDA0E26D227} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
-		{5E16CA24-F8A2-436C-86B6-6511A703FB82} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
-		{5F8285EB-50A6-72A5-EC22-272252A78342} = {2D6239A5-1257-7085-A746-2B83BF5833B3}
-		{62BB4FD3-461F-9188-4888-44C68D0ED548} = {D2288D3A-B06E-9A12-3C08-06E8689CF6A8}
-		{6332D45B-9105-4EA4-BB61-65D494AF4CE0} = {C25B8C43-91C7-4F23-B186-05E37C145720}
-		{63F4DEE8-3B65-353E-BE35-5E4AE270E5BA} = {DB514C30-5601-82E1-CDE1-701ADA43A9BE}
-		{6625778A-E44C-F016-70B3-507A374B34BF} = {9D17877F-6145-90EC-14CD-F14A1A24D13C}
-		{66E6F059-15CC-E73D-631D-D37626A53A9E} = {63F4DEE8-3B65-353E-BE35-5E4AE270E5BA}
-		{6886A40C-C0AA-4E2C-B04C-640DE620DDB6} = {2E147DA9-AE28-4EEF-A4FF-AAE6F92E322B}
-		{6C51D135-2DDF-FC35-0708-A289D9BDE33A} = {B0918D5C-3B09-C8F7-F0ED-764BD3B50846}
-		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
-		{6DEB47AB-1056-3133-6922-0C428B9ECD52} = {A5F21C3D-5BE7-7CE7-8DA7-E727F8333062}
-		{6F7F63BC-5509-E8FD-57DB-35CDFDCAF744} = {D2E0D44F-71F1-1478-F989-466955EC6F80}
-		{70784D89-0A75-0366-7174-BEE862B9AFC2} = {2EBC7002-F2CD-D818-C6B9-E2522FC6E793}
-		{71FB51E6-F9B0-937E-39F6-38EFD7C91189} = {CC3C64B5-A5FC-8F8E-720E-921A21F00229}
-		{73D7F203-E36F-1FD4-ADB2-149FDB43BD7C} = {BA51EB65-9FFD-B105-4679-3BC400E9F983}
-		{77311056-84A3-4B57-AEF1-7A76F17C500C} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
-		{7DAB2C47-91F8-4085-8786-94437B89820E} = {D9146E66-5EB7-4919-B6CC-F36544D8ACE4}
-		{7E6A17D1-EC6E-9802-06EB-AC9B75B11339} = {53D85186-4F21-7AF4-966E-0BFE3529E387}
-		{7E765BF6-D902-9F4E-CD6C-90C614044B91} = {D2E0D44F-71F1-1478-F989-466955EC6F80}
-		{7FA23122-0EF3-554B-F66F-7011C69C51C4} = {7E765BF6-D902-9F4E-CD6C-90C614044B91}
-		{80A2525D-699A-419F-82E8-B26BBFDFBFB8} = {99D94B10-047C-480C-9CF4-3C47E7925870}
-		{832B5C4F-3EB0-0B68-2891-21F9C30AE7D2} = {0A281F7B-C6D3-D687-5485-F34DEF383257}
-		{861E01E1-D689-40B3-BE1D-E0F7FF11DD73} = {B7214789-B7E7-4F88-A6DE-F367B65F9BDF}
-		{878DA696-AD56-4739-84BB-D9A8E4BC5A48} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
-		{8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
-		{8B6A058C-7402-4392-8956-6B1489D9E118} = {D832A37F-03A2-4EBD-9FF9-BC27D415378B}
-		{8C2CF08B-7E03-796A-7D77-8F40A51B3827} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
-		{8CB5D103-21B9-4651-A4A1-671107F28847} = {13DA8639-4234-4E82-9423-056A19840860}
-		{907E880C-10F6-4C85-9DF8-5C73F54646DB} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
-		{91C1626E-08D0-D15F-E92C-49D0A474AFDC} = {A9963E0C-F9B5-4635-505D-54E094B1F113}
-		{923F42D8-57A1-4A1B-8FB9-35B5D73A7F8A} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
-		{9395B0E3-017F-7F84-FB1C-A6CBED930E09} = {E2174583-0F9E-9F9C-BC44-62107766E1C4}
-		{941FD4A9-CB23-4415-8DC3-67D60AEC425D} = {1833675A-E63B-4FD3-8C8E-B7732DA73438}
-		{954721D1-E3F2-CE5D-E92C-D6B6FF3DA750} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
-		{96EB236F-1DA2-3CE9-BB64-D02FAE2393A9} = {D2288D3A-B06E-9A12-3C08-06E8689CF6A8}
-		{99D94B10-047C-480C-9CF4-3C47E7925870} = {59895D38-CDF4-4147-9A04-43A9272774B2}
-		{9A43C79B-ED5A-7282-DF3B-F27B77DD2EA1} = {4EC19DE5-86B2-F917-EDBE-0853570B42C8}
-		{9D17877F-6145-90EC-14CD-F14A1A24D13C} = {71FB51E6-F9B0-937E-39F6-38EFD7C91189}
-		{9FE6730F-C6F4-44B7-981B-BDC489FF202C} = {0CF0E8F4-117A-457B-8BE3-40FEEC842EEB}
-		{A2A1771D-A861-1285-43E2-9EBFD04BFCC1} = {219E05B7-6343-C810-FB04-31E430BD5184}
-		{A2BAABAE-02D4-4685-9081-F599C5AF7D30} = {D832A37F-03A2-4EBD-9FF9-BC27D415378B}
-		{A5F21C3D-5BE7-7CE7-8DA7-E727F8333062} = {53D85186-4F21-7AF4-966E-0BFE3529E387}
-		{A62B830A-BE58-54F9-6766-E95D2B04A2A8} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
-		{A63D24B8-5B7A-45B8-9C11-000000000100} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
-		{A63D24B8-5B7A-45B8-9C11-000000000300} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
-		{A63D24B8-5B7A-45B8-9C11-000000000301} = {A63D24B8-5B7A-45B8-9C11-000000000300}
-		{A82C4E93-051E-4C0B-B705-5875F748742C} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
-		{A9D15F6F-E8E6-215E-B4A8-4EEF838A4827} = {954721D1-E3F2-CE5D-E92C-D6B6FF3DA750}
-		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
-		{ABDB27EA-51AF-8FD4-C199-EED7FB927000} = {96EB236F-1DA2-3CE9-BB64-D02FAE2393A9}
-		{ADBA3BA9-F6AC-7A5C-7A27-59AE40606576} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
-		{B0918D5C-3B09-C8F7-F0ED-764BD3B50846} = {70784D89-0A75-0366-7174-BEE862B9AFC2}
-		{B1134F64-5AC3-5777-C8DC-87B904646C91} = {96EB236F-1DA2-3CE9-BB64-D02FAE2393A9}
-		{B14DAB6E-86A3-4998-20B8-E7AF79E61621} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
-		{B241A093-3EF2-C381-34F0-E038AA6C2CBE} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
-		{B30EC563-478C-BAFB-6574-559B0E97A3BA} = {D299E483-C236-42DA-9F90-8447C3B007D1}
-		{B398F253-412C-49AA-B2EF-D5F164B8ACF2} = {6332D45B-9105-4EA4-BB61-65D494AF4CE0}
-		{B569FD6A-798F-1FA3-BA02-38D11F7B1747} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
-		{B690A596-AD03-40E3-B875-6722D2397011} = {907E880C-10F6-4C85-9DF8-5C73F54646DB}
-		{B7214789-B7E7-4F88-A6DE-F367B65F9BDF} = {299A0CF7-250D-4E08-B628-B84DABF5ABF8}
-		{B7217065-2D8A-8851-0B4F-46E7CEB4D4F0} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
-		{BA51EB65-9FFD-B105-4679-3BC400E9F983} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
-		{BB4173F9-2ECC-455A-AE66-4115A51C9396} = {18F6F60D-7635-4701-A27F-616A9A9C251A}
-		{BC0651B9-7642-4436-BF89-5D8B8BD4F4A0} = {8B6A058C-7402-4392-8956-6B1489D9E118}
-		{BD39C8CE-C2B3-E621-63FE-823BF42FD280} = {EE0699C4-AF73-7691-6CA6-84054809308A}
-		{BE41E66B-A170-480D-9D80-1C69E83390BA} = {8976D8AF-8FEC-4C26-9C65-71AAD4EC40E1}
-		{BF01194B-04FD-4A07-B85F-2781C7237D5D} = {B7214789-B7E7-4F88-A6DE-F367B65F9BDF}
-		{BF6E01A3-B5FA-4885-DDF6-04EBC39A937F} = {219E05B7-6343-C810-FB04-31E430BD5184}
-		{C107C931-3488-14EB-5D4A-E3550F9BEF90} = {4E95EF45-F0E9-25F3-42D1-46CE1983D834}
-		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
-		{C25B8C43-91C7-4F23-B186-05E37C145720} = {45569702-BF11-421C-A43A-03D1364E3C95}
-		{C45C681B-A5F9-4F56-8DBE-70193C735CAB} = {D299E483-C236-42DA-9F90-8447C3B007D1}
-		{C9FA28BE-811A-821C-36B5-541DDABEA455} = {96EB236F-1DA2-3CE9-BB64-D02FAE2393A9}
-		{CA7AB659-38EB-4E98-99A7-95A777DCD074} = {DC091494-5AC6-46E6-BA6D-61441682BB62}
-		{CB7EEAB5-39FB-49B2-95A1-72774A80F5B8} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
-		{D0232E88-555A-715D-6447-52CCBAD305FC} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
-		{D2288D3A-B06E-9A12-3C08-06E8689CF6A8} = {A9963E0C-F9B5-4635-505D-54E094B1F113}
-		{D299E483-C236-42DA-9F90-8447C3B007D1} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
-		{D2E0D44F-71F1-1478-F989-466955EC6F80} = {13DA8639-4234-4E82-9423-056A19840860}
-		{D693EE1E-DC42-D1C1-7685-7768CDA90754} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}
-		{D832A37F-03A2-4EBD-9FF9-BC27D415378B} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
-		{D9146E66-5EB7-4919-B6CC-F36544D8ACE4} = {8B6A058C-7402-4392-8956-6B1489D9E118}
-		{DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
-		{DB514C30-5601-82E1-CDE1-701ADA43A9BE} = {54759879-4933-7741-25DA-A95FC7B5B6E4}
-		{DC091494-5AC6-46E6-BA6D-61441682BB62} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
-		{DCEE23F9-A0C0-19CB-258B-9D2A5A9171DD} = {55C13CE1-FBB1-5BD5-BD41-2250C3A423B1}
-		{DE87C8F7-02CD-48E0-8FB9-916978A13394} = {C45C681B-A5F9-4F56-8DBE-70193C735CAB}
-		{DFDA3D21-D9F6-7EC5-DC03-983844BB8450} = {7E6A17D1-EC6E-9802-06EB-AC9B75B11339}
-		{E2174583-0F9E-9F9C-BC44-62107766E1C4} = {BD39C8CE-C2B3-E621-63FE-823BF42FD280}
-		{E21B97A1-D847-2938-4E29-760523C97389} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
-		{E2ADF44C-9D50-4B96-BA2B-1A97992C5C8E} = {DE87C8F7-02CD-48E0-8FB9-916978A13394}
-		{E2BB8948-A33B-7D06-CADA-F3B535F84401} = {ADBA3BA9-F6AC-7A5C-7A27-59AE40606576}
-		{E742837F-6B59-8FB2-A0A2-A595262A3096} = {D2288D3A-B06E-9A12-3C08-06E8689CF6A8}
-		{E9D989EE-D136-4BE0-E95F-EC2543481E3D} = {12C09B2F-C78B-CC22-D2D7-E3B64300C265}
-		{EE0699C4-AF73-7691-6CA6-84054809308A} = {9A43C79B-ED5A-7282-DF3B-F27B77DD2EA1}
-		{F104C833-785D-E25F-5F10-B46284462A11} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
-		{F14DE294-71C4-BF70-A2DA-80F47CB2AE6C} = {B30EC563-478C-BAFB-6574-559B0E97A3BA}
-		{F980E824-E22F-AD62-3F6C-1C68F2150D95} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}
-		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
-		{FD5EB6FB-8E3E-612D-6EA7-6A98EFF87A76} = {C107C931-3488-14EB-5D4A-E3550F9BEF90}
-		{FD8E4341-008D-D47E-74BC-857A2385FB25} = {B0918D5C-3B09-C8F7-F0ED-764BD3B50846}
 		{87778C21-3EDD-762C-4729-44D2C138BAAB} = {9315E867-4526-9C38-A100-BB380E93098F}
 		{D9E8691F-411D-4108-BFA5-210709F14B46} = {87778C21-3EDD-762C-4729-44D2C138BAAB}
 		{3DEC0D62-580B-05E1-441F-FCB2A45C9268} = {87778C21-3EDD-762C-4729-44D2C138BAAB}
@@ -2184,14 +2184,22 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{220b0789-1f04-54d3-18e5-5db99e91172f}*SharedItemsImports = 4
-		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{364e96cb-9d8a-40b0-8455-6a31a15a36b0}*SharedItemsImports = 9
-		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{3e00a02d-46f3-432b-91c8-5d459f70c525}*SharedItemsImports = 9
 		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{6cbdc266-9b42-f741-03eb-f610ab72e1b1}*SharedItemsImports = 4
 		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{77311056-84a3-4b57-aef1-7a76f17c500c}*SharedItemsImports = 4
-		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{ab97876a-f25a-4aae-bacd-d32c776bb261}*SharedItemsImports = 9
-		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{c1e8c40d-b9b5-4c0d-9f7e-1b793d3c13ae}*SharedItemsImports = 9
 		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{e21b97a1-d847-2938-4e29-760523c97389}*SharedItemsImports = 4
 		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{f104c833-785d-e25f-5f10-b46284462a11}*SharedItemsImports = 4
 		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{fa67d7fd-393a-e9bc-f2a4-2570b2929973}*SharedItemsImports = 4
+	EndGlobalSection
+	GlobalSection(SolutionInjectorProjectOwnership) = preSolution
+		{220B0789-1F04-54D3-18E5-5DB99E91172F} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Static.vcxproj
+		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems
+		{3E00A02D-46F3-432B-91C8-5D459F70C525} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems
+		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Static.vcxproj
+		{77311056-84A3-4B57-AEF1-7A76F17C500C} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dynamic.vcxproj
+		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems
+		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems
+		{E21B97A1-D847-2938-4E29-760523C97389} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj
+		{F104C833-785D-E25F-5F10-B46284462A11} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj
+		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dynamic.vcxproj
 	EndGlobalSection
 EndGlobal

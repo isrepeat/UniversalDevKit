@@ -1,0 +1,11 @@
+{
+  "name": "Probe",
+  "kind": "compiled",
+  "variants": ["static", "dynamic"],
+  "headers": ["Source/**/*.h"],
+  "sources": ["Source/**/*.cpp"],
+  "excludeSources": ["Source/excluded/**"],
+  "requirements": { "cxxStandard": 20 },
+  "compile": { "includeDirectories": ["Source"], "precompiledHeader": "notUsing" },
+  "buildExtensions": { "msbuildProps": "Custom.props", "msbuildTargets": "Custom.targets" }
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 2,
+  "name": "ProjectTools",
+  "versionSource": "Version.json",
+  "projects": {
+    "tool": {
+      "adapter": "files",
+      "mappings": [
+        { "source": "Sources/Windows/ProjectTools", "destination": "tools" },
+        { "source": "Packages/Windows/ProjectTools/Delivery/NuGet/UniversalDevKit.ProjectTools.targets", "destination": "build/UniversalDevKit.ProjectTools.targets" }
+      ]
+    }
+  },
+  "contents": [
+    { "project": "tool", "root": "output", "destination": "." },
+    { "source": ".", "include": ["LICENSE", "Packages/Windows/ProjectTools/README.md"], "destination": ".", "preserveHierarchy": false, "rename": { "LICENSE": "LICENSE.txt" } }
+  ],
+  "deliveries": { "NuGet": "Delivery/NuGet/Delivery.json" }
+}

@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "adapter": "nuget",
+  "id": "UniversalDevKit.ProjectTools",
+  "supportedPlatforms": ["Windows"],
+  "nuspec": "UniversalDevKit.ProjectTools.nuspec",
+  "noWarn": ["NU5100", "NU5111"]
+}

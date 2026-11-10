@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <ProjectToolsManifest Condition="'$(ProjectToolsManifest)' == ''">$(MSBuildProjectDirectory)/Components.json</ProjectToolsManifest>
+    <ProjectToolsPowerShell Condition="'$(ProjectToolsPowerShell)' == ''">pwsh.exe</ProjectToolsPowerShell>
+    <__UniversalDevKitProjectToolsEntry>$(MSBuildThisFileDirectory)..\tools\Generate.ps1</__UniversalDevKitProjectToolsEntry>
+  </PropertyGroup>
+  <Target Name="GenerateComponentProjects">
+    <Exec Command="&quot;$(ProjectToolsPowerShell)&quot; -NoProfile -File &quot;$(__UniversalDevKitProjectToolsEntry)&quot; -ManifestPath &quot;$(ProjectToolsManifest)&quot;" />
+  </Target>
+  <Target Name="CheckComponentProjects">
+    <Exec Command="&quot;$(ProjectToolsPowerShell)&quot; -NoProfile -File &quot;$(__UniversalDevKitProjectToolsEntry)&quot; -ManifestPath &quot;$(ProjectToolsManifest)&quot; -Check" />
+  </Target>
+</Project>

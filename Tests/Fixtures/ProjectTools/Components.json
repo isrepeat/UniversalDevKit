@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 3,
+  "includes": ["Component.json"],
+  "generation": {
+    "msbuild": {
+      "solution": "Probe.sln",
+      "projectDirectory": "Projects/{name}",
+      "projectName": "{name}.{variant}",
+      "configurations": ["Debug", "Release"],
+      "platforms": ["x64"]
+    }
+  }
+}

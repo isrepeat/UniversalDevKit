@@ -1,0 +1,1 @@
+int NewFile() { return 7; }
