@@ -23,7 +23,7 @@ function InvokeChecked([string]$Tool, [string[]]$Arguments) {
 
 try {
     # 1. Create projects only in an isolated UDK copy.
-    & (Join-Path $workspace.Library 'Sources/Windows/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $workspace.Library 'Components.json')
+    & (Join-Path $workspace.Library 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $workspace.Library 'Components.json')
     $build = Join-Path $workspace.Library '!artifacts/tests/g'
     $install = Join-Path $workspace.Root 'install'
     InvokeChecked $CMake @('-S', $workspace.Library, '-B', $build, '-G', 'Visual Studio 18 2026', '-A', 'x64', "-DCMAKE_INSTALL_PREFIX=$install")

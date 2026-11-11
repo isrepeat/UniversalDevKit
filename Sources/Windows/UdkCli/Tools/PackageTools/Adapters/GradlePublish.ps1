@@ -13,6 +13,7 @@ function Invoke-UdkGradlePublishProject($Project, $Context) {
         Get-ChildItem -LiteralPath $existing -Force | Copy-Item -Destination $target -Recurse -Force
     }
     $arguments = @('--project-dir', $projectRoot, '--project-cache-dir', (Join-Path $Context.WorkDirectory 'cache'), "-PudkBuildRoot=$($Context.WorkDirectory.Replace('\','/'))/build", "-PandroidPackagesFeedPath=$($Context.OutputDirectory.Replace('\','/'))", "-PudkPublicationFeedPath=$($publication.Replace('\','/'))", '--console=plain')
+    $arguments += "-PpackageVersion=$($Context.Version)"
     $arguments += $Project.tasks
     if ($Project.refreshDependencies) {
         $arguments += '--refresh-dependencies'

@@ -13,7 +13,7 @@ $repository = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $workspace = New-TestWorkspace $repository WorkingTree HEAD
 $fixture = Join-Path $repository 'Tests/Fixtures/Libraries/HeaderOnly'
 Get-ChildItem -LiteralPath $fixture -Force | Copy-Item -Destination $workspace.Library -Recurse -Force
-$generator = Join-Path $workspace.Library 'Sources/Windows/ProjectTools/Generate.ps1'
+$generator = Join-Path $workspace.Library 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1'
 
 function InvokeChecked([string]$Tool, [string[]]$Arguments) {
     & $Tool @Arguments | Out-Host

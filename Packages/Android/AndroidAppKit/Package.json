@@ -1,11 +1,7 @@
 {
   "schemaVersion": 2,
   "name": "AndroidAppKit",
-  "versionSource": {
-    "path": "../../../Projects/Gradle/AndroidAppKit/gradle.properties",
-    "format": "properties",
-    "property": "packageVersion"
-  },
+  "version": "1.0.19",
   "projects": {
     "gradle": {
       "adapter": "gradle-publish",

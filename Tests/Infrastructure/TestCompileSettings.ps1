@@ -19,7 +19,7 @@ Move-Item -LiteralPath $workspace.Library -Destination $shortLibrary
 $workspace.Library = $shortLibrary
 $fixture = Join-Path $repository 'Tests/Fixtures/Libraries/Compile'
 Get-ChildItem -LiteralPath $fixture -Force | Copy-Item -Destination $workspace.Library -Recurse -Force
-$generator = Join-Path $workspace.Library 'Sources/Windows/ProjectTools/Generate.ps1'
+$generator = Join-Path $workspace.Library 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1'
 & $generator -ManifestPath (Join-Path $workspace.Library 'Components.json')
 $sharedPath = Join-Path $workspace.Library 'Projects/MsBuild/CompileProbe/UniversalDevKit.CompileProbe.Shared.vcxitems'
 [xml]$shared = Get-Content -LiteralPath $sharedPath -Raw

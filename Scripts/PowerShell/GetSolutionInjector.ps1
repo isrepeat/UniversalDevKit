@@ -8,7 +8,7 @@ $OutputEncoding = [Text.UTF8Encoding]::new($false)
 
 $ErrorActionPreference = 'Stop'
 $repositoryPath = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-$manifest = Get-Content (Join-Path $repositoryPath 'Scripts/Tools/SolutionInjector.json') -Raw | ConvertFrom-Json
+$manifest = Get-Content (Join-Path $repositoryPath 'Sources/Windows/UdkCli/SolutionInjector.Connect.json') -Raw | ConvertFrom-Json
 
 function SendToolProgress([string]$Stage, [long]$Completed, [long]$Total, [bool]$Finished = $false) {
     if ($ProgressCallback) {

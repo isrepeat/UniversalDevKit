@@ -1,3 +1,5 @@
+. (Join-Path $PSScriptRoot '../../ResolveJsonReference.ps1')
+
 function Assert-UdkFields($Value, [string[]]$Allowed, [string[]]$Required, [string]$Label) {
     if ($Value -isnot [pscustomobject]) {
         throw "Expected an object: $Label"
@@ -109,7 +111,7 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
     $packageFile = Resolve-UdkBuildPath $root $root $PackagePath -Existing
     $packageRoot = Split-Path -Parent $packageFile
     $package = Read-UdkBuildJson $packageFile
-    Assert-UdkFields $package @('schemaVersion', 'name', 'versionSource', 'projects', 'contents', 'deliveries', 'releaseDependencies') @('schemaVersion', 'name', 'versionSource', 'projects', 'contents', 'deliveries') $packageFile
+    Assert-UdkFields $package @('schemaVersion', 'name', 'version', 'abiVersion', 'projects', 'contents', 'deliveries', 'releaseDependencies') @('schemaVersion', 'name', 'projects', 'contents', 'deliveries') $packageFile
     if (-not (Test-UdkSchemaVersion $package.schemaVersion 2)) {
         throw 'Unsupported package schemaVersion.'
     }
@@ -138,33 +140,9 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
         throw "Package release dependency cycle: $releaseKey"
     }
     $nextStack = $ReleaseStack.Clone(); $nextStack[$releaseKey] = $true
-    if ($package.versionSource -is [string]) {
-        $versionSource = [pscustomobject]@{
-            path=$package.versionSource
-            format='json'
-            property='version'
-        }
-    }
-    else {
-        Assert-UdkFields $package.versionSource @('path','format','property') @('path','format','property') 'versionSource'
-        $versionSource=$package.versionSource
-    }
-    $versionPath = Resolve-UdkBuildPath $root $packageRoot $versionSource.path -Existing
-    $versionData = switch ($versionSource.format) {
-        'json' {
-            Read-UdkBuildJson $versionPath
-        }
-        'properties' {
-            ConvertFrom-StringData (Get-Content -LiteralPath $versionPath -Raw)
-        }
-        default {
-            throw 'Unsupported version source format.'
-        }
-    }
-    $version = $versionData.($versionSource.property)
-    if ($version -isnot [string] -or $version -notmatch '^\d+\.\d+\.\d+(?:\.\d+)?(?:[-+][A-Za-z0-9.-]+)?$') {
-        throw 'Invalid package version.'
-    }
+    Resolve-UdkDescriptionVersion $root $package $packageFile
+    Resolve-UdkDescriptionAbiVersion $root $package $packageFile
+    $version = $package.version
     $deliveryPath = Resolve-UdkBuildPath $root $packageRoot $package.deliveries.$DeliveryName -Existing
     $delivery = Read-UdkBuildJson $deliveryPath
     $nuspec = $null
@@ -552,6 +530,7 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
         ReleaseDependencies = @($releaseDependencies.ToArray())
         Package = $package
         Version = $version
+        AbiVersion = $package.abiVersion
         Delivery = $delivery
         Nuspec = $nuspec
         Projects = $projects

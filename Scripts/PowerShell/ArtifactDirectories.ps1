@@ -1,1 +1,1 @@
-. (Join-Path $PSScriptRoot '../../Sources/Windows/PackageTools/Private/ArtifactDirectories.ps1')
+. (Join-Path $PSScriptRoot '../../Sources/Windows/UdkCli/Tools/PackageTools/Private/ArtifactDirectories.ps1')

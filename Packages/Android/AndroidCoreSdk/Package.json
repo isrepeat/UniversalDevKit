@@ -1,11 +1,7 @@
 {
   "schemaVersion": 2,
   "name": "AndroidCoreSdk",
-  "versionSource": {
-    "path": "../../../Projects/Gradle/AndroidCoreSdk/gradle.properties",
-    "format": "properties",
-    "property": "packageVersion"
-  },
+  "version": "1.0.10",
   "projects": {
     "gradle": {
       "adapter": "gradle-publish",

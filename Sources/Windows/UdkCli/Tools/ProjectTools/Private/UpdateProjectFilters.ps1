@@ -1,5 +1,5 @@
 param(
-    [string]$RepositoryRoot = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)),
+    [string]$RepositoryRoot = (Get-Location).Path,
     [switch]$Check,
     [switch]$PassThru
 )

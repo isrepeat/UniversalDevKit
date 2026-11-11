@@ -2,7 +2,7 @@
 
 Полный цикл создания приложения, настройки и выпуска: [гайд Android-приложений](../../../Docs/AndroidBuild.md).
 
-Шаблон Android-приложения и команды его создания/удаления перенесены из UtilityHelpersLib. NuGet ID `AndroidTemplates`, версия `1.0.0.34`; версия задаётся Version.json без автоматического увеличения.
+Шаблон Android-приложения и команды его создания/удаления перенесены из UtilityHelpersLib. NuGet ID `AndroidTemplates`, версия `1.0.0.34`. Версия задаётся полем `version` в `Package.json`.
 
 Сборка: `Scripts/Packages/Android/Pack.AndroidTemplates.cmd`. Исходники команд и шаблона находятся в Sources/Android/AndroidTemplates/PowerShell и Sources/Android/AndroidTemplates/Templates/Application. Delivery.json собирает из них прежние PowerShell и template_app внутри NuGet. После восстановления пакета вызовите `PowerShell/New-AndroidApplication.ps1 -Name MyApp -PackageId com.example.myapp -Destination <new-directory>`.
 

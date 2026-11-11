@@ -13,7 +13,8 @@ namespace universaldevkit::cli::details {
 		output << "Usage:\n"
 			"  udk project generate [manifest]\n"
 			"  udk project check [manifest]\n"
-			"  udk package build <package-path>\n\n"
+			"  udk package build <package-path>\n"
+			"  udk package plan <package-path>\n\n"
 			"The default project manifest is Components.json in the current directory.\n"
 			"Run package commands from the repository root.\n";
 		return invalidArguments ? 2 : 0;
@@ -42,11 +43,12 @@ int wmain(int argc, wchar_t* argv[]) {
 		if (group == L"project" && (command == L"generate" || command == L"check")) {
 			return universaldevkit::cli::details::RunProject(argc == 4 ? argv[3] : L"Components.json", command == L"check");
 		}
-		if (group == L"package" && command == L"build" && argc == 4) {
-			return universaldevkit::cli::RunPowerShellScript(
-				L"PackageTools/Build.ps1",
-				{L"-PackagePath", argv[3], L"-RepositoryPath", std::filesystem::current_path().wstring()}
-			);
+		if (group == L"package" && (command == L"build" || command == L"plan") && argc == 4) {
+			std::vector<std::wstring> arguments{L"-PackagePath", argv[3]};
+			if (command == L"plan") {
+				arguments.emplace_back(L"-Plan");
+			}
+			return universaldevkit::cli::RunPowerShellScript(L"PackageTools/Build.ps1", arguments);
 		}
 		return universaldevkit::cli::details::ShowHelp(true);
 	} catch (const std::exception& exception) {

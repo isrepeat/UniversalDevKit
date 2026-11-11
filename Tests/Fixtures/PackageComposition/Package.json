@@ -1,7 +1,8 @@
 {
   "schemaVersion": 2,
   "name": "CompositionProbe",
-  "versionSource": "Version.json",
+  "version": "${UDK_VERSION.version}",
+  "abiVersion": "${UDK_VERSION.abiVersion}",
   "projects": "Projects.json",
   "contents": [
     {

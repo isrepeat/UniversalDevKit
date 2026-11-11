@@ -10,7 +10,7 @@
 ./Packages/Build/Build.ps1 -PackagePath Packages/CrossPlatform/Diagnostic/Package.json -Delivery NuGet
 ```
 
-Можно указать CMake, NuGet и OutputDirectory. Версия читается через versionSource. Предварительный выпуск необходимых пакетов задаётся releaseDependencies. Для всех NuGet используйте -All -Delivery NuGet. Каждый корень имеет изолированный каталог в !artifacts/packages/nuget/<component>; необходимая подготовка внешних зависимостей вызывается через delivery. Для XAML и renderer используются их отдельные CMD-точки в Scripts/Packages/CrossPlatform.
+Можно указать CMake, NuGet и OutputDirectory. Версия задаётся полем `version` в `Package.json`. Предварительный выпуск необходимых пакетов задаётся releaseDependencies. Для всех NuGet используйте -All -Delivery NuGet. Каждый корень имеет изолированный каталог в !artifacts/packages/nuget/<component>; необходимая подготовка внешних зависимостей вызывается через delivery. Для XAML и renderer используются их отдельные CMD-точки в Scripts/Packages/CrossPlatform.
 
 Helpers поставляется как header-only Shared. Diagnostic имеет process-state и поставляется только Dynamic с Dynamic CRT. XamlRuntime и OpenGLESRenderer имеют Static/Dynamic и используют Dynamic CRT; renderer также доставляет ANGLE. Нельзя выбирать варианты, отсутствующие в конкретном delivery.
 

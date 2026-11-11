@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "name": "NativeProbe",
-  "versionSource": "../../../Version.json",
+  "version": "0.1.0",
   "projects": {
     "windows": {
       "adapter": "udk-native",

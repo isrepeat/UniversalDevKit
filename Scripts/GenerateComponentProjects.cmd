@@ -5,9 +5,9 @@ set "VSLANG=1033"
 setlocal
 where pwsh.exe >nul 2>nul
 if errorlevel 1 (
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\Sources\Windows\ProjectTools\Generate.ps1" -ManifestPath "%~dp0..\Components.json" %*
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\Sources\Windows\UdkCli\Tools\ProjectTools\Generate.ps1" -ManifestPath "%~dp0..\Components.json" %*
 ) else (
-    pwsh.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\Sources\Windows\ProjectTools\Generate.ps1" -ManifestPath "%~dp0..\Components.json" %*
+    pwsh.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0..\Sources\Windows\UdkCli\Tools\ProjectTools\Generate.ps1" -ManifestPath "%~dp0..\Components.json" %*
 )
 set "scriptExitCode=%errorlevel%"
 echo.

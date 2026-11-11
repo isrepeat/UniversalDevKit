@@ -11,6 +11,26 @@
 - [CMake без дублирования списков](#cmake-без-дублирования-списков)
 - [Настройки компиляции](#настройки-компиляции)
 - [Исполняемые проекты MSBuild](#исполняемые-проекты-msbuild)
+- [Ссылки на JSON](#ссылки-на-json)
+
+## Ссылки на JSON
+
+В `Package.json` поле `version` обязательно. В описании компонента поле `githubVersion` требуется для публикации релиза на GitHub. Для локальной генерации его можно пропустить. Оба поля принимают номер версии или ссылку на поле другого JSON. Псевдонимы файлов задаются в `JsonReferences.json` в корне обрабатываемого репозитория. Пути в карте отсчитываются от этого корня.
+
+```json
+{
+  "UDK_VERSION": "Version.json"
+}
+```
+
+```json
+{
+  "version": "${UDK_VERSION.version}",
+  "abiVersion": "${UDK_VERSION.abiVersion}"
+}
+```
+
+Ссылка занимает всё значение поля. Резолвер поддерживает вложенные поля и сохраняет тип значения. `version` и `githubVersion` разрешаются в строки с номерами выпуска, а необязательное `abiVersion` — в целое неотрицательное число. Бинарные метаданные библиотек UDK по-прежнему задаются общим `Version.json`.
 
 ## Исполняемые проекты MSBuild
 
@@ -60,13 +80,13 @@ Include-каталоги должны существовать. Определе
 
 Каждое описание содержит `name`, `msbuildGuid`, `headers` и `sources`, а также необязательный объект `filters`. `name` определяет компонент и имя `.vcxitems`. `msbuildGuid` сохраняет идентификатор Shared-проекта; при добавлении компонента нужен новый уникальный GUID.
 
-После изменения реестра компонентов запустите `Scripts/GenerateComponentProjects.cmd` либо `pwsh -File Sources/Windows/ProjectTools/Generate.ps1 -ManifestPath Components.json`. Один запуск обновляет `.vcxitems`, затем вызывает внутренний `UpdateProjectFilters.ps1` для обновления `.filters` всех проектов. Сгенерированные файлы хранятся в Git. После завершения обоих этапов перезагрузите проект или solution в Visual Studio.
+После изменения реестра компонентов запустите `Scripts/GenerateComponentProjects.cmd` либо `pwsh -File Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1 -ManifestPath Components.json`. Один запуск обновляет `.vcxitems`, затем вызывает внутренний `UpdateProjectFilters.ps1` для обновления `.filters` всех проектов. Сгенерированные файлы хранятся в Git. После завершения обоих этапов перезагрузите проект или solution в Visual Studio.
 
-Для проверки без записи: `pwsh -File Sources/Windows/ProjectTools/Generate.ps1 -ManifestPath Components.json -Check` или `Scripts/GenerateComponentProjects.cmd -Check`. Неактуальные или отсутствующие `.vcxitems` либо `.filters` вызывают ошибку. Если устарели проекты, проверка останавливается на первом этапе; после их актуализации проверяются фильтры. Ни один этап проверки не записывает файлы.
+Для проверки без записи: `pwsh -File Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1 -ManifestPath Components.json -Check` или `Scripts/GenerateComponentProjects.cmd -Check`. Неактуальные или отсутствующие `.vcxitems` либо `.filters` вызывают ошибку. Если устарели проекты, проверка останавливается на первом этапе; после их актуализации проверяются фильтры. Ни один этап проверки не записывает файлы.
 
 Генератор сохраняет GUID и импорт публичных настроек. Для каждого `.cpp` по умолчанию сохраняет наследование PCH и стандартных настроек пути объектного файла.
 
-Генерация выполняется общим [ProjectTools](ProjectTools.md) в PowerShell 7 или Windows PowerShell 5.1. CMD, проверки и Connect напрямую вызывают Sources/Windows/ProjectTools/Generate.ps1 с путём к Components.json. Реализация поставляется отдельным пакетом. XML записывается в UTF-8 без BOM и завершающих переводов строк. Повторный запуск не перезаписывает актуальные проекты. Solution обновляется через закреплённый SolutionInjector, который получает сам инструмент.
+Генерация выполняется общим [ProjectTools](ProjectTools.md) в PowerShell 7 или Windows PowerShell 5.1. CMD, проверки и Connect напрямую вызывают Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1 с путём к Components.json. Для других репозиториев ProjectTools входит в поставку [UdkCli](UdkCli.md). XML записывается в UTF-8 без BOM и завершающих переводов строк. Повторный запуск не перезаписывает актуальные проекты. Solution обновляется через закреплённый SolutionInjector, который получает сам инструмент.
 
 Пути заголовков и исходников задаются относительно репозитория через `/`, без MSBuild-макросов. `headers` и `sources` допускают точные пути и маски: `*` соответствует имени в одном каталоге, `**` — вложенным каталогам, `?` — одному символу. Например, `Sources/XamlRuntime/**/*.cpp` выбирает все исходники компонента. ProjectTools и CMake раскрывают маски в явные списки перед обработкой компонента. Необязательные `excludeHeaders` и `excludeSources` исключают файлы по тем же правилам; Helpers и Diagnostic исключают автоматически формируемый Export.h из списка описания. Внутренние заголовки не добавляют публичных include-путей и не включаются в HeaderCheck. Проверяются существование файлов, уникальность имён и GUID, повторяющиеся includes и пути; все описания проверяются до записи.
 

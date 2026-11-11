@@ -17,7 +17,7 @@ $NuGet = & (Join-Path $repository 'Scripts/PowerShell/GetNuGet.ps1') -LocalPath 
 $workspace = New-TestWorkspace $repository WorkingTree HEAD
 $fixture = Join-Path $repository 'Tests/Fixtures/Libraries/HeaderOnly'
 Get-ChildItem -LiteralPath $fixture -Force | Copy-Item -Destination $workspace.Library -Recurse -Force
-& (Join-Path $workspace.Library 'Sources/Windows/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $workspace.Library 'Components.json')
+& (Join-Path $workspace.Library 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $workspace.Library 'Components.json')
 # Короткий путь предотвращает превышение MAX_PATH у CompilerId MSBuild.
 $shortLibrary = Join-Path $workspace.Root 'L'
 Copy-Item -LiteralPath $workspace.Library -Destination $shortLibrary -Recurse

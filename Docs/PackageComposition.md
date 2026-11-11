@@ -2,36 +2,18 @@
 
 **Навигация:** [Документация](README.md) → Выпуск пакетов
 
-UDK выпускает UniversalDevKit.PackageTools как самостоятельный NuGet. Реализация находится в Sources/Windows/PackageTools; пакет содержит все адаптеры, helpers, manifest NuGet.exe и MSBuild targets. Использование инструмента не требует checkout UDK. AndroidAppPreviewer — отдельный репозиторий и самостоятельный владелец выпуска Previewer/PluginSDK.
+PackageTools входит в поставку [UdkCli](UdkCli.md). Для работы из стороннего репозитория нужны `udk.exe`, его каталог `Tools` и PowerShell 7.
 
-## Подключение к другому репозиторию
+## Запуск из другого репозитория
 
-Создайте служебный Packages/Build.csproj с закреплённым PackageReference:
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <EnableDefaultItems>false</EnableDefaultItems>
-    <UdkPackageRepository>$(MSBuildProjectDirectory)/..</UdkPackageRepository>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="UniversalDevKit.PackageTools" Version="0.5.0" PrivateAssets="all" />
-    <UdkPackage Include="Packages/MyLibrary/Package.json" />
-  </ItemGroup>
-</Project>
-```
-
-Команды из корня потребителя:
+Из корня репозитория:
 
 ```powershell
-dotnet msbuild Packages/Build.csproj -restore -t:PlanRepositoryPackages
-dotnet msbuild Packages/Build.csproj -restore -t:PackRepository
+udk package plan Packages/MyLibrary/Package.json
+udk package build Packages/MyLibrary/Package.json
 ```
 
-Первое действие проверяет JSON без сборки проектов, второе создаёт NuGet локально. Отправку пакетов в feed выполняет отдельное действие CI. Для восстановления инструмента используются стандартные NuGet.Config и RestoreAdditionalProjectSources. UdkPackageSources задаёт источники для адаптера nuget-restore. Дополнительные свойства: UdkPackageOutput, UdkPackageNuGet, UdkPackageCMake, UdkPackagePowerShell.
-
-В установленном пакете также можно напрямую вызвать tools/Build.ps1 с RepositoryPath и PackagePath. Исходная точка UDK Packages/Build/Build.ps1 — только оболочка над тем же инструментом.
+Первая команда проверяет план выпуска без сборки, вторая собирает пакет локально. Для дополнительных параметров можно вызвать `Tools/PackageTools/Build.ps1` из поставки напрямую. Отправку пакетов в feed выполняет отдельный шаг CI.
 
 ## Контракт проектов
 
@@ -55,13 +37,13 @@ cmake-install допускает preparation для нестандартной �
 
 ## Контракт пакета
 
-Package.json версии 2 содержит name, versionSource, projects, непустой contents и deliveries с именованными способами доставки. Пути versionSource и deliveries относительны к каталогу пакета. contents.source относителен корню репозитория. Для пакета только из готовых файлов projects может быть пустым объектом. Если projects — строка, путь внешнего реестра относителен каталогу пакета; пути внутри любых определений проектов по-прежнему относительны корню репозитория.
+Package.json версии 2 содержит name, projects, непустой contents и deliveries с именованными способами доставки. Поле `version` обязательно. Оно принимает номер версии или ссылку из корневого `JsonReferences.json`. Пути deliveries относительны к каталогу пакета. contents.source относителен корню репозитория. Для пакета только из готовых файлов projects может быть пустым объектом. Если projects — строка, путь внешнего реестра относителен каталогу пакета; пути внутри любых определений проектов по-прежнему относительны корню репозитория.
 
 ```json
 {
   "schemaVersion": 2,
   "name": "MyLibrary",
-  "versionSource": "../../Version.json",
+  "version": "1.0.0",
   "projects": {
     "managed": {
       "adapter": "dotnet",
@@ -94,7 +76,7 @@ Delivery.json версии 1 выбирает adapter=nuget, id, supportedPlatfo
 {
   "schemaVersion": 2,
   "name": "MyLibrary",
-  "versionSource": "Version.json",
+  "version": "1.0.0",
   "projects": {
     "managed": {
       "adapter": "dotnet",
@@ -150,15 +132,15 @@ Delivery.json версии 1 выбирает adapter=nuget, id, supportedPlatfo
 
 Старое поле contents.file удалено и отклоняется как неизвестное. Для миграции преобразуйте старый путь относительно каталога пакета в include относительно source; в destination оставьте каталог назначения, а новое имя задайте через rename. Для перехода с именованных артефактов перенесите root/path в contents и удалите artifacts/artifact.
 
-Проверка Tests/Integration/Packages/PackageContents.Tests.ps1 создаёт настоящий NuGet и проверяет его состав, отсутствие лишних файлов, сохранение дерева, уплощение и ошибки контракта. Параметр PackageToolsPackage запускает тот же тест установленным инструментом из nupkg.
+Проверка Tests/Integration/Packages/PackageContents.Tests.ps1 создаёт настоящий NuGet и проверяет его состав, отсутствие лишних файлов, сохранение дерева, уплощение и ошибки контракта. Параметр `UdkCliDirectory` запускает ту же проверку скриптами из поставки UdkCli.
 
 ## Собственные выпуски UDK
 
 ```powershell
-& ./Packages/Build/Build.ps1 -PackagePath Packages/Windows/PackageTools/Package.json
+& ./Packages/Build/Build.ps1 -PackagePath Packages/Windows/XamlCompiler/Package.json
 ```
 
-PackageTools использует files-адаптер и собственный Version.json. Все остальные пакеты UDK выпускаются тем же PackageTools. Адаптер udk-native сохраняет ABI, MSBuild-интеграцию и вычисление native-зависимостей из реестра компонентов. OpenGLESRenderer включает ANGLE, публичные заголовки в include/ANGLE и лицензии. Зависимости компонентных nuspec не ограничены группой native, поэтому NuGet восстанавливает транзитивные пакеты и для смешанных net8.0 SDK.
+Продуктовые пакеты UDK выпускаются через PackageTools. Адаптер udk-native сохраняет ABI, MSBuild-интеграцию и вычисление native-зависимостей из реестра компонентов. OpenGLESRenderer включает ANGLE, публичные заголовки в include/ANGLE и лицензии. Зависимости компонентных nuspec не ограничены группой native, поэтому NuGet восстанавливает транзитивные пакеты и для смешанных net8.0 SDK.
 
 Продуктовые Package.json UDK выбирают результаты напрямую в contents, без промежуточных artifacts: root=output для подготовленного дерева и root=build, path=Release, include=["XamlCompiler.exe"] для компилятора. Там, где нужен весь результат, include/exclude опускаются: сохраняется полное дерево. Параметры доставки и зависимости пакетов от этого упрощения не меняются.
 
@@ -168,13 +150,13 @@ PackageTools использует files-адаптер и собственный
 
 Все проекты используют !artifacts/package-build/<пакет>/<имя-проекта> с output, build, install, dependencies или packages. Поэтому одинаковые локальные имена в разных пакетах не пересекаются. Путь одинаково формируется для локальных проектов и проектов внешнего реестра и не зависит от доставки. Адаптеры получают общий WorkDirectory; buildDirectory в описаниях проектов не поддерживается. Выпуски находятся в !artifacts/packages/nuget/<имя-пакета>, staging — staging/payload. Блокировки проектов удерживаются до завершения staging. NuGet.exe хранится в !tools собираемого репозитория; загрузка проверяется по закреплённому SHA-256.
 
-Tests/Integration/Packages/PackageComposition.Tests.ps1 проверяет смешанный пакет, внешний корень, ошибки контрактов, восстановление NuGet-зависимости и конфликтующие файлы. Параметр PackageToolsPackage запускает тот же сценарий установленным инструментом из настоящего nupkg. Проверки конкретного PluginSDK принадлежат репозиторию Previewer.
+Tests/Integration/Packages/PackageComposition.Tests.ps1 проверяет смешанный пакет, внешний корень, ошибки контрактов, восстановление NuGet-зависимости и конфликтующие файлы. Параметр `UdkCliDirectory` запускает ту же проверку скриптами из поставки UdkCli. Проверки конкретного PluginSDK принадлежат репозиторию Previewer.
 
 ## Несколько доставок и предварительные выпуски
 
 contents может содержать deliveries: ["NuGet"] или ["Android"]. Сборщик выбирает только результаты выбранной доставки и необходимые проекты. Общие элементы без фильтра включаются всегда. releaseDependencies содержит package (путь к Package.json относительно текущего пакета), delivery и необязательный when (список доставок текущего пакета). Эти пакеты выпускаются первыми; циклы отвергаются при построении плана. Для NuGet зависимости копируются в feed корневого пакета, для Maven используется общий выходной репозиторий. Это порядок выпуска; зависимости потребителя описываются отдельно в Delivery.json либо исходном Gradle-проекте.
 
-versionSource может быть строкой с JSON-путём либо объектом path/format/property. format=properties позволяет читать packageVersion из gradle.properties. Значение версии не изменяется при выпуске.
+Ссылки вида `${UDK_VERSION.version}` разрешаются по [карте JSON-ссылок](Components.md#ссылки-на-json). Значение версии не изменяется при выпуске.
 
 | Проект | Назначение |
 |---|---|
@@ -185,4 +167,4 @@ versionSource может быть строкой с JSON-путём либо о�
 
 Специализированные udk-native и udk-prefab требуют реестр компонентов и инфраструктуру исходного UDK; обычный сторонний репозиторий использует dotnet, cmake-install, cmake-build, files и nuget-restore. gradle-publish получает путь к resolver toolchain явно из JSON. Delivery adapter=maven-prefab формирует native AAR/POM, maven-repository переносит штатную Gradle-публикацию вместе с метаданными и контрольными суммами. NuGet dependencySource=udk-component вычисляет точные зависимости из компонентного реестра; обычные пакеты задают dependencies явно.
 
-В UDK основной точкой запуска служит ./Packages/Build/Build.ps1. Параметр -All автоматически выбирает все Package.json и их доставки, -Delivery ограничивает способ доставки, а -PackagePath выбирает конкретный пакет. Оболочка использует исходный PackageTools, поэтому инструмент может выпускать сам себя без предварительной установки. Проверка -All -Plan не запускает сборку. Служебный MSBuild-проект из примера подключения предназначен для сторонних репозиториев; в самом UDK отдельный Build.csproj не нужен. PackageTools.Migration.Tests.ps1 сверяет все планы, а с BaselineDirectory сравнивает состав файлов и NuGet-зависимости с контрольными пакетами; CheckMaven проверяет Android-публикации.
+В UDK основной точкой запуска служит ./Packages/Build/Build.ps1. Параметр -All автоматически выбирает все Package.json и их доставки, -Delivery ограничивает способ доставки, а -PackagePath выбирает конкретный пакет. Оболочка использует исходный PackageTools. Проверка -All -Plan не запускает сборку. PackageTools.Migration.Tests.ps1 сверяет все планы, а с BaselineDirectory сравнивает состав файлов и NuGet-зависимости с контрольными пакетами; CheckMaven проверяет Android-публикации.

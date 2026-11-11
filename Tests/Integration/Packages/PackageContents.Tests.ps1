@@ -1,4 +1,4 @@
-param([string]$PackageToolsPackage, [string]$NuGet = 'nuget.exe')
+param([string]$UdkCliDirectory, [string]$NuGet = 'nuget.exe')
 
 $ErrorActionPreference = 'Stop'
 $repository = (Resolve-Path (Join-Path $PSScriptRoot '../../..')).Path
@@ -8,10 +8,8 @@ $external = Join-Path $run 'external'
 [void][IO.Directory]::CreateDirectory($external)
 $builder = Join-Path $repository 'Packages/Build/Build.ps1'
 Add-Type -AssemblyName System.IO.Compression.FileSystem
-if ($PackageToolsPackage) {
-    $installed = Join-Path $run 'installed'
-    [IO.Compression.ZipFile]::ExtractToDirectory($PackageToolsPackage, $installed)
-    $builder = Join-Path $installed 'tools/Build.ps1'
+if ($UdkCliDirectory) {
+    $builder = Join-Path $UdkCliDirectory 'Tools/PackageTools/Build.ps1'
 }
 foreach ($file in @('Delivery.json', 'Package.nuspec')) {
     Copy-Item -LiteralPath (Join-Path $repository "Tests/Fixtures/PackageComposition/$file") -Destination $external
@@ -33,7 +31,7 @@ function Set-ContentsPackage($Content) {
     Save-ContentsJson 'Package.json' @{
         schemaVersion = 2
         name = 'ContentsProbe'
-        versionSource = 'Version.json'
+        version = '1.0.0'
         projects = @{ files = $project }
         contents = @($Content)
         deliveries = @{ NuGet = 'Delivery.json' }
@@ -70,7 +68,6 @@ function Expect-ContentsFailure([scriptblock]$Action, [string]$Pattern) {
         throw "Expected '$Pattern', got '$message'."
     }
 }
-Save-ContentsJson 'Version.json' @{ version = '1.0.0' }
 
 # Patterns are relative to the selected root; ** also includes top-level files.
 $content = @{ project = 'files'; destination = 'selected'; include = @('**/*.dll'); exclude = @('**/*Tests.dll', 'Extensions/A.dll') }

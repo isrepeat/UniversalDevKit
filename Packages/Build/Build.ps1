@@ -53,7 +53,7 @@ foreach ($key in @('Abi','Configuration','ApiLevel')) {
     }
 }
 if (-not $All) {
-    & (Join-Path $root 'Sources/Windows/PackageTools/Build.ps1') -PackagePath $PackagePath -Delivery $Delivery @arguments
+    & (Join-Path $root 'Sources/Windows/UdkCli/Tools/PackageTools/Build.ps1') -PackagePath $PackagePath -Delivery $Delivery @arguments
     return
 }
 foreach ($file in Get-ChildItem (Join-Path $RepositoryPath 'Packages') -Filter Package.json -Recurse -File | Sort-Object FullName) {
@@ -63,6 +63,6 @@ foreach ($file in Get-ChildItem (Join-Path $RepositoryPath 'Packages') -Filter P
         if ($Delivery -and $Delivery -ne $name) {
             continue
         }
-        & (Join-Path $root 'Sources/Windows/PackageTools/Build.ps1') -PackagePath $relative -Delivery $name @arguments
+        & (Join-Path $root 'Sources/Windows/UdkCli/Tools/PackageTools/Build.ps1') -PackagePath $relative -Delivery $name @arguments
     }
 }

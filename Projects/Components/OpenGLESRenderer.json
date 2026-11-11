@@ -5,20 +5,6 @@
     "Windows",
     "Android"
   ],
-  "headers": [
-    "Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/**/*.h",
-    "Sources/OpenGLESRenderer/**/*.h"
-  ],
-  "sources": [
-    "Sources/OpenGLESRenderer/**/*.cpp"
-  ],
-  "filters": {
-    "roots": [
-      { "path": "Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer", "filter": "" },
-      { "path": "Sources/OpenGLESRenderer", "filter": "" }
-    ],
-    "files": {}
-  },
   "dependencies": [
     {
       "component": "Helpers",
@@ -36,6 +22,20 @@
       "linkage": "same"
     }
   ],
+  "headers": [
+    "Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/**/*.h",
+    "Sources/OpenGLESRenderer/**/*.h"
+  ],
+  "sources": [
+    "Sources/OpenGLESRenderer/**/*.cpp"
+  ],
+  "filters": {
+    "roots": [
+      { "path": "Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer", "filter": "" },
+      { "path": "Sources/OpenGLESRenderer", "filter": "" }
+    ],
+    "files": {}
+  },
   "requirements": {
     "cxxStandard": 20
   },

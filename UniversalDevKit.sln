@@ -15,17 +15,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Repository", "!Repository"
 		README.md = README.md
 		TODO.md = TODO.md
 		Version.json = Version.json
+		JsonReferences.json = JsonReferences.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{0458F395-ECF0-44BA-9C83-38D6F7E56AF3}"
 	ProjectSection(SolutionItems) = preProject
 		Docs\Abi.md = Docs\Abi.md
+		Docs\AndroidBuild.md = Docs\AndroidBuild.md
 		Docs\Architecture.md = Docs\Architecture.md
+		Docs\Artifacts.md = Docs\Artifacts.md
 		Docs\AutoPrMerge.md = Docs\AutoPrMerge.md
 		Docs\BinaryReleasePolicy.md = Docs\BinaryReleasePolicy.md
 		Docs\BuildExtensions.md = Docs\BuildExtensions.md
 		Docs\CMake.md = Docs\CMake.md
-		Docs\AndroidBuild.md = Docs\AndroidBuild.md
 		Docs\Components.md = Docs\Components.md
 		Docs\Connect.md = Docs\Connect.md
 		Docs\Diagnostic.md = Docs\Diagnostic.md
@@ -33,18 +35,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{0458F395-E
 		Docs\Math.md = Docs\Math.md
 		Docs\Meta.md = Docs\Meta.md
 		Docs\MSBuild.md = Docs\MSBuild.md
+		Docs\PackageComposition.md = Docs\PackageComposition.md
 		Docs\README.md = Docs\README.md
 		Docs\RegistryContract.md = Docs\RegistryContract.md
 		Docs\Requirements.md = Docs\Requirements.md
+		Docs\SourceLayout.md = Docs\SourceLayout.md
 		Docs\StateScope.md = Docs\StateScope.md
 		Docs\Std.md = Docs\Std.md
 		Docs\Tools.md = Docs\Tools.md
+		Docs\UdkCli.md = Docs\UdkCli.md
 		Docs\Validation.md = Docs\Validation.md
 		Docs\XamlRuntime.md = Docs\XamlRuntime.md
-		Docs\SourceLayout.md = Docs\SourceLayout.md
-		Docs\UdkCli.md = Docs\UdkCli.md
-		Docs\PackageComposition.md = Docs\PackageComposition.md
-		Docs\Artifacts.md = Docs\Artifacts.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Includes", "Includes", "{CC3C64B5-A5FC-8F8E-720E-921A21F00229}"
@@ -91,7 +92,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "Androi
 	ProjectSection(SolutionItems) = preProject
 		Packages\Android\AndroidBuildTools\Package.json = Packages\Android\AndroidBuildTools\Package.json
 		Packages\Android\AndroidBuildTools\README.md = Packages\Android\AndroidBuildTools\README.md
-		Packages\Android\AndroidBuildTools\Version.json = Packages\Android\AndroidBuildTools\Version.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{F14DE294-71C4-BF70-A2DA-80F47CB2AE6C}"
@@ -119,7 +119,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidTemplates", "Android
 	ProjectSection(SolutionItems) = preProject
 		Packages\Android\AndroidTemplates\Package.json = Packages\Android\AndroidTemplates\Package.json
 		Packages\Android\AndroidTemplates\README.md = Packages\Android\AndroidTemplates\README.md
-		Packages\Android\AndroidTemplates\Version.json = Packages\Android\AndroidTemplates\Version.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{12C09B2F-C78B-CC22-D2D7-E3B64300C265}"
@@ -232,22 +231,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{59FB48FD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{45569702-BF11-421C-A43A-03D1364E3C95}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PackageTools", "PackageTools", "{D7F020F8-ED67-EA28-7A50-A160CA8B9554}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\Windows\PackageTools\Package.json = Packages\Windows\PackageTools\Package.json
-		Packages\Windows\PackageTools\README.md = Packages\Windows\PackageTools\README.md
-		Packages\Windows\PackageTools\Version.json = Packages\Windows\PackageTools\Version.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{9F537FBC-3641-B48E-6E02-3CC1AC523A09}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{9DFA8DD9-A595-773B-B68B-E71B493C5B49}"
-	ProjectSection(SolutionItems) = preProject
-		Packages\Windows\PackageTools\Delivery\NuGet\Delivery.json = Packages\Windows\PackageTools\Delivery\NuGet\Delivery.json
-		Packages\Windows\PackageTools\Delivery\NuGet\UniversalDevKit.PackageTools.nuspec = Packages\Windows\PackageTools\Delivery\NuGet\UniversalDevKit.PackageTools.nuspec
-		Packages\Windows\PackageTools\Delivery\NuGet\UniversalDevKit.PackageTools.targets = Packages\Windows\PackageTools\Delivery\NuGet\UniversalDevKit.PackageTools.targets
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{C25B8C43-91C7-4F23-B186-05E37C145720}"
 	ProjectSection(SolutionItems) = preProject
 		Packages\Windows\XamlCompiler\Package.json = Packages\Windows\XamlCompiler\Package.json
@@ -262,14 +245,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{B398F253
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{13DA8639-4234-4E82-9423-056A19840860}"
-	ProjectSection(SolutionItems) = preProject
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4-1E80-4386-ACBA-A8B9D984FC44}"
 	ProjectSection(SolutionItems) = preProject
 		Projects\Cmake\BinaryReleasePolicy.cmake = Projects\Cmake\BinaryReleasePolicy.cmake
 		Projects\Cmake\BuildIdentity.cmake = Projects\Cmake\BuildIdentity.cmake
 		Projects\Cmake\BuildIdentity.txt.in = Projects\Cmake\BuildIdentity.txt.in
+		Projects\Cmake\ComponentCompile.cmake = Projects\Cmake\ComponentCompile.cmake
 		Projects\Cmake\ComponentDependencies.cmake = Projects\Cmake\ComponentDependencies.cmake
 		Projects\Cmake\ComponentRequirements.cmake = Projects\Cmake\ComponentRequirements.cmake
 		Projects\Cmake\InstallPackageGuard.cmake.in = Projects\Cmake\InstallPackageGuard.cmake.in
@@ -279,7 +261,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4
 		Projects\Cmake\RegistryContract.cmake = Projects\Cmake\RegistryContract.cmake
 		Projects\Cmake\UniversalDevKitConfig.cmake.in = Projects\Cmake\UniversalDevKitConfig.cmake.in
 		Projects\Cmake\Version.cmake = Projects\Cmake\Version.cmake
-		Projects\Cmake\ComponentCompile.cmake = Projects\Cmake\ComponentCompile.cmake
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{ADBA3BA9-F6AC-7A5C-7A27-59AE40606576}"
@@ -314,10 +295,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{8CB5D103-21B9-4651-A4A1-671107F28847}"
 	ProjectSection(SolutionItems) = preProject
 		Projects\Components\Diagnostic.json = Projects\Components\Diagnostic.json
-		Projects\Components\UdkCli.json = Projects\Components\UdkCli.json
-		Projects\Components\XamlCompiler.json = Projects\Components\XamlCompiler.json
 		Projects\Components\Helpers.json = Projects\Components\Helpers.json
 		Projects\Components\OpenGLESRenderer.json = Projects\Components\OpenGLESRenderer.json
+		Projects\Components\UdkCli.json = Projects\Components\UdkCli.json
+		Projects\Components\XamlCompiler.json = Projects\Components\XamlCompiler.json
 		Projects\Components\XamlRuntime.json = Projects\Components\XamlRuntime.json
 	EndProjectSection
 EndProject
@@ -382,6 +363,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRen
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Static", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Static.vcxproj", "{220B0789-1F04-54D3-18E5-5DB99E91172F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Shared", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems", "{364E96CB-9D8A-40B0-8455-6A31A15A36B0}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli", "UdkCli", "{752A6291-E849-433A-BF37-7102E850AAB5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UdkCli", "Projects\MsBuild\UdkCli\UdkCli.vcxproj", "{9C7AAB80-FA41-4925-95FA-06409E32E4E1}"
@@ -393,8 +376,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XamlCompiler", "Projects\MsBuild\XamlCompiler\XamlCompiler.vcxproj", "{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlCompiler.Shared", "Projects\MsBuild\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems", "{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Shared", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems", "{364E96CB-9D8A-40B0-8455-6A31A15A36B0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlRuntime", "XamlRuntime", "{A62B830A-BE58-54F9-6766-E95D2B04A2A8}"
 EndProject
@@ -447,23 +428,23 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{1B943F80-0EB6-4134-A02A-2F1FF121CFEC}"
 	ProjectSection(SolutionItems) = preProject
 		Scripts\Packages\Windows\Pack.XamlCompiler.cmd = Scripts\Packages\Windows\Pack.XamlCompiler.cmd
-		Scripts\Packages\Windows\Pack.PackageTools.cmd = Scripts\Packages\Windows\Pack.PackageTools.cmd
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{D832A37F-03A2-4EBD-9FF9-BC27D415378B}"
 	ProjectSection(SolutionItems) = preProject
+		Scripts\PowerShell\ArtifactDirectories.ps1 = Scripts\PowerShell\ArtifactDirectories.ps1
 		Scripts\PowerShell\AutoPrMerge.ps1 = Scripts\PowerShell\AutoPrMerge.ps1
 		Scripts\PowerShell\Connect.ps1 = Scripts\PowerShell\Connect.ps1
 		Scripts\PowerShell\Connect.Tests.ps1 = Scripts\PowerShell\Connect.Tests.ps1
 		Scripts\PowerShell\ConnectConsole.ps1 = Scripts\PowerShell\ConnectConsole.ps1
 		Scripts\PowerShell\FormatXmlAttributes.ps1 = Scripts\PowerShell\FormatXmlAttributes.ps1
-		Scripts\PowerShell\GetSolutionInjector.ps1 = Scripts\PowerShell\GetSolutionInjector.ps1
-		Scripts\PowerShell\SyncRuntimeLibraries.ps1 = Scripts\PowerShell\SyncRuntimeLibraries.ps1
-		Scripts\PowerShell\UpdateProjectFilters.ps1 = Scripts\PowerShell\UpdateProjectFilters.ps1
-		Scripts\PowerShell\ArtifactDirectories.ps1 = Scripts\PowerShell\ArtifactDirectories.ps1
 		Scripts\PowerShell\GetNuGet.ps1 = Scripts\PowerShell\GetNuGet.ps1
+		Scripts\PowerShell\GetSolutionInjector.ps1 = Scripts\PowerShell\GetSolutionInjector.ps1
+		Scripts\PowerShell\PublishUdkCli.ps1 = Scripts\PowerShell\PublishUdkCli.ps1
 		Scripts\PowerShell\ResetBuildDrives.ps1 = Scripts\PowerShell\ResetBuildDrives.ps1
 		Scripts\PowerShell\Setup.ps1 = Scripts\PowerShell\Setup.ps1
+		Scripts\PowerShell\SyncRuntimeLibraries.ps1 = Scripts\PowerShell\SyncRuntimeLibraries.ps1
+		Scripts\PowerShell\UpdateProjectFilters.ps1 = Scripts\PowerShell\UpdateProjectFilters.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{8B6A058C-7402-4392-8956-6B1489D9E118}"
@@ -511,8 +492,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{CB7EEAB5-39FB-49B2-95A1-72774A80F5B8}"
 	ProjectSection(SolutionItems) = preProject
-		Scripts\Tools\README.md = Scripts\Tools\README.md
-		Scripts\Tools\SolutionInjector.json = Scripts\Tools\SolutionInjector.json
+		Scripts\Tools\Publish.UdkCli.cmd = Scripts\Tools\Publish.UdkCli.cmd
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{A9963E0C-F9B5-4635-505D-54E094B1F113}"
@@ -616,10 +596,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", 
 		Sources\Android\AndroidBuildTools\PowerShell\get-configuration-value.ps1 = Sources\Android\AndroidBuildTools\PowerShell\get-configuration-value.ps1
 		Sources\Android\AndroidBuildTools\PowerShell\Invoke-Build.ps1 = Sources\Android\AndroidBuildTools\PowerShell\Invoke-Build.ps1
 		Sources\Android\AndroidBuildTools\PowerShell\Read-AndroidSharedProps.ps1 = Sources\Android\AndroidBuildTools\PowerShell\Read-AndroidSharedProps.ps1
+		Sources\Android\AndroidBuildTools\PowerShell\Resolve-AndroidAppPreviewer.ps1 = Sources\Android\AndroidBuildTools\PowerShell\Resolve-AndroidAppPreviewer.ps1
 		Sources\Android\AndroidBuildTools\PowerShell\run-android-app-previewer.ps1 = Sources\Android\AndroidBuildTools\PowerShell\run-android-app-previewer.ps1
 		Sources\Android\AndroidBuildTools\PowerShell\test-apk-signing.ps1 = Sources\Android\AndroidBuildTools\PowerShell\test-apk-signing.ps1
 		Sources\Android\AndroidBuildTools\PowerShell\upload-apk-to-drive.ps1 = Sources\Android\AndroidBuildTools\PowerShell\upload-apk-to-drive.ps1
-		Sources\Android\AndroidBuildTools\PowerShell\Resolve-AndroidAppPreviewer.ps1 = Sources\Android\AndroidBuildTools\PowerShell\Resolve-AndroidAppPreviewer.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{C107C931-3488-14EB-5D4A-E3550F9BEF90}"
@@ -884,37 +864,68 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Control", "Control", "{3424
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{91C1626E-08D0-D15F-E92C-49D0A474AFDC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli", "UdkCli", "{A00B13E7-A763-472E-8EC3-9E04CB803294}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\UdkCli\SolutionInjector.Connect.json = Sources\Windows\UdkCli\SolutionInjector.Connect.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{A7499D06-7157-4EE6-836C-A32AB920B114}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\UdkCli\Tools\ResolveJsonReference.ps1 = Sources\Windows\UdkCli\Tools\ResolveJsonReference.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectTools", "ProjectTools", "{12E19D66-1CB5-4679-A956-40DDBF49C078}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\UdkCli\Tools\ProjectTools\Generate.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Generate.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Contract.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Contract.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\FormatXmlAttributes.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\FormatXmlAttributes.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\GetSolutionInjector.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\GetSolutionInjector.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Linkage.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Linkage.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\MsBuild.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\MsBuild.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Requirements.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Requirements.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Component.vcxproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Component.vcxproj.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\ComponentExport.h.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\ComponentExport.h.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Export.h.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Export.h.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\HeaderCheck.cpp.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\HeaderCheck.cpp.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.2-windows-x64.zip = Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.2-windows-x64.zip
+		Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json = Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PackageTools", "PackageTools", "{D7274C99-03B8-37D0-1088-3C5B52ABF346}"
 	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\PackageTools\Build.ps1 = Sources\Windows\PackageTools\Build.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Build.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Build.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "Adapters", "{07C10469-FD4A-A594-ABEF-29C813652D1B}"
 	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\PackageTools\Adapters\CMakeInstall.ps1 = Sources\Windows\PackageTools\Adapters\CMakeInstall.ps1
-		Sources\Windows\PackageTools\Adapters\ComponentSources.ps1 = Sources\Windows\PackageTools\Adapters\ComponentSources.ps1
-		Sources\Windows\PackageTools\Adapters\DotNet.ps1 = Sources\Windows\PackageTools\Adapters\DotNet.ps1
-		Sources\Windows\PackageTools\Adapters\Files.ps1 = Sources\Windows\PackageTools\Adapters\Files.ps1
-		Sources\Windows\PackageTools\Adapters\NuGet.ps1 = Sources\Windows\PackageTools\Adapters\NuGet.ps1
-		Sources\Windows\PackageTools\Adapters\NuGetRestore.ps1 = Sources\Windows\PackageTools\Adapters\NuGetRestore.ps1
-		Sources\Windows\PackageTools\Adapters\UdkNative.ps1 = Sources\Windows\PackageTools\Adapters\UdkNative.ps1
-		Sources\Windows\PackageTools\Adapters\UdkPrefab.ps1 = Sources\Windows\PackageTools\Adapters\UdkPrefab.ps1
-		Sources\Windows\PackageTools\Adapters\GradlePublish.ps1 = Sources\Windows\PackageTools\Adapters\GradlePublish.ps1
-		Sources\Windows\PackageTools\Adapters\Maven.ps1 = Sources\Windows\PackageTools\Adapters\Maven.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\CMakeInstall.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\CMakeInstall.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\ComponentSources.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\ComponentSources.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\DotNet.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\DotNet.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Files.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Files.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\GradlePublish.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\GradlePublish.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Maven.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Maven.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\NuGet.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\NuGet.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\NuGetRestore.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\NuGetRestore.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkNative.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkNative.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkPrefab.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkPrefab.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{CF4766B5-C3CE-1EBF-CD69-67BABDC0EBEF}"
 	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\PackageTools\Private\ArtifactDirectories.ps1 = Sources\Windows\PackageTools\Private\ArtifactDirectories.ps1
-		Sources\Windows\PackageTools\Private\Contract.ps1 = Sources\Windows\PackageTools\Private\Contract.ps1
-		Sources\Windows\PackageTools\Private\GetNuGet.ps1 = Sources\Windows\PackageTools\Private\GetNuGet.ps1
-		Sources\Windows\PackageTools\Private\NuGet.json = Sources\Windows\PackageTools\Private\NuGet.json
-		Sources\Windows\PackageTools\Private\Tools.ps1 = Sources\Windows\PackageTools\Private\Tools.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Private\ArtifactDirectories.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Private\ArtifactDirectories.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Private\Contract.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Private\Contract.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Private\GetNuGet.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Private\GetNuGet.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Private\NuGet.json = Sources\Windows\UdkCli\Tools\PackageTools\Private\NuGet.json
+		Sources\Windows\UdkCli\Tools\PackageTools\Private\Tools.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Private\Tools.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{A33D8A01-8AFF-75D4-37A1-7659C13C021C}"
 	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\PackageTools\Templates\PrefabConsumer.cmake = Sources\Windows\PackageTools\Templates\PrefabConsumer.cmake
+		Sources\Windows\UdkCli\Tools\PackageTools\Templates\PrefabConsumer.cmake = Sources\Windows\UdkCli\Tools\PackageTools\Templates\PrefabConsumer.cmake
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9315E867-4526-9C38-A100-BB380E93098F}"
@@ -1557,10 +1568,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Consumer", "Consumer", "{C2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CsWinRtConsumer", "CsWinRtConsumer", "{99B67E18-0910-0BBA-CE72-565FA4DF72A0}"
 	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\CsWinRtConsumer\app.manifest = Tests\Fixtures\Packages\CsWinRtConsumer\app.manifest
 		Tests\Fixtures\Packages\CsWinRtConsumer\Consumer.csproj = Tests\Fixtures\Packages\CsWinRtConsumer\Consumer.csproj
 		Tests\Fixtures\Packages\CsWinRtConsumer\NuGet.Config.in = Tests\Fixtures\Packages\CsWinRtConsumer\NuGet.Config.in
 		Tests\Fixtures\Packages\CsWinRtConsumer\Program.cs = Tests\Fixtures\Packages\CsWinRtConsumer\Program.cs
-		Tests\Fixtures\Packages\CsWinRtConsumer\app.manifest = Tests\Fixtures\Packages\CsWinRtConsumer\app.manifest
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Managed", "Managed", "{68CB4D20-5CB6-E30C-337E-EF1611071206}"
@@ -1619,9 +1630,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "buildTransitive", "buildTra
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WinRtConsumer", "WinRtConsumer", "{BBB28A43-C037-BABA-4E7A-9E554101219F}"
 	ProjectSection(SolutionItems) = preProject
+		Tests\Fixtures\Packages\WinRtConsumer\app.manifest = Tests\Fixtures\Packages\WinRtConsumer\app.manifest
 		Tests\Fixtures\Packages\WinRtConsumer\CMakeLists.txt = Tests\Fixtures\Packages\WinRtConsumer\CMakeLists.txt
 		Tests\Fixtures\Packages\WinRtConsumer\Main.cpp = Tests\Fixtures\Packages\WinRtConsumer\Main.cpp
-		Tests\Fixtures\Packages\WinRtConsumer\app.manifest = Tests\Fixtures\Packages\WinRtConsumer\app.manifest
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RegistryContract", "RegistryContract", "{B1133F33-C872-7FCE-4F69-EA4E95E583AC}"
@@ -1707,8 +1718,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{0D
 		Tests\Integration\Packages\PackageComposition.Tests.ps1 = Tests\Integration\Packages\PackageComposition.Tests.ps1
 		Tests\Integration\Packages\PackageContents.Tests.ps1 = Tests\Integration\Packages\PackageContents.Tests.ps1
 		Tests\Integration\Packages\PackageDelivery.Tests.ps1 = Tests\Integration\Packages\PackageDelivery.Tests.ps1
-		Tests\Integration\Packages\README.md = Tests\Integration\Packages\README.md
 		Tests\Integration\Packages\PackageTools.Migration.Tests.ps1 = Tests\Integration\Packages\PackageTools.Migration.Tests.ps1
+		Tests\Integration\Packages\README.md = Tests\Integration\Packages\README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{72DDC50B-70A0-A40B-81D6-0569B0C8E86A}"
@@ -1776,10 +1787,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cmake-buildsystem", "cmake-buildsystem", "{922CD124-862F-7873-048A-36536A9D3F93}"
 	ProjectSection(SolutionItems) = preProject
 		ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\CMakeLists.txt = ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\CMakeLists.txt
+		ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\linux.cmake = ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\linux.cmake
 		ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\PlatformLinux.cmake = ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\PlatformLinux.cmake
 		ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\PlatformMac.cmake = ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\PlatformMac.cmake
 		ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\PlatformWin.cmake = ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\PlatformWin.cmake
-		ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\linux.cmake = ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\linux.cmake
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cmake", "cmake", "{6EC553D8-7DB7-DE87-BDA5-B8C2FE14ADC2}"
@@ -1810,6 +1821,8 @@ Global
 		{77311056-84A3-4B57-AEF1-7A76F17C500C}.Release|x64.Build.0 = Release|x64
 		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Debug|x64.ActiveCfg = Debug|x64
 		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Debug|x64.Build.0 = Debug|x64
+		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Release|x64.ActiveCfg = Release|x64
+		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Release|x64.Build.0 = Release|x64
 		{9C7AAB80-FA41-4925-95FA-06409E32E4E1}.Debug|x64.ActiveCfg = Debug|x64
 		{9C7AAB80-FA41-4925-95FA-06409E32E4E1}.Debug|x64.Build.0 = Debug|x64
 		{9C7AAB80-FA41-4925-95FA-06409E32E4E1}.Release|x64.ActiveCfg = Release|x64
@@ -1818,8 +1831,6 @@ Global
 		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3}.Debug|x64.Build.0 = Debug|x64
 		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3}.Release|x64.ActiveCfg = Release|x64
 		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3}.Release|x64.Build.0 = Release|x64
-		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Release|x64.ActiveCfg = Release|x64
-		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Release|x64.Build.0 = Release|x64
 		{FA67D7FD-393A-E9BC-F2A4-2570B2929973}.Debug|x64.ActiveCfg = Debug|x64
 		{FA67D7FD-393A-E9BC-F2A4-2570B2929973}.Debug|x64.Build.0 = Debug|x64
 		{FA67D7FD-393A-E9BC-F2A4-2570B2929973}.Release|x64.ActiveCfg = Release|x64
@@ -1873,9 +1884,6 @@ Global
 		{9FE6730F-C6F4-44B7-981B-BDC489FF202C} = {0CF0E8F4-117A-457B-8BE3-40FEEC842EEB}
 		{59FB48FD-1E1A-499E-BAD5-B16AE1E29194} = {0CF0E8F4-117A-457B-8BE3-40FEEC842EEB}
 		{45569702-BF11-421C-A43A-03D1364E3C95} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
-		{D7F020F8-ED67-EA28-7A50-A160CA8B9554} = {45569702-BF11-421C-A43A-03D1364E3C95}
-		{9F537FBC-3641-B48E-6E02-3CC1AC523A09} = {D7F020F8-ED67-EA28-7A50-A160CA8B9554}
-		{9DFA8DD9-A595-773B-B68B-E71B493C5B49} = {9F537FBC-3641-B48E-6E02-3CC1AC523A09}
 		{C25B8C43-91C7-4F23-B186-05E37C145720} = {45569702-BF11-421C-A43A-03D1364E3C95}
 		{6332D45B-9105-4EA4-BB61-65D494AF4CE0} = {C25B8C43-91C7-4F23-B186-05E37C145720}
 		{B398F253-412C-49AA-B2EF-D5F164B8ACF2} = {6332D45B-9105-4EA4-BB61-65D494AF4CE0}
@@ -1902,14 +1910,14 @@ Global
 		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
 		{1C920419-6FCA-97AA-DE2F-11C8037C1EF6} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{77311056-84A3-4B57-AEF1-7A76F17C500C} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
+		{220B0789-1F04-54D3-18E5-5DB99E91172F} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
+		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
 		{752A6291-E849-433A-BF37-7102E850AAB5} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{9C7AAB80-FA41-4925-95FA-06409E32E4E1} = {752A6291-E849-433A-BF37-7102E850AAB5}
 		{9C0C0DD8-D324-6EBE-A92E-80D071FA070E} = {752A6291-E849-433A-BF37-7102E850AAB5}
 		{15C9DD02-133A-0D54-8BE8-73206CCE738F} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3} = {15C9DD02-133A-0D54-8BE8-73206CCE738F}
 		{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC} = {15C9DD02-133A-0D54-8BE8-73206CCE738F}
-		{220B0789-1F04-54D3-18E5-5DB99E91172F} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
-		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
 		{A62B830A-BE58-54F9-6766-E95D2B04A2A8} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
 		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
@@ -2001,7 +2009,10 @@ Global
 		{29D7CAB4-B2E3-541B-0D13-40F66C92226D} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}
 		{34242C6D-6418-92C1-647F-5E73461A6CFE} = {29D7CAB4-B2E3-541B-0D13-40F66C92226D}
 		{91C1626E-08D0-D15F-E92C-49D0A474AFDC} = {A9963E0C-F9B5-4635-505D-54E094B1F113}
-		{D7274C99-03B8-37D0-1088-3C5B52ABF346} = {91C1626E-08D0-D15F-E92C-49D0A474AFDC}
+		{A00B13E7-A763-472E-8EC3-9E04CB803294} = {91C1626E-08D0-D15F-E92C-49D0A474AFDC}
+		{A7499D06-7157-4EE6-836C-A32AB920B114} = {A00B13E7-A763-472E-8EC3-9E04CB803294}
+		{12E19D66-1CB5-4679-A956-40DDBF49C078} = {A7499D06-7157-4EE6-836C-A32AB920B114}
+		{D7274C99-03B8-37D0-1088-3C5B52ABF346} = {A7499D06-7157-4EE6-836C-A32AB920B114}
 		{07C10469-FD4A-A594-ABEF-29C813652D1B} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
 		{CF4766B5-C3CE-1EBF-CD69-67BABDC0EBEF} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
 		{A33D8A01-8AFF-75D4-37A1-7659C13C021C} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
@@ -2178,10 +2189,6 @@ Global
 		{EE8853E3-3A53-CFEA-66C5-9E423EB7CBAE} = {C0E4FA52-CD34-8218-8DE3-34C30B6E5E0C}
 		{2CB7E290-845C-C373-DA37-CD79918D9A4D} = {B20B6A49-6658-6B91-DE86-E2E140262C3F}
 		{5173E0E9-F9FD-707F-A9CF-2FB713C21C3B} = {B20B6A49-6658-6B91-DE86-E2E140262C3F}
-		{9C0C0DD8-D324-6EBE-A92E-80D071FA070E} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems
-		{9C7AAB80-FA41-4925-95FA-06409E32E4E1} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\UdkCli\UdkCli.vcxproj
-		{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems
-		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlCompiler\XamlCompiler.vcxproj
 		{0D1619D9-DC89-7EF4-9010-CA605BA2364B} = {B20B6A49-6658-6B91-DE86-E2E140262C3F}
 		{72DDC50B-70A0-A40B-81D6-0569B0C8E86A} = {9315E867-4526-9C38-A100-BB380E93098F}
 		{292A53B2-9ADE-E639-5AE3-A4AB6C032EBE} = {72DDC50B-70A0-A40B-81D6-0569B0C8E86A}
@@ -2198,21 +2205,47 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{220b0789-1f04-54d3-18e5-5db99e91172f}*SharedItemsImports = 4
-		Projects\MsBuild\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems*{9c7aab80-fa41-4925-95fa-06409e32e4e1}*SharedItemsImports = 4
-		Projects\MsBuild\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems*{b4c64df3-8ee8-154a-4e88-d72af9ca9bc3}*SharedItemsImports = 4
+		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{364e96cb-9d8a-40b0-8455-6a31a15a36b0}*SharedItemsImports = 9
+		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{3e00a02d-46f3-432b-91c8-5d459f70c525}*SharedItemsImports = 9
 		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{6cbdc266-9b42-f741-03eb-f610ab72e1b1}*SharedItemsImports = 4
 		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{77311056-84a3-4b57-aef1-7a76f17c500c}*SharedItemsImports = 4
+		Projects\MsBuild\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems*{9c0c0dd8-d324-6ebe-a92e-80d071fa070e}*SharedItemsImports = 9
+		Projects\MsBuild\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems*{9c7aab80-fa41-4925-95fa-06409e32e4e1}*SharedItemsImports = 4
+		Projects\MsBuild\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems*{a8b26cd9-d2ee-7f56-8caa-d8ea5008edac}*SharedItemsImports = 9
+		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{ab97876a-f25a-4aae-bacd-d32c776bb261}*SharedItemsImports = 9
+		Projects\MsBuild\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems*{b4c64df3-8ee8-154a-4e88-d72af9ca9bc3}*SharedItemsImports = 4
+		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{c1e8c40d-b9b5-4c0d-9f7e-1b793d3c13ae}*SharedItemsImports = 9
 		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{e21b97a1-d847-2938-4e29-760523c97389}*SharedItemsImports = 4
 		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{f104c833-785d-e25f-5f10-b46284462a11}*SharedItemsImports = 4
 		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{fa67d7fd-393a-e9bc-f2a4-2570b2929973}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionInjectorProjectOwnership) = preSolution
+		{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems
+		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlCompiler\XamlCompiler.vcxproj
 		{220B0789-1F04-54D3-18E5-5DB99E91172F} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Static.vcxproj
 		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems
 		{3E00A02D-46F3-432B-91C8-5D459F70C525} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems
 		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Static.vcxproj
 		{77311056-84A3-4B57-AEF1-7A76F17C500C} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dynamic.vcxproj
+		{9C0C0DD8-D324-6EBE-A92E-80D071FA070E} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems
+		{9C7AAB80-FA41-4925-95FA-06409E32E4E1} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\UdkCli\UdkCli.vcxproj
 		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems
+		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems
+		{E21B97A1-D847-2938-4E29-760523C97389} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj
+		{F104C833-785D-E25F-5F10-B46284462A11} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj
+		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dynamic.vcxproj
+	EndGlobalSection
+	GlobalSection(SolutionInjectorManagedProjects) = preSolution
+		{220B0789-1F04-54D3-18E5-5DB99E91172F} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Static.vcxproj
+		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems
+		{3E00A02D-46F3-432B-91C8-5D459F70C525} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems
+		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Static.vcxproj
+		{77311056-84A3-4B57-AEF1-7A76F17C500C} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dynamic.vcxproj
+		{9C0C0DD8-D324-6EBE-A92E-80D071FA070E} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems
+		{9C7AAB80-FA41-4925-95FA-06409E32E4E1} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\UdkCli\UdkCli.vcxproj
+		{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems
+		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems
+		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlCompiler\XamlCompiler.vcxproj
 		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems
 		{E21B97A1-D847-2938-4E29-760523C97389} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj
 		{F104C833-785D-E25F-5F10-B46284462A11} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj

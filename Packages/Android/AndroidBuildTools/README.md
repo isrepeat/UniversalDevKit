@@ -2,7 +2,7 @@
 
 Пользовательские команды и настройка окружения: [гайд Android-приложений](../../../Docs/AndroidBuild.md).
 
-Перенесённые инструменты сборки приложений Android из UtilityHelpersLib. NuGet ID `AndroidBuildTools` сохранён; версия поставки — `1.0.63.31`. Версия теперь хранится в Version.json и автоматически не повышается.
+Перенесённые инструменты сборки приложений Android из UtilityHelpersLib. NuGet ID `AndroidBuildTools` сохранён; версия поставки — `1.0.63.31`. Версия задаётся полем `version` в `Package.json`.
 
 Сборка пакета: `Scripts/Packages/Android/Pack.AndroidBuildTools.cmd`. Результат: `!artifacts/packages/nuget/AndroidBuildTools`. Реализация находится в Sources/Android/AndroidBuildTools: PowerShell, Cmake, Gradle и ApplicationFramework. Публичные C++ заголовки находятся в Includes/Android/AndroidBuildTools, проекты сборки — в Projects/Gradle/AndroidBuildTools и Projects/Cmake/AndroidBuildTools. Delivery/NuGet/Delivery.json задаёт отображение этих каталогов в tools, cmake, gradle и build/native внутри пакета.
 

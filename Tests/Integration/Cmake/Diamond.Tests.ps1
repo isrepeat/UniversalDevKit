@@ -94,7 +94,7 @@ try {
             $registryText = [IO.File]::ReadAllText($registryPath).Replace('"public"', '"private"')
             [IO.File]::WriteAllText($registryPath, $registryText, [Text.UTF8Encoding]::new($false))
         }
-        & (Join-Path $library 'Sources/Windows/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $library 'Components.json') | Out-Host
+        & (Join-Path $library 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $library 'Components.json') | Out-Host
         $version = (Get-Content (Join-Path $library 'Version.json') -Raw | ConvertFrom-Json).version
         $mode = if ($caseName -in @('Static', 'PrivateAllStatic')) { 'Static' } else { 'Dynamic' }
         $private = if ($caseName -like 'Private*') { 'ON' } else { 'OFF' }

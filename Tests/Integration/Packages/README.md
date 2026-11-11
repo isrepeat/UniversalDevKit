@@ -12,7 +12,7 @@
 | PackageDelivery.Tests.ps1 | Механизмы доставки на изолированных fixtures |
 | PackageTools.Migration.Tests.ps1 | Все Package.json версии 2, 14 доставок, отсутствие старых упаковщиков; BaselineDirectory сверяет файлы и NuGet-зависимости, CheckMaven — Android-публикации |
 | PackageComposition.Tests.ps1 | JSON-граф смешанных проектов, установленный PackageTools, точные NuGet-зависимости, состав пакета и ошибки контрактов |
-| PackageContents.Tests.ps1 | Источники project/root/path и source, маски include/exclude, rename, сохранение и уплощение дерева, отклонение устаревших полей и конфликтов; PackageToolsPackage проверяет установленный NuGet |
+| PackageContents.Tests.ps1 | Источники project/root/path и source, маски include/exclude, rename, сохранение и уплощение дерева, отклонение устаревших полей и конфликтов; UdkCliDirectory проверяет скрипты из поставки UdkCli |
 
 Общий Windows component-шаблон для synthetic-fixtures находится в ../../Fixtures/Packages/NativeComponent. Он не регистрируется и не выпускается как рабочий компонент.
 

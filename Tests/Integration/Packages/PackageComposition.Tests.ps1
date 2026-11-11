@@ -1,4 +1,4 @@
-param([string]$CMake, [string]$NuGet = 'nuget.exe', [string]$PackageToolsPackage)
+param([string]$CMake, [string]$NuGet = 'nuget.exe', [string]$UdkCliDirectory)
 
 $ErrorActionPreference = 'Stop'
 $env:DOTNET_CLI_UI_LANGUAGE = 'en-US'
@@ -15,10 +15,8 @@ $external = Join-Path $run 'external'
 [void][IO.Directory]::CreateDirectory($external)
 Copy-Item -Path (Join-Path $fixture '*') -Destination $external -Recurse
 Add-Type -AssemblyName System.IO.Compression.FileSystem
-if ($PackageToolsPackage) {
-    $installedTools = Join-Path $run 'installed-tools'
-    [IO.Compression.ZipFile]::ExtractToDirectory($PackageToolsPackage, $installedTools)
-    $builder = Join-Path $installedTools 'tools/Build.ps1'
+if ($UdkCliDirectory) {
+    $builder = Join-Path $UdkCliDirectory 'Tools/PackageTools/Build.ps1'
     if (-not (Test-Path -LiteralPath $builder)) { throw 'Installed PackageTools does not contain its entry point.' }
 }
 
@@ -46,7 +44,8 @@ function Assert-PackageEntries([string]$Path, [string[]]$Required) {
 # Планирование работает отдельно от инструментов и в чужом корне репозитория.
 $plan = & $builder -RepositoryPath $external -PackagePath Package.json -Plan
 if (($plan.Order -join ',') -cne 'Managed,Native,CMake') { throw 'Unexpected project dependency order.' }
-foreach ($package in @('PackageTools')) {
+if ($plan.Version -cne '1.0.0' -or ($plan.AbiVersion -isnot [int] -and $plan.AbiVersion -isnot [long]) -or $plan.AbiVersion -ne 0) { throw 'JSON reference resolution failed.' }
+foreach ($package in @('XamlCompiler')) {
     $actual = & $builder -RepositoryPath $repository -PackagePath "Packages/Windows/$package/Package.json" -Plan
     if (-not $actual.Order.Count) { throw "Missing real package plan: $package" }
 }
@@ -165,18 +164,17 @@ $package.contents[0] | Add-Member path 'missing'
 Write-TestJson 'Package.json' $package
 Expect-Failure { & $builder -RepositoryPath $external -PackagePath Package.json -OutputDirectory (Join-Path $run 'missing') -NuGet $NuGet } 'Missing path'
 
-# Выбор доставки ограничивает граф проектов; версия может читаться из properties.
+# Выбор доставки ограничивает граф проектов; явная версия заменяет ссылку.
 Write-TestJson 'Package.json' $originalPackage
 $package = Read-TestJson 'Package.json'
 $package.deliveries | Add-Member Android 'Maven.json'
 Write-TestJson 'Maven.json' ([pscustomobject]@{ schemaVersion=1; adapter='maven-repository'; groupId='org.probe'; artifactId='probe' })
 foreach ($content in $package.contents) { $content | Add-Member deliveries @('NuGet') }
 $package.contents += [pscustomobject]@{ project='Native'; root='output'; destination='.'; deliveries=@('Android') }
-[IO.File]::WriteAllText((Join-Path $external 'version.properties'), 'packageVersion=1.2.3', [Text.UTF8Encoding]::new($false))
-$package.versionSource = [pscustomobject]@{ path='version.properties'; format='properties'; property='packageVersion' }
+$package.version = '1.2.3'
 Write-TestJson 'Package.json' $package
 $selected = & $builder -RepositoryPath $external -PackagePath Package.json -Delivery Android -Plan
-if ($selected.Version -cne '1.2.3' -or ($selected.Order -join ',') -cne 'Native') { throw 'Delivery filtering or properties version failed.' }
+if ($selected.Version -cne '1.2.3' -or ($selected.Order -join ',') -cne 'Native') { throw 'Delivery filtering or literal version failed.' }
 $package | Add-Member releaseDependencies @([pscustomobject]@{ package='Package.json'; delivery='Android'; when=@('NuGet') })
 Write-TestJson 'Package.json' $package
 $selected = & $builder -RepositoryPath $external -PackagePath Package.json -Delivery NuGet -Plan

@@ -1,11 +1,15 @@
+import groovy.json.JsonSlurper
+
 plugins {
     id("com.android.library")
     id("maven-publish")
 }
 
 group = providers.gradleProperty("packageGroup").get()
-version = providers.gradleProperty("packageVersion")
-    .get()
+version = providers.gradleProperty("packageVersion").orElse(providers.provider {
+    val manifest = rootProject.file("../../../Packages/Android/AndroidAppKit/Package.json")
+    (JsonSlurper().parse(manifest) as Map<*, *>)["version"] as String
+}).get()
 
 extensions.configure<com.android.build.api.dsl.LibraryExtension>("android") {
     sourceSets.getByName("main") {

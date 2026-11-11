@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "name": "AndroidTemplates",
-  "versionSource": "Version.json",
+  "version": "1.0.0.34",
   "projects": {
     "files": {
       "adapter": "files",

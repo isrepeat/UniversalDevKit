@@ -9,7 +9,7 @@
 
 ## Подготовка инструментов
 
-После клонирования запустите `Scripts/Setup.cmd` или `pwsh -File Scripts/PowerShell/Setup.ps1`. Скрипт подготавливает SolutionInjector и NuGet в игнорируемом `!tools/`; EXE не включаются в Git. Версии, URL и SHA-256 закреплены в `Scripts/Tools/SolutionInjector.json` и `Sources/Windows/PackageTools/Private/NuGet.json`. Visual Studio, CMake и SDK этот скрипт не устанавливает.
+После клонирования запустите `Scripts/Setup.cmd` или `pwsh -File Scripts/PowerShell/Setup.ps1`. Скрипт подготавливает SolutionInjector и NuGet в игнорируемом `!tools/`; EXE не включаются в Git. Версии, URL и SHA-256 закреплены в `Sources/Windows/UdkCli/SolutionInjector.Connect.json` и `Sources/Windows/UdkCli/Tools/PackageTools/Private/NuGet.json`. Visual Studio, CMake и SDK этот скрипт не устанавливает.
 
 SolutionInjector хранится в `!tools/SolutionInjector/<версия>/`, NuGet — в `!tools/NuGet/<версия>/nuget.exe`. Готовый NuGet проверяется и используется повторно без загрузки или перезаписи. Новый файл сначала скачивается во временный файл и переносится на итоговый путь только после проверки SHA-256. Несовпадение хеша останавливает операцию.
 
@@ -25,7 +25,7 @@ Setup необязателен: Connect вызывает существующи�
 
 `Module.Udk.Console` содержит палитру, ввод пути, меню, таблицу зависимостей и навигацию. Wizard возвращает запрос, не изменяя проекты. Общие значения передаются параметрами; внутренние файлы подключаются только внутри своего psm1. `ConnectConsole.ps1` использует экспортированную функцию оформления для итогового статуса.
 
-Фиксированная Windows x64-дистрибуция описана в `SolutionInjector.json`: URL GitHub Release, commit репозитория, SHA-256 архива и EXE. Архив содержит готовый EXE из репозитория SolutionInjector и app-local Visual C++ Runtime DLL. Соответствие EXE исходникам не подтверждено пересборкой.
+Фиксированная Windows x64-дистрибуция для Connect описана в `SolutionInjector.Connect.json`: URL GitHub Release, commit репозитория, SHA-256 архива и EXE. Архив содержит готовый EXE из репозитория SolutionInjector и app-local Visual C++ Runtime DLL. Соответствие EXE исходникам не подтверждено пересборкой.
 
 `Scripts/PowerShell/GetSolutionInjector.ps1` скачивает архив, проверяет SHA-256 и распаковывает его в игнорируемый `!tools/SolutionInjector/<версия>/`. Проверенный архив используется повторно без сети. Параметр `-LocalPath` позволяет указать тот же EXE локально; runtime DLL должны быть рядом с ним либо runtime должен быть установлен.
 

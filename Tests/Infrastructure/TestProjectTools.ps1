@@ -3,7 +3,7 @@ param()
 
 $ErrorActionPreference = 'Stop'
 $repository = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-$tool = Join-Path $repository 'Sources/Windows/ProjectTools/Generate.ps1'
+$tool = Join-Path $repository 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1'
 $fixture = Join-Path $repository 'Tests/Fixtures/ProjectTools'
 $temporary = Join-Path ([IO.Path]::GetTempPath()) ('ProjectTools.Tests.' + [Guid]::NewGuid().ToString('N'))
 try {

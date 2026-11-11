@@ -5,6 +5,18 @@
     "Windows",
     "Android"
   ],
+  "dependencies": [
+    {
+      "component": "Helpers",
+      "visibility": "public",
+      "linkage": "same"
+    },
+    {
+      "component": "Diagnostic",
+      "visibility": "private",
+      "linkage": "dynamic"
+    }
+  ],
   "headers": [
     "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/**/*.h"
   ],
@@ -18,18 +30,6 @@
     ],
     "files": {}
   },
-  "dependencies": [
-    {
-      "component": "Helpers",
-      "visibility": "public",
-      "linkage": "same"
-    },
-    {
-      "component": "Diagnostic",
-      "visibility": "private",
-      "linkage": "dynamic"
-    }
-  ],
   "requirements": {
     "cxxStandard": 20
   },

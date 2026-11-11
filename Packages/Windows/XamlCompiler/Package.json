@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "name": "XamlCompiler",
-  "versionSource": "../../../Version.json",
+  "version": "${UDK_VERSION.version}",
   "projects": {
     "compiler": {
       "adapter": "cmake-build",

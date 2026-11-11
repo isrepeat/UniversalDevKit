@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 //
 // Собирает AndroidCoreSdk как AAR и публикует его в локальный Maven feed.
 //
@@ -8,10 +10,12 @@ plugins {
     id("maven-publish")
 }
 
-// Получает Maven group и версию из gradle.properties.
+// Версия прямой сборки берётся из описания пакета.
 group = providers.gradleProperty("packageGroup").get()
-version = providers.gradleProperty("packageVersion")
-    .get()
+version = providers.gradleProperty("packageVersion").orElse(providers.provider {
+    val manifest = rootProject.file("../../../Packages/Android/AndroidCoreSdk/Package.json")
+    (JsonSlurper().parse(manifest) as Map<*, *>)["version"] as String
+}).get()
 
 extensions.configure<com.android.build.api.dsl.LibraryExtension>("android") {
     sourceSets.getByName("main") {

@@ -1,3 +1,5 @@
+. (Join-Path $PSScriptRoot '../../ResolveJsonReference.ps1')
+
 function Get-ProjectToolsGuid([string]$Identity) {
     $sha = [Security.Cryptography.SHA256]::Create()
     try { $bytes = $sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($Identity)) } finally { $sha.Dispose() }
@@ -93,17 +95,21 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         $componentPath = Resolve-ProjectToolsPath $root $include
         if ($components.Contains($include) -or $applications.Contains($include)) { throw "Duplicate include: $include" }
         $component = Get-Content -LiteralPath $componentPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        if ($component.PSObject.Properties['githubVersion']) {
+            Resolve-UdkDescriptionVersion $root $component $componentPath 'githubVersion'
+        }
+        Resolve-UdkDescriptionAbiVersion $root $component $componentPath
         if ($component.name -notmatch '^[A-Z][A-Za-z0-9]*$' -or $names.ContainsKey($component.name)) { throw "Invalid or duplicate component name: $($component.name)" }
         $names[$component.name] = $true
         foreach ($field in $component.PSObject.Properties.Name) {
-            if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild')) { throw "Unknown component field: $field" }
+            if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild')) { throw "Unknown component field: $field" }
         }
         if (-not $component.kind) { $component | Add-Member kind 'compiled' }
         $isApplication = $include -in $manifest.msbuildApplications
         if ($isApplication) {
             if ($component.kind -ne 'application') { throw "Expected application kind: $include" }
             foreach ($field in $component.PSObject.Properties.Name) {
-                if ($field -notin @('name', 'kind', 'msbuildGuid', 'headers', 'sources', 'excludeHeaders', 'excludeSources', 'filters', 'requirements', 'buildExtensions', 'msbuild')) {
+                if ($field -notin @('name', 'kind', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'excludeHeaders', 'excludeSources', 'filters', 'requirements', 'buildExtensions', 'msbuild')) {
                     throw "Unsupported application field: $field"
                 }
             }
