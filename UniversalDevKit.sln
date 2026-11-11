@@ -440,7 +440,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", 
 		Scripts\PowerShell\FormatXmlAttributes.ps1 = Scripts\PowerShell\FormatXmlAttributes.ps1
 		Scripts\PowerShell\GetNuGet.ps1 = Scripts\PowerShell\GetNuGet.ps1
 		Scripts\PowerShell\GetSolutionInjector.ps1 = Scripts\PowerShell\GetSolutionInjector.ps1
-		Scripts\PowerShell\PublishUdkCli.ps1 = Scripts\PowerShell\PublishUdkCli.ps1
 		Scripts\PowerShell\ResetBuildDrives.ps1 = Scripts\PowerShell\ResetBuildDrives.ps1
 		Scripts\PowerShell\Setup.ps1 = Scripts\PowerShell\Setup.ps1
 		Scripts\PowerShell\SyncRuntimeLibraries.ps1 = Scripts\PowerShell\SyncRuntimeLibraries.ps1
@@ -493,6 +492,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{CB7EEAB5-39FB-49B2-95A1-72774A80F5B8}"
 	ProjectSection(SolutionItems) = preProject
 		Scripts\Tools\Publish.UdkCli.cmd = Scripts\Tools\Publish.UdkCli.cmd
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{1C4B2EE2-2255-4CA5-83A0-11A4B0320881}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Tools\PowerShell\Publish.UdkCli.ps1 = Scripts\Tools\PowerShell\Publish.UdkCli.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{A9963E0C-F9B5-4635-505D-54E094B1F113}"
@@ -867,6 +871,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli", "UdkCli", "{A00B13E7-A763-472E-8EC3-9E04CB803294}"
 	ProjectSection(SolutionItems) = preProject
 		Sources\Windows\UdkCli\SolutionInjector.Connect.json = Sources\Windows\UdkCli\SolutionInjector.Connect.json
+		Projects\DotNet\UdkCli.Setup\UdkCli.Setup.csproj = Projects\DotNet\UdkCli.Setup\UdkCli.Setup.csproj
+		Projects\DotNet\UdkCli.Setup\Program.cs = Projects\DotNet\UdkCli.Setup\Program.cs
+		Projects\DotNet\UdkCli.Setup\Installation.cs = Projects\DotNet\UdkCli.Setup\Installation.cs
+		Projects\DotNet\UdkCli.Setup\SetupWindow.xaml = Projects\DotNet\UdkCli.Setup\SetupWindow.xaml
+		Projects\DotNet\UdkCli.Setup\SetupWindow.xaml.cs = Projects\DotNet\UdkCli.Setup\SetupWindow.xaml.cs
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{A7499D06-7157-4EE6-836C-A32AB920B114}"
@@ -1937,6 +1946,7 @@ Global
 		{7DAB2C47-91F8-4085-8786-94437B89820E} = {D9146E66-5EB7-4919-B6CC-F36544D8ACE4}
 		{A2BAABAE-02D4-4685-9081-F599C5AF7D30} = {D832A37F-03A2-4EBD-9FF9-BC27D415378B}
 		{CB7EEAB5-39FB-49B2-95A1-72774A80F5B8} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
+		{1C4B2EE2-2255-4CA5-83A0-11A4B0320881} = {CB7EEAB5-39FB-49B2-95A1-72774A80F5B8}
 		{D2288D3A-B06E-9A12-3C08-06E8689CF6A8} = {A9963E0C-F9B5-4635-505D-54E094B1F113}
 		{62BB4FD3-461F-9188-4888-44C68D0ED548} = {D2288D3A-B06E-9A12-3C08-06E8689CF6A8}
 		{30C6ED4F-6B52-2F4E-2094-8D0A1261E8EC} = {62BB4FD3-461F-9188-4888-44C68D0ED548}

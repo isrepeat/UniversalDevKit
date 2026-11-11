@@ -1,7 +1,12 @@
 @echo off
 setlocal
 chcp 65001 >nul
-pwsh.exe -NoProfile -File "%~dp0..\PowerShell\PublishUdkCli.ps1" %*
+where.exe pwsh.exe >nul 2>nul
+if errorlevel 1 (
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0PowerShell\Publish.UdkCli.ps1" %*
+) else (
+    pwsh.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0PowerShell\Publish.UdkCli.ps1" %*
+)
 set "result=%errorlevel%"
 pause
 exit /b %result%

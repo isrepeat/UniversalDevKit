@@ -1,0 +1,46 @@
+<Window x:Class="UniversalDevKit.UdkCli.Setup.SetupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="UDK CLI Setup"
+        Width="520"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+    <StackPanel Margin="24">
+        <TextBlock x:Name="VersionText"
+                   FontSize="24"
+                   Margin="0,0,0,12" />
+        <TextBlock x:Name="InstallLocationLabel"
+                   Text="Install for the current user in"
+                   Margin="0,0,0,4" />
+        <DockPanel>
+            <Button x:Name="BrowseButton"
+                    DockPanel.Dock="Right"
+                    Content="Browse…"
+                    Margin="8,0,0,0"
+                    Padding="10,4"
+                    Click="OnBrowseClick" />
+            <TextBlock x:Name="InstallDirectoryText"
+                       VerticalAlignment="Center"
+                       TextWrapping="Wrap" />
+        </DockPanel>
+        <CheckBox x:Name="AddToPathCheckBox"
+                  Content="Add udk to my PATH"
+                  IsChecked="True"
+                  Margin="0,16,0,18" />
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button x:Name="InstallButton"
+                    Content="Install"
+                    IsDefault="True"
+                    MinWidth="100"
+                    Padding="10,5"
+                    Click="OnInstallClick" />
+            <Button Content="Cancel"
+                    IsCancel="True"
+                    MinWidth="100"
+                    Margin="8,0,0,0"
+                    Click="OnCancelClick" />
+        </StackPanel>
+    </StackPanel>
+</Window>

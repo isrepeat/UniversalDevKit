@@ -1,7 +1,7 @@
 {
   "name": "UdkCli",
   "kind": "application",
-  "githubVersion": "0.1.0",
+  "githubVersion": "0.1.1",
   "msbuildGuid": "{9C7AAB80-FA41-4925-95FA-06409E32E4E1}",
   "headers": ["Sources/Windows/UdkCli/**/*.h"],
   "sources": ["Sources/Windows/UdkCli/**/*.cpp"],

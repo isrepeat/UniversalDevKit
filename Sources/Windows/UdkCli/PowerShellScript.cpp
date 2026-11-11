@@ -39,6 +39,36 @@ namespace universaldevkit::cli {
 		}
 	} // namespace details
 
+	void LaunchUninstaller() {
+		const auto uninstallerPath = details::GetExecutableDirectory() / L"Uninstall UDK CLI.exe";
+		if (!std::filesystem::is_regular_file(uninstallerPath)) {
+			throw std::runtime_error("No uninstaller was found beside udk.exe. Run this command from an installed copy of UDK CLI.");
+		}
+
+		auto commandLine = details::QuoteArgument(uninstallerPath.native()) + L" --uninstall";
+		STARTUPINFOW startupInfo{};
+		startupInfo.cb = sizeof(startupInfo);
+		PROCESS_INFORMATION processInformation{};
+		if (!::CreateProcessW(
+			uninstallerPath.c_str(),
+			commandLine.data(),
+			nullptr,
+			nullptr,
+			FALSE,
+			0,
+			nullptr,
+			nullptr,
+			&startupInfo,
+			&processInformation
+		)) {
+			throw std::system_error(static_cast<int>(::GetLastError()), std::system_category(), "Cannot start the UDK CLI uninstaller");
+		}
+
+		// Завершаем CLI сразу, чтобы деинсталлятор мог удалить его файл.
+		::CloseHandle(processInformation.hThread);
+		::CloseHandle(processInformation.hProcess);
+	}
+
 	int RunPowerShellScript(const std::filesystem::path& path, const std::vector<std::wstring>& arguments) {
 		// Locate the tool scripts beside the installed CLI.
 		const auto scriptPath = details::GetExecutableDirectory() / L"Tools" / path;

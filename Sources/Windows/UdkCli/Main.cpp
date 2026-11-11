@@ -14,7 +14,8 @@ namespace universaldevkit::cli::details {
 			"  udk project generate [manifest]\n"
 			"  udk project check [manifest]\n"
 			"  udk package build <package-path>\n"
-			"  udk package plan <package-path>\n\n"
+			"  udk package plan <package-path>\n"
+			"  udk uninstall\n\n"
 			"The default project manifest is Components.json in the current directory.\n"
 			"Run package commands from the repository root.\n";
 		return invalidArguments ? 2 : 0;
@@ -33,6 +34,10 @@ int wmain(int argc, wchar_t* argv[]) {
 	try {
 		if (argc == 1 || (argc == 2 && (std::wstring_view(argv[1]) == L"--help" || std::wstring_view(argv[1]) == L"-h"))) {
 			return universaldevkit::cli::details::ShowHelp();
+		}
+		if (argc == 2 && std::wstring_view(argv[1]) == L"uninstall") {
+			universaldevkit::cli::LaunchUninstaller();
+			return 0;
 		}
 		if (argc != 3 && argc != 4) {
 			return universaldevkit::cli::details::ShowHelp(true);
