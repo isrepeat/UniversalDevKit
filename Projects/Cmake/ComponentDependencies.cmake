@@ -5,7 +5,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/ComponentFiles.cmake")
 
 # 1. Проверяем корневой реестр до чтения описаний и создания targets.
 file(READ "${PROJECT_SOURCE_DIR}/Components.json" registryManifest)
-udkCheckObjectKeys("${registryManifest}" "schemaVersion;includes" manifest)
+udkCheckObjectKeys("${registryManifest}" "schemaVersion;includes;msbuildApplications" manifest)
 string(JSON registrySchemaVersion GET "${registryManifest}" schemaVersion)
 string(JSON registrySchemaType TYPE "${registryManifest}" schemaVersion)
 string(JSON registryIncludesType TYPE "${registryManifest}" includes)

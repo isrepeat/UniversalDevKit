@@ -10,6 +10,13 @@
 - [Платформенные файлы](#платформенные-файлы)
 - [CMake без дублирования списков](#cmake-без-дублирования-списков)
 - [Настройки компиляции](#настройки-компиляции)
+- [Исполняемые проекты MSBuild](#исполняемые-проекты-msbuild)
+
+## Исполняемые проекты MSBuild
+
+В профиле UDK массив `msbuildApplications` корневого `Components.json` содержит пути к описаниям компонентов с `"kind": "application"`. Из каждого описания ProjectTools создаёт Shared `.vcxitems` с исходниками и консольный `.vcxproj` с типом `Application`, который импортирует Shared. Оба проекта добавляются в папку компонента в решении. `msbuildGuid` позволяет сохранить GUID существующего приложения при переносе, а `msbuild.properties.TargetName` задаёт имя выходного файла.
+
+Списки `headers` и `sources` принимают шаблоны путей. Особые настройки MSBuild подключаются через `buildExtensions.msbuildProps` и `buildExtensions.msbuildTargets`. CMake и Connect продолжают получать библиотечные компоненты из массива `includes`. Рабочий пример описания находится в [UdkCli.json](../Projects/Components/UdkCli.json).
 
 ## Настройки компиляции
 

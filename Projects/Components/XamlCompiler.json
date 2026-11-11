@@ -1,0 +1,15 @@
+{
+  "name": "XamlCompiler",
+  "kind": "application",
+  "headers": ["Sources/Windows/XamlCompiler/**/*.h"],
+  "sources": ["Sources/Windows/XamlCompiler/**/*.cpp"],
+  "filters": {
+    "roots": [
+      { "path": "Sources/Windows/XamlCompiler", "filter": "Sources" }
+    ],
+    "files": {}
+  },
+  "requirements": {
+    "cxxStandard": 20
+  }
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <__UniversalDevKitWindowsSources>$(MSBuildThisFileDirectory)..\..\..\Sources\Windows\</__UniversalDevKitWindowsSources>
+  </PropertyGroup>
+  <Target Name="__UniversalDevKitStageCliTools" AfterTargets="Build">
+    <ItemGroup>
+      <__UniversalDevKitCliTool Include="$(__UniversalDevKitWindowsSources)ProjectTools\**\*">
+        <ToolDirectory>ProjectTools</ToolDirectory>
+      </__UniversalDevKitCliTool>
+      <__UniversalDevKitCliTool Include="$(__UniversalDevKitWindowsSources)PackageTools\**\*">
+        <ToolDirectory>PackageTools</ToolDirectory>
+      </__UniversalDevKitCliTool>
+    </ItemGroup>
+    <Copy SourceFiles="@(__UniversalDevKitCliTool)"
+          DestinationFiles="@(__UniversalDevKitCliTool->'$(OutDir)Tools\%(ToolDirectory)\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+  </Target>
+</Project>

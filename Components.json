@@ -5,5 +5,9 @@
     "Projects/Components/Helpers.json",
     "Projects/Components/XamlRuntime.json",
     "Projects/Components/OpenGLESRenderer.json"
+  ],
+  "msbuildApplications": [
+    "Projects/Components/UdkCli.json",
+    "Projects/Components/XamlCompiler.json"
   ]
 }

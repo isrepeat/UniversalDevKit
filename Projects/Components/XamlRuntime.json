@@ -1,5 +1,23 @@
 {
   "name": "XamlRuntime",
+  "msbuildGuid": "{3E00A02D-46F3-432B-91C8-5D459F70C525}",
+  "supportedPlatforms": [
+    "Windows",
+    "Android"
+  ],
+  "headers": [
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/**/*.h"
+  ],
+  "sources": [
+    "Sources/XamlRuntime/**/*.cpp"
+  ],
+  "filters": {
+    "roots": [
+      { "path": "Includes/XamlRuntime/UniversalDevKit/XamlRuntime", "filter": "" },
+      { "path": "Sources/XamlRuntime", "filter": "" }
+    ],
+    "files": {}
+  },
   "dependencies": [
     {
       "component": "Helpers",
@@ -15,26 +33,8 @@
   "requirements": {
     "cxxStandard": 20
   },
-  "supportedPlatforms": [
-    "Windows",
-    "Android"
-  ],
-  "msbuildGuid": "{3E00A02D-46F3-432B-91C8-5D459F70C525}",
-  "headers": [
-    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/**/*.h"
-  ],
-  "sources": [
-    "Sources/XamlRuntime/**/*.cpp"
-  ],
   "buildExtensions": {
     "cmake": "Projects/Cmake/XamlRuntime/Build.cmake",
     "msbuildTargets": "Projects/MsBuild/XamlRuntime/Build.targets"
-  },
-  "filters": {
-    "roots": [
-      { "path": "Includes/XamlRuntime/UniversalDevKit/XamlRuntime", "filter": "" },
-      { "path": "Sources/XamlRuntime", "filter": "" }
-    ],
-    "files": {}
   }
 }

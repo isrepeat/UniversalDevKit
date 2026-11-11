@@ -42,6 +42,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{0458F395-E
 		Docs\Validation.md = Docs\Validation.md
 		Docs\XamlRuntime.md = Docs\XamlRuntime.md
 		Docs\SourceLayout.md = Docs\SourceLayout.md
+		Docs\UdkCli.md = Docs\UdkCli.md
 		Docs\PackageComposition.md = Docs\PackageComposition.md
 		Docs\Artifacts.md = Docs\Artifacts.md
 	EndProjectSection
@@ -313,6 +314,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{8CB5D103-21B9-4651-A4A1-671107F28847}"
 	ProjectSection(SolutionItems) = preProject
 		Projects\Components\Diagnostic.json = Projects\Components\Diagnostic.json
+		Projects\Components\UdkCli.json = Projects\Components\UdkCli.json
+		Projects\Components\XamlCompiler.json = Projects\Components\XamlCompiler.json
 		Projects\Components\Helpers.json = Projects\Components\Helpers.json
 		Projects\Components\OpenGLESRenderer.json = Projects\Components\OpenGLESRenderer.json
 		Projects\Components\XamlRuntime.json = Projects\Components\XamlRuntime.json
@@ -386,6 +389,18 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Dynamic", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dynamic.vcxproj", "{77311056-84A3-4B57-AEF1-7A76F17C500C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Static", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Static.vcxproj", "{220B0789-1F04-54D3-18E5-5DB99E91172F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli", "UdkCli", "{752A6291-E849-433A-BF37-7102E850AAB5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UdkCli", "Projects\MsBuild\UdkCli\UdkCli.vcxproj", "{9C7AAB80-FA41-4925-95FA-06409E32E4E1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.UdkCli.Shared", "Projects\MsBuild\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems", "{9C0C0DD8-D324-6EBE-A92E-80D071FA070E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{15C9DD02-133A-0D54-8BE8-73206CCE738F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XamlCompiler", "Projects\MsBuild\XamlCompiler\XamlCompiler.vcxproj", "{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlCompiler.Shared", "Projects\MsBuild\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems", "{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Shared", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems", "{364E96CB-9D8A-40B0-8455-6A31A15A36B0}"
 EndProject
@@ -912,11 +927,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{A33D8A01-8AFF-75D4-37A1-7659C13C021C}"
 	ProjectSection(SolutionItems) = preProject
 		Sources\Windows\PackageTools\Templates\PrefabConsumer.cmake = Sources\Windows\PackageTools\Templates\PrefabConsumer.cmake
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{15C9DD02-133A-0D54-8BE8-73206CCE738F}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\XamlCompiler\Main.cpp = Sources\Windows\XamlCompiler\Main.cpp
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9315E867-4526-9C38-A100-BB380E93098F}"
@@ -1812,6 +1822,14 @@ Global
 		{77311056-84A3-4B57-AEF1-7A76F17C500C}.Release|x64.Build.0 = Release|x64
 		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Debug|x64.ActiveCfg = Debug|x64
 		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Debug|x64.Build.0 = Debug|x64
+		{9C7AAB80-FA41-4925-95FA-06409E32E4E1}.Debug|x64.ActiveCfg = Debug|x64
+		{9C7AAB80-FA41-4925-95FA-06409E32E4E1}.Debug|x64.Build.0 = Debug|x64
+		{9C7AAB80-FA41-4925-95FA-06409E32E4E1}.Release|x64.ActiveCfg = Release|x64
+		{9C7AAB80-FA41-4925-95FA-06409E32E4E1}.Release|x64.Build.0 = Release|x64
+		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3}.Debug|x64.ActiveCfg = Debug|x64
+		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3}.Debug|x64.Build.0 = Debug|x64
+		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3}.Release|x64.ActiveCfg = Release|x64
+		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3}.Release|x64.Build.0 = Release|x64
 		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Release|x64.ActiveCfg = Release|x64
 		{220B0789-1F04-54D3-18E5-5DB99E91172F}.Release|x64.Build.0 = Release|x64
 		{FA67D7FD-393A-E9BC-F2A4-2570B2929973}.Debug|x64.ActiveCfg = Debug|x64
@@ -1896,6 +1914,12 @@ Global
 		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
 		{1C920419-6FCA-97AA-DE2F-11C8037C1EF6} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
 		{77311056-84A3-4B57-AEF1-7A76F17C500C} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
+		{752A6291-E849-433A-BF37-7102E850AAB5} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{9C7AAB80-FA41-4925-95FA-06409E32E4E1} = {752A6291-E849-433A-BF37-7102E850AAB5}
+		{9C0C0DD8-D324-6EBE-A92E-80D071FA070E} = {752A6291-E849-433A-BF37-7102E850AAB5}
+		{15C9DD02-133A-0D54-8BE8-73206CCE738F} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3} = {15C9DD02-133A-0D54-8BE8-73206CCE738F}
+		{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC} = {15C9DD02-133A-0D54-8BE8-73206CCE738F}
 		{220B0789-1F04-54D3-18E5-5DB99E91172F} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
 		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
 		{A62B830A-BE58-54F9-6766-E95D2B04A2A8} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
@@ -1993,7 +2017,6 @@ Global
 		{07C10469-FD4A-A594-ABEF-29C813652D1B} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
 		{CF4766B5-C3CE-1EBF-CD69-67BABDC0EBEF} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
 		{A33D8A01-8AFF-75D4-37A1-7659C13C021C} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
-		{15C9DD02-133A-0D54-8BE8-73206CCE738F} = {91C1626E-08D0-D15F-E92C-49D0A474AFDC}
 		{87778C21-3EDD-762C-4729-44D2C138BAAB} = {9315E867-4526-9C38-A100-BB380E93098F}
 		{D9E8691F-411D-4108-BFA5-210709F14B46} = {87778C21-3EDD-762C-4729-44D2C138BAAB}
 		{3DEC0D62-580B-05E1-441F-FCB2A45C9268} = {87778C21-3EDD-762C-4729-44D2C138BAAB}
@@ -2167,6 +2190,10 @@ Global
 		{EE8853E3-3A53-CFEA-66C5-9E423EB7CBAE} = {C0E4FA52-CD34-8218-8DE3-34C30B6E5E0C}
 		{2CB7E290-845C-C373-DA37-CD79918D9A4D} = {B20B6A49-6658-6B91-DE86-E2E140262C3F}
 		{5173E0E9-F9FD-707F-A9CF-2FB713C21C3B} = {B20B6A49-6658-6B91-DE86-E2E140262C3F}
+		{9C0C0DD8-D324-6EBE-A92E-80D071FA070E} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems
+		{9C7AAB80-FA41-4925-95FA-06409E32E4E1} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\UdkCli\UdkCli.vcxproj
+		{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems
+		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlCompiler\XamlCompiler.vcxproj
 		{0D1619D9-DC89-7EF4-9010-CA605BA2364B} = {B20B6A49-6658-6B91-DE86-E2E140262C3F}
 		{72DDC50B-70A0-A40B-81D6-0569B0C8E86A} = {9315E867-4526-9C38-A100-BB380E93098F}
 		{292A53B2-9ADE-E639-5AE3-A4AB6C032EBE} = {72DDC50B-70A0-A40B-81D6-0569B0C8E86A}
@@ -2183,6 +2210,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{220b0789-1f04-54d3-18e5-5db99e91172f}*SharedItemsImports = 4
+		Projects\MsBuild\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems*{9c7aab80-fa41-4925-95fa-06409e32e4e1}*SharedItemsImports = 4
+		Projects\MsBuild\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems*{b4c64df3-8ee8-154a-4e88-d72af9ca9bc3}*SharedItemsImports = 4
 		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{6cbdc266-9b42-f741-03eb-f610ab72e1b1}*SharedItemsImports = 4
 		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{77311056-84a3-4b57-aef1-7a76f17c500c}*SharedItemsImports = 4
 		Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{e21b97a1-d847-2938-4e29-760523c97389}*SharedItemsImports = 4

@@ -56,7 +56,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
     $manifest = Get-Content -LiteralPath $path -Raw -Encoding UTF8 | ConvertFrom-Json
     if (($manifest.schemaVersion -isnot [int] -and $manifest.schemaVersion -isnot [long]) -or $manifest.schemaVersion -notin @(2, 3)) { throw 'Unsupported component schemaVersion.' }
     if ($manifest.includes -isnot [Array] -or -not $manifest.includes.Count) { throw 'includes must be a nonempty array.' }
-    foreach ($field in $manifest.PSObject.Properties.Name) { if ($field -notin @('schemaVersion', 'includes', 'generation')) { throw "Unknown manifest field: $field" } }
+    foreach ($field in $manifest.PSObject.Properties.Name) { if ($field -notin @('schemaVersion', 'includes', 'generation', 'msbuildApplications')) { throw "Unknown manifest field: $field" } }
     $settings = $manifest.generation.msbuild
     $profile = $manifest.generation.profile
     if (-not $profile -and $manifest.schemaVersion -eq 2) { $profile = 'udk' }
@@ -81,11 +81,17 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         foreach ($value in $settings.$field) { if ($value -notmatch '^[A-Za-z0-9_.-]+$') { throw "Invalid ${field}: $value" } }
     }
     $components = [ordered]@{}
+    $applications = [ordered]@{}
+    if ($manifest.PSObject.Properties['msbuildApplications'] -and ($profile -ne 'udk' -or $manifest.msbuildApplications -isnot [Array])) {
+        throw 'msbuildApplications must be an array in the UDK profile.'
+    }
     $names = @{}
     $guids = @{}
-    foreach ($include in $manifest.includes) {
+    $includes = @($manifest.includes)
+    if ($manifest.msbuildApplications) { $includes += $manifest.msbuildApplications }
+    foreach ($include in $includes) {
         $componentPath = Resolve-ProjectToolsPath $root $include
-        if ($components.Contains($include)) { throw "Duplicate include: $include" }
+        if ($components.Contains($include) -or $applications.Contains($include)) { throw "Duplicate include: $include" }
         $component = Get-Content -LiteralPath $componentPath -Raw -Encoding UTF8 | ConvertFrom-Json
         if ($component.name -notmatch '^[A-Z][A-Za-z0-9]*$' -or $names.ContainsKey($component.name)) { throw "Invalid or duplicate component name: $($component.name)" }
         $names[$component.name] = $true
@@ -93,7 +99,22 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
             if ($field -notin @('name', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild')) { throw "Unknown component field: $field" }
         }
         if (-not $component.kind) { $component | Add-Member kind 'compiled' }
-        if ($component.kind -notin @('compiled', 'headerOnly')) { throw 'Invalid component kind.' }
+        $isApplication = $include -in $manifest.msbuildApplications
+        if ($isApplication) {
+            if ($component.kind -ne 'application') { throw "Expected application kind: $include" }
+            foreach ($field in $component.PSObject.Properties.Name) {
+                if ($field -notin @('name', 'kind', 'msbuildGuid', 'headers', 'sources', 'excludeHeaders', 'excludeSources', 'filters', 'requirements', 'buildExtensions', 'msbuild')) {
+                    throw "Unsupported application field: $field"
+                }
+            }
+            foreach ($field in $component.requirements.PSObject.Properties.Name) {
+                if ($field -ne 'cxxStandard') { throw "Unsupported application requirement: $field" }
+            }
+            foreach ($field in $component.msbuild.PSObject.Properties.Name) {
+                if ($field -ne 'properties') { throw "Unsupported application MSBuild setting: $field" }
+            }
+            if ($component.buildExtensions -and $component.buildExtensions.PSObject.Properties['cmake']) { throw 'Applications support MSBuild extensions only.' }
+        } elseif ($component.kind -notin @('compiled', 'headerOnly')) { throw 'Invalid library component kind.' }
         if (-not $profile -and ($component.platformSources -or $component.platformRequirements -or $component.sourceSettings)) { throw 'Standalone MSBuild generation does not yet support platformSources, platformRequirements or sourceSettings. Use explicit build extensions.' }
         if ($component.PSObject.Properties['variants'] -and ($component.variants -isnot [Array] -or ($component.kind -eq 'compiled' -and -not $component.variants.Count))) { throw 'Compiled variants must be a nonempty array.' }
         foreach ($extensionEntry in $component.buildExtensions.PSObject.Properties) {
@@ -112,12 +133,16 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
             $component.$field = @(Expand-ProjectToolsFiles $root $component.$field $exclude)
         }
         foreach ($entry in $component.platformSources.PSObject.Properties) { $entry.Value = @(Expand-ProjectToolsFiles $root $entry.Value @()) }
-        if (-not $component.msbuildGuid) { $component | Add-Member msbuildGuid (Get-ProjectToolsGuid ('ProjectTools:' + $component.name + ':Shared')) }
+        if (-not $component.msbuildGuid) {
+            $identity = if ($isApplication) { 'Application' } else { 'Shared' }
+            $component | Add-Member msbuildGuid (Get-ProjectToolsGuid ('ProjectTools:' + $component.name + ':' + $identity))
+        }
         $parsedGuid = [Guid]::Empty
         if (-not [Guid]::TryParse($component.msbuildGuid, [ref]$parsedGuid) -or $guids.ContainsKey($parsedGuid.ToString())) { throw 'Invalid or duplicate component GUID.' }
         $guids[$parsedGuid.ToString()] = $true
         if ($component.kind -eq 'headerOnly' -and ($component.sources.Count -or $component.platformSources -or $component.variants)) { throw 'Header-only component cannot have sources or binary variants.' }
-        $components[$include] = $component
+        if ($isApplication) { $applications[$include] = $component }
+        else { $components[$include] = $component }
     }
-    return [pscustomobject]@{ Root = $root; Manifest = $manifest; Components = $components; Settings = $settings; Profile = $profile }
+    return [pscustomobject]@{ Root = $root; Manifest = $manifest; Components = $components; Applications = $applications; Settings = $settings; Profile = $profile }
 }
