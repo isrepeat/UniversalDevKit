@@ -43,5 +43,13 @@
     <__UniversalDevKitUnsupportedSystemRequirement Include="OpenGLESRenderer" Condition="'$(UniversalDevKitTargetOS)' == 'Android'" />
   </ItemGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.Requirements.targets" Condition="'$(__IsUniversalDevKitRequirementsImported)' != 'true'" />
-  <Import Project="$(MSBuildThisFileDirectory)..\..\..\Projects\MsBuild\OpenGLESRenderer\Build.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\..\Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.targets" />
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.OpenGLESRenderer.targets">
+      <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.OpenGLESRenderer.Dependencies.props">
+      <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
+    </None>
+  </ItemGroup>
 </Project>

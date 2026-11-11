@@ -365,10 +365,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{08C8
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\MsBuild\Diagnostic\Spdlog.targets = Projects\MsBuild\Diagnostic\Spdlog.targets
-		Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dependencies.props = Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dependencies.props
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Dynamic", "Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj", "{F104C833-785D-E25F-5F10-B46284462A11}"
 EndProject
@@ -381,10 +377,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Shared", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems", "{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLESRenderer", "{1C920419-6FCA-97AA-DE2F-11C8037C1EF6}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\MsBuild\OpenGLESRenderer\Build.targets = Projects\MsBuild\OpenGLESRenderer\Build.targets
-		Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dependencies.props = Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dependencies.props
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Dynamic", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dynamic.vcxproj", "{77311056-84A3-4B57-AEF1-7A76F17C500C}"
 EndProject
@@ -405,10 +397,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Shared", "Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems", "{364E96CB-9D8A-40B0-8455-6A31A15A36B0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlRuntime", "XamlRuntime", "{A62B830A-BE58-54F9-6766-E95D2B04A2A8}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\MsBuild\XamlRuntime\Build.targets = Projects\MsBuild\XamlRuntime\Build.targets
-		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dependencies.props = Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dependencies.props
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Dynamic", "Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dynamic.vcxproj", "{FA67D7FD-393A-E9BC-F2A4-2570B2929973}"
 EndProject

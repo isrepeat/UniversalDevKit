@@ -418,8 +418,12 @@ foreach ($includePath in $manifest.includes) {
     if ($component.buildExtensions.msbuildTargets) {
         $lines.Add('  <Import Project="' + (EscapeXml ('$(MSBuildThisFileDirectory)..\..\..\' + $component.buildExtensions.msbuildTargets.Replace('/', '\'))) + '" />')
     }
-    $lines.Add('</Project>')
     $relativePath = "Projects/MsBuild/$name/UniversalDevKit.$name.Shared.vcxitems"
+    $dependenciesPath = if ($kind -ne 'headerOnly') { "Projects/MsBuild/$name/UniversalDevKit.$name.Dependencies.props" }
+    foreach ($line in (Get-ProjectToolsBuildItems $Model $component $relativePath $dependenciesPath)) {
+        $lines.Add($line)
+    }
+    $lines.Add('</Project>')
     $targetPath = Join-Path $repositoryPath $relativePath
     $content = $lines -join "`n"
     $original = if (Test-Path -LiteralPath $targetPath) {

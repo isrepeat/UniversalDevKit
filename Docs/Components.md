@@ -18,6 +18,8 @@
 
 Списки `headers` и `sources` принимают шаблоны путей. Особые настройки MSBuild подключаются через `buildExtensions.msbuildProps` и `buildExtensions.msbuildTargets`. CMake и Connect продолжают получать библиотечные компоненты из массива `includes`. Рабочий пример описания находится в [UdkCli.json](../Projects/Components/UdkCli.json).
 
+В профиле UDK `.props` и `.targets` из `buildExtensions` относятся ко всему компоненту. ProjectTools показывает их вместе со сгенерированным `Dependencies.props` библиотеки в фильтре `Shared → Build`. Импорты MSBuild задаются отдельно от элементов дерева Visual Studio.
+
 ## Настройки компиляции
 
 Публичный include-корень определяется по заголовкам `Includes/.../UniversalDevKit/...` из описания компонента. Для внешнего компонента с заголовком `<компонент>/Export.h` корнем служит родитель каталога компонента. CMake, генератор MSBuild, Connect и генерация Export.h используют тот же корень. При установке внешнего компонента копируются только его публичные заголовки. AndroidAppPreviewerPluginSdk теперь принадлежит отдельному репозиторию AndroidAppPreviewer и в реестр компонентов UDK не входит.

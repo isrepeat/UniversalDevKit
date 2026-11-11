@@ -33,7 +33,6 @@
   <ImportGroup Label="Shared">
     <Import Project="@SHARED@" Label="Shared" />
   </ImportGroup>
-@BUILDITEMS@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 @TARGETS@
 </Project>

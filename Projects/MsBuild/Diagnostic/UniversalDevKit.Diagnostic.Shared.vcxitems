@@ -79,4 +79,12 @@
   </ItemGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.Requirements.targets" Condition="'$(__IsUniversalDevKitRequirementsImported)' != 'true'" />
   <Import Project="$(MSBuildThisFileDirectory)..\..\..\Projects\MsBuild\Diagnostic\Spdlog.targets" />
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Spdlog.targets">
+      <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.Diagnostic.Dependencies.props">
+      <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
+    </None>
+  </ItemGroup>
 </Project>

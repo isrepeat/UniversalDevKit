@@ -48,6 +48,6 @@
   },
   "buildExtensions": {
     "cmake": "Projects/Cmake/OpenGLESRenderer/Build.cmake",
-    "msbuildTargets": "Projects/MsBuild/OpenGLESRenderer/Build.targets"
+    "msbuildTargets": "Projects/MsBuild/OpenGLESRenderer/UniversalDevKit.OpenGLESRenderer.targets"
   }
 }

@@ -41,10 +41,6 @@
   <ImportGroup Label="Shared">
     <Import Project="$(MSBuildThisFileDirectory)UniversalDevKit.UdkCli.Shared.vcxitems" Label="Shared" />
   </ImportGroup>
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)UdkCli.props"><__UniversalDevKitFilter>Build</__UniversalDevKitFilter></None>
-    <None Include="$(MSBuildThisFileDirectory)UdkCli.targets"><__UniversalDevKitFilter>Build</__UniversalDevKitFilter></None>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Import Project="$(MSBuildThisFileDirectory)UdkCli.targets" />
 </Project>

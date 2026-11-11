@@ -29,6 +29,21 @@ function Get-ProjectToolsRelativeImport($Model, [string]$ProjectPath, [string]$T
     return '$(MSBuildThisFileDirectory)' + (Get-ProjectToolsRelativePath $directory $targetPath)
 }
 
+function Get-ProjectToolsBuildItems($Model, $Component, [string]$SharedPath, [string]$DependenciesPath) {
+    $paths = @($Component.buildExtensions.msbuildProps, $Component.buildExtensions.msbuildTargets, $DependenciesPath) |
+        Where-Object { $_ } | Select-Object -Unique
+    if (-not $paths) { return }
+
+    '  <ItemGroup>'
+    foreach ($file in $paths) {
+        $include = ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeImport $Model $SharedPath $file)
+        '    <None Include="' + $include + '">'
+        '      <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>'
+        '    </None>'
+    }
+    '  </ItemGroup>'
+}
+
 function New-ProjectToolsApplicationSharedProject($Model, $Component, [string]$Path, [string]$Guid) {
     $lines = @(
         '<?xml version="1.0" encoding="utf-8"?>'
@@ -49,7 +64,10 @@ function New-ProjectToolsApplicationSharedProject($Model, $Component, [string]$P
             $lines += '    </' + $group.Type + '>'
         }
     }
-    return ($lines + @('  </ItemGroup>', '</Project>')) -join "`n"
+    $lines += '  </ItemGroup>'
+    $lines += @(Get-ProjectToolsBuildItems $Model $Component $Path)
+    $lines += '</Project>'
+    return $lines -join "`n"
 }
 
 function New-ProjectToolsApplicationProject($Model, $Component, [string]$Path, [string]$SharedPath) {
@@ -73,13 +91,6 @@ function New-ProjectToolsApplicationProject($Model, $Component, [string]$Path, [
     $targets = foreach ($file in @($Component.buildExtensions.msbuildTargets) + @($Model.Settings.targets)) {
         if ($file) { '  <Import Project="' + (ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeImport $Model $Path $file)) + '" />' }
     }
-    $extensions = foreach ($file in @($Component.buildExtensions.msbuildProps, $Component.buildExtensions.msbuildTargets) | Where-Object { $_ } | Select-Object -Unique) {
-        $include = ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeImport $Model $Path $file)
-        '    <None Include="' + $include + '"><__UniversalDevKitFilter>Build</__UniversalDevKitFilter></None>'
-    }
-    $buildItems = if ($extensions) {
-        (@('  <ItemGroup>') + $extensions + '  </ItemGroup>') -join "`n"
-    }
     $standard = if ($Component.requirements.cxxStandard -eq 23) { 'stdcpplatest' } else { 'stdcpp20' }
     $template = [IO.File]::ReadAllText((Join-Path $PSScriptRoot '../Templates/Application.vcxproj.in'))
     $values = @{
@@ -89,7 +100,6 @@ function New-ProjectToolsApplicationProject($Model, $Component, [string]$Path, [
         PROPS = $props -join "`n"
         STANDARD = $standard
         SHARED = ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeImport $Model $Path $SharedPath)
-        BUILDITEMS = $buildItems
         TARGETS = $targets -join "`n"
     }
     return [regex]::Replace($template, '@([A-Z]+)@', { param($match) $values[$match.Groups[1].Value] })

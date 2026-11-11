@@ -16,4 +16,12 @@
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)UdkCli.props">
+      <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)UdkCli.targets">
+      <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
+    </None>
+  </ItemGroup>
 </Project>

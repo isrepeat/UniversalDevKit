@@ -35,6 +35,6 @@
   },
   "buildExtensions": {
     "cmake": "Projects/Cmake/XamlRuntime/Build.cmake",
-    "msbuildTargets": "Projects/MsBuild/XamlRuntime/Build.targets"
+    "msbuildTargets": "Projects/MsBuild/XamlRuntime/UniversalDevKit.XamlRuntime.targets"
   }
 }
