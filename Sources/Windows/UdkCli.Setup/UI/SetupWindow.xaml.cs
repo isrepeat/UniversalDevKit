@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Windows;
+using System.Threading.Tasks;
 using System.Reflection;
 
 namespace UniversalDevKit.UdkCli.Setup {
@@ -51,22 +52,17 @@ namespace UniversalDevKit.UdkCli.Setup {
                     message += "\n\nPowerShell 7 (pwsh.exe) must be on PATH to run UDK CLI commands.";
                 }
                 try {
-                    using var extension = assembly.GetManifestResourceStream("UdkCli.VisualStudio.vsix")
-                        ?? throw new InvalidDataException("The installer does not contain the Visual Studio extension.");
-                    var result = await VisualStudioIntegration.InstallAsync(extension);
-                    if (this.log.IsInitialized) {
-                        Diagnostic.Log.Write(Diagnostic.Level.Info, "UdkCli.Setup", $"Visual Studio integration completed. {result.Trim()}");
-                    }
-                    message += result;
+                    message += await this.InstallExtensionAsync();
                 } catch (Exception exception) {
+                    var extensionWindow = new ExtensionWindow(message, exception.Message, this.log.Location, this.InstallExtensionAsync) {
+                        Owner = this
+                    };
+                    var installed = extensionWindow.ShowDialog() == true;
                     if (this.log.IsInitialized) {
-                        Diagnostic.Log.Write(Diagnostic.Level.Error, "UdkCli.Setup", exception.ToString());
+                        Diagnostic.Log.Write(Diagnostic.Level.Info, "UdkCli.Setup",
+                            installed ? "Setup completed." : "Setup completed without finishing Visual Studio integration.");
                     }
-                    MessageBox.Show(this, message + "\n\nVisual Studio extension: " + exception.Message + this.log.Location,
-                        Title, MessageBoxButton.OK, MessageBoxImage.Warning);
-                    InstallLocationLabel.Text = "Update the existing installation in";
-                    InstallButton.Content = "Update";
-                    BrowseButton.Visibility = Visibility.Collapsed;
+                    Close();
                     return;
                 }
                 if (this.log.IsInitialized) {
@@ -82,6 +78,23 @@ namespace UniversalDevKit.UdkCli.Setup {
             } finally {
                 InstallButton.IsEnabled = true;
                 BrowseButton.IsEnabled = true;
+            }
+        }
+
+        private async Task<string> InstallExtensionAsync() {
+            try {
+                using var extension = Assembly.GetExecutingAssembly().GetManifestResourceStream("UdkCli.VisualStudio.vsix")
+                    ?? throw new InvalidDataException("The installer does not contain the UDK CLI extension.");
+                var result = await VisualStudioIntegration.InstallAsync(extension);
+                if (this.log.IsInitialized) {
+                    Diagnostic.Log.Write(Diagnostic.Level.Info, "UdkCli.Setup", $"Visual Studio integration completed. {result.Trim()}");
+                }
+                return result;
+            } catch (Exception exception) {
+                if (this.log.IsInitialized) {
+                    Diagnostic.Log.Write(Diagnostic.Level.Error, "UdkCli.Setup", exception.ToString());
+                }
+                throw;
             }
         }
 

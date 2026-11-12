@@ -48,7 +48,7 @@ namespace UniversalDevKit.UdkCli.Setup {
                 return "";
             }
             if (IsVisualStudioRunning()) {
-                throw new InvalidOperationException("Close Visual Studio, then run UDK Setup again to install or update its extension.");
+                throw new InvalidOperationException("Close Visual Studio, then click Install extension.");
             }
 
             var packagePath = Path.Combine(Path.GetTempPath(), $"UdkCli-{Guid.NewGuid():N}.vsix");

@@ -14,6 +14,8 @@
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\Installation.cs" Link="Installation.cs" />
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\Program.cs" Link="Program.cs" />
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\SetupLog.cs" Link="SetupLog.cs" />
+    <Page Include="..\..\..\..\Sources\Windows\UdkCli.Setup\UI\ExtensionWindow.xaml" Link="UI\ExtensionWindow.xaml" />
+    <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\UI\ExtensionWindow.xaml.cs" Link="UI\ExtensionWindow.xaml.cs" />
     <Page Include="..\..\..\..\Sources\Windows\UdkCli.Setup\UI\SetupWindow.xaml" Link="UI\SetupWindow.xaml" />
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\UI\SetupWindow.xaml.cs" Link="UI\SetupWindow.xaml.cs" />
     <Page Include="..\..\..\..\Sources\Windows\UdkCli.Setup\UI\UninstallWindow.xaml" Link="UI\UninstallWindow.xaml" />
