@@ -58,7 +58,7 @@ function ConvertTo-ProjectToolsFilterRules([string]$Root, $Rules) {
             Regex = [regex](ConvertTo-ProjectToolsGlobRegex $pattern)
             BaseLength = $prefix.LastIndexOf('/') + 1
             Folder = $rule.filter
-            PreserveTree = $rule.preserveTree
+            PreserveTree = [bool]$rule.preserveTree
         }
     }
 }

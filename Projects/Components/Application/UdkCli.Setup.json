@@ -9,7 +9,7 @@
     "Sources/Windows/UdkCli.Setup/**/*.xaml"
   ],
   "filters": [
-    { "path": "Sources/Windows/UdkCli.Setup", "filter": "Root", "preserveTree": true }
+    { "path": "Sources/Windows/UdkCli.Setup", "filter": "", "preserveTree": true }
   ],
   "msbuild": {
     "properties": {

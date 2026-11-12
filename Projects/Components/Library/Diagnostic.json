@@ -22,7 +22,7 @@
     "ThirdParty/spdlog/src/*.cpp"
   ],
   "filters": [
-    { "path": "Includes/Diagnostic/UniversalDevKit/Diagnostic", "filter": "", "preserveTree": true },
+    { "path": "Includes/Diagnostic/UniversalDevKit/Diagnostic", "filter": "" },
     { "path": "Sources/Diagnostic", "filter": "", "preserveTree": true },
     { "path": "ThirdParty/spdlog", "filter": "ThirdParty/spdlog", "preserveTree": true }
   ],

@@ -11,13 +11,13 @@
     <TargetFramework>net10.0-windows</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\Installation.cs" Link="Root\Installation.cs" />
-    <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\Program.cs" Link="Root\Program.cs" />
-    <Page Include="..\..\..\..\Sources\Windows\UdkCli.Setup\UI\SetupWindow.xaml" Link="Root\UI\SetupWindow.xaml" />
-    <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\UI\SetupWindow.xaml.cs" Link="Root\UI\SetupWindow.xaml.cs" />
-    <Page Include="..\..\..\..\Sources\Windows\UdkCli.Setup\UI\UninstallWindow.xaml" Link="Root\UI\UninstallWindow.xaml" />
-    <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\UI\UninstallWindow.xaml.cs" Link="Root\UI\UninstallWindow.xaml.cs" />
-    <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\VisualStudioIntegration.cs" Link="Root\VisualStudioIntegration.cs" />
+    <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\Installation.cs" Link="Installation.cs" />
+    <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\Program.cs" Link="Program.cs" />
+    <Page Include="..\..\..\..\Sources\Windows\UdkCli.Setup\UI\SetupWindow.xaml" Link="SetupWindow.xaml" />
+    <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\UI\SetupWindow.xaml.cs" Link="SetupWindow.xaml.cs" />
+    <Page Include="..\..\..\..\Sources\Windows\UdkCli.Setup\UI\UninstallWindow.xaml" Link="UninstallWindow.xaml" />
+    <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\UI\UninstallWindow.xaml.cs" Link="UninstallWindow.xaml.cs" />
+    <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\VisualStudioIntegration.cs" Link="VisualStudioIntegration.cs" />
     <None Update="UdkCli.Setup.targets" Link="Build\UdkCli.Setup.targets" />
   </ItemGroup>
   <Import Project="$(MSBuildThisFileDirectory)UdkCli.Setup.targets" />

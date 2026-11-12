@@ -6,7 +6,7 @@
   "headers": ["Sources/Windows/XamlCompiler/**/*.h"],
   "sources": ["Sources/Windows/XamlCompiler/**/*.cpp"],
   "filters": [
-    { "path": "Sources/Windows/XamlCompiler", "filter": "Sources", "preserveTree": true }
+    { "path": "Sources/Windows/XamlCompiler", "filter": "Sources" }
   ],
   "requirements": {
     "cxxStandard": 20

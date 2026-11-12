@@ -8,7 +8,7 @@
   "headers": ["Sources/Windows/UdkCli/**/*.h"],
   "sources": ["Sources/Windows/UdkCli/**/*.cpp"],
   "filters": [
-    { "path": "Sources/Windows/UdkCli", "filter": "", "preserveTree": true }
+    { "path": "Sources/Windows/UdkCli", "filter": "" }
   ],
   "requirements": {
     "cxxStandard": 20
