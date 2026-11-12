@@ -12,11 +12,9 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot '../Private/FormatXmlAttributes.ps1')
 . (Join-Path $PSScriptRoot '../Private/Requirements.ps1')
 $repositoryPath = [IO.Path]::GetFullPath($RepositoryRoot)
-$manifest = $Model.Manifest
 $updates = [Collections.Generic.List[object]]::new()
 $guids = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 $names = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
-$includePaths = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 $componentGraph = @{}
 $binaryComponentRegistry = @{}
 
@@ -161,16 +159,7 @@ function GetComponentFilter([string]$Path, $Settings) {
     return [IO.Path]::GetDirectoryName($mapped.Replace('/', '\'))
 }
 
-foreach ($includePath in $manifest.includes) {
-    # Resolve includes from root Components.json; nested includes are unsupported.
-    if ($includePath -isnot [string] -or $includePath -match '[\\:$@%*?;\r\n]' -or
-        @($includePath.Split('/') | Where-Object { $_ -in @('', '.', '..') }).Count -or
-        [IO.Path]::GetExtension($includePath) -cne '.json') {
-        throw "Invalid component include path: $includePath"
-    }
-    if (-not $includePaths.Add($includePath)) {
-        throw "Duplicate component include: $includePath"
-    }
+foreach ($includePath in $Model.Components.Keys) {
     $component = $Model.Components[$includePath]
     $name = $component.name
     if ($name -isnot [string]) {
@@ -184,7 +173,7 @@ foreach ($includePath in $manifest.includes) {
     }
     # Reject unknown fields; dependencies and platforms require explicit generator support.
     foreach ($field in $component.PSObject.Properties.Name) {
-        if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild')) {
+        if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild')) {
             throw "Unsupported field ${name}: $field"
         }
     }

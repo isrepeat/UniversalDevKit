@@ -6,34 +6,39 @@
 
 ```json
 {
-  "schemaVersion": 2,
-  "includes": [
-    "Projects/Components/Helpers.json",
-    "Projects/Components/Diagnostic.json"
-  ]
+  "schemaVersion": 4,
+  "components": [
+    "Projects/Components/Libraries/Helpers.json",
+    "Projects/Components/Libraries/Diagnostic.json",
+    "Projects/Components/Applications/UdkCli.json"
+  ],
+  "generation": { "profile": "udk" }
 }
 ```
 
-**Неизвестные поля отклоняются.** Пути в `includes` перечисляются явно, без wildcard.
+**Неизвестные поля отклоняются.** Пути в `components` перечисляются явно, без wildcard.
 
 ## Значения по умолчанию
 
-Схема 2 поднимает минимальный стандарт до C++20. Явное cxxStandard=17 и реестры схемы 1 отклоняются; при миграции обновите корневой реестр и стандарт проектов-потребителей. Версии схем Package.json и бинарных манифестов независимы и не меняются.
+Минимальный стандарт C++ для библиотек — C++20. Версии схем Package.json и бинарных манифестов независимы от реестра компонентов.
 
 | Поле | Значения | По умолчанию |
 |---|---|---|
-| `kind` | `compiled`, `headerOnly` | `compiled` |
+| `kind` | `library`, `application` | Обязателен в схеме 4 |
+| `language` | `cpp`, `csharp` | Обязателен в схеме 4 |
+| `projectType` | `native` для C++, `wpf` для C#-приложений | Обязателен в схеме 4 |
+| `libraryType` | `compiled`, `headerOnly` | `compiled` для библиотек |
 | `stateScope` | `module`, `process` | `module` |
 | `requirements.cxxStandard` | `20`, `23` | `20` |
 | `requirements.threads` | `true`, `false` | `false` |
 | `dependencies` | Массив связей | Пустой список |
-| `headers`, `sources` | Массивы путей | Обязательны; допустимы `[]` |
+| `headers`, `sources` | Массивы путей C++-компонента | Обязательны для C++; допустимы `[]` |
 
 ## Версия схемы и идентификаторы
 
-Реестр — внутренний API сборки UDK. Components.json содержит schemaVersion=2 (число) и непустой массив includes с явными путями Projects/Components/*.json. Неизвестные поля отклоняются. Изменение смысла существующих полей, обязательных полей или значений по умолчанию требует новой версии схемы и согласованного обновления CMake и PowerShell; новые необязательные поля принимаются только обновлёнными readers, старые версии должны выдать ошибку.
+Реестр — внутренний API сборки UDK. Схема 4 содержит непустой массив `components`. ProjectTools также принимает прежние схемы 2 и 3 для существующих манифестов. Для профиля UDK задайте `generation.profile: udk`.
 
-msbuildGuid записывается в форме {xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}. Имена компонентов уникальны без учёта регистра; допустимы латинские буквы и цифры, первая буква заглавная. GUID также уникальны без учёта регистра.
+`msbuildGuid` записывается в форме `{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}`. Имена и GUID уникальны без учёта регистра. В именах C++-компонентов допустимы латинские буквы и цифры, первая буква заглавная. В именах существующих C#-проектов также допускаются точки.
 
 ## Зависимости
 

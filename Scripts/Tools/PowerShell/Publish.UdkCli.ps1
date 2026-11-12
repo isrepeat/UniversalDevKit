@@ -1,5 +1,6 @@
 param(
-    [ValidatePattern('^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$')]
+    [ValidateLength(1, 80)]
+    [ValidatePattern('\A[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?\z')]
     [string]$Version
 )
 
@@ -12,11 +13,11 @@ $OutputEncoding = [Text.UTF8Encoding]::new($false)
 
 $root = (Resolve-Path (Join-Path $PSScriptRoot '../../..')).Path
 . (Join-Path $root 'Sources/Windows/UdkCli/Tools/ResolveJsonReference.ps1')
-$componentPath = Join-Path $root 'Projects/Components/UdkCli.json'
+$componentPath = Join-Path $root 'Projects/Components/Applications/UdkCli.json'
 $component = Get-Content -LiteralPath $componentPath -Raw -Encoding UTF8 | ConvertFrom-Json
 Resolve-UdkDescriptionVersion $root $component $componentPath 'githubVersion'
 if (-not $Version) { $Version = $component.githubVersion }
-if ($Version -isnot [string] -or $Version -notmatch '^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$') {
+if ($Version -isnot [string] -or $Version.Length -gt 80 -or $Version -notmatch '\A[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?\z') {
     throw 'A valid release version is required.'
 }
 $repository = 'isrepeat/UniversalDevKit'
@@ -83,8 +84,12 @@ try {
     $buildLock.Dispose()
 }
 
+$archiveHash = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash
+$archiveChecksum = "$archive.sha256"
+[IO.File]::WriteAllText($archiveChecksum, $archiveHash)
 Write-Host "Archive: $archive"
-Write-Host "SHA-256: $((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash)"
+Write-Host "SHA-256: $archiveHash"
+Write-Host "Checksum file: $archiveChecksum"
 Write-Host "Installer: $installer"
 Write-Host "SHA-256: $((Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash)"
 Write-Host "GitHub release: $repository $tag"
@@ -95,7 +100,7 @@ if ((Read-Host 'Publish this release? [y/N]') -notin @('y', 'yes')) {
 }
 
 $gh = (Get-Command gh.exe -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
-$releaseArguments = @('release', 'create', $tag, $archive, $installer, '--repo', $repository, '--target', $commit,
+$releaseArguments = @('release', 'create', $tag, $archive, $archiveChecksum, $installer, '--repo', $repository, '--target', $commit,
     '--title', "UDK CLI $Version", '--notes', "Windows x64 build from commit $commit.", '--latest=false')
 if ($Version.Contains('-')) { $releaseArguments += '--prerelease' }
 & $gh @releaseArguments

@@ -1,5 +1,8 @@
 {
   "name": "Diagnostic",
+  "kind": "library",
+  "language": "cpp",
+  "projectType": "native",
   "msbuildGuid": "{AB97876A-F25A-4AAE-BACD-D32C776BB261}",
   "stateScope": "process",
   "dependencies": [

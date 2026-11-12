@@ -1,14 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сгенерировано ProjectTools. Изменяйте описание компонента. -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
+    <TargetFramework>net10.0-windows</TargetFramework>
   </PropertyGroup>
-  <ItemGroup Condition="'$(UdkPayload)' != ''">
-    <EmbeddedResource Include="$(UdkPayload)" LogicalName="UdkPayload.zip" />
+  <ItemGroup>
+    <Compile Update="Installation.cs" Link="Installation\Installation.cs" />
+    <Page Update="SetupWindow.xaml" Link="Windows\SetupWindow.xaml" />
+    <Compile Update="SetupWindow.xaml.cs" Link="Windows\SetupWindow.xaml.cs" />
+    <Page Update="UninstallWindow.xaml" Link="Windows\UninstallWindow.xaml" />
+    <Compile Update="UninstallWindow.xaml.cs" Link="Windows\UninstallWindow.xaml.cs" />
+    <None Update="UdkCli.Setup.targets" Link="Build\UdkCli.Setup.targets" />
   </ItemGroup>
-  <Target Name="RequireUdkPayload" BeforeTargets="Publish" Condition="'$(UdkPayload)' == ''">
-    <Error Text="Build the UDK CLI setup through Publish.UdkCli.cmd." />
-  </Target>
+  <Import Project="$(MSBuildThisFileDirectory)UdkCli.Setup.targets" />
 </Project>

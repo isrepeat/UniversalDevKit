@@ -77,7 +77,13 @@ namespace universaldevkit::cli {
 		}
 
 		// Build the child process arguments without invoking cmd.exe.
-		std::vector<std::wstring> childArguments{L"pwsh.exe", L"-NoProfile", L"-File", details::QuoteArgument(scriptPath.native())};
+		std::vector<std::wstring> childArguments{L"-NoProfile", L"-File", scriptPath.native()};
+		childArguments.insert(childArguments.end(), arguments.begin(), arguments.end());
+		return cli::RunExecutable(L"pwsh.exe", childArguments);
+	}
+
+	int RunExecutable(const std::filesystem::path& path, const std::vector<std::wstring>& arguments) {
+		std::vector<std::wstring> childArguments{details::QuoteArgument(path.native())};
 		for (const auto& argument : arguments) {
 			childArguments.push_back(details::QuoteArgument(argument));
 		}
@@ -88,9 +94,9 @@ namespace universaldevkit::cli {
 		}
 		argumentPointers.push_back(nullptr);
 
-		const auto exitCode = ::_wspawnvp(_P_WAIT, L"pwsh.exe", argumentPointers.data());
+		const auto exitCode = ::_wspawnvp(_P_WAIT, path.c_str(), argumentPointers.data());
 		if (exitCode == -1) {
-			throw std::system_error(errno, std::generic_category(), "Cannot start pwsh.exe");
+			throw std::system_error(errno, std::generic_category(), "Cannot start " + path.filename().string());
 		}
 		return static_cast<int>(exitCode);
 	}

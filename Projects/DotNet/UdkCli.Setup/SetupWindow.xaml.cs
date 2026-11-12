@@ -33,11 +33,8 @@ namespace UniversalDevKit.UdkCli.Setup {
             try {
                 using var payload = Assembly.GetExecutingAssembly().GetManifestResourceStream("UdkPayload.zip")
                     ?? throw new InvalidDataException("The installer does not contain the UDK CLI files.");
-                var addToPath = AddToPathCheckBox.IsChecked == true;
-                Installation.Install(payload, InstallDirectoryText.Text, addToPath);
-                var message = addToPath
-                    ? "UDK CLI is installed. Open a new terminal and run udk --help."
-                    : "UDK CLI is installed. Run udk.exe from the installation folder.";
+                Installation.Install(payload, InstallDirectoryText.Text);
+                var message = "UDK CLI is installed. Open a new terminal and run udk --help.";
                 if (!Installation.HasPowerShell()) {
                     message += "\n\nPowerShell 7 (pwsh.exe) must be on PATH to run UDK CLI commands.";
                 }

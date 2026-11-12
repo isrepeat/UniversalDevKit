@@ -15,12 +15,16 @@ function Get-UdkComponentRegistry {
     param([string]$RepositoryPath)
     [void](GetAvailableComponents -RepositoryPath $RepositoryPath)
     $manifest = Get-Content -LiteralPath (Join-Path $repositoryPath 'Components.json') -Raw -Encoding UTF8 | ConvertFrom-Json
-    if ($manifest.schemaVersion -ne 2 -or -not $manifest.includes) {
+    $paths = if ($manifest.schemaVersion -eq 4) { $manifest.components } elseif ($manifest.schemaVersion -eq 2) { $manifest.includes }
+    if (-not $paths) {
         throw 'Unsupported Components.json schema.'
     }
     $componentRegistry = @{}
-    foreach ($include in $manifest.includes) {
+    foreach ($include in $paths) {
         $component = Get-Content -LiteralPath (Join-Path $repositoryPath $include) -Raw -Encoding UTF8 | ConvertFrom-Json
+        if ($component.kind -eq 'application') { continue }
+        $kind = $component.kind
+        if ($kind -eq 'library') { $kind = $component.libraryType }
         if (-not $component.name -or -not $component.msbuildGuid) {
             throw "Invalid component description: $include"
         }
@@ -33,9 +37,10 @@ function Get-UdkComponentRegistry {
         }
         $componentRegistry[$component.name] = [pscustomobject]@{
             Name = $component.name
+            RegistryPath = $include
             IncludeRoot = Get-UdkComponentIncludeRoot $component
             Guid = $guid
-            Kind = if ($component.kind) { $component.kind } else { 'compiled' }
+            Kind = if ($kind) { $kind } else { 'compiled' }
             StateScope = $component.stateScope
             Requirements = Get-UdkRequirementDefinition $component
             Dependencies = @($component.dependencies | Where-Object { $null -ne $_ } | ForEach-Object {

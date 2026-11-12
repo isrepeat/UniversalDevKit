@@ -15,17 +15,16 @@ namespace UniversalDevKit.UdkCli.Setup {
         }
 
         private static void Uninstall() {
-            const string title = "Uninstall UDK CLI";
-            if (MessageBox.Show("Remove UDK CLI for the current user?", title, MessageBoxButton.YesNo,
-                MessageBoxImage.Question, MessageBoxResult.No) != MessageBoxResult.Yes) {
+            var dialog = new UninstallWindow();
+            if (dialog.ShowDialog() != true) {
                 return;
             }
 
             try {
-                Installation.Uninstall();
-                MessageBox.Show("UDK CLI was removed.", title, MessageBoxButton.OK, MessageBoxImage.Information);
+                Installation.Uninstall(dialog.RemoveVersionCache);
+                MessageBox.Show("UDK CLI was removed.", dialog.Title, MessageBoxButton.OK, MessageBoxImage.Information);
             } catch (Exception exception) {
-                MessageBox.Show(exception.Message, title, MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(exception.Message, dialog.Title, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

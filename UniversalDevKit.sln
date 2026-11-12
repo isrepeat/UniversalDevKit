@@ -263,6 +263,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4
 		Projects\Cmake\Version.cmake = Projects\Cmake\Version.cmake
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{2E383B60-BE80-4FE6-8EC1-D1D23C281549}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{ADBA3BA9-F6AC-7A5C-7A27-59AE40606576}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApplicationFramework", "ApplicationFramework", "{E2BB8948-A33B-7D06-CADA-F3B535F84401}"
@@ -281,6 +283,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLE
 		Projects\Cmake\OpenGLESRenderer\Build.cmake = Projects\Cmake\OpenGLESRenderer\Build.cmake
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{5BDCA3C6-D8B9-42B9-A450-8032E2D7EA18}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{923F42D8-57A1-4A1B-8FB9-35B5D73A7F8A}"
 	ProjectSection(SolutionItems) = preProject
 		Projects\Cmake\XamlCompiler\CMakeLists.txt = Projects\Cmake\XamlCompiler\CMakeLists.txt
@@ -293,16 +297,31 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlRuntime", "XamlRuntime"
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{8CB5D103-21B9-4651-A4A1-671107F28847}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Applications", "{9DE65AD6-7269-4A1C-9443-DFD2F2F0BC63}"
 	ProjectSection(SolutionItems) = preProject
-		Projects\Components\Diagnostic.json = Projects\Components\Diagnostic.json
-		Projects\Components\Helpers.json = Projects\Components\Helpers.json
-		Projects\Components\OpenGLESRenderer.json = Projects\Components\OpenGLESRenderer.json
-		Projects\Components\UdkCli.json = Projects\Components\UdkCli.json
-		Projects\Components\XamlCompiler.json = Projects\Components\XamlCompiler.json
-		Projects\Components\XamlRuntime.json = Projects\Components\XamlRuntime.json
+		Projects\Components\Applications\UdkCli.json = Projects\Components\Applications\UdkCli.json
+		Projects\Components\Applications\UdkCli.Setup.json = Projects\Components\Applications\UdkCli.Setup.json
+		Projects\Components\Applications\XamlCompiler.json = Projects\Components\Applications\XamlCompiler.json
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{12517CCF-8D81-4473-BEB1-AE0B9BD5B003}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\Components\Libraries\Diagnostic.json = Projects\Components\Libraries\Diagnostic.json
+		Projects\Components\Libraries\Helpers.json = Projects\Components\Libraries\Helpers.json
+		Projects\Components\Libraries\OpenGLESRenderer.json = Projects\Components\Libraries\OpenGLESRenderer.json
+		Projects\Components\Libraries\XamlRuntime.json = Projects\Components\Libraries\XamlRuntime.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{0A0141D6-9607-24C7-57B0-CE35AE9F2AA2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli.Setup", "UdkCli.Setup", "{AA57C568-5481-61FD-0DCD-D5660DF883C3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UdkCli.Setup", "Projects\DotNet\UdkCli.Setup\UdkCli.Setup.csproj", "{C27A6217-35E3-4AD1-BBC7-71438D8E1E16}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{D2E0D44F-71F1-1478-F989-466955EC6F80}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{7A9CB031-4F5B-4C90-BCC5-9E0C170937D6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppKit", "AndroidAppKit", "{7E765BF6-D902-9F4E-CD6C-90C614044B91}"
 	ProjectSection(SolutionItems) = preProject
@@ -356,6 +375,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.HeaderCheck", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj", "{E21B97A1-D847-2938-4E29-760523C97389}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Shared", "Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems", "{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{039CECB5-AFB8-E1E1-C5CE-77165073FE9D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLESRenderer", "{1C920419-6FCA-97AA-DE2F-11C8037C1EF6}"
 EndProject
@@ -871,11 +892,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli", "UdkCli", "{A00B13E7-A763-472E-8EC3-9E04CB803294}"
 	ProjectSection(SolutionItems) = preProject
 		Sources\Windows\UdkCli\SolutionInjector.Connect.json = Sources\Windows\UdkCli\SolutionInjector.Connect.json
-		Projects\DotNet\UdkCli.Setup\UdkCli.Setup.csproj = Projects\DotNet\UdkCli.Setup\UdkCli.Setup.csproj
-		Projects\DotNet\UdkCli.Setup\Program.cs = Projects\DotNet\UdkCli.Setup\Program.cs
-		Projects\DotNet\UdkCli.Setup\Installation.cs = Projects\DotNet\UdkCli.Setup\Installation.cs
-		Projects\DotNet\UdkCli.Setup\SetupWindow.xaml = Projects\DotNet\UdkCli.Setup\SetupWindow.xaml
-		Projects\DotNet\UdkCli.Setup\SetupWindow.xaml.cs = Projects\DotNet\UdkCli.Setup\SetupWindow.xaml.cs
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{A7499D06-7157-4EE6-836C-A32AB920B114}"
@@ -919,6 +935,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectTools", "ProjectTools", "{12E19D66-1CB5-4679-A956-40DDBF49C078}"
 	ProjectSection(SolutionItems) = preProject
 		Sources\Windows\UdkCli\Tools\ProjectTools\Generate.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Generate.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{5D2BF654-F1C0-4A82-9F1B-2CECA93E55D0}"
+	ProjectSection(SolutionItems) = preProject
 		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Contract.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Contract.ps1
 		Sources\Windows\UdkCli\Tools\ProjectTools\Private\FormatXmlAttributes.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\FormatXmlAttributes.ps1
 		Sources\Windows\UdkCli\Tools\ProjectTools\Private\GetSolutionInjector.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\GetSolutionInjector.ps1
@@ -927,12 +947,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectTools", "ProjectTool
 		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Requirements.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Requirements.ps1
 		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1
 		Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Profiles", "Profiles", "{3F6B159C-F6E0-4BCA-A342-E8E291A05DA9}"
+	ProjectSection(SolutionItems) = preProject
 		Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{8837A940-083B-4DD0-92E6-4A8BC02A3B70}"
+	ProjectSection(SolutionItems) = preProject
 		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Wpf.csproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Wpf.csproj.in
 		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Component.vcxproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Component.vcxproj.in
 		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\ComponentExport.h.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\ComponentExport.h.in
 		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Export.h.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Export.h.in
 		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\HeaderCheck.cpp.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\HeaderCheck.cpp.in
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{44467B7C-2BE2-498F-A7F0-3E4A7F180FFC}"
+	ProjectSection(SolutionItems) = preProject
 		Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip = Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip
 		Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json = Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json
 	EndProjectSection
@@ -1816,6 +1849,10 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C27A6217-35E3-4AD1-BBC7-71438D8E1E16}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C27A6217-35E3-4AD1-BBC7-71438D8E1E16}.Debug|x64.Build.0 = Debug|Any CPU
+		{C27A6217-35E3-4AD1-BBC7-71438D8E1E16}.Release|x64.ActiveCfg = Release|Any CPU
+		{C27A6217-35E3-4AD1-BBC7-71438D8E1E16}.Release|x64.Build.0 = Release|Any CPU
 		{F104C833-785D-E25F-5F10-B46284462A11}.Debug|x64.ActiveCfg = Debug|x64
 		{F104C833-785D-E25F-5F10-B46284462A11}.Debug|x64.Build.0 = Debug|x64
 		{F104C833-785D-E25F-5F10-B46284462A11}.Release|x64.ActiveCfg = Release|x64
@@ -1853,6 +1890,16 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{5D2BF654-F1C0-4A82-9F1B-2CECA93E55D0} = {12E19D66-1CB5-4679-A956-40DDBF49C078}
+		{3F6B159C-F6E0-4BCA-A342-E8E291A05DA9} = {12E19D66-1CB5-4679-A956-40DDBF49C078}
+		{8837A940-083B-4DD0-92E6-4A8BC02A3B70} = {12E19D66-1CB5-4679-A956-40DDBF49C078}
+		{44467B7C-2BE2-498F-A7F0-3E4A7F180FFC} = {12E19D66-1CB5-4679-A956-40DDBF49C078}
+		{9DE65AD6-7269-4A1C-9443-DFD2F2F0BC63} = {8CB5D103-21B9-4651-A4A1-671107F28847}
+		{12517CCF-8D81-4473-BEB1-AE0B9BD5B003} = {8CB5D103-21B9-4651-A4A1-671107F28847}
+		{0A0141D6-9607-24C7-57B0-CE35AE9F2AA2} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{039CECB5-AFB8-E1E1-C5CE-77165073FE9D} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{AA57C568-5481-61FD-0DCD-D5660DF883C3} = {0A0141D6-9607-24C7-57B0-CE35AE9F2AA2}
+		{C27A6217-35E3-4AD1-BBC7-71438D8E1E16} = {AA57C568-5481-61FD-0DCD-D5660DF883C3}
 		{71FB51E6-F9B0-937E-39F6-38EFD7C91189} = {CC3C64B5-A5FC-8F8E-720E-921A21F00229}
 		{9D17877F-6145-90EC-14CD-F14A1A24D13C} = {71FB51E6-F9B0-937E-39F6-38EFD7C91189}
 		{6625778A-E44C-F016-70B3-507A374B34BF} = {9D17877F-6145-90EC-14CD-F14A1A24D13C}
@@ -1897,37 +1944,40 @@ Global
 		{6332D45B-9105-4EA4-BB61-65D494AF4CE0} = {C25B8C43-91C7-4F23-B186-05E37C145720}
 		{B398F253-412C-49AA-B2EF-D5F164B8ACF2} = {6332D45B-9105-4EA4-BB61-65D494AF4CE0}
 		{26DC63D4-1E80-4386-ACBA-A8B9D984FC44} = {13DA8639-4234-4E82-9423-056A19840860}
-		{ADBA3BA9-F6AC-7A5C-7A27-59AE40606576} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{2E383B60-BE80-4FE6-8EC1-D1D23C281549} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{5BDCA3C6-D8B9-42B9-A450-8032E2D7EA18} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{ADBA3BA9-F6AC-7A5C-7A27-59AE40606576} = {2E383B60-BE80-4FE6-8EC1-D1D23C281549}
 		{E2BB8948-A33B-7D06-CADA-F3B535F84401} = {ADBA3BA9-F6AC-7A5C-7A27-59AE40606576}
-		{03C0B81C-6B57-4791-B5F3-9D2D48CE2544} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
-		{A82C4E93-051E-4C0B-B705-5875F748742C} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
-		{923F42D8-57A1-4A1B-8FB9-35B5D73A7F8A} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
-		{189A1B26-8EB9-4D78-A955-CF1E45F39257} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
+		{03C0B81C-6B57-4791-B5F3-9D2D48CE2544} = {2E383B60-BE80-4FE6-8EC1-D1D23C281549}
+		{A82C4E93-051E-4C0B-B705-5875F748742C} = {2E383B60-BE80-4FE6-8EC1-D1D23C281549}
+		{923F42D8-57A1-4A1B-8FB9-35B5D73A7F8A} = {5BDCA3C6-D8B9-42B9-A450-8032E2D7EA18}
+		{189A1B26-8EB9-4D78-A955-CF1E45F39257} = {2E383B60-BE80-4FE6-8EC1-D1D23C281549}
 		{8CB5D103-21B9-4651-A4A1-671107F28847} = {13DA8639-4234-4E82-9423-056A19840860}
 		{D2E0D44F-71F1-1478-F989-466955EC6F80} = {13DA8639-4234-4E82-9423-056A19840860}
-		{7E765BF6-D902-9F4E-CD6C-90C614044B91} = {D2E0D44F-71F1-1478-F989-466955EC6F80}
+		{7A9CB031-4F5B-4C90-BCC5-9E0C170937D6} = {D2E0D44F-71F1-1478-F989-466955EC6F80}
+		{7E765BF6-D902-9F4E-CD6C-90C614044B91} = {7A9CB031-4F5B-4C90-BCC5-9E0C170937D6}
 		{7FA23122-0EF3-554B-F66F-7011C69C51C4} = {7E765BF6-D902-9F4E-CD6C-90C614044B91}
-		{6F7F63BC-5509-E8FD-57DB-35CDFDCAF744} = {D2E0D44F-71F1-1478-F989-466955EC6F80}
-		{0A281F7B-C6D3-D687-5485-F34DEF383257} = {D2E0D44F-71F1-1478-F989-466955EC6F80}
+		{6F7F63BC-5509-E8FD-57DB-35CDFDCAF744} = {7A9CB031-4F5B-4C90-BCC5-9E0C170937D6}
+		{0A281F7B-C6D3-D687-5485-F34DEF383257} = {7A9CB031-4F5B-4C90-BCC5-9E0C170937D6}
 		{832B5C4F-3EB0-0B68-2891-21F9C30AE7D2} = {0A281F7B-C6D3-D687-5485-F34DEF383257}
 		{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83} = {13DA8639-4234-4E82-9423-056A19840860}
-		{DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C} = {039CECB5-AFB8-E1E1-C5CE-77165073FE9D}
 		{F104C833-785D-E25F-5F10-B46284462A11} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
 		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
-		{50CDBD24-894E-0FD6-7C08-442980AADBB7} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{50CDBD24-894E-0FD6-7C08-442980AADBB7} = {039CECB5-AFB8-E1E1-C5CE-77165073FE9D}
 		{E21B97A1-D847-2938-4E29-760523C97389} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
 		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
-		{1C920419-6FCA-97AA-DE2F-11C8037C1EF6} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{1C920419-6FCA-97AA-DE2F-11C8037C1EF6} = {039CECB5-AFB8-E1E1-C5CE-77165073FE9D}
 		{77311056-84A3-4B57-AEF1-7A76F17C500C} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
 		{220B0789-1F04-54D3-18E5-5DB99E91172F} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
 		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
-		{752A6291-E849-433A-BF37-7102E850AAB5} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{752A6291-E849-433A-BF37-7102E850AAB5} = {0A0141D6-9607-24C7-57B0-CE35AE9F2AA2}
 		{9C7AAB80-FA41-4925-95FA-06409E32E4E1} = {752A6291-E849-433A-BF37-7102E850AAB5}
 		{9C0C0DD8-D324-6EBE-A92E-80D071FA070E} = {752A6291-E849-433A-BF37-7102E850AAB5}
-		{15C9DD02-133A-0D54-8BE8-73206CCE738F} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{15C9DD02-133A-0D54-8BE8-73206CCE738F} = {0A0141D6-9607-24C7-57B0-CE35AE9F2AA2}
 		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3} = {15C9DD02-133A-0D54-8BE8-73206CCE738F}
 		{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC} = {15C9DD02-133A-0D54-8BE8-73206CCE738F}
-		{A62B830A-BE58-54F9-6766-E95D2B04A2A8} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
+		{A62B830A-BE58-54F9-6766-E95D2B04A2A8} = {039CECB5-AFB8-E1E1-C5CE-77165073FE9D}
 		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
 		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
 		{3E00A02D-46F3-432B-91C8-5D459F70C525} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
@@ -2241,6 +2291,7 @@ Global
 		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems
 		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlCompiler\XamlCompiler.vcxproj
 		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems
+		{C27A6217-35E3-4AD1-BBC7-71438D8E1E16} = ProjectTools|{9A19103F-16F7-4668-BE54-9A1E7A4F7556}|Projects\DotNet\UdkCli.Setup\UdkCli.Setup.csproj
 		{E21B97A1-D847-2938-4E29-760523C97389} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj
 		{F104C833-785D-E25F-5F10-B46284462A11} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj
 		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dynamic.vcxproj

@@ -247,8 +247,8 @@ function Invoke-UdkConnectionPlanCore {
             [void]$root.InsertBefore($document.CreateWhitespace($newline + '  '), $anchor)
             [void]$root.InsertBefore($requirementsImport, $anchor)
             # Registry fingerprints stop stale connections before compilation.
-            $manifest = Get-Content -LiteralPath (Join-Path $repositoryPath 'Components.json') -Raw -Encoding UTF8 | ConvertFrom-Json
-            foreach ($componentRegistryPath in @('Components.json') + @($manifest.includes)) {
+            $componentPaths = @($requirementRegistry.Values | ForEach-Object RegistryPath | Sort-Object)
+            foreach ($componentRegistryPath in @('Components.json') + $componentPaths) {
                 $componentRegistryFile = Join-Path $repositoryPath $componentRegistryPath
                 $componentRegistryItem = $document.CreateElement('__UniversalDevKitComponentRegistryFile', $namespace)
                 $componentRegistryItem.SetAttribute('Include', (GetRelativePath $projectDirectory $componentRegistryFile))

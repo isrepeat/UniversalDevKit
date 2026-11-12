@@ -1,5 +1,8 @@
 {
   "name": "XamlRuntime",
+  "kind": "library",
+  "language": "cpp",
+  "projectType": "native",
   "msbuildGuid": "{3E00A02D-46F3-432B-91C8-5D459F70C525}",
   "supportedPlatforms": [
     "Windows",

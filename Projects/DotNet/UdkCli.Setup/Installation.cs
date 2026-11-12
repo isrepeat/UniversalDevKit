@@ -26,11 +26,11 @@ namespace UniversalDevKit.UdkCli.Setup {
             return registration?.GetValue("InstallLocation") as string;
         }
 
-        public static void Install(Stream payload, string selectedDirectory, bool addToPath) {
+        public static void Install(Stream payload, string selectedDirectory) {
             using var registration = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(RegistryPath);
             var registeredDirectory = registration.GetValue("InstallLocation") as string;
             var directory = ValidateDirectory(registeredDirectory ?? selectedDirectory);
-            if (addToPath && directory.Contains(';')) {
+            if (directory.Contains(';')) {
                 throw new IOException("Choose an installation folder without semicolons to add it to PATH.");
             }
             if (registeredDirectory is null && Directory.Exists(directory) && Directory.EnumerateFileSystemEntries(directory).Any()) {
@@ -68,7 +68,7 @@ namespace UniversalDevKit.UdkCli.Setup {
                 registration.SetValue("NoModify", 1);
                 registration.SetValue("NoRepair", 1);
                 CreateShortcut(uninstaller);
-                UpdatePath(registration, directory, addToPath);
+                UpdatePath(registration, directory, addToPath: true);
                 if (Directory.Exists(backup)) {
                     Directory.Delete(backup, recursive: true);
                 }
@@ -79,7 +79,7 @@ namespace UniversalDevKit.UdkCli.Setup {
             }
         }
 
-        public static void Uninstall() {
+        public static void Uninstall(bool removeVersionCache) {
             using var registration = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(RegistryPath, writable: true);
             if (registration?.GetValue("InstallLocation") is not string registeredDirectory) {
                 throw new InvalidOperationException("UDK CLI is not registered for the current user.");
@@ -89,6 +89,10 @@ namespace UniversalDevKit.UdkCli.Setup {
             var uninstaller = Path.Combine(directory, UninstallerName);
             if (!string.Equals(Environment.ProcessPath, uninstaller, StringComparison.OrdinalIgnoreCase)) {
                 throw new InvalidOperationException("Run the installed uninstaller from the Start menu.");
+            }
+
+            if (removeVersionCache) {
+                RemoveVersionCache(directory);
             }
 
             var tools = Path.Combine(directory, "Tools");
@@ -121,6 +125,22 @@ namespace UniversalDevKit.UdkCli.Setup {
         public static bool HasPowerShell() => (Environment.GetEnvironmentVariable("PATH") ?? "").Split(';')
             .Where(entry => !string.IsNullOrWhiteSpace(entry))
             .Any(entry => File.Exists(Path.Combine(Environment.ExpandEnvironmentVariables(entry.Trim().Trim('"')), "pwsh.exe")));
+
+        private static void RemoveVersionCache(string installDirectory) {
+            var cacheRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UdkCli");
+            var versions = Path.Combine(cacheRoot, "versions");
+            if (!Directory.Exists(versions)) {
+                return;
+            }
+
+            ValidateDirectory(cacheRoot);
+            ValidateDirectory(versions);
+            if (string.Equals(installDirectory, versions, StringComparison.OrdinalIgnoreCase) ||
+                installDirectory.StartsWith(versions + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)) {
+                throw new IOException("The UDK CLI installation is inside the version cache.");
+            }
+            Directory.Delete(versions, recursive: true);
+        }
 
         private static string ValidateDirectory(string path) {
             if (!Path.IsPathFullyQualified(path)) {

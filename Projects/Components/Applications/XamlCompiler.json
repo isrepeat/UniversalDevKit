@@ -1,6 +1,8 @@
 {
   "name": "XamlCompiler",
   "kind": "application",
+  "language": "cpp",
+  "projectType": "native",
   "headers": ["Sources/Windows/XamlCompiler/**/*.h"],
   "sources": ["Sources/Windows/XamlCompiler/**/*.cpp"],
   "filters": {

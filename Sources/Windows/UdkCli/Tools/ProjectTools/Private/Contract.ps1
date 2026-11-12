@@ -56,9 +56,13 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
     $path = (Resolve-Path -LiteralPath $ManifestPath -ErrorAction Stop).Path
     $root = Split-Path -Parent $path
     $manifest = Get-Content -LiteralPath $path -Raw -Encoding UTF8 | ConvertFrom-Json
-    if (($manifest.schemaVersion -isnot [int] -and $manifest.schemaVersion -isnot [long]) -or $manifest.schemaVersion -notin @(2, 3)) { throw 'Unsupported component schemaVersion.' }
-    if ($manifest.includes -isnot [Array] -or -not $manifest.includes.Count) { throw 'includes must be a nonempty array.' }
-    foreach ($field in $manifest.PSObject.Properties.Name) { if ($field -notin @('schemaVersion', 'includes', 'generation', 'msbuildApplications')) { throw "Unknown manifest field: $field" } }
+    if (($manifest.schemaVersion -isnot [int] -and $manifest.schemaVersion -isnot [long]) -or $manifest.schemaVersion -notin @(2, 3, 4)) { throw 'Unsupported component schemaVersion.' }
+    $unified = $manifest.schemaVersion -eq 4
+    $listField = if ($unified) { 'components' } else { 'includes' }
+    if ($manifest.$listField -isnot [Array] -or -not $manifest.$listField.Count) { throw "$listField must be a nonempty array." }
+    $manifestFields = @('schemaVersion', 'generation', $listField)
+    if (-not $unified) { $manifestFields += 'msbuildApplications' }
+    foreach ($field in $manifest.PSObject.Properties.Name) { if ($field -notin $manifestFields) { throw "Unknown manifest field: $field" } }
     $settings = $manifest.generation.msbuild
     $profile = $manifest.generation.profile
     if (-not $profile -and $manifest.schemaVersion -eq 2) { $profile = 'udk' }
@@ -89,9 +93,10 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
     }
     $names = @{}
     $guids = @{}
-    $includes = @($manifest.includes)
+    $includes = @($manifest.$listField)
     if ($manifest.msbuildApplications) { $includes += $manifest.msbuildApplications }
     foreach ($include in $includes) {
+        if ($include -isnot [string] -or $include -match '[*?]' -or [IO.Path]::GetExtension($include) -cne '.json') { throw "Invalid component path: $include" }
         $componentPath = Resolve-ProjectToolsPath $root $include
         if ($components.Contains($include) -or $applications.Contains($include)) { throw "Duplicate include: $include" }
         $component = Get-Content -LiteralPath $componentPath -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -99,46 +104,88 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
             Resolve-UdkDescriptionVersion $root $component $componentPath 'githubVersion'
         }
         Resolve-UdkDescriptionAbiVersion $root $component $componentPath
-        if ($component.name -notmatch '^[A-Z][A-Za-z0-9]*$' -or $names.ContainsKey($component.name)) { throw "Invalid or duplicate component name: $($component.name)" }
-        $names[$component.name] = $true
-        foreach ($field in $component.PSObject.Properties.Name) {
-            if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild')) { throw "Unknown component field: $field" }
-        }
-        if (-not $component.kind) { $component | Add-Member kind 'compiled' }
-        $isApplication = $include -in $manifest.msbuildApplications
-        if ($isApplication) {
-            if ($component.kind -ne 'application') { throw "Expected application kind: $include" }
-            foreach ($field in $component.PSObject.Properties.Name) {
-                if ($field -notin @('name', 'kind', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'excludeHeaders', 'excludeSources', 'filters', 'requirements', 'buildExtensions', 'msbuild')) {
-                    throw "Unsupported application field: $field"
-                }
+        $isApplication = $component.kind -ceq 'application'
+        if ($unified) {
+            if ($component.language -isnot [string] -or $component.projectType -isnot [string]) {
+                throw "Expected language and projectType strings: $include"
             }
-            foreach ($field in $component.requirements.PSObject.Properties.Name) {
-                if ($field -ne 'cxxStandard') { throw "Unsupported application requirement: $field" }
+        } elseif ($component.PSObject.Properties['language'] -or $component.PSObject.Properties['projectType']) {
+            throw "language and projectType require schemaVersion 4: $include"
+        }
+        $isWpf = $unified -and $isApplication -and $component.language -ceq 'csharp' -and $component.projectType -ceq 'wpf'
+        $namePattern = if ($isWpf) { '^[A-Z][A-Za-z0-9]*(?:\.[A-Za-z0-9]+)*$' } else { '^[A-Z][A-Za-z0-9]*$' }
+        if ($component.name -isnot [string] -or $component.name -notmatch $namePattern -or $names.ContainsKey($component.name)) { throw "Invalid or duplicate component name: $($component.name)" }
+        $names[$component.name] = $true
+        if ($unified) {
+            if (-not $isWpf -and ($component.language -cne 'cpp' -or $component.projectType -cne 'native')) {
+                throw "Unsupported language and projectType for component: $include"
+            }
+            if ($component.kind -ceq 'library') {
+                $libraryType = if ($component.PSObject.Properties['libraryType']) { $component.libraryType } else { 'compiled' }
+                if ($libraryType -cnotin @('compiled', 'headerOnly')) { throw "Invalid libraryType: $include" }
+                $component.kind = $libraryType
+                $component.PSObject.Properties.Remove('libraryType')
+            } elseif (-not $isApplication) { throw "Expected library or application kind: $include" }
+        } elseif ($isApplication -ne ($include -in $manifest.msbuildApplications)) {
+            throw "Invalid application registration: $include"
+        }
+        if ($isWpf) {
+            foreach ($field in $component.PSObject.Properties.Name) {
+                if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'abiVersion', 'msbuildGuid', 'msbuild', 'buildExtensions', 'filters')) { throw "Unsupported WPF application field: $field" }
             }
             foreach ($field in $component.msbuild.PSObject.Properties.Name) {
-                if ($field -ne 'properties') { throw "Unsupported application MSBuild setting: $field" }
+                if ($field -ne 'properties') { throw "Unsupported WPF MSBuild setting: $field" }
             }
-            if ($component.buildExtensions -and $component.buildExtensions.PSObject.Properties['cmake']) { throw 'Applications support MSBuild extensions only.' }
-        } elseif ($component.kind -notin @('compiled', 'headerOnly')) { throw 'Invalid library component kind.' }
-        if (-not $profile -and ($component.platformSources -or $component.platformRequirements -or $component.sourceSettings)) { throw 'Standalone MSBuild generation does not yet support platformSources, platformRequirements or sourceSettings. Use explicit build extensions.' }
-        if ($component.PSObject.Properties['variants'] -and ($component.variants -isnot [Array] -or ($component.kind -eq 'compiled' -and -not $component.variants.Count))) { throw 'Compiled variants must be a nonempty array.' }
+            $framework = $component.msbuild.properties.TargetFramework
+            if ($component.PSObject.Properties['filters']) {
+                if ($component.filters -isnot [pscustomobject]) { throw 'Expected filters object for WPF application.' }
+                foreach ($setting in $component.filters.PSObject.Properties) {
+                    if (($setting.Name -eq 'roots' -and $setting.Value -is [array]) -or
+                        ($setting.Name -eq 'files' -and $setting.Value -is [pscustomobject])) { continue }
+                    throw "Invalid WPF filter setting: $($setting.Name)"
+                }
+            }
+            if ($framework -isnot [string] -or $framework -cnotmatch '^net[0-9]+\.[0-9]+-windows(?:[0-9]+(?:\.[0-9]+)*)?$') {
+                throw "WPF requires a Windows TargetFramework in msbuild.properties: $include"
+            }
+        } else {
+            foreach ($field in $component.PSObject.Properties.Name) {
+                if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild')) { throw "Unknown component field: $field" }
+            }
+            if (-not $component.kind) { $component | Add-Member kind 'compiled' }
+            if ($isApplication) {
+                foreach ($field in $component.PSObject.Properties.Name) {
+                    if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'excludeHeaders', 'excludeSources', 'filters', 'requirements', 'buildExtensions', 'msbuild')) {
+                        throw "Unsupported application field: $field"
+                    }
+                }
+                foreach ($field in $component.requirements.PSObject.Properties.Name) {
+                    if ($field -ne 'cxxStandard') { throw "Unsupported application requirement: $field" }
+                }
+                foreach ($field in $component.msbuild.PSObject.Properties.Name) {
+                    if ($field -ne 'properties') { throw "Unsupported application MSBuild setting: $field" }
+                }
+            } elseif ($component.kind -notin @('compiled', 'headerOnly')) { throw 'Invalid library component kind.' }
+            if (-not $profile -and ($component.platformSources -or $component.platformRequirements -or $component.sourceSettings)) { throw 'Standalone MSBuild generation does not yet support platformSources, platformRequirements or sourceSettings. Use explicit build extensions.' }
+            if ($component.PSObject.Properties['variants'] -and ($component.variants -isnot [Array] -or ($component.kind -eq 'compiled' -and -not $component.variants.Count))) { throw 'Compiled variants must be a nonempty array.' }
+            foreach ($field in $component.msbuild.PSObject.Properties.Name) { if ($field -notin @('properties', 'dynamicDefinitions', 'resolvedFiles')) { throw "Unknown component MSBuild setting: $field" } }
+            foreach ($field in $component.compile.PSObject.Properties.Name) { if ($field -notin @('includeDirectories', 'preprocessorDefinitions', 'precompiledHeader')) { throw "Unknown compile setting: $field" } }
+            if ($component.requirements.cxxStandard -and $component.requirements.cxxStandard -notin @(20, 23)) { throw 'Supported C++ standards are 20 and 23.' }
+            foreach ($dependency in $component.dependencies) {
+                if ($dependency.visibility -notin @('public', 'private') -or $dependency.linkage -notin @('same', 'static', 'dynamic')) { throw 'Invalid dependency visibility/linkage.' }
+            }
+            foreach ($field in @('headers', 'sources')) {
+                $exclude = if ($field -eq 'headers') { $component.excludeHeaders } else { $component.excludeSources }
+                $component.$field = @(Expand-ProjectToolsFiles $root $component.$field $exclude)
+            }
+            foreach ($entry in $component.platformSources.PSObject.Properties) { $entry.Value = @(Expand-ProjectToolsFiles $root $entry.Value @()) }
+        }
         foreach ($extensionEntry in $component.buildExtensions.PSObject.Properties) {
             if ($extensionEntry.Name -notin @('cmake', 'msbuildProps', 'msbuildTargets')) { throw 'Unknown build extension.' }
+            if ($isApplication -and $extensionEntry.Name -eq 'cmake') { throw 'Applications support MSBuild extensions only.' }
             $extension = Resolve-ProjectToolsPath $root $extensionEntry.Value
             if (-not (Test-Path -LiteralPath $extension -PathType Leaf)) { throw "Missing build extension: $($extensionEntry.Value)" }
         }
-        foreach ($field in $component.msbuild.PSObject.Properties.Name) { if ($field -notin @('properties', 'dynamicDefinitions', 'resolvedFiles')) { throw "Unknown component MSBuild setting: $field" } }
-        foreach ($field in $component.compile.PSObject.Properties.Name) { if ($field -notin @('includeDirectories', 'preprocessorDefinitions', 'precompiledHeader')) { throw "Unknown compile setting: $field" } }
-        if ($component.requirements.cxxStandard -and $component.requirements.cxxStandard -notin @(20, 23)) { throw 'Supported C++ standards are 20 and 23.' }
-        foreach ($dependency in $component.dependencies) {
-            if ($dependency.visibility -notin @('public', 'private') -or $dependency.linkage -notin @('same', 'static', 'dynamic')) { throw 'Invalid dependency visibility/linkage.' }
-        }
-        foreach ($field in @('headers', 'sources')) {
-            $exclude = if ($field -eq 'headers') { $component.excludeHeaders } else { $component.excludeSources }
-            $component.$field = @(Expand-ProjectToolsFiles $root $component.$field $exclude)
-        }
-        foreach ($entry in $component.platformSources.PSObject.Properties) { $entry.Value = @(Expand-ProjectToolsFiles $root $entry.Value @()) }
         if (-not $component.msbuildGuid) {
             $identity = if ($isApplication) { 'Application' } else { 'Shared' }
             $component | Add-Member msbuildGuid (Get-ProjectToolsGuid ('ProjectTools:' + $component.name + ':' + $identity))

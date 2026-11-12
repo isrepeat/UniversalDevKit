@@ -1,13 +1,15 @@
 {
-  "schemaVersion": 2,
-  "includes": [
-    "Projects/Components/Diagnostic.json",
-    "Projects/Components/Helpers.json",
-    "Projects/Components/XamlRuntime.json",
-    "Projects/Components/OpenGLESRenderer.json"
+  "schemaVersion": 4,
+  "components": [
+    "Projects/Components/Libraries/Diagnostic.json",
+    "Projects/Components/Libraries/Helpers.json",
+    "Projects/Components/Libraries/XamlRuntime.json",
+    "Projects/Components/Libraries/OpenGLESRenderer.json",
+    "Projects/Components/Applications/UdkCli.json",
+    "Projects/Components/Applications/UdkCli.Setup.json",
+    "Projects/Components/Applications/XamlCompiler.json"
   ],
-  "msbuildApplications": [
-    "Projects/Components/UdkCli.json",
-    "Projects/Components/XamlCompiler.json"
-  ]
+  "generation": {
+    "profile": "udk"
+  }
 }

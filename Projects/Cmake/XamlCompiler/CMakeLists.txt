@@ -17,7 +17,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/../ComponentFiles.cmake")
 
 function(udkAddXamlCompiler root)
     set(PROJECT_SOURCE_DIR "${root}")
-    set(componentPath "${root}/Projects/Components/XamlCompiler.json")
+    set(componentPath "${root}/Projects/Components/Applications/XamlCompiler.json")
     set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${componentPath}")
     file(READ "${componentPath}" component)
     udkResolveComponentFiles("${component}" component)

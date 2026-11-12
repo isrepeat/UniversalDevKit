@@ -1,6 +1,6 @@
 # XamlRuntime
 
-XamlRuntime и OpenGLESRenderer зарегистрированы в Components.json и используют общий граф CMake/MSBuild UDK. XamlCompiler — host-инструмент, описанный в Projects/Components/XamlCompiler.json. ProjectTools генерирует для него проекты Visual Studio, а Projects/Cmake/XamlCompiler читает из того же описания исходники и стандарт C++. Namespace: universaldevkit::xamlruntime, universaldevkit::xamlruntime::runtimemarkup и universaldevkit::openglesrenderer. Aliases xaml, xaml::runtime и es_renderer сохранены для перехода потребителей; новые определения namespace используют полные имена UDK.
+XamlRuntime и OpenGLESRenderer зарегистрированы в Components.json и используют общий граф CMake/MSBuild UDK. XamlCompiler — host-инструмент, описанный в Projects/Components/Applications/XamlCompiler.json. ProjectTools генерирует для него проекты Visual Studio, а Projects/Cmake/XamlCompiler читает из того же описания исходники и стандарт C++. Namespace: universaldevkit::xamlruntime, universaldevkit::xamlruntime::runtimemarkup и universaldevkit::openglesrenderer. Aliases xaml, xaml::runtime и es_renderer сохранены для перехода потребителей; новые определения namespace используют полные имена UDK.
 
 ## Общие механизмы
 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Сгенерировано ProjectTools. Изменяйте описание компонента. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+@PROPERTIES@
+  </PropertyGroup>
+@FILTERS@
+@IMPORTS@
+</Project>

@@ -24,11 +24,8 @@
                        VerticalAlignment="Center"
                        TextWrapping="Wrap" />
         </DockPanel>
-        <CheckBox x:Name="AddToPathCheckBox"
-                  Content="Add udk to my PATH"
-                  IsChecked="True"
-                  Margin="0,16,0,18" />
         <StackPanel Orientation="Horizontal"
+                    Margin="0,18,0,0"
                     HorizontalAlignment="Right">
             <Button x:Name="InstallButton"
                     Content="Install"
