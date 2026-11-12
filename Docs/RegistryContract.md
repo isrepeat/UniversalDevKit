@@ -8,9 +8,9 @@
 {
   "schemaVersion": 4,
   "components": [
-    "Projects/Components/Libraries/Helpers.json",
-    "Projects/Components/Libraries/Diagnostic.json",
-    "Projects/Components/Applications/UdkCli.json"
+    "Projects/Components/Library/Helpers.json",
+    "Projects/Components/Library/Diagnostic.json",
+    "Projects/Components/Application/UdkCli.json"
   ],
   "generation": { "profile": "udk" }
 }
@@ -26,7 +26,7 @@
 |---|---|---|
 | `kind` | `library`, `application` | Обязателен в схеме 4 |
 | `language` | `cpp`, `csharp` | Обязателен в схеме 4 |
-| `projectType` | `native` для C++, `wpf` для C#-приложений | Обязателен в схеме 4 |
+| `projectType` | `native` для C++, `wpf` и `vsix` для C#-приложений | Обязателен в схеме 4 |
 | `libraryType` | `compiled`, `headerOnly` | `compiled` для библиотек |
 | `stateScope` | `module`, `process` | `module` |
 | `requirements.cxxStandard` | `20`, `23` | `20` |

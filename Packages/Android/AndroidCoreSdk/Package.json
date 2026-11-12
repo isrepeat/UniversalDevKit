@@ -5,7 +5,7 @@
   "projects": {
     "gradle": {
       "adapter": "gradle-publish",
-      "projectDirectory": "Projects/Gradle/AndroidCoreSdk",
+      "projectDirectory": "Projects/Gradle/Library/AndroidCoreSdk",
       "tasks": [
         ":androidcoresdk:publishReleasePublicationToAndroidPackagesFeedRepository"
       ],

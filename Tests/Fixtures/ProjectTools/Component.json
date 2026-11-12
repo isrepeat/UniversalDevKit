@@ -5,6 +5,10 @@
   "headers": ["Source/**/*.h"],
   "sources": ["Source/**/*.cpp"],
   "excludeSources": ["Source/excluded/**"],
+  "filters": [
+    { "path": "Source/**/*.cpp", "filter": "Implementation", "preserveTree": true },
+    { "path": "Source/Prob?.cpp", "filter": "" }
+  ],
   "requirements": { "cxxStandard": 20 },
   "compile": { "includeDirectories": ["Source"], "precompiledHeader": "notUsing" },
   "buildExtensions": { "msbuildProps": "Custom.props", "msbuildTargets": "Custom.targets" }

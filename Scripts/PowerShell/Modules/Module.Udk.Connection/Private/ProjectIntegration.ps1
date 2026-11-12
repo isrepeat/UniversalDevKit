@@ -178,12 +178,14 @@ function Invoke-UdkConnectionPlanCore {
             $dynamicDefinitions = @()
             $runtimeItems = $document.CreateElement('ItemGroup', $namespace)
             $runtimeItems.SetAttribute('Label', 'UniversalDevKit')
+            $manifest = Get-Content -LiteralPath (Join-Path $repositoryPath 'Components.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+            $libraryRoot = if ($manifest.schemaVersion -eq 4) { 'Projects/MsBuild/Library' } else { 'Projects/MsBuild' }
             foreach ($name in $resolvedComponents) {
                 $mode = $resolvedModes[$name]
                 if ($mode -eq 'Shared') {
                     continue
                 }
-                $libraryPath = Join-Path $repositoryPath "Projects/MsBuild/$name/UniversalDevKit.$name.$mode.vcxproj"
+                $libraryPath = Join-Path $repositoryPath "$libraryRoot/$name/UniversalDevKit.$name.$mode.vcxproj"
                 $reference = $document.CreateElement('ProjectReference', $namespace)
                 $reference.SetAttribute('Include', (GetRelativePath $projectDirectory $libraryPath))
                 [xml]$libraryProject = [IO.File]::ReadAllText($libraryPath)

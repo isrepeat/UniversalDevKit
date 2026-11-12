@@ -1,0 +1,19 @@
+{
+  "name": "UdkCli.VisualStudio",
+  "kind": "application",
+  "language": "csharp",
+  "projectType": "vsix",
+  "msbuildGuid": "{5217622B-841E-4635-BA5D-8DE005125B16}",
+  "sources": ["Sources/Windows/UdkCli.VisualStudio/**/*.cs"],
+  "filters": [
+    { "path": "Sources/Windows/UdkCli.VisualStudio", "filter": "", "preserveTree": true }
+  ],
+  "msbuild": {
+    "properties": {
+      "TargetFramework": "net472"
+    }
+  },
+  "buildExtensions": {
+    "msbuildTargets": "Projects/MsBuild/Application/UdkCli.VisualStudio/UdkCli.VisualStudio.targets"
+  }
+}

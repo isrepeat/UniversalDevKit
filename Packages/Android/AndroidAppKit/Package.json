@@ -5,7 +5,7 @@
   "projects": {
     "gradle": {
       "adapter": "gradle-publish",
-      "projectDirectory": "Projects/Gradle/AndroidAppKit",
+      "projectDirectory": "Projects/Gradle/Library/AndroidAppKit",
       "tasks": [
         ":androidappkit:publishReleasePublicationToAndroidPackagesFeedRepository"
       ],

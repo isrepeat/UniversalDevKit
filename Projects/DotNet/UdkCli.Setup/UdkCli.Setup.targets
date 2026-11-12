@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project>
-  <ItemGroup Condition="'$(UdkPayload)' != ''">
-    <EmbeddedResource Include="$(UdkPayload)" LogicalName="UdkPayload.zip" />
-  </ItemGroup>
-  <Target Name="RequireUdkPayload" BeforeTargets="Publish" Condition="'$(UdkPayload)' == ''">
-    <Error Text="Build the UDK CLI setup through Publish.UdkCli.cmd." />
-  </Target>
-</Project>

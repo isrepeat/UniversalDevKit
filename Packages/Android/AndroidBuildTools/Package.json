@@ -19,7 +19,7 @@
           "destination": "gradle"
         },
         {
-          "source": "Projects/Gradle/AndroidBuildTools",
+          "source": "Projects/Gradle/Library/AndroidBuildTools",
           "destination": "gradle"
         },
         {
@@ -31,7 +31,7 @@
           "destination": "build/native/include/UniversalDevKit/Android/AndroidBuildTools/ApplicationFramework"
         },
         {
-          "source": "Projects/Cmake/AndroidBuildTools/ApplicationFramework/CMakeLists.txt",
+          "source": "Projects/Cmake/Library/AndroidBuildTools/ApplicationFramework/CMakeLists.txt",
           "destination": "build/native/Android/AndroidBuildTools/ApplicationFramework/CMakeLists.txt"
         },
         {

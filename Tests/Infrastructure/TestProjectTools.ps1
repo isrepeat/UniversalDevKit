@@ -13,6 +13,11 @@ try {
     if (-not (Test-Path -LiteralPath (Join-Path $temporary 'Projects/Probe/Probe.Dynamic.vcxproj'))) { throw 'Dynamic project was not generated.' }
     $shared = [IO.File]::ReadAllText((Join-Path $temporary 'Projects/Probe/Probe.Shared.vcxitems'))
     if ($shared.Contains('Excluded.cpp') -or -not $shared.Contains('Probe.cpp') -or -not $shared.Contains('Custom.props')) { throw 'Invalid file selection or extension import.' }
+    $filtersPath = Join-Path $temporary 'Projects/Probe/Probe.Shared.vcxitems.filters'
+    $filters = [IO.File]::ReadAllText($filtersPath)
+    if ($filters -notmatch '<ClCompile Include="[^"]*Probe\.cpp" />' -or $filters.Contains('Excluded.cpp')) { throw 'Invalid filter override or source exclusion.' }
+    if ($filters -notmatch '<None Include="[^"]*Custom\.props"><Filter>Build</Filter></None>' -or
+        $filters -notmatch '<None Include="[^"]*Custom\.targets"><Filter>Build</Filter></None>') { throw 'Missing Build filters.' }
     $binary = [IO.File]::ReadAllText((Join-Path $temporary 'Projects/Probe/Probe.Static.vcxproj'))
     if (-not $binary.Contains('Custom.targets')) { throw 'Missing target extension.' }
     $solution = Join-Path $temporary 'Probe.sln'
@@ -20,13 +25,15 @@ try {
     & $tool -ManifestPath $manifest -Check
     & $tool -ManifestPath $manifest
     if ([IO.File]::ReadAllText($solution) -cne $before) { throw 'Repeated generation rewrote the solution.' }
-    Copy-Item -LiteralPath (Join-Path $temporary 'NewFile.cpp') -Destination (Join-Path $temporary 'Source/NewFile.cpp')
+    $nestedSource = New-Item -ItemType Directory -Path (Join-Path $temporary 'Source/Nested')
+    Copy-Item -LiteralPath (Join-Path $temporary 'NewFile.cpp') -Destination $nestedSource.FullName
     $rejected = $false
     try { & $tool -ManifestPath $manifest -Check } catch { $rejected = $true }
     if (-not $rejected) { throw 'Check did not detect a new source file.' }
     if ([IO.File]::ReadAllText($solution) -cne $before) { throw 'Check modified the solution.' }
     & $tool -ManifestPath $manifest
     if (-not [IO.File]::ReadAllText((Join-Path $temporary 'Projects/Probe/Probe.Shared.vcxitems')).Contains('NewFile.cpp')) { throw 'New source was not included.' }
+    if ([IO.File]::ReadAllText($filtersPath) -notmatch '<ClCompile Include="[^"]*NewFile\.cpp"><Filter>Implementation\\Nested</Filter></ClCompile>') { throw 'Source hierarchy was not preserved.' }
     & $tool -ManifestPath $manifest -Check
     # Removing a variant changes only the managed solution entries; files remain available.
     $componentPath = Join-Path $temporary 'Component.json'

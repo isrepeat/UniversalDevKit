@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup Condition="'$(ArtifactsPath)' == '' And ('$(MSBuildProjectName)' == 'UdkCli.Setup' Or '$(MSBuildProjectName)' == 'UdkCli.VisualStudio')">
+    <ArtifactsPath>$(MSBuildThisFileDirectory)..\..\!artifacts\projects\Windows-x64\msbuild\$(MSBuildProjectName)</ArtifactsPath>
+    <IncludeProjectNameInArtifactsPaths>false</IncludeProjectNameInArtifactsPaths>
+  </PropertyGroup>
+</Project>

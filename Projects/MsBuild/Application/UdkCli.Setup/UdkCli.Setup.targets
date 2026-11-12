@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ItemGroup Condition="'$(UdkPayload)' != ''">
+    <EmbeddedResource Include="$(UdkPayload)" LogicalName="UdkPayload.zip" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UdkVsixPayload)' != ''">
+    <EmbeddedResource Include="$(UdkVsixPayload)" LogicalName="UdkCli.VisualStudio.vsix" />
+  </ItemGroup>
+  <Target Name="RequireUdkPayload" BeforeTargets="Publish" Condition="'$(UdkPayload)' == '' Or '$(UdkVsixPayload)' == ''">
+    <Error Text="Build the UDK CLI setup through Publish.UdkCli.cmd." />
+  </Target>
+</Project>

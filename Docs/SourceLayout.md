@@ -18,9 +18,9 @@
 
 ## Инструменты и шаблоны
 
-Kotlin-код AndroidCoreSdk и AndroidAppKit находится в Sources/Android/<имя>/src/main. Projects/Gradle/<имя> подключает его через sourceSets. Kotlin packages com.isrepeat и Maven-координаты сохраняются.
+Kotlin-код AndroidCoreSdk и AndroidAppKit находится в Sources/Android/<имя>/src/main. Projects/Gradle/Library/<имя> подключает его через sourceSets. Kotlin packages com.isrepeat и Maven-координаты сохраняются.
 
-Потребительские команды находятся в Sources/Android/AndroidBuildTools/PowerShell, CMake-модули — в Cmake, исходники Gradle-плагинов — в Gradle. ApplicationFramework использует публичные заголовки из Includes/Android/AndroidBuildTools и проект Projects/Cmake/AndroidBuildTools/ApplicationFramework.
+Потребительские команды находятся в Sources/Android/AndroidBuildTools/PowerShell, CMake-модули — в Cmake, исходники Gradle-плагинов — в Gradle. ApplicationFramework использует публичные заголовки из Includes/Android/AndroidBuildTools и проект Projects/Cmake/Library/AndroidBuildTools/ApplicationFramework.
 
 Команды создания приложения находятся в Sources/Android/AndroidTemplates/PowerShell, заготовки — в Sources/Android/AndroidTemplates/Templates/Application. Это исходное содержимое компонента, а не служебные скрипты репозитория.
 

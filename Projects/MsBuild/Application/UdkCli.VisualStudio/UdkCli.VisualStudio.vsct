@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable">
+  <Extern href="stdidcmd.h" />
+  <Extern href="vsshlids.h" />
+  <Commands package="guidUdkPackage">
+    <Groups>
+      <Group guid="guidUdkCommands" id="UdkToolsGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS" />
+      </Group>
+    </Groups>
+    <Buttons>
+      <Button guid="guidUdkCommands" id="RegenerateSolution" priority="0x0100" type="Button">
+        <Parent guid="guidUdkCommands" id="UdkToolsGroup" />
+        <Strings>
+          <ButtonText>Regenerate UDK Solution</ButtonText>
+          <CanonicalName>UdkRegenerateSolution</CanonicalName>
+        </Strings>
+      </Button>
+    </Buttons>
+  </Commands>
+  <Symbols>
+    <GuidSymbol name="guidUdkPackage" value="{111B8451-4B34-4D32-A917-DA2C6D10E337}" />
+    <GuidSymbol name="guidUdkCommands" value="{93E681D4-1B92-46A3-9400-A1A8C947417A}">
+      <IDSymbol name="RegenerateSolution" value="0x0100" />
+      <IDSymbol name="UdkToolsGroup" value="0x1020" />
+    </GuidSymbol>
+  </Symbols>
+</CommandTable>

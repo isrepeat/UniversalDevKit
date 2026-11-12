@@ -1,0 +1,42 @@
+{
+  "name": "Diagnostic",
+  "kind": "library",
+  "language": "cpp",
+  "projectType": "native",
+  "msbuildGuid": "{AB97876A-F25A-4AAE-BACD-D32C776BB261}",
+  "stateScope": "process",
+  "dependencies": [
+    {
+      "component": "Helpers",
+      "visibility": "private",
+      "linkage": "same"
+    }
+  ],
+  "headers": [
+    "Includes/Diagnostic/UniversalDevKit/Diagnostic/**/*.h",
+    "Sources/Diagnostic/**/*.h"
+  ],
+  "excludeHeaders": ["Includes/Diagnostic/UniversalDevKit/Diagnostic/Export.h"],
+  "sources": [
+    "Sources/Diagnostic/**/*.cpp",
+    "ThirdParty/spdlog/src/*.cpp"
+  ],
+  "filters": [
+    { "path": "Includes/Diagnostic/UniversalDevKit/Diagnostic", "filter": "", "preserveTree": true },
+    { "path": "Sources/Diagnostic", "filter": "", "preserveTree": true },
+    { "path": "ThirdParty/spdlog", "filter": "ThirdParty/spdlog", "preserveTree": true }
+  ],
+  "requirements": {
+    "cxxStandard": 20,
+    "threads": true
+  },
+  "compile": {
+    "includeDirectories": ["ThirdParty/spdlog/include"],
+    "preprocessorDefinitions": ["SPDLOG_COMPILED_LIB", "SPDLOG_WCHAR_FILENAMES"],
+    "precompiledHeader": "notUsing"
+  },
+  "buildExtensions": {
+    "cmake": "Projects/Cmake/Library/Diagnostic/Spdlog.cmake",
+    "msbuildTargets": "Projects/MsBuild/Library/Diagnostic/Spdlog.targets"
+  }
+}

@@ -1,13 +1,14 @@
 {
   "schemaVersion": 4,
   "components": [
-    "Projects/Components/Libraries/Diagnostic.json",
-    "Projects/Components/Libraries/Helpers.json",
-    "Projects/Components/Libraries/XamlRuntime.json",
-    "Projects/Components/Libraries/OpenGLESRenderer.json",
-    "Projects/Components/Applications/UdkCli.json",
-    "Projects/Components/Applications/UdkCli.Setup.json",
-    "Projects/Components/Applications/XamlCompiler.json"
+    "Projects/Components/Library/Diagnostic.json",
+    "Projects/Components/Library/Helpers.json",
+    "Projects/Components/Library/XamlRuntime.json",
+    "Projects/Components/Library/OpenGLESRenderer.json",
+    "Projects/Components/Application/UdkCli.json",
+    "Projects/Components/Application/UdkCli.Setup.json",
+    "Projects/Components/Application/UdkCli.VisualStudio.json",
+    "Projects/Components/Application/XamlCompiler.json"
   ],
   "generation": {
     "profile": "udk"

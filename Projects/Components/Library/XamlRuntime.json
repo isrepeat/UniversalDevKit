@@ -1,0 +1,40 @@
+{
+  "name": "XamlRuntime",
+  "kind": "library",
+  "language": "cpp",
+  "projectType": "native",
+  "msbuildGuid": "{3E00A02D-46F3-432B-91C8-5D459F70C525}",
+  "supportedPlatforms": [
+    "Windows",
+    "Android"
+  ],
+  "dependencies": [
+    {
+      "component": "Helpers",
+      "visibility": "public",
+      "linkage": "same"
+    },
+    {
+      "component": "Diagnostic",
+      "visibility": "private",
+      "linkage": "dynamic"
+    }
+  ],
+  "headers": [
+    "Includes/XamlRuntime/UniversalDevKit/XamlRuntime/**/*.h"
+  ],
+  "sources": [
+    "Sources/XamlRuntime/**/*.cpp"
+  ],
+  "filters": [
+    { "path": "Includes/XamlRuntime/UniversalDevKit/XamlRuntime", "filter": "", "preserveTree": true },
+    { "path": "Sources/XamlRuntime", "filter": "", "preserveTree": true }
+  ],
+  "requirements": {
+    "cxxStandard": 20
+  },
+  "buildExtensions": {
+    "cmake": "Projects/Cmake/Library/XamlRuntime/Build.cmake",
+    "msbuildTargets": "Projects/MsBuild/Library/XamlRuntime/UniversalDevKit.XamlRuntime.targets"
+  }
+}

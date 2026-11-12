@@ -12,6 +12,15 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot '../Private/FormatXmlAttributes.ps1')
 . (Join-Path $PSScriptRoot '../Private/Requirements.ps1')
 $repositoryPath = [IO.Path]::GetFullPath($RepositoryRoot)
+$libraryDirectory = 'Projects/MsBuild'
+$libraryRepositoryRelative = '..\..\..\'
+$libraryMsbuildRelative = '..\'
+if ($Model.Manifest.schemaVersion -eq 4) {
+    $libraryDirectory += '/Library'
+    $libraryRepositoryRelative = '..\' + $libraryRepositoryRelative
+    $libraryMsbuildRelative = '..\' + $libraryMsbuildRelative
+}
+$libraryRepositoryPrefix = '$(MSBuildThisFileDirectory)' + $libraryRepositoryRelative
 $updates = [Collections.Generic.List[object]]::new()
 $guids = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 $names = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
@@ -70,7 +79,7 @@ function ValidateCompileSettings($Settings) {
 
 function AddCompileMetadata($Lines, $Settings, [switch]$Common) {
     if ($Settings.includeDirectories.Count) {
-        $includes = @($Settings.includeDirectories | ForEach-Object { '$(MSBuildThisFileDirectory)..\..\..\' + $_.Replace('/', '\') })
+        $includes = @($Settings.includeDirectories | ForEach-Object { $libraryRepositoryPrefix + $_.Replace('/', '\') })
         $Lines.Add('      <AdditionalIncludeDirectories>' + (EscapeXml (($includes + '%(AdditionalIncludeDirectories)') -join ';')) + '</AdditionalIncludeDirectories>')
     }
     if ($Settings.preprocessorDefinitions.Count) {
@@ -80,83 +89,6 @@ function AddCompileMetadata($Lines, $Settings, [switch]$Common) {
         $condition = if ($Common) { ' Condition="''%(ClCompile.__UniversalDevKitInheritPch)'' != ''true''"' } else { '' }
         $Lines.Add('      <PrecompiledHeader' + $condition + '>NotUsing</PrecompiledHeader>')
     }
-}
-
-function ValidateFilterSettings($Settings, $Component, $AdditionalFiles) {
-    if ($null -eq $Settings) {
-        return
-    }
-    if ($Settings -isnot [pscustomobject]) {
-        throw 'filters must be an object.'
-    }
-    foreach ($field in $Settings.PSObject.Properties.Name) {
-        if ($field -notin @('roots', 'files')) {
-            throw "Unsupported filters field: $field"
-        }
-    }
-    if ($Settings.PSObject.Properties['roots']) {
-        if ($Settings.roots -isnot [Array]) {
-            throw 'filters.roots must be an array.'
-        }
-        $seen = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
-        foreach ($rule in $Settings.roots) {
-            if ($rule -isnot [pscustomobject]) {
-                throw 'Filter root must be an object.'
-            }
-            foreach ($field in $rule.PSObject.Properties.Name) {
-                if ($field -notin @('path', 'filter')) {
-                    throw "Unsupported filter root field: $field"
-                }
-            }
-            ValidateFilterPath $rule.path 'roots.path'
-            ValidateFilterPath $rule.filter 'roots.filter'
-            if ($rule.path -eq '' -or -not $seen.Add($rule.path)) {
-                throw "Empty or duplicate filter root: $($rule.path)"
-            }
-        }
-    }
-    if ($Settings.PSObject.Properties['files']) {
-        if ($Settings.files -isnot [pscustomobject]) {
-            throw 'filters.files must be an object.'
-        }
-        $knownFiles = @($Component.headers) + @($Component.sources) + @($AdditionalFiles)
-        if ($Component.platformSources) {
-            foreach ($platformEntry in $Component.platformSources.PSObject.Properties) { $knownFiles += @($platformEntry.Value) }
-        }
-        foreach ($entry in $Settings.files.PSObject.Properties) {
-            if ($entry.Name -cnotin $knownFiles) {
-                throw "Unknown filters.files entry: $($entry.Name)"
-            }
-            ValidateFilterPath $entry.Value $entry.Name
-        }
-    }
-}
-
-function GetComponentFilter([string]$Path, $Settings) {
-    # File overrides take precedence; an empty value places the file at the project root.
-    if ($null -ne $Settings -and $null -ne $Settings.files) {
-        $entry = $Settings.files.PSObject.Properties[$Path]
-        if ($entry) {
-            return $entry.Value.Replace('/', '\')
-        }
-    }
-    $mapped = $Path
-    if ($null -ne $Settings) {
-        $best = $null
-        foreach ($rule in $Settings.roots) {
-            if ($Path.StartsWith($rule.path + '/', [StringComparison]::Ordinal) -and
-                ($null -eq $best -or $rule.path.Length -gt $best.path.Length)) {
-                $best = $rule
-            }
-        }
-        if ($null -ne $best) {
-            $mapped = $Path.Substring($best.path.Length + 1)
-            if ($best.filter -ne '') {
-                $mapped = $best.filter + '/' + $mapped
-            }
-        }
-    }
-    return [IO.Path]::GetDirectoryName($mapped.Replace('/', '\'))
 }
 
 foreach ($includePath in $Model.Components.Keys) {
@@ -234,9 +166,6 @@ foreach ($includePath in $Model.Components.Keys) {
             [pscustomobject]@{ Component = $_.component; Visibility = $_.visibility; Linkage = $_.linkage }
         })
     }
-    if ($component.PSObject.Properties['filters'] -and $null -eq $component.filters) {
-        throw "${name}.filters must be an object."
-    }
     $componentSources = @($component.sources)
     $platformFileConditions = @{}
     if ($component.PSObject.Properties['supportedPlatforms']) {
@@ -299,7 +228,6 @@ foreach ($includePath in $Model.Components.Keys) {
             }
         }
     }
-    ValidateFilterSettings $component.filters $component @()
     $files = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
     $lines = [Collections.Generic.List[string]]::new()
     $lines.Add('<?xml version="1.0" encoding="utf-8"?>')
@@ -309,14 +237,14 @@ foreach ($includePath in $Model.Components.Keys) {
     $lines.Add('    <HasSharedItems>true</HasSharedItems>')
     $lines.Add('    <ItemsProjectGuid>{' + $guid.ToString().ToUpperInvariant() + '}</ItemsProjectGuid>')
     $lines.Add('  </PropertyGroup>')
-    $lines.Add('  <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.props" Condition="''$(__IsUniversalDevKitPublicPropsImported)'' != ''true''" />')
+    $lines.Add('  <Import Project="$(MSBuildThisFileDirectory)' + $libraryMsbuildRelative + 'UniversalDevKit.props" Condition="''$(__IsUniversalDevKitPublicPropsImported)'' != ''true''" />')
     if ($component.buildExtensions.msbuildProps) {
-        $lines.Add('  <Import Project="' + (EscapeXml ('$(MSBuildThisFileDirectory)..\..\..\' + $component.buildExtensions.msbuildProps.Replace('/', '\'))) + '" />')
+        $lines.Add('  <Import Project="' + (EscapeXml ($libraryRepositoryPrefix + $component.buildExtensions.msbuildProps.Replace('/', '\'))) + '" />')
     }
     if ($kind -eq 'headerOnly') {
         $lines.Add('  <ItemDefinitionGroup>')
         $lines.Add('    <ClCompile>')
-        $lines.Add('      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\' + $binaryComponentRegistry[$name].IncludeRoot.Replace('/', '\') + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>')
+        $lines.Add('      <AdditionalIncludeDirectories>' + $libraryRepositoryPrefix + $binaryComponentRegistry[$name].IncludeRoot.Replace('/', '\') + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>')
         $lines.Add('    </ClCompile>')
         $lines.Add('  </ItemDefinitionGroup>')
     }
@@ -329,17 +257,17 @@ foreach ($includePath in $Model.Components.Keys) {
         if (-not $files.Add($path)) {
             throw "Duplicate component file: $path"
         }
-        $include = EscapeXml ('$' + '(MSBuildThisFileDirectory)..\..\..\' + $path.Replace('/', '\'))
+        $include = EscapeXml ($libraryRepositoryPrefix + $path.Replace('/', '\'))
         $lines.Add('    <ClInclude Include="' + $include + '">')
-        $lines.Add('      <__UniversalDevKitFilter>' + (EscapeXml (GetComponentFilter $path $component.filters)) + '</__UniversalDevKitFilter>')
+        $lines.Add('      <__UniversalDevKitFilter>' + (EscapeXml (Get-ProjectToolsFilter $path $component.filters)) + '</__UniversalDevKitFilter>')
         $lines.Add('    </ClInclude>')
     }
     # Generated export headers are project items even when omitted from the registry.
     $exportHeader = $binaryComponentRegistry[$name].ExportHeader
     if ($exportHeader -notin $component.headers) {
-        $include = EscapeXml ('$' + '(MSBuildThisFileDirectory)..\..\..\' + $exportHeader.Replace('/', '\'))
+        $include = EscapeXml ($libraryRepositoryPrefix + $exportHeader.Replace('/', '\'))
         $lines.Add('    <ClInclude Include="' + $include + '">')
-        $lines.Add('      <__UniversalDevKitFilter>' + (EscapeXml (GetComponentFilter $exportHeader $component.filters)) + '</__UniversalDevKitFilter>')
+        $lines.Add('      <__UniversalDevKitFilter>' + (EscapeXml (Get-ProjectToolsFilter $exportHeader $component.filters)) + '</__UniversalDevKitFilter>')
         $lines.Add('    </ClInclude>')
     }
     foreach ($path in $componentSources) {
@@ -353,7 +281,7 @@ foreach ($includePath in $Model.Components.Keys) {
         if ([IO.Path]::GetExtension($path) -cne '.cpp') {
             throw "Expected .cpp source: $path"
         }
-        $include = EscapeXml ('$' + '(MSBuildThisFileDirectory)..\..\..\' + $path.Replace('/', '\'))
+        $include = EscapeXml ($libraryRepositoryPrefix + $path.Replace('/', '\'))
         $conditionAttribute = if ($platformFileConditions.ContainsKey($path)) {
             ' Condition="' + (EscapeXml $platformFileConditions[$path]) + '"'
         } else {
@@ -361,7 +289,7 @@ foreach ($includePath in $Model.Components.Keys) {
         }
         $lines.Add('    <ClCompile Include="' + $include + '"' + $conditionAttribute + '>')
         $lines.Add('      <__UniversalDevKitComponent>' + $name + '</__UniversalDevKitComponent>')
-        $lines.Add('      <__UniversalDevKitFilter>' + (EscapeXml (GetComponentFilter $path $component.filters)) + '</__UniversalDevKitFilter>')
+        $lines.Add('      <__UniversalDevKitFilter>' + (EscapeXml (Get-ProjectToolsFilter $path $component.filters)) + '</__UniversalDevKitFilter>')
         if ($fileSettings[$path].precompiledHeader -eq 'inherit' -and $component.compile.precompiledHeader -eq 'notUsing') {
             $lines.Add('      <__UniversalDevKitInheritPch>true</__UniversalDevKitInheritPch>')
         }
@@ -383,7 +311,7 @@ foreach ($includePath in $Model.Components.Keys) {
         $lines.Add('  </ItemGroup>')
     }
     foreach ($entry in $component.sourceSettings) {
-        $paths = @($entry.files | ForEach-Object { '$(MSBuildThisFileDirectory)..\..\..\' + $_.Replace('/', '\') })
+        $paths = @($entry.files | ForEach-Object { $libraryRepositoryPrefix + $_.Replace('/', '\') })
         $lines.Add('  <ItemGroup>')
         $lines.Add('    <ClCompile Update="' + (EscapeXml ($paths -join ';')) + '">')
         AddCompileMetadata $lines $entry.compile
@@ -403,12 +331,12 @@ foreach ($includePath in $Model.Components.Keys) {
         $lines.Add('  </Target>')
     }
     $lines.Add((Get-UdkRequirementItemsXml $name $binaryComponentRegistry[$name].Requirements $true $true $true))
-    $lines.Add('  <Import Project="$(MSBuildThisFileDirectory)..\UniversalDevKit.Requirements.targets" Condition="''$(__IsUniversalDevKitRequirementsImported)'' != ''true''" />')
+    $lines.Add('  <Import Project="$(MSBuildThisFileDirectory)' + $libraryMsbuildRelative + 'UniversalDevKit.Requirements.targets" Condition="''$(__IsUniversalDevKitRequirementsImported)'' != ''true''" />')
     if ($component.buildExtensions.msbuildTargets) {
-        $lines.Add('  <Import Project="' + (EscapeXml ('$(MSBuildThisFileDirectory)..\..\..\' + $component.buildExtensions.msbuildTargets.Replace('/', '\'))) + '" />')
+        $lines.Add('  <Import Project="' + (EscapeXml ($libraryRepositoryPrefix + $component.buildExtensions.msbuildTargets.Replace('/', '\'))) + '" />')
     }
-    $relativePath = "Projects/MsBuild/$name/UniversalDevKit.$name.Shared.vcxitems"
-    $dependenciesPath = if ($kind -ne 'headerOnly') { "Projects/MsBuild/$name/UniversalDevKit.$name.Dependencies.props" }
+    $relativePath = "$libraryDirectory/$name/UniversalDevKit.$name.Shared.vcxitems"
+    $dependenciesPath = if ($kind -ne 'headerOnly') { "$libraryDirectory/$name/UniversalDevKit.$name.Dependencies.props" }
     foreach ($line in (Get-ProjectToolsBuildItems $Model $component $relativePath $dependenciesPath)) {
         $lines.Add($line)
     }
@@ -582,13 +510,14 @@ if ($null -eq $original -or $original.Replace("`r`n", "`n") -cne $content) {
 # Determine all library GUIDs first, including projects not yet created.
 $libraryGuids = @{}
 $projectTemplate = [IO.File]::ReadAllText((Join-Path $PSScriptRoot '../Templates/Component.vcxproj.in'))
+$projectTemplate = $projectTemplate.Replace('..\BuildLayout.props', ($libraryMsbuildRelative + 'BuildLayout.props'))
 foreach ($name in $componentNames) {
     foreach ($mode in @('Static', 'Dynamic')) {
         if ($binaryComponentRegistry[$name].Kind -eq 'headerOnly') { continue }
         if ($mode -eq 'Static' -and $binaryComponentRegistry[$name].StateScope -eq 'process') {
             continue
         }
-        $relativePath = "Projects/MsBuild/$name/UniversalDevKit.$name.$mode.vcxproj"
+        $relativePath = "$libraryDirectory/$name/UniversalDevKit.$name.$mode.vcxproj"
         $targetPath = Join-Path $repositoryPath $relativePath
         $configurationType = if ($mode -eq 'Static') {
             'StaticLibrary'
@@ -658,7 +587,7 @@ foreach ($name in $componentNames) {
             'DynamicLibrary'
         }
         $condition = "'`$(ConfigurationType)' == '$configurationType'"
-        $dependencyIncludeRoots = @($dependencyGraph.RequirementComponents | ForEach-Object { '$(MSBuildThisFileDirectory)..\..\..\' + $binaryComponentRegistry[$_].IncludeRoot.Replace('/', '\') })
+        $dependencyIncludeRoots = @($dependencyGraph.RequirementComponents | ForEach-Object { $libraryRepositoryPrefix + $binaryComponentRegistry[$_].IncludeRoot.Replace('/', '\') })
         if ($dependencyIncludeRoots.Count) {
             $lines.Add('  <ItemDefinitionGroup Condition="' + $condition + '"><ClCompile><AdditionalIncludeDirectories>' + ($dependencyIncludeRoots -join ';') + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile></ItemDefinitionGroup>')
         }
@@ -692,7 +621,7 @@ foreach ($name in $componentNames) {
         }
     }
     $lines.Add('</Project>')
-    $relativePath = "Projects/MsBuild/$name/UniversalDevKit.$name.Dependencies.props"
+    $relativePath = "$libraryDirectory/$name/UniversalDevKit.$name.Dependencies.props"
     $targetPath = Join-Path $repositoryPath $relativePath
     $content = Format-UdkXmlAttributes ($lines -join "`n")
     $original = if (Test-Path -LiteralPath $targetPath) {
@@ -720,7 +649,7 @@ foreach ($name in $componentNames) {
     }
     $language = if ($standard -eq 23) { 'stdcpplatest' } else { 'stdcpp' + $standard }
     $content = $projectTemplate.Replace('@COMPONENT@', $name).Replace('@GUID@', $guid).Replace('@CONFIGURATION_TYPE@', 'Application').Replace('@DYNAMIC_DEFINITIONS@', '').Replace('stdcpp20', $language)
-    $dependencyIncludes = @($headerGraph.RequirementComponents | Where-Object { $_ -ne $name } | ForEach-Object { '$(MSBuildThisFileDirectory)..\..\..\' + $binaryComponentRegistry[$_].IncludeRoot.Replace('/', '\') })
+    $dependencyIncludes = @($headerGraph.RequirementComponents | Where-Object { $_ -ne $name } | ForEach-Object { $libraryRepositoryPrefix + $binaryComponentRegistry[$_].IncludeRoot.Replace('/', '\') })
     if ($dependencyIncludes.Count) {
         $content = $content.Replace('<LanguageStandard>', '<AdditionalIncludeDirectories>' + ($dependencyIncludes -join ';') + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>' + "`n      <LanguageStandard>")
     }
@@ -739,7 +668,7 @@ foreach ($name in $componentNames) {
         $source += '#include <' + $header.Substring($binaryComponentRegistry[$name].IncludeRoot.Length + 1) + '>' + "`n"
     }
     $source += "`nint main() { return 0; }"
-    foreach ($item in @(@{ Path = "Projects/MsBuild/$name/UniversalDevKit.$name.HeaderCheck.vcxproj"; Content = $content.TrimEnd([char[]]"`r`n") }, @{ Path = "Projects/MsBuild/$name/HeaderCheck.cpp"; Content = $source })) {
+    foreach ($item in @(@{ Path = "$libraryDirectory/$name/UniversalDevKit.$name.HeaderCheck.vcxproj"; Content = $content.TrimEnd([char[]]"`r`n") }, @{ Path = "$libraryDirectory/$name/HeaderCheck.cpp"; Content = $source })) {
         $path = Join-Path $repositoryPath $item.Path
         $original = if (Test-Path -LiteralPath $path) { [IO.File]::ReadAllText($path) } else { $null }
         if ($original -cne $item.Content) { $updates.Add([pscustomobject]@{ Path = $path; RelativePath = $item.Path; Content = $item.Content; Original = $original }) }

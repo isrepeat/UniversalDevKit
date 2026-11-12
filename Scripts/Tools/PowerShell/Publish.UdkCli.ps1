@@ -11,9 +11,9 @@ $env:VSLANG = '1033'
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
 $OutputEncoding = [Text.UTF8Encoding]::new($false)
 
-$root = (Resolve-Path (Join-Path $PSScriptRoot '../../..')).Path
-. (Join-Path $root 'Sources/Windows/UdkCli/Tools/ResolveJsonReference.ps1')
-$componentPath = Join-Path $root 'Projects/Components/Applications/UdkCli.json'
+$root = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
+. (Join-Path $root 'Sources\Windows\UdkCli\Tools\ResolveJsonReference.ps1')
+$componentPath = Join-Path $root 'Projects\Components\Application\UdkCli.json'
 $component = Get-Content -LiteralPath $componentPath -Raw -Encoding UTF8 | ConvertFrom-Json
 Resolve-UdkDescriptionVersion $root $component $componentPath 'githubVersion'
 if (-not $Version) { $Version = $component.githubVersion }
@@ -27,7 +27,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Could not resolve the release commit.' }
 
 $msbuild = (Get-Command MSBuild.exe -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1).Source
 if (-not $msbuild) {
-    $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+    $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
     if (Test-Path -LiteralPath $vswhere -PathType Leaf) {
         $msbuild = & $vswhere -latest -products '*' -requires Microsoft.Component.MSBuild Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -find 'MSBuild\Current\Bin\MSBuild.exe' | Select-Object -First 1
     }
@@ -36,23 +36,26 @@ if (-not $msbuild) { throw 'MSBuild with the Visual C++ toolset was not found.' 
 
 $dotnet = (Get-Command dotnet.exe -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
 
-$releaseDirectory = Join-Path $root "!artifacts/releases/UdkCli/$tag/$([Guid]::NewGuid().ToString('N'))"
-$cacheDirectory = Join-Path $root '!artifacts/projects/Windows-x64/UdkCli.Release'
-$buildDirectory = Join-Path $cacheDirectory 'cpp/bin'
-$objectDirectory = Join-Path $cacheDirectory 'cpp/obj'
-$setupOutput = Join-Path $cacheDirectory 'wpf/publish'
+$releaseDirectory = Join-Path $root "!artifacts\releases\UdkCli\$tag\$([Guid]::NewGuid().ToString('N'))"
+$cacheDirectory = Join-Path $root '!artifacts\projects\Windows-x64\UdkCli.Release'
+$buildDirectory = Join-Path $cacheDirectory 'cpp\bin'
+$objectDirectory = Join-Path $cacheDirectory 'cpp\obj'
+$setupOutput = Join-Path $cacheDirectory 'wpf\publish'
 $cachedPayload = Join-Path $cacheDirectory 'UdkPayload.zip'
-$toolsDirectory = Join-Path $root 'Sources/Windows/UdkCli/Tools'
+$vsixOutput = Join-Path $cacheDirectory 'vsix\bin'
+$vsixProject = Join-Path $root 'Projects\MsBuild\Application\UdkCli.VisualStudio\UdkCli.VisualStudio.csproj'
+$vsix = Join-Path $vsixOutput 'UdkCli.VisualStudio.vsix'
+$toolsDirectory = Join-Path $root 'Sources\Windows\UdkCli\Tools'
 $packageDirectory = Join-Path $releaseDirectory 'package'
 $archive = Join-Path $releaseDirectory "$tag-windows-x64.zip"
 $installerName = "$tag-setup-windows-x64"
 $installer = Join-Path $releaseDirectory "$installerName.exe"
-$project = Join-Path $root 'Projects/MsBuild/UdkCli/UdkCli.vcxproj'
+$project = Join-Path $root 'Projects\MsBuild\Application\UdkCli\UdkCli.vcxproj'
 
 [void][IO.Directory]::CreateDirectory($cacheDirectory)
 $buildLock = [IO.File]::Open((Join-Path $cacheDirectory 'build.lock'), 'OpenOrCreate', 'ReadWrite', 'None')
 try {
-    & $msbuild $project /nologo /m /t:Build /p:Configuration=Release /p:Platform=x64 "/p:UniversalDevKitGitHubVersion=$Version" "/p:OutDir=$buildDirectory/" "/p:IntDir=$objectDirectory/"
+    & $msbuild $project /nologo /m /t:Build /p:Configuration=Release /p:Platform=x64 "/p:UniversalDevKitGitHubVersion=$Version" "/p:OutDir=$buildDirectory\" "/p:IntDir=$objectDirectory\"
     if ($LASTEXITCODE -ne 0) { throw 'UdkCli build failed.' }
 
     $cli = Join-Path $buildDirectory 'udk.exe'
@@ -69,13 +72,16 @@ try {
         Copy-Item -LiteralPath $archive -Destination $cachedPayload -Force
     }
 
-    $setupProject = Join-Path $root 'Projects/DotNet/UdkCli.Setup/UdkCli.Setup.csproj'
+    & $msbuild $vsixProject /nologo /m /restore /p:Configuration=Release "/p:OutDir=$vsixOutput\" "/p:ArtifactsPath=$cacheDirectory\vsix"
+    if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $vsix -PathType Leaf)) { throw 'UDK Visual Studio extension build failed.' }
+
+    $setupProject = Join-Path $root 'Projects\MsBuild\Application\UdkCli.Setup\UdkCli.Setup.csproj'
     $dotnetArguments = @(
         'publish', $setupProject, '-c', 'Release', '-r', 'win-x64', '--self-contained', 'true',
         '--artifacts-path', (Join-Path $cacheDirectory 'wpf'), '-o', $setupOutput,
         '-p:PublishSingleFile=true', '-p:IncludeNativeLibrariesForSelfExtract=true',
         '-p:EnableCompressionInSingleFile=true', '-p:DebugType=None', '-p:IncludeSourceRevisionInInformationalVersion=false',
-        "-p:Version=$Version", "-p:UdkPayload=$cachedPayload"
+        "-p:Version=$Version", "-p:UdkPayload=$cachedPayload", "-p:UdkVsixPayload=$vsix"
     )
     & $dotnet @dotnetArguments
     if ($LASTEXITCODE -ne 0) { throw 'UdkCli installer compilation failed.' }

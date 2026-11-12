@@ -1,0 +1,22 @@
+{
+  "name": "UdkCli.Setup",
+  "kind": "application",
+  "language": "csharp",
+  "projectType": "wpf",
+  "msbuildGuid": "{C27A6217-35E3-4AD1-BBC7-71438D8E1E16}",
+  "sources": [
+    "Sources/Windows/UdkCli.Setup/**/*.cs",
+    "Sources/Windows/UdkCli.Setup/**/*.xaml"
+  ],
+  "filters": [
+    { "path": "Sources/Windows/UdkCli.Setup", "filter": "Root", "preserveTree": true }
+  ],
+  "msbuild": {
+    "properties": {
+      "TargetFramework": "net10.0-windows"
+    }
+  },
+  "buildExtensions": {
+    "msbuildTargets": "Projects/MsBuild/Application/UdkCli.Setup/UdkCli.Setup.targets"
+  }
+}

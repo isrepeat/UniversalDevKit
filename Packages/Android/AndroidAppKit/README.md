@@ -2,7 +2,7 @@
 
 Kotlin AAR, перенесённый из UtilityHelpersLib. Публичные Kotlin packages и Maven-координаты сохранены.
 
-Координаты: `com.isrepeat:androidappkit:1.0.19`. Минимальный Android API — 23, compileSdk — 36. Исходники находятся в Sources/Android/AndroidAppKit/src/main; Gradle-проект — в Projects/Gradle/AndroidAppKit; описание доставки — здесь, в Delivery/Android.
+Координаты: `com.isrepeat:androidappkit:1.0.19`. Минимальный Android API — 23, compileSdk — 36. Исходники находятся в Sources/Android/AndroidAppKit/src/main; Gradle-проект — в Projects/Gradle/Library/AndroidAppKit; описание доставки — здесь, в Delivery/Android.
 
 Сборка и публикация в новый локальный Maven feed:
 

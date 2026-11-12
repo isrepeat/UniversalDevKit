@@ -9,22 +9,13 @@ function Get-ProjectToolsApplicationProperties($Component, [string[]]$Reserved) 
     }
 }
 
-function Get-ProjectToolsFilter([string]$Path, $Component, [string]$Default) {
-    if ($Component.filters.files -and $Component.filters.files.PSObject.Properties[$Path]) { return $Component.filters.files.PSObject.Properties[$Path].Value.Replace('/', '\') }
-    $best = $null
-    foreach ($rule in $Component.filters.roots) {
-        if ($Path.StartsWith($rule.path + '/', [StringComparison]::Ordinal) -and ($null -eq $best -or $rule.path.Length -gt $best.path.Length)) { $best = $rule }
-    }
-    if ($null -ne $best) {
-        $mapped = $Path.Substring($best.path.Length + 1)
-        if ($best.filter) { $mapped = $best.filter + '/' + $mapped }
-        return Split-Path -Parent $mapped.Replace('/', '\')
-    }
-    return $Default
+function Get-ProjectToolsDirectory($Model, $Component) {
+    $kind = if ($Component.kind -eq 'application') { 'Application' } else { 'Library' }
+    return $Model.Settings.projectDirectory.Replace('{kind}', $kind).Replace('{name}', $Component.name)
 }
 
 function Get-ProjectToolsLocation($Model, $Component, [string]$Variant) {
-    $directory = $Model.Settings.projectDirectory.Replace('{name}', $Component.name)
+    $directory = Get-ProjectToolsDirectory $Model $Component
     $name = $Model.Settings.projectName.Replace('{name}', $Component.name).Replace('{variant}', $Variant)
     $extension = if ($Variant -eq 'Shared') { '.vcxitems' } else { '.vcxproj' }
     $path = $directory + '/' + $name + $extension
@@ -47,7 +38,8 @@ function Get-ProjectToolsBuildItems($Model, $Component, [string]$SharedPath, [st
     foreach ($file in $paths) {
         $include = ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeImport $Model $SharedPath $file)
         '    <None Include="' + $include + '">'
-        '      <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>'
+        $filter = ConvertTo-ProjectToolsXml (Get-ProjectToolsFilter $file $Component.filters 'Build')
+        '      <__UniversalDevKitFilter>' + $filter + '</__UniversalDevKitFilter>'
         '    </None>'
     }
     '  </ItemGroup>'
@@ -67,7 +59,7 @@ function New-ProjectToolsApplicationSharedProject($Model, $Component, [string]$P
     foreach ($group in @(@{ Type = 'ClInclude'; Files = $Component.headers }, @{ Type = 'ClCompile'; Files = $Component.sources })) {
         foreach ($file in $group.Files | Sort-Object -CaseSensitive) {
             $include = ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeImport $Model $Path $file)
-            $filter = ConvertTo-ProjectToolsXml (Get-ProjectToolsFilter $file $Component (Split-Path -Parent $file.Replace('/', '\')))
+            $filter = ConvertTo-ProjectToolsXml (Get-ProjectToolsFilter $file $Component.filters)
             $lines += '    <' + $group.Type + ' Include="' + $include + '">'
             $lines += '      <__UniversalDevKitFilter>' + $filter + '</__UniversalDevKitFilter>'
             $lines += '    </' + $group.Type + '>'
@@ -112,69 +104,51 @@ function New-ProjectToolsApplicationProject($Model, $Component, [string]$Path, [
     return [regex]::Replace($template, '@([A-Z]+)@', { param($match) $values[$match.Groups[1].Value] })
 }
 
-function New-ProjectToolsWpfApplicationProject($Model, $Component, [string]$Path) {
-    $properties = Get-ProjectToolsApplicationProperties $Component @('ProjectGuid', 'OutputType', 'UseWPF', 'Nullable')
+function New-ProjectToolsDotNetApplicationProject($Model, $Component, [string]$Path) {
+    $reserved = if ($Component.projectType -eq 'wpf') { @('ProjectGuid', 'OutputType', 'UseWPF', 'Nullable') }
+        else { @('ProjectGuid', 'GeneratePkgDefFile', 'CreateVsixContainer', 'IncludeAssemblyInVSIXContainer', 'VSSDKTargetPlatformVersion', 'VSSDKBuildToolsAutoSetup', 'LangVersion') }
+    $reserved += @('EnableDefaultCompileItems', 'EnableDefaultPageItems', 'EnableDefaultApplicationDefinition')
+    $properties = Get-ProjectToolsApplicationProperties $Component $reserved
     $directory = Split-Path -Parent (Resolve-ProjectToolsPath $Model.Root $Path)
-    $roots = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
-    $filterFiles = [ordered]@{}
-    foreach ($rule in $Component.filters.roots) {
-        if ($rule.path -isnot [string] -or $rule.path -match '[*?]' -or
-            @($rule.PSObject.Properties.Name).Count -ne 2 -or -not $rule.PSObject.Properties['filter']) {
-            throw 'Expected path and filter in filters.roots.'
-        }
-        $root = Resolve-ProjectToolsPath $Model.Root $rule.path
-        $relativeRoot = Get-ProjectToolsRelativePath $directory $root
-        if ($relativeRoot -match '^\.\.(?:\\|$)' -or -not (Test-Path -LiteralPath $root -PathType Container) -or -not $roots.Add($root)) {
-            throw "Expected a unique directory inside the project for filters.roots: $($rule.path)"
-        }
-        foreach ($file in Get-ChildItem -LiteralPath $root -File -Recurse | Sort-Object FullName) {
-            $relative = Get-ProjectToolsRelativePath $directory $file.FullName
-            if ($relative -match '(?:^|\\)(?:bin|obj|\.[^\\]+)\\' -or $file.Extension -in @('.csproj', '.user')) { continue }
-            $repositoryPath = (Get-ProjectToolsRelativePath $Model.Root $file.FullName).Replace('\', '/')
-            $filterFiles[$repositoryPath] = $file.FullName
-        }
-    }
-    foreach ($entry in $Component.filters.files.PSObject.Properties) {
-        $filterFiles[$entry.Name] = Resolve-ProjectToolsPath $Model.Root $entry.Name
-    }
-    $virtualFolders = @(
-        foreach ($rule in $Component.filters.roots) { $rule.filter }
-        foreach ($entry in $Component.filters.files.PSObject.Properties) { $entry.Value }
-    )
-    foreach ($filter in $virtualFolders) {
-        if ($filter -isnot [string] -or $filter -match '[\\:*?"<>|$@%;\r\n]' -or
-            ($filter -ne '' -and @($filter.Split('/') | Where-Object { $_ -in @('', '.', '..') }).Count)) {
-            throw "Invalid virtual filter folder: $filter"
-        }
-    }
-    $filterItems = foreach ($repositoryPath in $filterFiles.Keys) {
-        $file = $filterFiles[$repositoryPath]
+    $sourceFiles = @($Component.sources | Sort-Object -CaseSensitive)
+    $buildExtensions = @($Component.buildExtensions.msbuildProps, $Component.buildExtensions.msbuildTargets) |
+        Where-Object { $_ } | Select-Object -Unique
+    $links = [Collections.Generic.Dictionary[string,string]]::new([StringComparer]::OrdinalIgnoreCase)
+    $filterItems = foreach ($repositoryPath in ($sourceFiles + @($buildExtensions))) {
+        $file = Resolve-ProjectToolsPath $Model.Root $repositoryPath
         $relative = Get-ProjectToolsRelativePath $directory $file
-        if ($relative -match '^\.\.(?:\\|$)' -or $repositoryPath -match '[*?]' -or -not (Test-Path -LiteralPath $file -PathType Leaf)) {
-            throw "Expected a file in the project directory for filters.files: $repositoryPath"
-        }
+        $outsideProject = $relative -match '^\.\.(?:\\|$)'
+        $isBuildExtension = $repositoryPath -in $buildExtensions
+        $defaultFolder = if ($isBuildExtension) { 'Build' } else { '' }
+        $folder = Get-ProjectToolsFilter $repositoryPath $Component.filters $defaultFolder
         $link = [IO.Path]::GetFileName($file)
-        $folder = Get-ProjectToolsFilter $repositoryPath $Component (Split-Path -Parent $relative)
         if ($folder) { $link = $folder + '\' + $link }
+        if ($links.ContainsKey($link)) {
+            throw "Duplicate virtual path '$link' in $($Component.name): '$($links[$link])' and '$repositoryPath'."
+        }
+        $links.Add($link, $repositoryPath)
         $link = ConvertTo-ProjectToolsXml $link
         $include = ConvertTo-ProjectToolsXml $relative
-        $itemTypes = switch ([IO.Path]::GetExtension($file)) {
+        if ($isBuildExtension) {
+            $operation = if ($outsideProject) { 'Include' } else { 'Update' }
+            '    <None ' + $operation + '="' + $include + '" Link="' + $link + '" />'
+            continue
+        }
+        $type = switch ([IO.Path]::GetExtension($file)) {
             '.cs' { 'Compile' }
             '.xaml' {
-                'Page'
-                if ($relative -ieq 'App.xaml') { 'ApplicationDefinition' }
+                if ([IO.Path]::GetFileName($file) -ieq 'App.xaml') { 'ApplicationDefinition' } else { 'Page' }
             }
-            default { 'None' }
         }
-        foreach ($type in $itemTypes) {
-            '    <' + $type + ' Update="' + $include + '" Link="' + $link + '" />'
-        }
+        if (-not $outsideProject) { '    <None Remove="' + $include + '" />' }
+        '    <' + $type + ' Include="' + $include + '" Link="' + $link + '" />'
     }
     $filters = if ($filterItems) { (@('  <ItemGroup>') + $filterItems + '  </ItemGroup>') -join "`n" }
     $imports = foreach ($file in @($Model.Settings.props) + @($Component.buildExtensions.msbuildProps, $Component.buildExtensions.msbuildTargets) + @($Model.Settings.targets)) {
         if ($file) { '  <Import Project="' + (ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeImport $Model $Path $file)) + '" />' }
     }
-    $template = [IO.File]::ReadAllText((Join-Path $PSScriptRoot '../Templates/Application.Wpf.csproj.in'))
+    $templateName = if ($Component.projectType -eq 'wpf') { 'Application.Wpf.csproj.in' } else { 'Application.Vsix.csproj.in' }
+    $template = [IO.File]::ReadAllText((Join-Path $PSScriptRoot "../Templates/$templateName"))
     $values = @{ PROPERTIES = $properties -join "`n"; FILTERS = $filters; IMPORTS = $imports -join "`n" }
     return [regex]::Replace($template, '@([A-Z]+)@', { param($match) $values[$match.Groups[1].Value] })
 }
@@ -230,11 +204,15 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
             foreach ($group in @(@{ Type = 'ClInclude'; Files = $component.headers }, @{ Type = 'ClCompile'; Files = $component.sources })) {
                 foreach ($file in $group.Files) {
                     $include = Get-ProjectToolsRelativeImport $Model $sharedPath $file
-                    $filter = Split-Path -Parent (Get-ProjectToolsRelativePath (Split-Path -Parent (Join-Path $Model.Root $sharedPath)) (Join-Path $Model.Root $file))
-                    $filter = Get-ProjectToolsFilter $file $component $filter
+                    $filter = Get-ProjectToolsFilter $file $component.filters
                     $sharedItems.Add(@{ Type = $group.Type; Include = $include; Filter = $filter })
                     $lines.Add('    <' + $group.Type + ' Include="' + (ConvertTo-ProjectToolsXml $include) + '" />')
                 }
+            }
+            foreach ($file in @($component.buildExtensions.msbuildProps, $component.buildExtensions.msbuildTargets) | Where-Object { $_ } | Select-Object -Unique) {
+                $include = Get-ProjectToolsRelativeImport $Model $sharedPath $file
+                $sharedItems.Add(@{ Type = 'None'; Include = $include; Filter = (Get-ProjectToolsFilter $file $component.filters 'Build') })
+                $lines.Add('    <None Include="' + (ConvertTo-ProjectToolsXml $include) + '" />')
             }
             $lines.Add('  </ItemGroup>')
             $lines.Add('</Project>')
@@ -243,7 +221,15 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
             foreach ($item in $sharedItems) { $filter = $item.Filter; while ($filter) { [void]$filters.Add($filter); $filter = Split-Path -Parent $filter } }
             $filterLines = @('<?xml version="1.0" encoding="utf-8"?>', '<!-- Generated by ProjectTools. Edit component file selections. -->', '<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">', '  <ItemGroup>')
             foreach ($filter in @($filters | Sort-Object)) { $filterLines += '    <Filter Include="' + (ConvertTo-ProjectToolsXml $filter) + '" />' }
-            foreach ($item in $sharedItems) { $filterLines += '    <' + $item.Type + ' Include="' + (ConvertTo-ProjectToolsXml $item.Include) + '"><Filter>' + (ConvertTo-ProjectToolsXml $item.Filter) + '</Filter></' + $item.Type + '>' }
+            foreach ($item in $sharedItems) {
+                $element = '    <' + $item.Type + ' Include="' + (ConvertTo-ProjectToolsXml $item.Include) + '"'
+                if ($item.Filter) {
+                    $element += '><Filter>' + (ConvertTo-ProjectToolsXml $item.Filter) + '</Filter></' + $item.Type + '>'
+                } else {
+                    $element += ' />'
+                }
+                $filterLines += $element
+            }
             $filterLines += @('  </ItemGroup>', '</Project>')
             AddOutput ($sharedPath + '.filters') ($filterLines -join "`n")
         }
@@ -260,6 +246,8 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
             $projects.Add([pscustomobject]@{ Path = $path; Guid = $guid; Variant = $variant; Component = $component.name })
             if ($Model.Profile -eq 'udk') {
                 $template = [IO.File]::ReadAllText((Join-Path $PSScriptRoot '../Templates/Component.vcxproj.in'))
+                $buildLayout = Get-ProjectToolsRelativeImport $Model $path 'Projects/MsBuild/BuildLayout.props'
+                $template = $template.Replace('..\BuildLayout.props', (ConvertTo-ProjectToolsXml $buildLayout.Replace('$(MSBuildThisFileDirectory)', '')))
                 $definitions = if ($variant -eq 'Dynamic') { '      <PreprocessorDefinitions>UNIVERSALDEVKIT_' + $component.name.ToUpperInvariant() + '_DYNAMIC;UNIVERSALDEVKIT_' + $component.name.ToUpperInvariant() + '_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>' } else { '' }
                 $type = if ($variant -eq 'Dynamic') { 'DynamicLibrary' } else { 'StaticLibrary' }
                 $content = $template.Replace('@COMPONENT@', $component.name).Replace('@GUID@', $guid.Trim('{}')).Replace('@CONFIGURATION_TYPE@', $type).Replace('@DYNAMIC_DEFINITIONS@', $definitions)
@@ -303,15 +291,14 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
     }
     foreach ($component in $Model.Applications.Values) {
         $guid = ([Guid]$component.msbuildGuid).ToString('B').ToUpperInvariant()
-        if ($component.projectType -ceq 'wpf') {
-            $directory = if ($Model.Profile -eq 'udk') { 'Projects/DotNet/' + $component.name }
-                else { $Model.Settings.projectDirectory.Replace('{name}', $component.name) }
+        $directory = Get-ProjectToolsDirectory $Model $component
+        if ($component.language -ceq 'csharp') {
             $path = "$directory/$($component.name).csproj"
             $projects.Add([pscustomobject]@{ Path = $path; Guid = $guid; Variant = 'DotNet'; Component = $component.name })
-            AddOutput $path (New-ProjectToolsWpfApplicationProject $Model $component $path)
+            AddOutput $path (New-ProjectToolsDotNetApplicationProject $Model $component $path)
             continue
         }
-        $path = $Model.Settings.projectDirectory.Replace('{name}', $component.name) + '/' + $component.name + '.vcxproj'
+        $path = "$directory/$($component.name).vcxproj"
         $projects.Add([pscustomobject]@{ Path = $path; Guid = $guid; Variant = 'Application'; Component = $component.name })
         $sharedPath = Get-ProjectToolsLocation $Model $component 'Shared'
         $sharedGuid = Get-ProjectToolsGuid (([Guid]$guid).ToString('D') + ':Shared')

@@ -5,7 +5,7 @@
   "projects": {
     "compiler": {
       "adapter": "cmake-build",
-      "sourceDirectory": "Projects/Cmake/XamlCompiler",
+      "sourceDirectory": "Projects/Cmake/Application/XamlCompiler",
       "generator": "Visual Studio 18 2026",
       "architecture": "x64",
       "configurations": [
