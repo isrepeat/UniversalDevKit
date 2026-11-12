@@ -51,7 +51,7 @@ $project = Join-Path $root 'Projects/MsBuild/UdkCli/UdkCli.vcxproj'
 [void][IO.Directory]::CreateDirectory($cacheDirectory)
 $buildLock = [IO.File]::Open((Join-Path $cacheDirectory 'build.lock'), 'OpenOrCreate', 'ReadWrite', 'None')
 try {
-    & $msbuild $project /nologo /m /t:Build /p:Configuration=Release /p:Platform=x64 "/p:OutDir=$buildDirectory/" "/p:IntDir=$objectDirectory/"
+    & $msbuild $project /nologo /m /t:Build /p:Configuration=Release /p:Platform=x64 "/p:UniversalDevKitGitHubVersion=$Version" "/p:OutDir=$buildDirectory/" "/p:IntDir=$objectDirectory/"
     if ($LASTEXITCODE -ne 0) { throw 'UdkCli build failed.' }
 
     $cli = Join-Path $buildDirectory 'udk.exe'

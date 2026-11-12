@@ -10,7 +10,8 @@
 namespace universaldevkit::cli::details {
 	int ShowHelp(bool invalidArguments = false) {
 		auto& output = invalidArguments ? std::cerr : std::cout;
-		output << "Usage:\n"
+		output << "version: " UDK_CLI_VERSION "\n\n"
+			"Usage:\n"
 			"  udk project generate [manifest]\n"
 			"  udk project check [manifest]\n"
 			"  udk package build <package-path>\n"

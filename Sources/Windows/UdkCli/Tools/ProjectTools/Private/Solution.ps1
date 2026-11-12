@@ -48,6 +48,8 @@ function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable) 
             $sharedProject = @($Projects | Where-Object { $_.Component -eq $project.Component -and $_.Variant -eq 'Shared' })[0]
             $sharedPath = Get-ProjectToolsRelativePath $directory (Join-Path $Model.Root $sharedProject.Path)
             $shared += "`t`t$sharedPath*$($project.Guid.ToLowerInvariant())*SharedItemsImports = 4"
+        } else {
+            $shared += "`t`t$relative*$($project.Guid.ToLowerInvariant())*SharedItemsImports = 9"
         }
     }
     $lines += @('Global', "`tGlobalSection(SolutionConfigurationPlatforms) = preSolution")

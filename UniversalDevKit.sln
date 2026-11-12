@@ -883,27 +883,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{A7499D06
 		Sources\Windows\UdkCli\Tools\ResolveJsonReference.ps1 = Sources\Windows\UdkCli\Tools\ResolveJsonReference.ps1
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectTools", "ProjectTools", "{12E19D66-1CB5-4679-A956-40DDBF49C078}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\UdkCli\Tools\ProjectTools\Generate.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Generate.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Contract.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Contract.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Private\FormatXmlAttributes.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\FormatXmlAttributes.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Private\GetSolutionInjector.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\GetSolutionInjector.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Linkage.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Linkage.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Private\MsBuild.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\MsBuild.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Requirements.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Requirements.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in
-		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Component.vcxproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Component.vcxproj.in
-		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\ComponentExport.h.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\ComponentExport.h.in
-		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Export.h.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Export.h.in
-		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\HeaderCheck.cpp.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\HeaderCheck.cpp.in
-		Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.2-windows-x64.zip = Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.2-windows-x64.zip
-		Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json = Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PackageTools", "PackageTools", "{D7274C99-03B8-37D0-1088-3C5B52ABF346}"
 	ProjectSection(SolutionItems) = preProject
 		Sources\Windows\UdkCli\Tools\PackageTools\Build.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Build.ps1
@@ -935,6 +914,27 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{A33D8A01-8AFF-75D4-37A1-7659C13C021C}"
 	ProjectSection(SolutionItems) = preProject
 		Sources\Windows\UdkCli\Tools\PackageTools\Templates\PrefabConsumer.cmake = Sources\Windows\UdkCli\Tools\PackageTools\Templates\PrefabConsumer.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectTools", "ProjectTools", "{12E19D66-1CB5-4679-A956-40DDBF49C078}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\UdkCli\Tools\ProjectTools\Generate.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Generate.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Contract.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Contract.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\FormatXmlAttributes.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\FormatXmlAttributes.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\GetSolutionInjector.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\GetSolutionInjector.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Linkage.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Linkage.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\MsBuild.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\MsBuild.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Requirements.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Requirements.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Component.vcxproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Component.vcxproj.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\ComponentExport.h.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\ComponentExport.h.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Export.h.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Export.h.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\HeaderCheck.cpp.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\HeaderCheck.cpp.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip = Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip
+		Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json = Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9315E867-4526-9C38-A100-BB380E93098F}"
@@ -2021,11 +2021,11 @@ Global
 		{91C1626E-08D0-D15F-E92C-49D0A474AFDC} = {A9963E0C-F9B5-4635-505D-54E094B1F113}
 		{A00B13E7-A763-472E-8EC3-9E04CB803294} = {91C1626E-08D0-D15F-E92C-49D0A474AFDC}
 		{A7499D06-7157-4EE6-836C-A32AB920B114} = {A00B13E7-A763-472E-8EC3-9E04CB803294}
-		{12E19D66-1CB5-4679-A956-40DDBF49C078} = {A7499D06-7157-4EE6-836C-A32AB920B114}
 		{D7274C99-03B8-37D0-1088-3C5B52ABF346} = {A7499D06-7157-4EE6-836C-A32AB920B114}
 		{07C10469-FD4A-A594-ABEF-29C813652D1B} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
 		{CF4766B5-C3CE-1EBF-CD69-67BABDC0EBEF} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
 		{A33D8A01-8AFF-75D4-37A1-7659C13C021C} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
+		{12E19D66-1CB5-4679-A956-40DDBF49C078} = {A7499D06-7157-4EE6-836C-A32AB920B114}
 		{87778C21-3EDD-762C-4729-44D2C138BAAB} = {9315E867-4526-9C38-A100-BB380E93098F}
 		{D9E8691F-411D-4108-BFA5-210709F14B46} = {87778C21-3EDD-762C-4729-44D2C138BAAB}
 		{3DEC0D62-580B-05E1-441F-FCB2A45C9268} = {87778C21-3EDD-762C-4729-44D2C138BAAB}
@@ -2230,22 +2230,6 @@ Global
 		Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{fa67d7fd-393a-e9bc-f2a4-2570b2929973}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionInjectorProjectOwnership) = preSolution
-		{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems
-		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlCompiler\XamlCompiler.vcxproj
-		{220B0789-1F04-54D3-18E5-5DB99E91172F} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Static.vcxproj
-		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems
-		{3E00A02D-46F3-432B-91C8-5D459F70C525} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems
-		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Static.vcxproj
-		{77311056-84A3-4B57-AEF1-7A76F17C500C} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dynamic.vcxproj
-		{9C0C0DD8-D324-6EBE-A92E-80D071FA070E} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems
-		{9C7AAB80-FA41-4925-95FA-06409E32E4E1} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\UdkCli\UdkCli.vcxproj
-		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems
-		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Helpers\UniversalDevKit.Helpers.Shared.vcxitems
-		{E21B97A1-D847-2938-4E29-760523C97389} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj
-		{F104C833-785D-E25F-5F10-B46284462A11} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj
-		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Dynamic.vcxproj
-	EndGlobalSection
-	GlobalSection(SolutionInjectorManagedProjects) = preSolution
 		{220B0789-1F04-54D3-18E5-5DB99E91172F} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Static.vcxproj
 		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems
 		{3E00A02D-46F3-432B-91C8-5D459F70C525} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems

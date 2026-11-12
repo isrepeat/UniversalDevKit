@@ -80,10 +80,13 @@ function New-ProjectToolsApplicationProject($Model, $Component, [string]$Path, [
         }
     }
     $properties = foreach ($property in $Component.msbuild.properties.PSObject.Properties) {
-        if ($property.Name -notmatch '^[A-Za-z_][A-Za-z0-9_]*$' -or $property.Name -in @('ProjectGuid', 'Keyword', 'WindowsTargetPlatformVersion')) {
+        if ($property.Name -notmatch '^[A-Za-z_][A-Za-z0-9_]*$' -or $property.Name -in @('ProjectGuid', 'Keyword', 'WindowsTargetPlatformVersion', 'UniversalDevKitGitHubVersion')) {
             throw "Invalid application MSBuild property: $($property.Name)"
         }
         '    <' + $property.Name + '>' + (ConvertTo-ProjectToolsXml $property.Value) + '</' + $property.Name + '>'
+    }
+    if ($Component.githubVersion) {
+        $properties = @('    <UniversalDevKitGitHubVersion>' + (ConvertTo-ProjectToolsXml $Component.githubVersion) + '</UniversalDevKitGitHubVersion>') + @($properties)
     }
     $props = foreach ($file in @($Component.buildExtensions.msbuildProps, 'Projects/MsBuild/BuildLayout.props') + @($Model.Settings.props)) {
         if ($file) { '  <Import Project="' + (ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeImport $Model $Path $file)) + '" />' }

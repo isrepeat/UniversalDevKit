@@ -28,4 +28,4 @@ msbuild Projects/MsBuild/UdkCli/UdkCli.vcxproj /p:Configuration=Release /p:Platf
 
 Повторные выпуски переиспользуют промежуточные файлы Release x64 из `!artifacts/projects/Windows-x64/UdkCli.Release`. ZIP и установщик каждого запуска сохраняются в отдельной папке под `!artifacts/releases/UdkCli`.
 
-В комплект включается существующий архив SolutionInjector из ProjectTools. Перед выпуском CLI его нужно обновить до сборки, которая использует SolutionInjectorProjectOwnership.
+В комплект включается SolutionInjector `v1.1.0-dev.3` для синхронизации проектов через `SolutionInjectorProjectOwnership`.

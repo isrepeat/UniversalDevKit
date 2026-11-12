@@ -15,11 +15,11 @@ Shared и метаданные UDK формирует профиль UDK; биб
 
 Проверка генератора описана в `Tests/Infrastructure/TestProjectTools.ps1`.
 
-ProjectTools поставляет проверяемый архив SolutionInjector v1.1.0-dev и использует sync вместо вставки проектов. Владение хранится в GlobalSection(SolutionInjectorProjectOwnership) самого решения. Обновление конфигураций и Shared-ссылок, перемещение и удаление управляемых записей проверяются на временной копии до записи основного solution. Версия для Connect закреплена в `Sources/Windows/UdkCli/SolutionInjector.Connect.json`. Для тестовых реестров используются отдельные минимальные solutions, чтобы они не наследовали владение рабочими компонентами UDK.
+ProjectTools поставляет проверяемый архив SolutionInjector v1.1.0-dev.3 и использует sync вместо вставки проектов. Владение хранится в GlobalSection(SolutionInjectorProjectOwnership) самого решения. Обновление конфигураций и Shared-ссылок, перемещение и удаление управляемых записей проверяются на временной копии до записи основного solution. Версия для Connect закреплена в `Sources/Windows/UdkCli/SolutionInjector.Connect.json`. Для тестовых реестров используются отдельные минимальные solutions, чтобы они не наследовали владение рабочими компонентами UDK.
 
 ## Контракт
 
-Параметры: -Check проверяет результат без изменения проектов и решения; -PassThru возвращает план изменений; -SolutionInjectorPath позволяет использовать локальную копию закреплённого EXE с проверкой SHA-256. SolutionInjector v1.1.0-dev поставляется архивом внутри ProjectTools, проверяется по SHA-256 архива и EXE и распаковывается в LOCALAPPDATA/UniversalDevKit/ProjectTools/SolutionInjector. Это локальная dev-сборка изменённого проекта SolutionInjector, а не опубликованный релиз. Проверка может заполнять кэш и создаёт временные решения рядом с проверяемым solution; временные файлы удаляются.
+Параметры: -Check проверяет результат без изменения проектов и решения; -PassThru возвращает план изменений; -SolutionInjectorPath позволяет использовать локальную копию закреплённого EXE с проверкой SHA-256. SolutionInjector v1.1.0-dev.3 поставляется архивом внутри ProjectTools, проверяется по SHA-256 архива и EXE и распаковывается в LOCALAPPDATA/UniversalDevKit/ProjectTools/SolutionInjector. Это локальная dev-сборка SolutionInjector из коммита `13f7e41`. Проверка может заполнять кэш и создаёт временные решения рядом с проверяемым solution; временные файлы удаляются.
 
 Контракт: schemaVersion 3, includes и generation.msbuild. Пути компонентов, файлов и расширений отсчитываются от каталога Components.json. generation.msbuild содержит solution, projectDirectory с {name}, projectName с {name}/{variant}, configurations, platforms, необязательные solutionFolder, props и targets.
 

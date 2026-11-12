@@ -3,4 +3,9 @@
   <PropertyGroup>
     <UniversalDevKitRuntime Condition="'$(UniversalDevKitRuntime)' == ''">Static</UniversalDevKitRuntime>
   </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>UDK_CLI_VERSION="$(UniversalDevKitGitHubVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
 </Project>
