@@ -45,6 +45,9 @@ $cachedPayload = Join-Path $cacheDirectory 'UdkPayload.zip'
 $vsixOutput = Join-Path $cacheDirectory 'vsix\bin'
 $vsixProject = Join-Path $root 'Projects\MsBuild\Application\UdkCli.VisualStudio\UdkCli.VisualStudio.csproj'
 $vsix = Join-Path $vsixOutput 'UdkCli.VisualStudio.vsix'
+$diagnosticOutput = Join-Path $cacheDirectory 'diagnostic\bin'
+$diagnosticProject = Join-Path $root 'Projects\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj'
+$diagnostic = Join-Path $diagnosticOutput 'UniversalDevKit.Diagnostic.Dynamic.dll'
 $toolsDirectory = Join-Path $root 'Sources\Windows\UdkCli\Tools'
 $packageDirectory = Join-Path $releaseDirectory 'package'
 $archive = Join-Path $releaseDirectory "$tag-windows-x64.zip"
@@ -75,13 +78,16 @@ try {
     & $msbuild $vsixProject /nologo /m /restore /p:Configuration=Release "/p:OutDir=$vsixOutput\" "/p:ArtifactsPath=$cacheDirectory\vsix"
     if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $vsix -PathType Leaf)) { throw 'UDK Visual Studio extension build failed.' }
 
+    & $msbuild $diagnosticProject /nologo /m /p:Configuration=Release /p:Platform=x64 /p:UniversalDevKitRuntime=Static "/p:OutDir=$diagnosticOutput\"
+    if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $diagnostic -PathType Leaf)) { throw 'UDK Setup Diagnostic build failed.' }
+
     $setupProject = Join-Path $root 'Projects\MsBuild\Application\UdkCli.Setup\UdkCli.Setup.csproj'
     $dotnetArguments = @(
         'publish', $setupProject, '-c', 'Release', '-r', 'win-x64', '--self-contained', 'true',
         '--artifacts-path', (Join-Path $cacheDirectory 'wpf'), '-o', $setupOutput,
         '-p:PublishSingleFile=true', '-p:IncludeNativeLibrariesForSelfExtract=true',
         '-p:EnableCompressionInSingleFile=true', '-p:DebugType=None', '-p:IncludeSourceRevisionInInformationalVersion=false',
-        "-p:Version=$Version", "-p:UdkPayload=$cachedPayload", "-p:UdkVsixPayload=$vsix"
+        "-p:Version=$Version", "-p:UdkPayload=$cachedPayload", "-p:UdkVsixPayload=$vsix", "-p:UdkDiagnosticPayload=$diagnostic"
     )
     & $dotnet @dotnetArguments
     if ($LASTEXITCODE -ne 0) { throw 'UdkCli installer compilation failed.' }

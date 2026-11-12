@@ -6,7 +6,10 @@
   <ItemGroup Condition="'$(UdkVsixPayload)' != ''">
     <EmbeddedResource Include="$(UdkVsixPayload)" LogicalName="UdkCli.VisualStudio.vsix" />
   </ItemGroup>
-  <Target Name="RequireUdkPayload" BeforeTargets="Publish" Condition="'$(UdkPayload)' == '' Or '$(UdkVsixPayload)' == ''">
+  <ItemGroup Condition="'$(UdkDiagnosticPayload)' != ''">
+    <EmbeddedResource Include="$(UdkDiagnosticPayload)" LogicalName="UdkDiagnostic.dll" />
+  </ItemGroup>
+  <Target Name="RequireUdkPayload" BeforeTargets="Publish" Condition="'$(UdkPayload)' == '' Or '$(UdkVsixPayload)' == '' Or '$(UdkDiagnosticPayload)' == ''">
     <Error Text="Build the UDK CLI setup through Publish.UdkCli.cmd." />
   </Target>
 </Project>
