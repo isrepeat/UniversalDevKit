@@ -1,6 +1,8 @@
-#include "PowerShellScript.h"
-
 #include <Windows.h>
+
+#include <UniversalDevKit/Diagnostic/Logging.h>
+
+#include "PowerShellScript.h"
 
 #include <system_error>
 #include <string_view>
@@ -16,6 +18,24 @@
 namespace universaldevkit::cli::details {
 	constexpr std::string_view version = UDK_CLI_VERSION;
 	constexpr std::wstring_view dispatchedArgument = L"--run-pinned-version";
+
+	bool InitializeLog() noexcept {
+		try {
+			std::wstring directory(32768, L'\0');
+			const auto length = ::GetEnvironmentVariableW(L"LOCALAPPDATA", directory.data(), static_cast<DWORD>(directory.size()));
+			if (length == 0 || length >= directory.size()) {
+				return false;
+			}
+			directory.resize(length);
+			diagnostic::LoggerOptions loggerOptions;
+			loggerOptions.filePath = std::filesystem::path(directory) / L"UdkCli" / L"Logs" / L"Cli.log";
+			loggerOptions.minimumLevel = diagnostic::Level::Warning;
+			loggerOptions.appendNewSession = false;
+			return diagnostic::Logger::TryInitialize(loggerOptions);
+		} catch (...) {
+			return false;
+		}
+	}
 
 	std::string ReadVersion(const std::filesystem::path& path) {
 		if (!std::filesystem::exists(path)) {
@@ -151,14 +171,23 @@ int wmain(int argc, wchar_t* argv[]) {
 			universaldevkit::cli::LaunchUninstaller();
 			return 0;
 		}
-		if (std::wstring_view(argv[1]) == universaldevkit::cli::details::dispatchedArgument) {
+		const bool dispatched = std::wstring_view(argv[1]) == universaldevkit::cli::details::dispatchedArgument;
+		if (dispatched) {
 			if (argc < 5 || std::wstring_view(argv[2]) != L"" UDK_CLI_VERSION) {
 				throw std::runtime_error("The cached UDK CLI does not match the requested version.");
 			}
-			return universaldevkit::cli::details::RunRepositoryCommand(argc - 2, argv + 2, true);
+			argc -= 2;
+			argv += 2;
 		}
-		return universaldevkit::cli::details::RunRepositoryCommand(argc, argv, false);
+		const int status = universaldevkit::cli::details::RunRepositoryCommand(argc, argv, dispatched);
+		if (status != 0 && universaldevkit::cli::details::InitializeLog()) {
+			UDK_LOG_ERROR("UdkCli", "Command exited with code {}.", status);
+		}
+		return status;
 	} catch (const std::exception& exception) {
+		if (universaldevkit::cli::details::InitializeLog()) {
+			UDK_LOG_ERROR("UdkCli", "{}", exception.what());
+		}
 		std::cerr << "udk: " << exception.what() << '\n';
 		return 1;
 	}

@@ -10,6 +10,7 @@ namespace UniversalDevKit.UdkCli.VisualStudio {
         private Input.RegenerateShortcut shortcut;
 
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress) {
+            VsShell.VsixLog.Initialize();
             var command = await Commands.CommandRegistration.RegisterAsync(this, cancellationToken);
             if (command == null) {
                 return;
@@ -19,13 +20,18 @@ namespace UniversalDevKit.UdkCli.VisualStudio {
                 await this.GetServiceAsync(typeof(SVsUIShell)) is IVsUIShell uiShell) {
                 this.shortcut = new Input.RegenerateShortcut(this, command, filterKeys, uiShell);
             } else {
-                ActivityLog.LogWarning("UDK CLI", "Shortcut services unavailable.");
+                if (VsShell.VsixLog.IsInitialized) {
+                    Diagnostic.Log.Write(Diagnostic.Level.Warning, VsShell.VsixLog.Category, "Shortcut services unavailable.");
+                } else {
+                    ActivityLog.LogWarning(VsShell.VsixLog.Category, "Shortcut services unavailable.");
+                }
             }
         }
 
         protected override void Dispose(bool disposing) {
             if (disposing) {
                 this.shortcut?.Dispose();
+                VsShell.VsixLog.Shutdown();
             }
             base.Dispose(disposing);
         }

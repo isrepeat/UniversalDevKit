@@ -1,6 +1,14 @@
+#nullable enable
 using System;
+#if NETFRAMEWORK
+using System.Text;
+#endif
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+
+#if NETFRAMEWORK
+[assembly: DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.System32)]
+#endif
 
 namespace UniversalDevKit.Diagnostic;
 
@@ -79,7 +87,7 @@ public static partial class Log {
             out var message
         );
         try {
-            return new LoggerInitResult(error, systemError, Marshal.PtrToStringUTF8(message) ?? string.Empty);
+            return new LoggerInitResult(error, systemError, ReadMessage(message));
         }
         finally {
             NativeMethods.UdkDiagnosticFreeMessage(message);
@@ -102,6 +110,23 @@ public static partial class Log {
 
     public static void Shutdown() => NativeMethods.UdkDiagnosticShutdownLoggers();
 
+    private static string ReadMessage(IntPtr message) {
+#if NETFRAMEWORK
+        if (message == IntPtr.Zero) {
+            return string.Empty;
+        }
+        var length = 0;
+        while (Marshal.ReadByte(message, length) != 0) {
+            length++;
+        }
+        var bytes = new byte[length];
+        Marshal.Copy(message, bytes, 0, length);
+        return Encoding.UTF8.GetString(bytes);
+#else
+        return Marshal.PtrToStringUTF8(message) ?? string.Empty;
+#endif
+    }
+
     private static partial class NativeMethods {
         private const string Library = "universaldevkit_diagnostic_dynamic";
 
@@ -123,6 +148,29 @@ public static partial class Log {
             internal Flags Flags;
         }
 
+#if NETFRAMEWORK
+        [DllImport(Library, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern LoggerInitError UdkDiagnosticInitialize(
+            uint loggerId, in Options options, [MarshalAs(UnmanagedType.LPUTF8Str)] string? filePath,
+            out int systemError, out IntPtr message
+        );
+
+        [DllImport(Library, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void UdkDiagnosticFreeMessage(IntPtr message);
+
+        [DllImport(Library, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void UdkDiagnosticWriteRecord(
+            uint loggerId, Level level, [MarshalAs(UnmanagedType.LPUTF8Str)] string category,
+            [MarshalAs(UnmanagedType.LPUTF8Str)] string message, [MarshalAs(UnmanagedType.LPUTF8Str)] string file,
+            [MarshalAs(UnmanagedType.LPUTF8Str)] string member, int line
+        );
+
+        [DllImport(Library, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void UdkDiagnosticFlush(uint loggerId);
+
+        [DllImport(Library, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void UdkDiagnosticShutdownLoggers();
+#else
         [LibraryImport(Library, StringMarshalling = StringMarshalling.Utf8)]
         internal static partial LoggerInitError UdkDiagnosticInitialize(
             uint loggerId,
@@ -145,5 +193,6 @@ public static partial class Log {
 
         [LibraryImport(Library)]
         internal static partial void UdkDiagnosticShutdownLoggers();
+#endif
     }
 }

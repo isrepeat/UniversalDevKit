@@ -6,9 +6,10 @@
       "language": "csharp",
       "projectType": "vsix",
       "msbuildGuid": "{5217622B-841E-4635-BA5D-8DE005125B16}",
-      "sources": ["Sources/Windows/UdkCli.VisualStudio/**/*.cs"],
+      "sources": ["Sources/Windows/UdkCli.VisualStudio/**/*.cs", "Sources/Diagnostic/DotNet/*.cs"],
       "filters": [
-        { "path": "Sources/Windows/UdkCli.VisualStudio", "filter": "", "preserveTree": true }
+        { "path": "Sources/Windows/UdkCli.VisualStudio", "filter": "", "preserveTree": true },
+        { "path": "Sources/Diagnostic/DotNet", "filter": "Diagnostic" }
       ],
       "msbuild": {
         "properties": {

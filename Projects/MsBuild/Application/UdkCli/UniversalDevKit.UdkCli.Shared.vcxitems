@@ -11,9 +11,11 @@
     </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Windows\UdkCli\Main.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\..\Includes\Diagnostic;$(MSBuildThisFileDirectory)..\..\..\..\Includes\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Windows\UdkCli\PowerShellScript.cpp">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\..\Includes\Diagnostic;$(MSBuildThisFileDirectory)..\..\..\..\Includes\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

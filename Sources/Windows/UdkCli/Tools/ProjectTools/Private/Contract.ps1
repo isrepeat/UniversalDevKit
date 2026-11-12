@@ -282,12 +282,15 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
             if (-not $component.kind) { $component | Add-Member kind 'compiled' }
             if ($isApplication) {
                 foreach ($field in $component.PSObject.Properties.Name) {
-                    if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'excludeHeaders', 'excludeSources', 'filters', 'requirements', 'buildExtensions', 'msbuild')) {
+                    if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'excludeHeaders', 'excludeSources', 'filters', 'requirements', 'compile', 'buildExtensions', 'msbuild')) {
                         throw "Unsupported application field: $field"
                     }
                 }
                 foreach ($field in $component.requirements.PSObject.Properties.Name) {
                     if ($field -ne 'cxxStandard') { throw "Unsupported application requirement: $field" }
+                }
+                foreach ($field in $component.compile.PSObject.Properties.Name) {
+                    if ($field -ne 'includeDirectories') { throw "Unsupported application compile setting: $field" }
                 }
                 foreach ($field in $component.msbuild.PSObject.Properties.Name) {
                     if ($field -ne 'properties') { throw "Unsupported application MSBuild setting: $field" }

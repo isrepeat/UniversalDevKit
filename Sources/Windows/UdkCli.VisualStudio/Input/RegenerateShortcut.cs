@@ -44,7 +44,12 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Input {
             this.hookProcedure = this.OnMessage;
             this.hook = SetWindowsHookEx(GetMessageHook, this.hookProcedure, IntPtr.Zero, GetCurrentThreadId());
             if (this.hook == IntPtr.Zero) {
-                ActivityLog.LogWarning("UDK CLI", $"Could not attach the shortcut handler: {Marshal.GetLastWin32Error()}.");
+                var message = $"Could not attach the shortcut handler: {Marshal.GetLastWin32Error()}.";
+                if (VsShell.VsixLog.IsInitialized) {
+                    Diagnostic.Log.Write(Diagnostic.Level.Warning, VsShell.VsixLog.Category, message);
+                } else {
+                    ActivityLog.LogWarning(VsShell.VsixLog.Category, message);
+                }
             }
         }
 

@@ -15,6 +15,9 @@
       "requirements": {
         "cxxStandard": 20
       },
+      "compile": {
+        "includeDirectories": ["Includes/Diagnostic", "Includes/Core"]
+      },
       "msbuild": {
         "properties": {
           "TargetName": "udk"

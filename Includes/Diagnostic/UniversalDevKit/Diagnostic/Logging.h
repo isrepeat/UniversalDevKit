@@ -89,6 +89,7 @@ namespace universaldevkit::diagnostic {
 
         // The host initializes logging; normal exit calls Shutdown automatically.
         [[nodiscard]] static UNIVERSALDEVKIT_DIAGNOSTIC_API LoggerInitResult Initialize(const LoggerOptions& loggerOptions = {}, LoggerId loggerId = 0);
+        [[nodiscard]] static UNIVERSALDEVKIT_DIAGNOSTIC_API bool TryInitialize(const LoggerOptions& loggerOptions = {}, LoggerId loggerId = 0) noexcept;
         // Waits for admitted backend writes/flushes and releases files before returning.
         // Concurrent new writes use fallback; callers must still quiesce before DLL unload.
         static UNIVERSALDEVKIT_DIAGNOSTIC_API void Shutdown() noexcept;

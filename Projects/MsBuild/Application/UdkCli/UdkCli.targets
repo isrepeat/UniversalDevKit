@@ -11,4 +11,12 @@
           DestinationFiles="@(__UniversalDevKitCliTool->'$(OutDir)Tools\%(RecursiveDir)%(Filename)%(Extension)')"
           SkipUnchangedFiles="true" />
   </Target>
+  <Target Name="__UniversalDevKitStageCliDiagnostic" AfterTargets="Build">
+    <MSBuild Projects="$(MSBuildThisFileDirectory)..\..\Library\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj"
+             Targets="GetTargetPath" Properties="UniversalDevKitRuntime=Static"
+             RemoveProperties="OutDir;IntDir">
+      <Output TaskParameter="TargetOutputs" ItemName="__UniversalDevKitCliDiagnostic" />
+    </MSBuild>
+    <Copy SourceFiles="@(__UniversalDevKitCliDiagnostic)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
 </Project>

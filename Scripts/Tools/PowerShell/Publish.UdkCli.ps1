@@ -14,7 +14,8 @@ $OutputEncoding = [Text.UTF8Encoding]::new($false)
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
 . (Join-Path $root 'Sources\Windows\UdkCli\Tools\ResolveJsonReference.ps1')
 $componentPath = Join-Path $root 'Projects\Components\Application\UdkCli.json'
-$component = Get-Content -LiteralPath $componentPath -Raw -Encoding UTF8 | ConvertFrom-Json
+$description = Get-Content -LiteralPath $componentPath -Raw -Encoding UTF8 | ConvertFrom-Json
+$component = $description.projects[0]
 Resolve-UdkDescriptionVersion $root $component $componentPath 'githubVersion'
 if (-not $Version) { $Version = $component.githubVersion }
 if ($Version -isnot [string] -or $Version.Length -gt 80 -or $Version -notmatch '\A[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?\z') {
@@ -45,9 +46,7 @@ $cachedPayload = Join-Path $cacheDirectory 'UdkPayload.zip'
 $vsixOutput = Join-Path $cacheDirectory 'vsix\bin'
 $vsixProject = Join-Path $root 'Projects\MsBuild\Application\UdkCli.VisualStudio\UdkCli.VisualStudio.csproj'
 $vsix = Join-Path $vsixOutput 'UdkCli.VisualStudio.vsix'
-$diagnosticOutput = Join-Path $cacheDirectory 'diagnostic\bin'
-$diagnosticProject = Join-Path $root 'Projects\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj'
-$diagnostic = Join-Path $diagnosticOutput 'UniversalDevKit.Diagnostic.Dynamic.dll'
+$diagnostic = Join-Path $buildDirectory 'UniversalDevKit.Diagnostic.Dynamic.dll'
 $toolsDirectory = Join-Path $root 'Sources\Windows\UdkCli\Tools'
 $packageDirectory = Join-Path $releaseDirectory 'package'
 $archive = Join-Path $releaseDirectory "$tag-windows-x64.zip"
@@ -63,8 +62,9 @@ try {
 
     $cli = Join-Path $buildDirectory 'udk.exe'
     if (-not (Test-Path -LiteralPath $cli -PathType Leaf)) { throw 'Build output is missing udk.exe.' }
+    if (-not (Test-Path -LiteralPath $diagnostic -PathType Leaf)) { throw 'Build output is missing the Diagnostic runtime.' }
     [void][IO.Directory]::CreateDirectory($packageDirectory)
-    Copy-Item -LiteralPath $cli, (Join-Path $root 'LICENSE') -Destination $packageDirectory
+    Copy-Item -LiteralPath $cli, $diagnostic, (Join-Path $root 'LICENSE') -Destination $packageDirectory
     Copy-Item -LiteralPath $toolsDirectory -Destination $packageDirectory -Recurse
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     [IO.Compression.ZipFile]::CreateFromDirectory($packageDirectory, $archive)
@@ -75,11 +75,8 @@ try {
         Copy-Item -LiteralPath $archive -Destination $cachedPayload -Force
     }
 
-    & $msbuild $vsixProject /nologo /m /restore /p:Configuration=Release "/p:OutDir=$vsixOutput\" "/p:ArtifactsPath=$cacheDirectory\vsix"
+    & $msbuild $vsixProject /nologo /m /restore /p:Configuration=Release "/p:OutDir=$vsixOutput\" "/p:ArtifactsPath=$cacheDirectory\vsix" "/p:UdkDiagnosticPayload=$diagnostic"
     if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $vsix -PathType Leaf)) { throw 'UDK Visual Studio extension build failed.' }
-
-    & $msbuild $diagnosticProject /nologo /m /p:Configuration=Release /p:Platform=x64 /p:UniversalDevKitRuntime=Static "/p:OutDir=$diagnosticOutput\"
-    if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $diagnostic -PathType Leaf)) { throw 'UDK Setup Diagnostic build failed.' }
 
     $setupProject = Join-Path $root 'Projects\MsBuild\Application\UdkCli.Setup\UdkCli.Setup.csproj'
     $dotnetArguments = @(

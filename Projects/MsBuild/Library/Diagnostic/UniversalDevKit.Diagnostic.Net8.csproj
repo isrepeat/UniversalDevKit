@@ -11,6 +11,7 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Sources\Diagnostic\DotNet\IsExternalInit.cs" Link="IsExternalInit.cs" />
     <Compile Include="..\..\..\..\Sources\Diagnostic\DotNet\Log.cs" Link="Log.cs" />
   </ItemGroup>
   <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'true'">

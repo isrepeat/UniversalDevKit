@@ -38,11 +38,19 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Commands {
                     return;
                 }
                 pane.OutputStringThreadSafe($"Regenerating UDK projects in {root}\r\n");
+                if (VsShell.VsixLog.IsInitialized) {
+                    Diagnostic.Log.Write(Diagnostic.Level.Info, VsShell.VsixLog.Category, $"Regenerating UDK projects in {root}.");
+                }
                 var result = await Task.Run(() => Generation.ProjectGenerator.RunAsync(root));
                 await this.package.JoinableTaskFactory.SwitchToMainThreadAsync();
                 pane.OutputStringThreadSafe(result);
             } catch (Exception exception) {
                 await this.package.JoinableTaskFactory.SwitchToMainThreadAsync();
+                if (VsShell.VsixLog.IsInitialized) {
+                    Diagnostic.Log.Write(Diagnostic.Level.Error, VsShell.VsixLog.Category, exception.ToString());
+                } else {
+                    ActivityLog.LogError(VsShell.VsixLog.Category, exception.ToString());
+                }
                 pane?.OutputStringThreadSafe($"UDK: {exception.Message}\r\n");
                 if (pane == null) {
                     throw;

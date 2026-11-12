@@ -5,7 +5,14 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <PreprocessorDefinitions>UDK_CLI_VERSION="$(UniversalDevKitGitHubVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>UDK_CLI_VERSION="$(UniversalDevKitGitHubVersion)";UNIVERSALDEVKIT_DIAGNOSTIC_DYNAMIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Library\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj">
+      <Private>true</Private>
+      <AdditionalProperties>UniversalDevKitRuntime=Static</AdditionalProperties>
+      <GlobalPropertiesToRemove>OutDir;IntDir</GlobalPropertiesToRemove>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

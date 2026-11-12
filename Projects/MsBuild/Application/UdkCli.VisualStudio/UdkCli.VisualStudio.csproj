@@ -16,6 +16,8 @@
     <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="18.5.40034" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Sources\Diagnostic\DotNet\IsExternalInit.cs" Link="Diagnostic\IsExternalInit.cs" />
+    <Compile Include="..\..\..\..\Sources\Diagnostic\DotNet\Log.cs" Link="Diagnostic\Log.cs" />
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.VisualStudio\Commands\CommandRegistration.cs" Link="Commands\CommandRegistration.cs" />
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.VisualStudio\Commands\RegenerateSolutionCommand.cs" Link="Commands\RegenerateSolutionCommand.cs" />
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.VisualStudio\Generation\ProjectGenerator.cs" Link="Generation\ProjectGenerator.cs" />
@@ -25,6 +27,7 @@
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.VisualStudio\UdkPackage.Registration.cs" Link="UdkPackage.Registration.cs" />
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.VisualStudio\VsShell\SolutionRepository.cs" Link="VsShell\SolutionRepository.cs" />
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.VisualStudio\VsShell\UdkOutput.cs" Link="VsShell\UdkOutput.cs" />
+    <Compile Include="..\..\..\..\Sources\Windows\UdkCli.VisualStudio\VsShell\VsixLog.cs" Link="VsShell\VsixLog.cs" />
     <None Update="UdkCli.VisualStudio.targets" Link="Build\UdkCli.VisualStudio.targets" />
   </ItemGroup>
   <Import Project="$(MSBuildThisFileDirectory)UdkCli.VisualStudio.targets" />

@@ -103,6 +103,7 @@ namespace UniversalDevKit.UdkCli.Setup {
                 Directory.Delete(tools, recursive: true);
             }
             File.Delete(Path.Combine(directory, "udk.exe"));
+            File.Delete(Path.Combine(directory, "UniversalDevKit.Diagnostic.Dynamic.dll"));
             File.Delete(Path.Combine(directory, "LICENSE"));
             File.Delete(ShortcutPath);
             UpdatePath(registration, directory, addToPath: false);

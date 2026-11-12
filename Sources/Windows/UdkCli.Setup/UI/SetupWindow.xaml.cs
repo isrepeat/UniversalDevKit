@@ -36,12 +36,16 @@ namespace UniversalDevKit.UdkCli.Setup {
             InstallButton.IsEnabled = false;
             BrowseButton.IsEnabled = false;
             try {
-                this.log.Info($"Installing CLI to {InstallDirectoryText.Text}.");
+                if (this.log.IsInitialized) {
+                    Diagnostic.Log.Write(Diagnostic.Level.Info, "UdkCli.Setup", $"Installing CLI to {InstallDirectoryText.Text}.");
+                }
                 var assembly = Assembly.GetExecutingAssembly();
                 using var payload = assembly.GetManifestResourceStream("UdkPayload.zip")
                     ?? throw new InvalidDataException("The installer does not contain the UDK CLI files.");
                 Installation.Install(payload, InstallDirectoryText.Text);
-                this.log.Info("CLI files installed. Checking the Visual Studio extension.");
+                if (this.log.IsInitialized) {
+                    Diagnostic.Log.Write(Diagnostic.Level.Info, "UdkCli.Setup", "CLI files installed. Checking the Visual Studio extension.");
+                }
                 var message = "UDK CLI is installed. Open a new terminal and run udk --help.";
                 if (!Installation.HasPowerShell()) {
                     message += "\n\nPowerShell 7 (pwsh.exe) must be on PATH to run UDK CLI commands.";
@@ -50,10 +54,14 @@ namespace UniversalDevKit.UdkCli.Setup {
                     using var extension = assembly.GetManifestResourceStream("UdkCli.VisualStudio.vsix")
                         ?? throw new InvalidDataException("The installer does not contain the Visual Studio extension.");
                     var result = await VisualStudioIntegration.InstallAsync(extension);
-                    this.log.Info($"Visual Studio integration completed. {result.Trim()}");
+                    if (this.log.IsInitialized) {
+                        Diagnostic.Log.Write(Diagnostic.Level.Info, "UdkCli.Setup", $"Visual Studio integration completed. {result.Trim()}");
+                    }
                     message += result;
                 } catch (Exception exception) {
-                    this.log.Error(exception);
+                    if (this.log.IsInitialized) {
+                        Diagnostic.Log.Write(Diagnostic.Level.Error, "UdkCli.Setup", exception.ToString());
+                    }
                     MessageBox.Show(this, message + "\n\nVisual Studio extension: " + exception.Message + this.log.Location,
                         Title, MessageBoxButton.OK, MessageBoxImage.Warning);
                     InstallLocationLabel.Text = "Update the existing installation in";
@@ -61,11 +69,15 @@ namespace UniversalDevKit.UdkCli.Setup {
                     BrowseButton.Visibility = Visibility.Collapsed;
                     return;
                 }
-                this.log.Info("Setup completed.");
+                if (this.log.IsInitialized) {
+                    Diagnostic.Log.Write(Diagnostic.Level.Info, "UdkCli.Setup", "Setup completed.");
+                }
                 MessageBox.Show(this, message, Title, MessageBoxButton.OK, MessageBoxImage.Information);
                 Close();
             } catch (Exception exception) {
-                this.log.Error(exception);
+                if (this.log.IsInitialized) {
+                    Diagnostic.Log.Write(Diagnostic.Level.Error, "UdkCli.Setup", exception.ToString());
+                }
                 MessageBox.Show(this, exception.Message + this.log.Location, Title, MessageBoxButton.OK, MessageBoxImage.Error);
             } finally {
                 InstallButton.IsEnabled = true;

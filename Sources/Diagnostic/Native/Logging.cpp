@@ -208,6 +208,14 @@ namespace universaldevkit::diagnostic {
         }
     }
 
+    bool Logger::TryInitialize(const LoggerOptions& loggerOptions, LoggerId loggerId) noexcept {
+        try {
+            return static_cast<bool>(Logger::Initialize(loggerOptions, loggerId));
+        } catch (...) {
+            return false;
+        }
+    }
+
     LoggerInitResult Logger::Initialize(const LoggerOptions& loggerOptions, LoggerId loggerId) {
         auto loggerInitError = LoggerInitError::InitializationFailed;
         try {
