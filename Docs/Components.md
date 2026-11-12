@@ -34,7 +34,7 @@
 
 ## Исполняемые проекты MSBuild
 
-ProjectTools выбирает приложения по `kind: application` в описаниях из списка `components`. Для C++-приложения он создаёт Shared `.vcxitems` с исходниками и консольный `.vcxproj`, который импортирует Shared. Оба проекта добавляются в папку компонента внутри группы `Application`. `msbuildGuid` сохраняет GUID приложения, а `msbuild.properties.TargetName` задаёт имя выходного файла.
+ProjectTools выбирает приложения по `kind: application` в записях массива `projects`. Для C++-приложения он создаёт Shared `.vcxitems` с исходниками и консольный `.vcxproj`, который импортирует Shared. Оба проекта добавляются в папку компонента внутри группы `Application`. `msbuildGuid` сохраняет GUID приложения, а `msbuild.properties.TargetName` задаёт имя выходного файла.
 
 Списки `headers` и `sources` принимают шаблоны путей. Настройки MSBuild подключаются через `buildExtensions.msbuildProps` и `buildExtensions.msbuildTargets`. Пример — [UdkCli.json](../Projects/Components/Application/UdkCli.json).
 
@@ -78,9 +78,9 @@ Include-каталоги должны существовать. Определе
 
 В MSBuild файлы сначала объявляются с меткой компонента, затем общие настройки применяются одним `ClCompile Update` к выборке по этой метке; файловые настройки идут отдельными блоками `Update`. Эти блоки изменяют метаданные только выбранных файлов; в CMake — в PRIVATE-настройки target и свойства исходников. Они не передаются другим файлам потребителя и потребителям публичных заголовков. Пути объектных файлов определяются стандартными настройками проекта Visual Studio; генератор не задаёт `ObjectFileName`. В `buildExtensions` остаются дополнительные настройки, не выраженные общей схемой. Полный пример — `Projects/Components/Library/Diagnostic.json`.
 
-Корневой `Components.json` схемы 4 содержит один явный список `components`. Пути отсчитываются от корневого файла. Описания библиотек находятся в `Projects/Components/Library`, а приложения — в `Projects/Components/Application`. Тип определяется по `kind`. CMake и Connect выбирают библиотеки, ProjectTools обрабатывает оба типа. Состав выпуска задаётся отдельно в `Packages/**/Package.json`.
+Корневой `Components.json` схемы 5 содержит один явный список `components`. Пути отсчитываются от корневого файла. Описания библиотек находятся в `Projects/Components/Library`, а приложения — в `Projects/Components/Application`. CMake и Connect выбирают нативные библиотеки. ProjectTools обрабатывает все поддерживаемые типы проектов. Состав выпуска задаётся отдельно в `Packages/**/Package.json`.
 
-Описания C++-компонентов содержат `name`, `kind`, `msbuildGuid`, `headers` и `sources`, а также необязательный объект `filters`. Для библиотеки `libraryType` по умолчанию равен `compiled`. Для библиотеки из одних заголовков укажите `headerOnly`.
+Описание компонента содержит `name` и массив `projects`. Запись C++-проекта содержит `kind`, `language`, `projectType`, `msbuildGuid`, `headers` и `sources`, а также необязательный массив `filters`. Для библиотеки `libraryType` по умолчанию равен `compiled`. Для библиотеки из одних заголовков укажите `headerOnly`.
 
 После изменения реестра компонентов запустите `Scripts/GenerateComponentProjects.cmd` либо `pwsh -File Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1 -ManifestPath Components.json`. Один запуск обновляет `.vcxitems`, затем вызывает внутренний `UpdateProjectFilters.ps1` для обновления `.filters` всех проектов. Сгенерированные файлы хранятся в Git. После завершения обоих этапов перезагрузите проект или solution в Visual Studio.
 

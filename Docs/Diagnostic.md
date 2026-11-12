@@ -6,11 +6,27 @@ Android AAR/Prefab выпускается через `Packages/Build/Build.ps1 -
 
 Общие признаки ОС определены в `<UniversalDevKit/Platform.h>` (Core): `UNIVERSALDEVKIT_PLATFORM_WINDOWS`, `ANDROID`, `LINUX`, `MACOS` с тем же префиксом, а также `UNIVERSALDEVKIT_PLATFORM_POSIX`. Все значения равны 0 или 1, поэтому используется `#if`, а не `#ifdef`. Android не включает признак LINUX, но включает POSIX. Эти признаки описывают целевую ОС, а не ОС машины сборки; Windows включает desktop и UWP. Проверки доступности отдельных WinAPI по WINAPI_FAMILY остаются отдельными.
 
-Платформенная реализация Diagnostic отделена от общей: внутренний Sources/Diagnostic/PlatformBackend.h объявляет границу backend; Windows создаёт debugger sink, Android/Linux сообщают об отсутствии Windows debugger/package directories. Назначение имени потока вынесено в Helpers/System/Thread.h: Thread::SetCurrentThreadName принимает UTF-8 и поддерживает Windows, Android, Linux и macOS, сокращая имя по границе символа при ограничении ОС. Все платформенные .cpp включены в общий список sources; каждый файл целиком обёрнут условием препроцессора, включая include. Linux-условие явно исключает Android. Logging.cpp содержит общие ID, файлы, фильтры, контекст, scope и Shutdown без условных веток ОС. Logcat не добавлен: Android сохраняет файл/консоль. Публичный API Diagnostic не изменён, platform backend остаётся приватной частью DLL/SO. Diagnostic пока поддерживает Windows, Android и Linux; Linux требует отдельного запуска на этой ОС.
+Платформенная реализация Diagnostic отделена от общей: внутренний Sources/Diagnostic/Native/PlatformBackend.h объявляет границу backend; Windows создаёт debugger sink, Android/Linux сообщают об отсутствии Windows debugger/package directories. Назначение имени потока вынесено в Helpers/System/Thread.h: Thread::SetCurrentThreadName принимает UTF-8 и поддерживает Windows, Android, Linux и macOS, сокращая имя по границе символа при ограничении ОС. Все платформенные .cpp включены в общий список sources; каждый файл целиком обёрнут условием препроцессора, включая include. Linux-условие явно исключает Android. Logging.cpp содержит общие ID, файлы, фильтры, контекст, scope и Shutdown без условных веток ОС. Logcat не добавлен: Android сохраняет файл/консоль. Публичный API Diagnostic не изменён, platform backend остаётся приватной частью DLL/SO. Diagnostic пока поддерживает Windows, Android и Linux; Linux требует отдельного запуска на этой ОС.
 
 Постоянный общий набор первого этапа находится в Tests/Fixtures/Consumers/Diagnostic: контракт, многопоточная запись и общее состояние EXE/DLL или executable/SO. Команды и границы проверки — Tests/Integration/Diagnostic/README.md; Android build-only явно отделён от запуска на устройстве.
 
 Минимальный C++20 сервис логирования со статическим классом `Logger`: `UniversalDevKit::Diagnostic.Dynamic`, namespace `universaldevkit::diagnostic`. Компонент имеет `stateScope=process`: штатные способы подключения разрешают только DLL/SO. Все модули приложения должны использовать один загруженный экземпляр Diagnostic.
+
+## .NET и WPF
+
+NuGet `UniversalDevKit.Diagnostic` содержит C# API для .NET 8+ и нативную Release DLL для Windows x64. Для WPF укажите `RuntimeIdentifier=win-x64` и добавьте обычный `PackageReference`. Нативная DLL использует динамический MSVC CRT. В процессе с нативными и управляемыми потребителями используйте один экземпляр Release DLL, чтобы они делили состояние логгеров.
+
+```csharp
+using UniversalDevKit.Diagnostic;
+
+var result = Log.Initialize(new LoggerOptions { FilePath = "application.log" });
+if (!result.Succeeded) {
+    throw new InvalidOperationException($"{result.Error} ({result.SystemError}): {result.Message}");
+}
+Log.Write(Level.Info, "Application", "WPF started");
+```
+
+`Log.Write` записывает файл, метод и строку C#-вызова. `Initialize`, `Write` и `Flush` принимают необязательный `loggerId`, по умолчанию 0. `Shutdown` завершает все ID процесса. Публичный C ABI объявлен в `LoggingC.h`. Строки на этой границе передаются как UTF-8 с завершающим NUL.
 
 ## Результат инициализации
 
@@ -161,4 +177,4 @@ Wide-сообщение сначала форматируется на стор�
 
 Папку EXE Diagnostic получает через Helpers/System/ApplicationPaths.h (приватная зависимость Helpers). GetPackageDirectory в этом helper означает папку установки UWP/MSIX; она не используется как writable-папка логов. Режимы LogFolder::Package и ApplicationOrPackage получают LocalState через ApplicationPaths::GetPackageLocalDataDirectory(); платформенный код из Logging.cpp удалён.
 
-LoggerOptions — место для будущей конфигурации, Write — граница передачи записи в DLL. Backend полностью скрыт в Sources/Diagnostic/Logging.cpp. Контекст объекта и scope уже реализованы; async остаётся отдельным будущим этапом.
+LoggerOptions — место для будущей конфигурации, Write — граница передачи записи в DLL. Backend полностью скрыт в Sources/Diagnostic/Native/Logging.cpp. Контекст объекта и scope уже реализованы; async остаётся отдельным будущим этапом.

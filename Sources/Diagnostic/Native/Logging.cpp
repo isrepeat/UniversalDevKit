@@ -1,4 +1,4 @@
-#include "../../Includes/Diagnostic/UniversalDevKit/Diagnostic/Logging.h"
+#include "../../../Includes/Diagnostic/UniversalDevKit/Diagnostic/Logging.h"
 
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -10,6 +10,7 @@
 #include <UniversalDevKit/Helpers/Text/Unicode.h>
 
 #include "PlatformBackend.h"
+#include "LogRecord.h"
 
 #include <condition_variable>
 #include <unordered_map>
@@ -226,6 +227,9 @@ namespace universaldevkit::diagnostic {
                 return { LoggerInitError::InvalidOptions, {}, "Invalid level, folder, file mode or rotation limits" };
             }
             if (loggerOptions.logFolder == LogFolder::Package && !PlatformBackend::SupportsPackageDirectories()) {
+#if defined(_MSC_VER)
+#pragma warning(suppress: 26117, justification: "The lock_guard owns the mutex on this return path.")
+#endif
                 return { LoggerInitError::UnsupportedPlatform, {}, "Package directories are not supported on this platform" };
             }
             const auto debuggerSink = loggerOptions.enableDebugger ? PlatformBackend::CreateDebuggerSink() : nullptr;
@@ -432,11 +436,11 @@ namespace universaldevkit::diagnostic {
         }
     }
 
-    void Logger::Write(
+    void details::WriteRecord(
         Level level,
         std::string_view category,
         std::string_view message,
-        std::source_location sourceLocation,
+        SourceLocation sourceLocation,
         LoggerId loggerId
     ) noexcept {
         if (!Logger::ShouldLog(level, loggerId)) {
@@ -446,7 +450,7 @@ namespace universaldevkit::diagnostic {
             const details::BackendAccess backendAccess{ loggerId };
             if (backendAccess.GetLogger()) {
                 backendAccess.GetLogger()->log(
-                    spdlog::source_loc{ sourceLocation.file_name(), static_cast<int>(sourceLocation.line()), sourceLocation.function_name() },
+                    spdlog::source_loc{ sourceLocation.file, sourceLocation.line, sourceLocation.member },
                     details::ToSpdlogLevel(level),
                     "[{}] {}",
                     spdlog::string_view_t{ category.data(), category.size() },
@@ -461,4 +465,20 @@ namespace universaldevkit::diagnostic {
             details::EmergencyWrite("Diagnostic: write failed");
         }
     }
-}
+
+    void Logger::Write(
+        Level level,
+        std::string_view category,
+        std::string_view message,
+        std::source_location sourceLocation,
+        LoggerId loggerId
+    ) noexcept {
+        details::WriteRecord(
+            level,
+            category,
+            message,
+            { sourceLocation.file_name(), static_cast<int>(sourceLocation.line()), sourceLocation.function_name() },
+            loggerId
+        );
+    }
+} // namespace universaldevkit::diagnostic

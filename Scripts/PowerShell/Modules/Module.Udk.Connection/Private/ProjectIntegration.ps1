@@ -179,7 +179,7 @@ function Invoke-UdkConnectionPlanCore {
             $runtimeItems = $document.CreateElement('ItemGroup', $namespace)
             $runtimeItems.SetAttribute('Label', 'UniversalDevKit')
             $manifest = Get-Content -LiteralPath (Join-Path $repositoryPath 'Components.json') -Raw -Encoding UTF8 | ConvertFrom-Json
-            $libraryRoot = if ($manifest.schemaVersion -eq 4) { 'Projects/MsBuild/Library' } else { 'Projects/MsBuild' }
+            $libraryRoot = if ($manifest.schemaVersion -in @(4, 5)) { 'Projects/MsBuild/Library' } else { 'Projects/MsBuild' }
             foreach ($name in $resolvedComponents) {
                 $mode = $resolvedModes[$name]
                 if ($mode -eq 'Shared') {

@@ -15,7 +15,7 @@ $repositoryPath = [IO.Path]::GetFullPath($RepositoryRoot)
 $libraryDirectory = 'Projects/MsBuild'
 $libraryRepositoryRelative = '..\..\..\'
 $libraryMsbuildRelative = '..\'
-if ($Model.Manifest.schemaVersion -eq 4) {
+if ($Model.Manifest.schemaVersion -in @(4, 5)) {
     $libraryDirectory += '/Library'
     $libraryRepositoryRelative = '..\' + $libraryRepositoryRelative
     $libraryMsbuildRelative = '..\' + $libraryMsbuildRelative

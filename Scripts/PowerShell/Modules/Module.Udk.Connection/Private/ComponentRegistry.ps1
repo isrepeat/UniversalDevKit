@@ -15,13 +15,23 @@ function Get-UdkComponentRegistry {
     param([string]$RepositoryPath)
     [void](GetAvailableComponents -RepositoryPath $RepositoryPath)
     $manifest = Get-Content -LiteralPath (Join-Path $repositoryPath 'Components.json') -Raw -Encoding UTF8 | ConvertFrom-Json
-    $paths = if ($manifest.schemaVersion -eq 4) { $manifest.components } elseif ($manifest.schemaVersion -eq 2) { $manifest.includes }
+    $paths = if ($manifest.schemaVersion -in @(4, 5)) { $manifest.components } elseif ($manifest.schemaVersion -eq 2) { $manifest.includes }
     if (-not $paths) {
         throw 'Unsupported Components.json schema.'
     }
     $componentRegistry = @{}
     foreach ($include in $paths) {
         $component = Get-Content -LiteralPath (Join-Path $repositoryPath $include) -Raw -Encoding UTF8 | ConvertFrom-Json
+        if ($manifest.schemaVersion -eq 5) {
+            $name = $component.name
+            $nativeLibraries = @($component.projects | Where-Object {
+                $_.kind -ceq 'library' -and $_.language -ceq 'cpp' -and $_.projectType -ceq 'native'
+            })
+            if (-not $nativeLibraries.Count) { continue }
+            if ($nativeLibraries.Count -ne 1) { throw "Duplicate native library: $include" }
+            $component = $nativeLibraries[0]
+            $component | Add-Member name $name
+        }
         if ($component.kind -eq 'application') { continue }
         $kind = $component.kind
         if ($kind -eq 'library') { $kind = $component.libraryType }

@@ -8,6 +8,12 @@
       "component": "Diagnostic",
       "generator": "Visual Studio 18 2026"
     },
+    "dotnet": {
+      "adapter": "dotnet",
+      "project": "Projects/MsBuild/Library/Diagnostic/UniversalDevKit.Diagnostic.Net8.csproj",
+      "operation": "build",
+      "configuration": "Release"
+    },
     "android": {
       "adapter": "udk-prefab",
       "component": "Diagnostic",
@@ -21,6 +27,13 @@
     }
   },
   "contents": [
+    {
+      "project": "dotnet",
+      "root": "output",
+      "include": ["UniversalDevKit.Diagnostic.dll"],
+      "destination": "lib/net8.0",
+      "deliveries": ["NuGet"]
+    },
     {
       "project": "windows",
       "root": "output",

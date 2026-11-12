@@ -10,25 +10,35 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\Logging.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\PlatformBackend.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\LoggingC.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\LogRecord.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\PlatformBackend.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\Export.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Logging.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\Logging.cpp">
       <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\platform\android\PlatformBackendAndroid.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\LoggingC.cpp">
+      <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\platform\android\PlatformBackendAndroid.cpp">
       <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>platform\android</__UniversalDevKitFilter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\platform\linux\PlatformBackendLinux.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\platform\linux\PlatformBackendLinux.cpp">
       <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>platform\linux</__UniversalDevKitFilter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\platform\windows\PlatformBackendWindows.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\platform\windows\PlatformBackendWindows.cpp">
       <__UniversalDevKitComponent>Diagnostic</__UniversalDevKitComponent>
       <__UniversalDevKitFilter>platform\windows</__UniversalDevKitFilter>
     </ClCompile>

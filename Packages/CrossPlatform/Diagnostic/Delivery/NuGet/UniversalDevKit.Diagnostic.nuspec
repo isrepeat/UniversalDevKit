@@ -5,11 +5,17 @@
     <id>UniversalDevKit.Diagnostic</id>
     <version>{{VERSION}}</version>
     <authors>UniversalDevKit</authors>
-    <description>UniversalDevKit Diagnostic native Windows x64 logging DLL backed by spdlog.</description>
-    <tags>native C++ Windows UniversalDevKit</tags>
+    <description>UniversalDevKit Diagnostic logging for native and .NET Windows x64 applications, backed by spdlog.</description>
+    <tags>native C++ .NET Windows UniversalDevKit</tags>
     <license type="file">LICENSE.txt</license>
     <readme>README.md</readme>
-    <dependencies>{{DEPENDENCIES}}</dependencies>
+    <dependencies>
+      <group>{{DEPENDENCIES}}</group>
+      <group targetFramework="net8.0" />
+    </dependencies>
   </metadata>
-  <files><file src="payload\**\*" target="" /></files>
+  <files>
+    <file src="payload\**\*" target="" />
+    <file src="payload\binaries\Dynamic\Release\universaldevkit_diagnostic_dynamic.dll" target="runtimes\win-x64\native" />
+  </files>
 </package>

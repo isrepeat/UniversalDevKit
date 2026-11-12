@@ -49,6 +49,38 @@ try {
     & $tool -ManifestPath $manifest
     if (-not [IO.File]::ReadAllText($solution).Contains('Probe.Dynamic')) { throw 'Restored variant was not added.' }
     & $tool -ManifestPath $manifest -Check
+
+    $settings = (Get-Content -LiteralPath $manifest -Raw | ConvertFrom-Json).generation
+    @{ schemaVersion = 5; components = @('Component.json'); generation = $settings } |
+        ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $manifest -Encoding utf8NoBOM -NoNewline
+    $component.PSObject.Properties.Remove('name')
+    $component.kind = 'library'
+    $component | Add-Member language 'cpp'
+    $component | Add-Member projectType 'native'
+    $component | Add-Member id 'native'
+    $runtime = @{ projectId = 'native'; variant = 'Dynamic' }
+    $managed = @{
+        kind = 'library'; language = 'csharp'; projectType = 'classLibrary'; sources = @()
+        msbuild = @{ properties = @{ TargetFramework = 'net8.0' } }
+        runtimeDependencies = @($runtime)
+    }
+    $description = @{ name = 'Probe'; projects = @($managed, $component) }
+    $description | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $componentPath -Encoding utf8NoBOM -NoNewline
+    & $tool -ManifestPath $manifest
+    $managedPath = Join-Path $temporary 'Projects/Probe/UniversalDevKit.Probe.Net8.csproj'
+    [xml]$managedProject = Get-Content -LiteralPath $managedPath -Raw
+    $reference = $managedProject.SelectSingleNode('/Project/ItemGroup/ProjectReference')
+    if ($reference.Include -cne 'Probe.Dynamic.vcxproj' -or $reference.ReferenceOutputAssembly -cne 'false' -or
+        -not [IO.File]::ReadAllText($solution).Contains('"UniversalDevKit.Probe.Net8", "Projects\Probe\UniversalDevKit.Probe.Net8.csproj"')) {
+        throw 'The solution or runtime reference for the C# library was not generated.'
+    }
+    & $tool -ManifestPath $manifest -Check
+    $runtime.Remove('projectId')
+    $runtime.project = 'native'
+    $description | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $componentPath -Encoding utf8NoBOM -NoNewline
+    $rejected = $false
+    try { & $tool -ManifestPath $manifest -Check } catch { $rejected = $_.Exception.Message -match 'Expected projectId' }
+    if (-not $rejected) { throw 'A runtime dependency using project instead of projectId was accepted.' }
     Write-Host 'PASS: standalone generation, variants, glob/exclude, extensions, check and idempotence.'
 } finally {
     $resolved = [IO.Path]::GetFullPath($temporary)

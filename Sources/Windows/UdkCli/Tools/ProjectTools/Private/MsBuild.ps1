@@ -104,8 +104,9 @@ function New-ProjectToolsApplicationProject($Model, $Component, [string]$Path, [
     return [regex]::Replace($template, '@([A-Z]+)@', { param($match) $values[$match.Groups[1].Value] })
 }
 
-function New-ProjectToolsDotNetApplicationProject($Model, $Component, [string]$Path) {
+function New-ProjectToolsDotNetProject($Model, $Component, [string]$Path) {
     $reserved = if ($Component.projectType -eq 'wpf') { @('ProjectGuid', 'OutputType', 'UseWPF', 'Nullable') }
+        elseif ($Component.projectType -eq 'classLibrary') { @('ProjectGuid', 'OutputType', 'EnableDefaultNoneItems') }
         else { @('ProjectGuid', 'GeneratePkgDefFile', 'CreateVsixContainer', 'IncludeAssemblyInVSIXContainer', 'VSSDKTargetPlatformVersion', 'VSSDKBuildToolsAutoSetup', 'LangVersion') }
     $reserved += @('EnableDefaultCompileItems', 'EnableDefaultPageItems', 'EnableDefaultApplicationDefinition')
     $properties = Get-ProjectToolsApplicationProperties $Component $reserved
@@ -147,9 +148,21 @@ function New-ProjectToolsDotNetApplicationProject($Model, $Component, [string]$P
     $imports = foreach ($file in @($Model.Settings.props) + @($Component.buildExtensions.msbuildProps, $Component.buildExtensions.msbuildTargets) + @($Model.Settings.targets)) {
         if ($file) { '  <Import Project="' + (ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeImport $Model $Path $file)) + '" />' }
     }
-    $templateName = if ($Component.projectType -eq 'wpf') { 'Application.Wpf.csproj.in' } else { 'Application.Vsix.csproj.in' }
+    $runtimeReferences = foreach ($runtimeProject in $Component.runtimeProjects) {
+        $runtimePath = Get-ProjectToolsLocation $Model $runtimeProject 'Dynamic'
+        '    <ProjectReference Include="' + (ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativePath $directory (Join-Path $Model.Root $runtimePath))) +
+            '" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" />'
+    }
+    $references = if ($runtimeReferences) {
+        (@('  <ItemGroup Condition="''$(BuildingInsideVisualStudio)'' == ''true''">') + $runtimeReferences + '  </ItemGroup>') -join "`n"
+    }
+    $templateName = switch ($Component.projectType) {
+        'wpf' { 'Application.Wpf.csproj.in' }
+        'vsix' { 'Application.Vsix.csproj.in' }
+        'classLibrary' { 'Library.CSharp.csproj.in' }
+    }
     $template = [IO.File]::ReadAllText((Join-Path $PSScriptRoot "../Templates/$templateName"))
-    $values = @{ PROPERTIES = $properties -join "`n"; FILTERS = $filters; IMPORTS = $imports -join "`n" }
+    $values = @{ PROPERTIES = $properties -join "`n"; FILTERS = $filters; IMPORTS = $imports -join "`n"; REFERENCES = $references }
     return [regex]::Replace($template, '@([A-Z]+)@', { param($match) $values[$match.Groups[1].Value] })
 }
 
@@ -289,13 +302,27 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
             $projects.Add([pscustomobject]@{ Path = $path; Guid = $guid; Variant = 'HeaderCheck'; Component = $component.name })
         }
     }
+    foreach ($component in $Model.ManagedLibraries.Values) {
+        $directory = Get-ProjectToolsDirectory $Model $component
+        $guid = ([Guid]$component.msbuildGuid).ToString('B').ToUpperInvariant()
+        $framework = $component.msbuild.properties.TargetFramework
+        $frameworkSuffix = switch -Regex ($framework) {
+            '^netstandard(.+)$' { 'NetStandard' + $Matches[1] }
+            '^netcoreapp(.+)$' { 'NetCoreApp' + $Matches[1] }
+            '^net([0-9]+)\.0(-.*)?$' { 'Net' + $Matches[1] + $Matches[2] }
+            default { 'Net' + $framework.Substring(3) }
+        }
+        $path = "$directory/UniversalDevKit.$($component.name).$frameworkSuffix.csproj"
+        $projects.Add([pscustomobject]@{ Path = $path; Guid = $guid; Variant = 'DotNet'; Component = $component.name })
+        AddOutput $path (New-ProjectToolsDotNetProject $Model $component $path)
+    }
     foreach ($component in $Model.Applications.Values) {
         $guid = ([Guid]$component.msbuildGuid).ToString('B').ToUpperInvariant()
         $directory = Get-ProjectToolsDirectory $Model $component
         if ($component.language -ceq 'csharp') {
             $path = "$directory/$($component.name).csproj"
             $projects.Add([pscustomobject]@{ Path = $path; Guid = $guid; Variant = 'DotNet'; Component = $component.name })
-            AddOutput $path (New-ProjectToolsDotNetApplicationProject $Model $component $path)
+            AddOutput $path (New-ProjectToolsDotNetProject $Model $component $path)
             continue
         }
         $path = "$directory/$($component.name).vcxproj"

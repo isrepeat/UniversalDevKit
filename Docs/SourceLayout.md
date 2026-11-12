@@ -14,7 +14,7 @@
 
 Платформенный компонент: Includes/Android/AndroidBuildTools/UniversalDevKit/Android/AndroidBuildTools/ApplicationFramework/InputDispatcher.h и Sources/Android/AndroidBuildTools/ApplicationFramework. Публичный include: UniversalDevKit/Android/AndroidBuildTools/ApplicationFramework/InputDispatcher.h. Namespace: universaldevkit::android::androidbuildtools::applicationframework.
 
-Потребителю передаётся корень конкретного компонента Includes/Android/AndroidBuildTools, а не общий Includes или Sources. Платформенные варианты внутри общего компонента, например Sources/Diagnostic/platform/android, сохраняют общий публичный API Diagnostic без платформенного сегмента.
+Потребителю передаётся корень конкретного компонента Includes/Android/AndroidBuildTools, а не общий Includes или Sources. Платформенные варианты внутри общего компонента, например Sources/Diagnostic/Native/platform/android, сохраняют общий публичный API Diagnostic без платформенного сегмента.
 
 ## Инструменты и шаблоны
 

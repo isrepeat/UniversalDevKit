@@ -1,25 +1,29 @@
 {
   "name": "UdkCli",
-  "kind": "application",
-  "language": "cpp",
-  "projectType": "native",
-  "githubVersion": "0.1.5",
-  "msbuildGuid": "{9C7AAB80-FA41-4925-95FA-06409E32E4E1}",
-  "headers": ["Sources/Windows/UdkCli/**/*.h"],
-  "sources": ["Sources/Windows/UdkCli/**/*.cpp"],
-  "filters": [
-    { "path": "Sources/Windows/UdkCli", "filter": "" }
-  ],
-  "requirements": {
-    "cxxStandard": 20
-  },
-  "msbuild": {
-    "properties": {
-      "TargetName": "udk"
+  "projects": [
+    {
+      "kind": "application",
+      "language": "cpp",
+      "projectType": "native",
+      "githubVersion": "0.1.5",
+      "msbuildGuid": "{9C7AAB80-FA41-4925-95FA-06409E32E4E1}",
+      "headers": ["Sources/Windows/UdkCli/**/*.h"],
+      "sources": ["Sources/Windows/UdkCli/**/*.cpp"],
+      "filters": [
+        { "path": "Sources/Windows/UdkCli", "filter": "" }
+      ],
+      "requirements": {
+        "cxxStandard": 20
+      },
+      "msbuild": {
+        "properties": {
+          "TargetName": "udk"
+        }
+      },
+      "buildExtensions": {
+        "msbuildProps": "Projects/MsBuild/Application/UdkCli/UdkCli.props",
+        "msbuildTargets": "Projects/MsBuild/Application/UdkCli/UdkCli.targets"
+      }
     }
-  },
-  "buildExtensions": {
-    "msbuildProps": "Projects/MsBuild/Application/UdkCli/UdkCli.props",
-    "msbuildTargets": "Projects/MsBuild/Application/UdkCli/UdkCli.targets"
-  }
+  ]
 }

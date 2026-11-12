@@ -18,6 +18,19 @@
 
 По умолчанию Debug и Release x64, Visual Studio 2026. CMake берётся из PATH или Visual Studio; можно передать -CMake. Есть CMD-точка Tests/Scripts/RunDiagnosticTests.cmd. Общий runner включает DiagnosticContract в Windows-группу. CMake fixture также регистрирует Diagnostic.contract/threads/modules в CTest (таймаут 180 секунд).
 
+## WPF и NuGet
+
+Из корня репозитория соберите локальные пакеты, восстановите WPF-проект из этого источника и запустите его. Приложение проверяет результат инициализации и запись в файл внутри WPF Startup. Успешный запуск возвращает код 0.
+
+```powershell
+$feed = Join-Path $PWD.Path '!artifacts/tests/diagnostic-wpf-feed'
+$project = 'Tests/Fixtures/Consumers/Diagnostic.Wpf/Diagnostic.Wpf.csproj'
+$version = (Get-Content Version.json -Raw | ConvertFrom-Json).version
+./Packages/Build/Build.ps1 -PackagePath Packages/CrossPlatform/Diagnostic/Package.json -Delivery NuGet -OutputDirectory $feed
+dotnet restore $project --source "$feed/Diagnostic" --packages "$feed/cache" "-p:UniversalDevKitPackageVersion=$version"
+dotnet run --project $project --no-restore "-p:UniversalDevKitPackageVersion=$version"
+```
+
 ## Android
 
 ```powershell

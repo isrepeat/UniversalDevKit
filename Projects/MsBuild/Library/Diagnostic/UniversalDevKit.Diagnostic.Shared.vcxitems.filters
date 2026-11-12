@@ -12,14 +12,15 @@
     <Filter Include="ThirdParty\spdlog\src" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Logging.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\platform\android\PlatformBackendAndroid.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\Logging.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\LoggingC.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\platform\android\PlatformBackendAndroid.cpp">
       <Filter>platform\android</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\platform\linux\PlatformBackendLinux.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\platform\linux\PlatformBackendLinux.cpp">
       <Filter>platform\linux</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\platform\windows\PlatformBackendWindows.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\platform\windows\PlatformBackendWindows.cpp">
       <Filter>platform\windows</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\ThirdParty\spdlog\src\async.cpp">
@@ -45,7 +46,9 @@
     </ClCompile>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\Export.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\Logging.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\PlatformBackend.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\LoggingC.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\LogRecord.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\PlatformBackend.h" />
     <None Include="$(MSBuildThisFileDirectory)Spdlog.targets">
       <Filter>Build</Filter>
     </None>

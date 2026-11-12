@@ -112,8 +112,8 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
     $path = (Resolve-Path -LiteralPath $ManifestPath -ErrorAction Stop).Path
     $root = Split-Path -Parent $path
     $manifest = Get-Content -LiteralPath $path -Raw -Encoding UTF8 | ConvertFrom-Json
-    if (($manifest.schemaVersion -isnot [int] -and $manifest.schemaVersion -isnot [long]) -or $manifest.schemaVersion -notin @(2, 3, 4)) { throw 'Unsupported component schemaVersion.' }
-    $unified = $manifest.schemaVersion -eq 4
+    if (($manifest.schemaVersion -isnot [int] -and $manifest.schemaVersion -isnot [long]) -or $manifest.schemaVersion -notin @(2, 3, 4, 5)) { throw 'Unsupported component schemaVersion.' }
+    $unified = $manifest.schemaVersion -in @(4, 5)
     $listField = if ($unified) { 'components' } else { 'includes' }
     if ($manifest.$listField -isnot [Array] -or -not $manifest.$listField.Count) { throw "$listField must be a nonempty array." }
     $manifestFields = @('schemaVersion', 'generation', $listField)
@@ -145,18 +145,82 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
     }
     $components = [ordered]@{}
     $applications = [ordered]@{}
+    $managedLibraries = [ordered]@{}
     if ($manifest.PSObject.Properties['msbuildApplications'] -and ($profile -ne 'udk' -or $manifest.msbuildApplications -isnot [Array])) {
         throw 'msbuildApplications must be an array in the UDK profile.'
     }
-    $names = @{}
     $guids = @{}
     $includes = @($manifest.$listField)
     if ($manifest.msbuildApplications) { $includes += $manifest.msbuildApplications }
-    foreach ($include in $includes) {
+    $seenIncludes = @{}
+    $names = @{}
+    $definitions = foreach ($include in $includes) {
         if ($include -isnot [string] -or $include -match '[*?]' -or [IO.Path]::GetExtension($include) -cne '.json') { throw "Invalid component path: $include" }
         $componentPath = Resolve-ProjectToolsPath $root $include
-        if ($components.Contains($include) -or $applications.Contains($include)) { throw "Duplicate include: $include" }
-        $component = Get-Content -LiteralPath $componentPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        if ($seenIncludes.ContainsKey($include)) { throw "Duplicate include: $include" }
+        $seenIncludes[$include] = $true
+        $definition = Get-Content -LiteralPath $componentPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        if ($definition.name -isnot [string] -or $definition.name -cnotmatch '^[A-Z][A-Za-z0-9]*(?:\.[A-Za-z0-9]+)*$' -or $names.ContainsKey($definition.name)) {
+            throw "Invalid or duplicate component name: $($definition.name)"
+        }
+        $names[$definition.name] = $true
+        if ($manifest.schemaVersion -ne 5) {
+            [pscustomobject]@{ Include = $include; Component = $definition; RuntimeProjects = @() }
+            continue
+        }
+        if (@($definition.PSObject.Properties.Name | Where-Object { $_ -cnotin @('name', 'projects') }).Count -or
+            $definition.projects -isnot [Array] -or -not $definition.projects.Count) {
+            throw "Expected name and a nonempty projects array: $include"
+        }
+        $projectIds = @{}
+        $projectTypes = @{}
+        foreach ($project in $definition.projects) {
+            if ($project -isnot [pscustomobject] -or $project.PSObject.Properties['name']) { throw "Invalid project object: $include" }
+            $identity = "$($project.kind)/$($project.language)/$($project.projectType)"
+            if ($projectTypes.ContainsKey($identity)) { throw "Duplicate project type $identity in $include" }
+            $projectTypes[$identity] = $true
+            if ($project.PSObject.Properties['id']) {
+                if ($project.id -isnot [string] -or $project.id -cnotmatch '^[A-Za-z][A-Za-z0-9_-]*$' -or $projectIds.ContainsKey($project.id)) {
+                    throw "Invalid or duplicate project id in $include"
+                }
+                $projectIds[$project.id] = $project
+            }
+        }
+        $applicationCount = @($definition.projects | Where-Object kind -ceq 'application').Count
+        if ($applicationCount -and $definition.projects.Count -ne 1) { throw "An application component must contain one project: $include" }
+        foreach ($project in $definition.projects) {
+            $runtimeProjects = @()
+            if ($project.PSObject.Properties['runtimeDependencies']) {
+                if ($project.language -cne 'csharp' -or $project.projectType -cne 'classLibrary' -or $project.runtimeDependencies -isnot [Array]) {
+                    throw "runtimeDependencies requires a C# classLibrary and an array: $include"
+                }
+                $seenRuntimeIds = @{}
+                $runtimeProjects = @(foreach ($dependency in $project.runtimeDependencies) {
+                    if ($dependency -isnot [pscustomobject] -or
+                        @($dependency.PSObject.Properties.Name | Where-Object { $_ -cnotin @('projectId', 'variant') }).Count -or
+                        $dependency.projectId -isnot [string] -or $dependency.variant -cne 'Dynamic' -or
+                        -not $projectIds.ContainsKey($dependency.projectId) -or $seenRuntimeIds.ContainsKey($dependency.projectId)) {
+                        throw "Invalid runtime dependency in $include. Expected projectId and variant Dynamic."
+                    }
+                    $seenRuntimeIds[$dependency.projectId] = $true
+                    $target = $projectIds[$dependency.projectId]
+                    if ($target.kind -cne 'library' -or $target.language -cne 'cpp' -or $target.projectType -cne 'native' -or
+                        $target.libraryType -eq 'headerOnly' -or ($target.variants -and 'Dynamic' -notin $target.variants)) {
+                        throw "Runtime dependency $($dependency.projectId) must provide a native Dynamic library: $include"
+                    }
+                    $target
+                })
+                $project.PSObject.Properties.Remove('runtimeDependencies')
+            }
+            $project.PSObject.Properties.Remove('id')
+            $project | Add-Member name $definition.name
+            [pscustomobject]@{ Include = $include; Component = $project; RuntimeProjects = $runtimeProjects }
+        }
+    }
+    foreach ($definition in $definitions) {
+        $include = $definition.Include
+        $componentPath = Resolve-ProjectToolsPath $root $include
+        $component = $definition.Component
         if ($component.PSObject.Properties['githubVersion']) {
             Resolve-UdkDescriptionVersion $root $component $componentPath 'githubVersion'
         }
@@ -169,20 +233,20 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         } elseif ($component.PSObject.Properties['language'] -or $component.PSObject.Properties['projectType']) {
             throw "language and projectType require schemaVersion 4: $include"
         }
-        $isDotNet = $unified -and $isApplication -and $component.language -ceq 'csharp' -and $component.projectType -cin @('wpf', 'vsix')
-        $namePattern = if ($isDotNet) { '^[A-Z][A-Za-z0-9]*(?:\.[A-Za-z0-9]+)*$' } else { '^[A-Z][A-Za-z0-9]*$' }
-        if ($component.name -isnot [string] -or $component.name -notmatch $namePattern -or $names.ContainsKey($component.name)) { throw "Invalid or duplicate component name: $($component.name)" }
-        $names[$component.name] = $true
+        $isManagedLibrary = $manifest.schemaVersion -eq 5 -and $component.kind -ceq 'library' -and
+            $component.language -ceq 'csharp' -and $component.projectType -ceq 'classLibrary'
+        $isDotNet = $isManagedLibrary -or ($unified -and $isApplication -and $component.language -ceq 'csharp' -and $component.projectType -cin @('wpf', 'vsix'))
+        if (-not $isDotNet -and $component.name -notmatch '^[A-Z][A-Za-z0-9]*$') { throw "Invalid native component name: $($component.name)" }
         if ($unified) {
             if (-not $isDotNet -and ($component.language -cne 'cpp' -or $component.projectType -cne 'native')) {
                 throw "Unsupported language and projectType for component: $include"
             }
-            if ($component.kind -ceq 'library') {
+            if ($component.kind -ceq 'library' -and -not $isManagedLibrary) {
                 $libraryType = if ($component.PSObject.Properties['libraryType']) { $component.libraryType } else { 'compiled' }
                 if ($libraryType -cnotin @('compiled', 'headerOnly')) { throw "Invalid libraryType: $include" }
                 $component.kind = $libraryType
                 $component.PSObject.Properties.Remove('libraryType')
-            } elseif (-not $isApplication) { throw "Expected library or application kind: $include" }
+            } elseif (-not $isApplication -and -not $isManagedLibrary) { throw "Expected library or application kind: $include" }
         } elseif ($isApplication -ne ($include -in $manifest.msbuildApplications)) {
             throw "Invalid application registration: $include"
         }
@@ -194,6 +258,9 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
                 if ($field -ne 'properties') { throw "Unsupported C# MSBuild setting: $field" }
             }
             $framework = $component.msbuild.properties.TargetFramework
+            if ($isManagedLibrary -and ($framework -isnot [string] -or $framework -cnotmatch '^net(?:standard|coreapp)?[0-9]+(?:\.[0-9]+)*(?:-[a-z]+[0-9.]*)?$')) {
+                throw "C# classLibrary requires TargetFramework in msbuild.properties: $include"
+            }
             if ($component.projectType -eq 'wpf' -and ($framework -isnot [string] -or $framework -cnotmatch '^net[0-9]+\.[0-9]+-windows(?:[0-9]+(?:\.[0-9]+)*)?$')) {
                 throw "WPF requires a Windows TargetFramework in msbuild.properties: $include"
             }
@@ -245,20 +312,24 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         }
         foreach ($extensionEntry in $component.buildExtensions.PSObject.Properties) {
             if ($extensionEntry.Name -notin @('cmake', 'msbuildProps', 'msbuildTargets')) { throw 'Unknown build extension.' }
-            if ($isApplication -and $extensionEntry.Name -eq 'cmake') { throw 'Applications support MSBuild extensions only.' }
+            if (($isApplication -or $isManagedLibrary) -and $extensionEntry.Name -eq 'cmake') { throw 'This project supports MSBuild extensions only.' }
             $extension = Resolve-ProjectToolsPath $root $extensionEntry.Value
             if (-not (Test-Path -LiteralPath $extension -PathType Leaf)) { throw "Missing build extension: $($extensionEntry.Value)" }
         }
         if (-not $component.msbuildGuid) {
-            $identity = if ($isApplication) { 'Application' } else { 'Shared' }
+            $identity = if ($isManagedLibrary) { 'ClassLibrary' } elseif ($isApplication) { 'Application' } else { 'Shared' }
             $component | Add-Member msbuildGuid (Get-ProjectToolsGuid ('ProjectTools:' + $component.name + ':' + $identity))
         }
         $parsedGuid = [Guid]::Empty
         if (-not [Guid]::TryParse($component.msbuildGuid, [ref]$parsedGuid) -or $guids.ContainsKey($parsedGuid.ToString())) { throw 'Invalid or duplicate component GUID.' }
         $guids[$parsedGuid.ToString()] = $true
         if ($component.kind -eq 'headerOnly' -and ($component.sources.Count -or $component.platformSources -or $component.variants)) { throw 'Header-only component cannot have sources or binary variants.' }
-        if ($isApplication) { $applications[$include] = $component }
+        if ($isManagedLibrary) {
+            $component | Add-Member runtimeProjects $definition.RuntimeProjects
+            $managedLibraries[$include] = $component
+        }
+        elseif ($isApplication) { $applications[$include] = $component }
         else { $components[$include] = $component }
     }
-    return [pscustomobject]@{ Root = $root; Manifest = $manifest; Components = $components; Applications = $applications; Settings = $settings; Profile = $profile }
+    return [pscustomobject]@{ Root = $root; Manifest = $manifest; Components = $components; Applications = $applications; ManagedLibraries = $managedLibraries; Settings = $settings; Profile = $profile }
 }

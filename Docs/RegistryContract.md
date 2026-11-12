@@ -6,7 +6,7 @@
 
 ```json
 {
-  "schemaVersion": 4,
+  "schemaVersion": 5,
   "components": [
     "Projects/Components/Library/Helpers.json",
     "Projects/Components/Library/Diagnostic.json",
@@ -18,15 +18,19 @@
 
 **Неизвестные поля отклоняются.** Пути в `components` перечисляются явно, без wildcard.
 
+В схеме 5 описание компонента содержит `name` и непустой массив `projects`. Настройки сборки и поля из таблицы ниже относятся к записи проекта. Библиотека может содержать нативный проект `cpp/native` и управляемый проект `csharp/classLibrary`. Приложение содержит одну запись `application`. Для C# class library задайте `msbuild.properties.TargetFramework` и исходники `sources`. ProjectTools генерирует SDK-style проект под узлом компонента в solution.
+
+`id` — необязательный идентификатор проекта, уникальный в пределах компонента. Он нужен, когда на проект ссылается `runtimeDependencies`. C# class library может указать `{ "projectId": "native", "variant": "Dynamic" }` для нативной DLL того же компонента. ProjectTools добавляет зависимость сборки в Visual Studio. Состав NuGet задаётся в `Package.json`. CMake использует запись нативной библиотеки. Пример обоих проектов — [Diagnostic.json](../Projects/Components/Library/Diagnostic.json).
+
 ## Значения по умолчанию
 
 Минимальный стандарт C++ для библиотек — C++20. Версии схем Package.json и бинарных манифестов независимы от реестра компонентов.
 
 | Поле | Значения | По умолчанию |
 |---|---|---|
-| `kind` | `library`, `application` | Обязателен в схеме 4 |
-| `language` | `cpp`, `csharp` | Обязателен в схеме 4 |
-| `projectType` | `native` для C++, `wpf` и `vsix` для C#-приложений | Обязателен в схеме 4 |
+| `kind` | `library`, `application` | Обязателен в схемах 4 и 5 |
+| `language` | `cpp`, `csharp` | Обязателен в схемах 4 и 5 |
+| `projectType` | `native` для C++, `wpf` и `vsix` для C#-приложений, `classLibrary` для C#-библиотек в схеме 5 | Обязателен в схемах 4 и 5 |
 | `libraryType` | `compiled`, `headerOnly` | `compiled` для библиотек |
 | `stateScope` | `module`, `process` | `module` |
 | `requirements.cxxStandard` | `20`, `23` | `20` |
@@ -36,7 +40,7 @@
 
 ## Версия схемы и идентификаторы
 
-Реестр — внутренний API сборки UDK. Схема 4 содержит непустой массив `components`. ProjectTools также принимает прежние схемы 2 и 3 для существующих манифестов. Для профиля UDK задайте `generation.profile: udk`.
+Реестр — внутренний API сборки UDK. Схемы 4 и 5 содержат непустой массив `components`. В схеме 4 поля проекта лежат непосредственно в описании компонента. ProjectTools также принимает схемы 2 и 3 для существующих манифестов. Для профиля UDK задайте `generation.profile: udk`.
 
 `msbuildGuid` записывается в форме `{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}`. Имена и GUID уникальны без учёта регистра. В именах C++-компонентов допустимы латинские буквы и цифры, первая буква заглавная. В именах существующих C#-проектов также допускаются точки.
 
