@@ -19,6 +19,8 @@
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.VisualStudio\Commands\CommandRegistration.cs" Link="Commands\CommandRegistration.cs" />
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.VisualStudio\Commands\RegenerateSolutionCommand.cs" Link="Commands\RegenerateSolutionCommand.cs" />
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.VisualStudio\Generation\ProjectGenerator.cs" Link="Generation\ProjectGenerator.cs" />
+    <Compile Include="..\..\..\..\Sources\Windows\UdkCli.VisualStudio\Input\RegenerateShortcut.cs" Link="Input\RegenerateShortcut.cs" />
+    <Compile Include="..\..\..\..\Sources\Windows\UdkCli.VisualStudio\Input\ShortcutBindings.cs" Link="Input\ShortcutBindings.cs" />
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.VisualStudio\UdkPackage.cs" Link="UdkPackage.cs" />
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.VisualStudio\UdkPackage.Registration.cs" Link="UdkPackage.Registration.cs" />
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.VisualStudio\VsShell\SolutionRepository.cs" Link="VsShell\SolutionRepository.cs" />

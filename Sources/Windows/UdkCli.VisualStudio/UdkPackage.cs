@@ -3,11 +3,31 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 
 namespace UniversalDevKit.UdkCli.VisualStudio {
     public sealed partial class UdkPackage : AsyncPackage {
-        protected override Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress) {
-            return Commands.CommandRegistration.RegisterAsync(this, cancellationToken);
+        private Input.RegenerateShortcut shortcut;
+
+        protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress) {
+            var command = await Commands.CommandRegistration.RegisterAsync(this, cancellationToken);
+            if (command == null) {
+                return;
+            }
+            await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+            if (await this.GetServiceAsync(typeof(SVsFilterKeys)) is IVsFilterKeys2 filterKeys &&
+                await this.GetServiceAsync(typeof(SVsUIShell)) is IVsUIShell uiShell) {
+                this.shortcut = new Input.RegenerateShortcut(this, command, filterKeys, uiShell);
+            } else {
+                ActivityLog.LogWarning("UDK CLI", "Shortcut services unavailable.");
+            }
+        }
+
+        protected override void Dispose(bool disposing) {
+            if (disposing) {
+                this.shortcut?.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }
