@@ -23,14 +23,14 @@ function CheckCase([string[]]$Options, [string]$ExpectedError) {
     }
     elseif ($code -ne 0) { throw "Unexpected failure: $output" }
 }
-# Оба CRT и повторное использование неизменного идентификатора должны проходить.
+# Both CRTs and reuse of the same identity should succeed.
 CheckCase @() ''
 CheckCase @() ''
 CheckCase @('-DRUNTIME=Static') ''
 foreach ($field in @('platforms', 'architectures', 'compilerIds', 'compilerVersions', 'toolsets', 'runtimes', 'configurations', 'variants')) {
     CheckCase @("-DREJECT_FIELD=$field") "release $field mismatch"
 }
-# Изменение любого параметра выполняется на уровне того же guard, что использует UDK.
+# Change each parameter at the same guard that UDK uses.
 foreach ($case in @('Compiler', 'CompilerVersion', 'Architecture', 'Runtime')) {
     CheckCase @("-DIDENTITY_CASE=$case") 'compiler/architecture/runtime changed'
 }

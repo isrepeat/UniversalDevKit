@@ -8,7 +8,7 @@ $env:VSLANG = '1033'
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
 $OutputEncoding = [Text.UTF8Encoding]::new($false)
 $ErrorActionPreference = 'Stop'
-# Загружаем Utility из каталога Windows PowerShell, независимо от унаследованного PSModulePath.
+# Load Utility from the Windows PowerShell directory regardless of inherited PSModulePath.
 Import-Module (Join-Path $PSHOME 'Modules/Microsoft.PowerShell.Utility') -ErrorAction Stop
 $output = [IO.Path]::GetFullPath($OutputDirectory)
 [void][IO.Directory]::CreateDirectory($output)
@@ -24,7 +24,7 @@ finally { $hasher.Dispose() }
 $manifest = Join-Path $state ($key + '.json')
 $lock = $null
 try {
-    # Блокировка сериализует владельцев общего OutDir; другие каталоги независимы.
+    # The lock serializes owners of a shared OutDir. Other directories are independent.
     for ($attempt = 0; $attempt -lt 100 -and -not $lock; $attempt++) {
         try { $lock = [IO.File]::Open((Join-Path $state 'sync.lock'), 'OpenOrCreate', 'ReadWrite', 'None') }
         catch [IO.IOException] { Start-Sleep -Milliseconds 100 }
@@ -59,7 +59,7 @@ try {
         }
         $current[$name] = [pscustomobject]@{ name = $name; hash = $hash; source = $source; managed = $managed }
     }
-    # Копируем после проверки всего набора; изменённые вручную файлы не удаляем.
+    # Copy after validating the entire set and preserve manually modified files.
     foreach ($entry in $current.Values) {
         $target = Join-Path $output $entry.name
         if (-not (Test-Path -LiteralPath $target) -or (Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash -ne $entry.hash) {

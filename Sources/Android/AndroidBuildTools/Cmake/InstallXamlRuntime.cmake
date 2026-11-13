@@ -1,6 +1,6 @@
 function(fn_androidappkit_find_latest_xaml_runtime_package packages_root package_name output_variable)
-    # Пакеты NuGet располагаются в отдельных папках <имя>.<версия>.
-    # Берём наиболее новую только при наличии стандартного CMake-контракта.
+    # NuGet packages live in individual <name>.<version> directories.
+    # Choose the newest package that provides the standard CMake contract.
     file(GLOB androidappkit_xaml_runtime_package_candidates LIST_DIRECTORIES true
         "${packages_root}/${package_name}.*")
     list(SORT androidappkit_xaml_runtime_package_candidates COMPARE NATURAL ORDER DESCENDING)
@@ -18,12 +18,12 @@ endfunction()
 function(fn_androidappkit_install_xaml_runtime packages_root package_source)
     set(androidappkit_xaml_runtime_package_name XamlRuntime)
     set(androidappkit_xaml_runtime_packages_root "${packages_root}")
-    # Для локального feed проверяем последнюю версию без запуска NuGet.
+    # Check the latest version in a local feed without launching NuGet.
     set(androidappkit_xaml_runtime_config_directory "")
     if (IS_DIRECTORY "${package_source}")
         file(GLOB androidappkit_xaml_archives "${package_source}/XamlRuntime.*.nupkg")
         list(FILTER androidappkit_xaml_archives INCLUDE REGEX "/XamlRuntime\\.[0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?\\.nupkg$")
-        # Убираем расширение до сортировки: 1.0.25.9 должна идти выше 1.0.25.
+        # Strip the extension before sorting so 1.0.25.9 ranks above 1.0.25.
         list(TRANSFORM androidappkit_xaml_archives REPLACE "\\.nupkg$" "")
         list(SORT androidappkit_xaml_archives COMPARE NATURAL ORDER DESCENDING)
         if (androidappkit_xaml_archives)
@@ -56,7 +56,7 @@ function(fn_androidappkit_install_xaml_runtime packages_root package_source)
     if (NOT androidappkit_xaml_runtime_config_directory)
         message(FATAL_ERROR "NuGet installation did not provide ${androidappkit_xaml_runtime_package_name}Config.cmake.")
     endif()
-    # Не позволяем значению от предыдущей конфигурации выбрать другую копию пакета.
+    # Avoid reusing a cached value from a different package copy.
     unset(${androidappkit_xaml_runtime_package_name}_DIR CACHE)
     find_package(${androidappkit_xaml_runtime_package_name} CONFIG REQUIRED
         PATHS "${androidappkit_xaml_runtime_config_directory}"

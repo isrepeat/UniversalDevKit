@@ -12,7 +12,7 @@ $encoding = [Text.UTF8Encoding]::new($false)
 [Console]::OutputEncoding = $encoding
 $OutputEncoding = $encoding
 
-# Используем установленный vcpkg; его binary cache учитывает ABI, рецепт и патчи.
+# Use installed vcpkg, whose binary cache accounts for ABI, recipes, and patches.
 $candidates = @()
 if ($env:VCPKG_ROOT) { $candidates += Join-Path $env:VCPKG_ROOT 'vcpkg.exe' }
 $command = Get-Command vcpkg.exe -ErrorAction SilentlyContinue
@@ -39,7 +39,7 @@ $binaryCache = Join-Path $repository '!artifacts/cache/vcpkg/binaries'
 [void][IO.Directory]::CreateDirectory($downloadCache)
 [void][IO.Directory]::CreateDirectory($binaryCache)
 
-# Короткий путь нужен Ninja и инструментам ANGLE из-за глубокого дерева исходников.
+# Ninja and ANGLE tools need a short path because the source tree is deep.
 $drive = $null
 foreach ($letter in @('Z', 'Y', 'X', 'W', 'V', 'U', 'T')) {
     $candidate = "$letter`:"
@@ -50,7 +50,7 @@ foreach ($letter in @('Z', 'Y', 'X', 'W', 'V', 'U', 'T')) {
 if (-not $drive) { throw 'No free drive letter is available for the temporary ANGLE build path.' }
 
 try {
-    # Рабочая копия сохраняет формат patch, не меняя исходный рецепт в репозитории.
+    # Use a working copy to preserve patch formatting and the repository recipe.
     $workingOverlay = Join-Path "$drive\" 'CustomRecipes'
     [void][IO.Directory]::CreateDirectory($workingOverlay)
     foreach ($file in Get-ChildItem -LiteralPath $overlay -Recurse -File) {
@@ -76,7 +76,7 @@ try {
         '--host-triplet=x64-windows',
         '--binarycaching'
     )
-    # Пользовательские источники кеша имеют приоритет; по умолчанию включён локальный кеш UDK.
+    # User cache sources take precedence over the default local UDK cache.
     if (-not $env:VCPKG_BINARY_SOURCES) { $arguments += "--binarysource=clear;files,$binaryCache,readwrite" }
     Write-Host "Preparing ANGLE for Windows x64, CRT $Runtime, configurations $($Configurations -join ', ')..."
     & $vcpkg @arguments | Out-Host
@@ -86,7 +86,7 @@ try {
     if ($LASTEXITCODE -ne 0) { Write-Warning "Could not release temporary drive $drive" }
 }
 
-# Наружу возвращаем настоящий путь, который продолжит работать после удаления subst.
+# Return the physical path so it still works after removing the subst drive.
 $installed = Join-Path $work 'installed/x64-windows'
 $required = @('include/GLES3/gl3.h', 'include/EGL/egl.h', 'share/angle/copyright')
 foreach ($configuration in $Configurations) {

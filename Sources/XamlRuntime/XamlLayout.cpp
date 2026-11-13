@@ -141,8 +141,8 @@ namespace universaldevkit::xamlruntime {
             const float contentWidth = element.Width() > 0.0f
                 ? std::max(0.0f, element.Width() - horizontal(decoration))
                 : std::max(0.0f, availableWidth - horizontal(element.Margin()) - horizontal(decoration));
-            // Первый проход вычисляет требуемый размер снизу вверх. Ширина
-            // контейнера участвует в вычислении высоты переносимого текста.
+            // The first pass measures desired sizes from the bottom up. Container width
+            // affects the height of wrapped text.
             if (element.Type() == ElementType::textBlock
                 || (element.Type() == ElementType::button && element.Children().empty())) {
                 Size result{
@@ -341,8 +341,8 @@ namespace universaldevkit::xamlruntime {
         }
 
         void arrange(Element& element, Rect bounds, Rect parentClipBounds) {
-            // Второй проход выдаёт каждому элементу конечный прямоугольник
-            // сверху вниз. StackPanel центрирует детей по поперечной оси.
+            // The second pass assigns final rectangles from the top down.
+            // StackPanel centers children along the cross axis.
             const Rect elementBounds = inset(bounds, element.Margin());
             element.SetBounds(elementBounds);
             element.SetClipBounds(intersect(elementBounds, parentClipBounds));
@@ -1239,12 +1239,12 @@ namespace universaldevkit::xamlruntime {
     }
 
     void layout(Element& root, Size availableSize) {
-        // Разделение measure/arrange позволяет заменить или расширить layout
-        // контейнеры, не меняя контракт визуального дерева.
+        // Separate measurement and arrangement so containers can change layout
+        // without changing the visual tree contract.
         const Size desired = details::measure(root, availableSize.width);
-        // Layout вызывается только при invalidation, а не в каждом render frame.
-        // Поэтому запись полезна для диагностики перестроений и не создаёт
-        // постоянной нагрузки в render loop.
+        // Layout runs only after invalidation.
+        // The log helps diagnose layout changes without adding work to every frame.
+        // This keeps the render loop free of continuous logging overhead.
         UDK_LOG_DEBUG(
             "XamlRuntime.Layout",
             "Layout: root='{}', available={}x{}, desired={}x{}",

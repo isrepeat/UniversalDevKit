@@ -13,7 +13,7 @@ if (-not (Test-Path -LiteralPath $buildScript -PathType Leaf)) {
     throw "ApkUpdater build script was not found: $buildScript"
 }
 Import-Module (Join-Path $BuildToolsRoot 'tools\Modules\Module.AndroidBuildTools\Module.AndroidBuildTools.psm1')
-# Расположение APK определяется конфигурацией самого Updater.
+# Updater's own configuration determines the APK location.
 $updaterProjectConfig = Read-AndroidBuildConfiguration $updaterRoot
 $variant = $Configuration.ToLowerInvariant()
 $apkPath = Join-Path $updaterRoot "Build\$($updaterProjectConfig.AndroidModule)\outputs\apk\$variant\$($updaterProjectConfig.AndroidModule)-$variant.apk"

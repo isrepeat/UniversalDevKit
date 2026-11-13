@@ -3,7 +3,7 @@
 #include <string>
 
 namespace {{application}}::application::core {
-    // Значения являются частью JNI-контракта и не зависят от порядка элементов.
+    // Values are part of the JNI contract and independent of declaration order.
     enum class HostCommand : std::int32_t {
         requestApplicationUpdate = 1,
         sendLogs = 2,

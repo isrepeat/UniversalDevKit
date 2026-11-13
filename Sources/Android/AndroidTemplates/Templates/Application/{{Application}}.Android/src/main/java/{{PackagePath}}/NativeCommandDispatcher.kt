@@ -1,6 +1,6 @@
 package {{PackageId}}
 
-// Числа совпадают с HostCommand в C++; ordinal не является частью контракта.
+// Values match the C++ HostCommand enum and do not depend on ordinals.
 enum class HostCommand(val id: Int) {
     REQUEST_APPLICATION_UPDATE(1),
     SEND_LOGS(2);
@@ -24,7 +24,7 @@ class NativeCommandDispatcher(handler: (HostCommand, String, String) -> Unit) {
         ui.post { handler?.invoke(command, text, additionalText) }
     }
 
-    // Вызывается на UI-потоке до освобождения native-сессии.
+    // Call on the UI thread before releasing the native session.
     fun close() {
         handler = null
         ui.removeCallbacksAndMessages(null)

@@ -438,8 +438,8 @@ namespace universaldevkit::xamlruntime {
         std::vector<RepeatedItem> repeatedItems;
     };
 
-    // Проходит от root по индексам дочерних элементов из path: {1, 1} означает
-    // root.Children()[1]->Children()[1]. Пустой путь возвращает сам root.
+    // Follow child indices from root. The path {1, 1} selects
+    // root.Children()[1]->Children()[1]. An empty path returns root.
     UNIVERSALDEVKIT_XAMLRUNTIME_API Element& ElementAt(Element& root, std::initializer_list<size_t> path);
 
     UNIVERSALDEVKIT_XAMLRUNTIME_API void SetTextGlyphMetrics(std::vector<TextGlyphMetric> value);

@@ -1,7 +1,7 @@
 package com.isrepeat.androidcoresdk.nativeui
 
 //
-// Контракт Kotlin-адаптера над JNI-рендерером приложения.
+// Kotlin adapter contract for the application's JNI renderer.
 //
 interface NativeRenderHost {
     fun log(message: String)

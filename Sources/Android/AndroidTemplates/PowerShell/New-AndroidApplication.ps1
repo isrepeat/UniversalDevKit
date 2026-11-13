@@ -75,7 +75,7 @@ if (-not [string]::IsNullOrWhiteSpace($ApkUpdaterProjectRoot)) {
 }
 
 $templateRoot = Join-Path (Split-Path -Parent $PSScriptRoot) 'template_app'
-# Фиксируем одну версию инструментов для нового приложения и существующего Updater.
+# Pin the same tool version for the new app and existing Updater.
 $nuget = (Get-Command nuget.exe -ErrorAction Stop).Source
 $availablePackages = & $nuget list AndroidBuildTools -Source $BuildToolsSource -AllVersions -NonInteractive -ForceEnglishOutput 2>&1
 if ($LASTEXITCODE -ne 0) { throw 'AndroidBuildTools version lookup failed.' }
@@ -128,7 +128,7 @@ foreach ($file in $files) {
     [IO.File]::WriteAllText($target, $text.TrimEnd(), $encoding)
 }
 
-# Общие скрипты уже включены в template_app при упаковке NuGet из одного исходника.
+# NuGet packaging already includes the shared scripts in template_app from one source.
 
 [IO.Directory]::CreateDirectory($secretsDirectory) | Out-Null
 [IO.Directory]::CreateDirectory($sharedSecretsDirectory) | Out-Null

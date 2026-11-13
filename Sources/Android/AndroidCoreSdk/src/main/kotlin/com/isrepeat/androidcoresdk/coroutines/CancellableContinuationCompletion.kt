@@ -1,7 +1,7 @@
 package com.isrepeat.androidcoresdk.coroutines
 
 //
-// Изолирует Kotlin extension-вызовы завершения coroutine.
+// Encapsulate Kotlin extension calls that complete the coroutine.
 //
 object CancellableContinuationCompletion {
     fun <Value> succeed(

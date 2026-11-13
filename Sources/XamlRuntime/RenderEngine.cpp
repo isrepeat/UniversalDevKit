@@ -292,9 +292,9 @@ namespace universaldevkit::xamlruntime {
         void RenderInspectionWireframes(
             const std::vector<InspectionWireframe>& wireframes,
             IRenderBackend& backend) {
-            // Инспекционные рамки рисуются после основного дерева без clip-областей.
-            // Иначе собственный clip элемента и отрисовка соседей могут обрезать
-            // стороны рамки или перекрыть её содержимым.
+            // Draw inspection outlines after the main tree with clipping disabled.
+            // Element clips and neighboring draws could otherwise cut off the outline
+            // or cover it with their content.
             for (const InspectionWireframe& wireframe : wireframes) {
                 const Element& element = wireframe.element;
                 if (element.HasInspectionWireframe()) {
@@ -388,7 +388,7 @@ namespace universaldevkit::xamlruntime {
                 ? element.State<VisualTransform>() : defaults;
             const float offsetX = inheritedOffsetX + element.RenderOffsetX() + transform.offsetX;
             const float offsetY = inheritedOffsetY + element.RenderOffsetY() + transform.offsetY;
-            // Ограничиваем каждый множитель до композиции: opacity > 1 не усиливает альфу цвета или родителя.
+            // Clamp each opacity factor before compositing to avoid amplifying other alpha values.
             const float opacity = inheritedOpacity * std::clamp(element.Opacity(), 0.0f, 1.0f)
                 * std::clamp(transform.opacity, 0.0f, 1.0f);
             const Rect bounds = Translate(element.Bounds(), offsetX, offsetY);

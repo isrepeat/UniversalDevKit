@@ -16,8 +16,8 @@
 namespace universaldevkit::windows::xamlcompiler {
     namespace details {
         struct Element {
-            // Промежуточное дерево: оно не зависит от runtime и существует только
-            // во время компиляции XAML в C++.
+            // This intermediate tree is independent of the runtime and exists only
+            // while compiling XAML to C++.
             std::string name;
             std::vector<std::pair<std::string, std::string>> attributes;
             std::vector<Element> children;
@@ -141,8 +141,8 @@ namespace universaldevkit::windows::xamlcompiler {
                 const std::filesystem::path& path,
                 const std::string& source,
                 size_t offset) {
-                // Верхушка stack — родитель текущего закрытого/self-closing элемента.
-                // Пустой stack означает, что element является корнем документа.
+                // The stack top is the parent of the current closing or self-closing element.
+                // An empty stack means the element is the document root.
                 if (!stack.empty()) {
                     stack.back().children.push_back(std::move(element));
                     return;
@@ -155,8 +155,8 @@ namespace universaldevkit::windows::xamlcompiler {
             }
 
             Element Parse(const std::filesystem::path& path, const std::string& source) {
-                // Это намеренно небольшой XAML-диалект, а не универсальный XML-парсер:
-                // он принимает только теги/атрибуты, которые способен выразить runtime.
+                // This small XAML dialect accepts only the tags and attributes
+                // that the runtime can represent.
                 const std::regex tagPattern(R"(<\s*([^>]+)>)");
                 const std::regex attributePattern(
                     R"attr(([A-Za-z][A-Za-z0-9:]*)\s*=\s*"([^"]*)")attr");
@@ -180,8 +180,8 @@ namespace universaldevkit::windows::xamlcompiler {
                     const bool selfClosing = !closing && !content.empty()
                         && content.back() == '/';
                     if (closing) {
-                        // Закрывающий тег завершает элемент и присоединяет его к
-                        // родителю. Так стек сохраняет вложенность без рекурсии.
+                        // A closing tag completes the element and attaches it to its parent.
+                        // The stack preserves nesting without recursion.
                         const std::string name = std::regex_replace(
                             content.substr(1), std::regex(R"(\s+)"), "");
                         if (stack.empty() || stack.back().name != name) {
@@ -470,8 +470,8 @@ namespace universaldevkit::windows::xamlcompiler {
                 std::vector<Binding>& bindings,
                 const std::string& templateItem,
                 const std::string& bindingContext) {
-                // Атрибуты переводятся в явные вызовы setter'ов. Поэтому итоговый код
-                // не разбирает строки в рантайме и остаётся обычным C++.
+                // Emit explicit setter calls for attributes so the generated C++
+                // does not parse attribute strings at runtime.
                 if (name == "itemsSource" && element.name == "ListView") {
                     return;
                 }
@@ -677,8 +677,8 @@ namespace universaldevkit::windows::xamlcompiler {
                     return variable;
                 }
 
-                // Сначала объявляем дочерние unique_ptr, затем передаём их родителю.
-                // Это повторяет ownership-структуру исходной XAML-разметки.
+                // Declare the child unique_ptr instances before passing them to the parent.
+                // This mirrors ownership in the source XAML.
                 const std::string variable = this->ElementVariableName(element, elementCounts);
                 std::vector<Binding> bindings;
                 output << "            auto " << variable << " = std::make_unique<Element>(ElementType::"
@@ -1220,8 +1220,8 @@ namespace universaldevkit::windows::xamlcompiler {
                 std::cout << "XamlCompiler: skipping " << input.string() << '\n';
                 return;
             }
-            // Каждая XAML-страница получает собственный тип. Контроллеры работают
-            // с MainPage::Create(), а не с неявной свободной функцией.
+            // Each XAML page gets its own type. Controllers call MainPage::Create()
+            // instead of relying on an implicit free function.
             const std::string source = this->ReadFile(input);
             this->xamlSource = &source;
             this->xamlSourcePath = std::filesystem::absolute(input).generic_string();
@@ -1292,7 +1292,7 @@ namespace universaldevkit::windows::xamlcompiler {
                 << "}";
 
             std::ostringstream header;
-            header << "// Сгенерировано XamlCompiler. Не редактировать вручную.\n"
+            header << "// Generated by XamlCompiler. Do not edit directly.\n"
                 << "#pragma once\n"
                 << "#include <UniversalDevKit/XamlRuntime/XamlLayout.h>\n"
                 << "#include <UniversalDevKit/XamlRuntime/Binding.h>\n\n";
@@ -1311,7 +1311,7 @@ namespace universaldevkit::windows::xamlcompiler {
             header << "\n#include <type_traits>\n\n" << body.str();
 
             std::ostringstream output;
-            output << "// Сгенерировано XamlCompiler. Не редактировать вручную.\n"
+            output << "// Generated by XamlCompiler. Do not edit directly.\n"
                 << "#include \"" << headerPath.filename().string() << "\"";
             std::filesystem::create_directories(outputPath.parent_path());
             std::ofstream headerFile(headerPath, std::ios::binary | std::ios::trunc);

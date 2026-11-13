@@ -1,7 +1,7 @@
 package com.isrepeat.androidappkit
 
 //
-// Прозрачность Activity дополнительно задаётся темой в манифесте приложения.
+// The manifest theme also controls Activity transparency.
 //
 abstract class NativeOpenGlActivity : androidx.activity.ComponentActivity() {
     protected open val translucentSurface: Boolean = false
@@ -54,7 +54,7 @@ abstract class NativeOpenGlActivity : androidx.activity.ComponentActivity() {
 
     final override fun onPause() {
         onPagePaused()
-        // Освобождаем GPU-ресурсы до остановки GL-потока и потери контекста.
+        // Release GPU resources before stopping the GL thread and losing its context.
         runOnRenderThreadAndWait { nativeReleaseSurface(handle) }
         surface.onPause()
         super.onPause()
@@ -66,7 +66,7 @@ abstract class NativeOpenGlActivity : androidx.activity.ComponentActivity() {
             onPageDestroyed()
         } finally {
             try {
-                // GLSurfaceView обрабатывает очередь событий и в состоянии pause.
+                // GLSurfaceView processes queued events even while paused.
                 runOnRenderThreadAndWait {
                     nativeDestroy(handle)
                     handle = 0L
@@ -94,14 +94,14 @@ abstract class NativeOpenGlActivity : androidx.activity.ComponentActivity() {
     protected open fun onPageIntent(intent: android.content.Intent) {}
     protected open fun onPageDestroyed() {}
 
-    // true означает, что приложение обработало событие и native-вызов не нужен.
+    // True means the application handled the event and no native call is needed.
     protected open fun onBackRequested(): Boolean = false
     protected open fun onPageTouchEvent(event: android.view.MotionEvent): Boolean = false
 
     //
     // Internal
     //
-    // Вызывается на UI-потоке; обработчик получает сессию только на GL-потоке.
+    // Called on the UI thread. The handler receives the session only on the GL thread.
     protected fun withNativeSession(action: (Long) -> Unit) {
         if (closed) {
             return

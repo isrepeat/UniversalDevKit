@@ -1,6 +1,6 @@
 package com.isrepeat.androidappkit
 
-// Общая точка входа: приложение передаёт только свои идентификаторы и native-мост.
+// Shared entry point. The application supplies its IDs and native bridge.
 data class AppIdentity(
     val name: String,
     val storageDirectory: String,

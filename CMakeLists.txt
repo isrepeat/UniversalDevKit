@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.22)
 
-# Ограничение каталога сборки действует только при самостоятельной сборке репозитория.
+# Restrict the build directory only for standalone builds.
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     file(TO_CMAKE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/!artifacts/" artifacts_prefix)
     file(TO_CMAKE_PATH "${CMAKE_BINARY_DIR}/" binary_prefix)
     if(CMAKE_HOST_WIN32)
-        # Проверяем физический каталог, сохраняя короткие пути самой сборки.
+        # Check the physical directory while keeping build paths short.
         execute_process(COMMAND subst OUTPUT_VARIABLE udk_subst_mappings RESULT_VARIABLE udk_subst_result)
         if(NOT udk_subst_result EQUAL 0)
             message(FATAL_ERROR "Cannot inspect substituted build drives")
@@ -38,7 +38,7 @@ endif()
 include("Projects/Cmake/Version.cmake")
 project(UniversalDevKit VERSION ${udkReleaseVersion} LANGUAGES CXX)
 
-# Настройка принадлежит UDK и не меняет глобальные параметры consumer.
+# Keep this UDK setting local to avoid affecting consumers.
 set(UniversalDevKitRuntime "Dynamic" CACHE STRING "MSVC runtime: Dynamic (MD) or Static (MT)")
 set_property(CACHE UniversalDevKitRuntime PROPERTY STRINGS Dynamic Static)
 if(NOT UniversalDevKitRuntime MATCHES "^(Dynamic|Static)$")
@@ -52,7 +52,7 @@ if(MSVC AND DEFINED CMAKE_MSVC_RUNTIME_LIBRARY AND NOT CMAKE_MSVC_RUNTIME_LIBRAR
     message(FATAL_ERROR "CMAKE_MSVC_RUNTIME_LIBRARY conflicts with UniversalDevKitRuntime; select the same runtime explicitly")
 endif()
 
-# Один build-каталог закреплён за компилятором, архитектурой и CRT.
+# Each build directory belongs to one compiler, architecture, and CRT.
 set(udkBuildIdentity "${CMAKE_SYSTEM_NAME}|${CMAKE_SYSTEM_PROCESSOR}|${CMAKE_SIZEOF_VOID_P}|${CMAKE_CXX_COMPILER}|${CMAKE_CXX_COMPILER_VERSION}|${CMAKE_VS_PLATFORM_TOOLSET}|${UniversalDevKitRuntime}")
 set(udkBuildIdentityPath "${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKitBuildIdentity.txt")
 include("Projects/Cmake/BuildIdentity.cmake")
@@ -64,11 +64,11 @@ option(UniversalDevKit_BUILD_STATIC "Build static variants" ON)
 option(UniversalDevKit_BUILD_DYNAMIC "Build dynamic variants" ON)
 option(UniversalDevKit_INSTALL "Generate installation rules" ON)
 
-# INTERFACE передаёт заголовки и требования C++ потребителю, не создавая библиотеку.
+# The INTERFACE target exposes headers and C++ requirements to consumers.
 add_library(universaldevkit_headers INTERFACE)
 add_library(UniversalDevKit::Headers ALIAS universaldevkit_headers)
 
-# До установки заголовки берутся из репозитория, после — из каталога пакета.
+# Use repository headers before installation and package headers afterward.
 target_include_directories(universaldevkit_headers INTERFACE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Includes/Core>"
     "$<INSTALL_INTERFACE:include>"
@@ -78,10 +78,10 @@ target_compile_features(universaldevkit_headers INTERFACE cxx_std_20)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
-# Каждый компонент самостоятельно создаёт Static/Dynamic targets и их зависимости.
+# Each component defines its own Static and Dynamic targets and dependencies.
 include("Projects/Cmake/ComponentDependencies.cmake")
 
-# Установка объединяет библиотеки и требования к ним в один набор экспорта.
+# Export all installed libraries and their requirements together.
 if(UniversalDevKit_INSTALL)
 set(udkPackageHasBinaries FALSE)
 foreach(componentTarget IN LISTS exportedComponentTargets)
@@ -94,7 +94,7 @@ set(udkPackageArchitectureOptions)
 if(udkPackageHasBinaries)
     include("Projects/Cmake/PackageMetadata.cmake")
 else()
-    # Пакет только заголовков не имеет CRT/toolset или архитектуры бинарников.
+    # Header-only packages have no binary architecture, CRT, or toolset.
     list(APPEND udkPackageArchitectureOptions ARCH_INDEPENDENT)
 endif()
 set_target_properties(universaldevkit_headers PROPERTIES EXPORT_NAME Headers)
@@ -112,12 +112,12 @@ foreach(componentName IN LISTS availablePackageComponents)
         install(DIRECTORY "${componentIncludeRoot_${componentName}}/" DESTINATION "include")
     endif()
 endforeach()
-# Namespace + EXPORT_NAME дают, например, UniversalDevKit::XamlRuntime.Static.
+# The namespace and EXPORT_NAME produce names such as UniversalDevKit::XamlRuntime.Static.
 install(EXPORT UniversalDevKitTargets
     NAMESPACE UniversalDevKit::
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/UniversalDevKit"
 )
-# Config загружает targets для find_package; ConfigVersion проверяет версию пакета.
+# Config loads the targets for find_package, and ConfigVersion checks the package version.
 configure_package_config_file(
     "Projects/Cmake/UniversalDevKitConfig.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKitConfig.cmake"

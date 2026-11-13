@@ -80,7 +80,7 @@ class MainPage : androidappkit.NativeOpenGlActivity() {
             },
             androidappkit.diagnostics.sharedLogger(),
             { onConfirmed, onCancelled ->
-                // Для старого ApkUpdater подтверждение остаётся в приложении.
+                // For older ApkUpdater versions, confirmation stays in the app.
                 reinstallConfirmation = android.app.AlertDialog.Builder(this)
                     .setTitle("Reinstall application?")
                     .setMessage("This version is already installed.")
@@ -93,7 +93,7 @@ class MainPage : androidappkit.NativeOpenGlActivity() {
     }
 
     override fun onPageIntent(intent: android.content.Intent) {
-        // Диагностика updater попадает в тот же журнал, который отправляет Send logs.
+        // Updater diagnostics go to the same log that Send logs uploads.
         val result = androidappkit.update.readApkUpdaterResult(intent)
         result.trace?.takeIf { trace -> trace.isNotBlank() }?.let(NativeDiagnostics::log)
         result.error?.let(this::setStatus)

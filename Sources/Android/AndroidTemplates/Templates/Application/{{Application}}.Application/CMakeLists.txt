@@ -1,5 +1,5 @@
 set({{application}}_project_root "${CMAKE_CURRENT_SOURCE_DIR}/..")
-# Android-сборка передаёт фактическую версию; preview использует базовую версию проекта.
+# Android builds pass the actual version. Preview uses the project's base version.
 if (NOT DEFINED {{APPLICATION}}_PACKAGE_VERSION)
     set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${{{application}}_project_root}/version.properties")
     file(STRINGS "${{{application}}_project_root}/version.properties" {{application}}_version_line REGEX "^VERSION_NAME_BASE=")
@@ -21,7 +21,7 @@ file(GLOB_RECURSE {{application}}_generated_xaml CONFIGURE_DEPENDS "${{{applicat
 if (NOT {{application}}_generated_xaml)
     message(FATAL_ERROR "XamlCompiler did not generate application sources.")
 endif()
-# Генерируемые исходники и заголовки показываем отдельно от рукописного кода.
+# Show generated sources and headers separately from handwritten code.
 file(GLOB_RECURSE {{application}}_generated_headers CONFIGURE_DEPENDS "${{{application}}_generated_root}/*.xaml.h")
 set({{application}}_generated_files
     ${{{application}}_generated_xaml}

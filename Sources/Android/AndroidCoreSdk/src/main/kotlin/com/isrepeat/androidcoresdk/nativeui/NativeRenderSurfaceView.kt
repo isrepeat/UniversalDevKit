@@ -1,7 +1,7 @@
 package com.isrepeat.androidcoresdk.nativeui
 
 //
-// Общий адаптер SurfaceView, оставляющий JNI-детали в реализации NativeRenderHost.
+// Shared SurfaceView adapter that leaves JNI details to NativeRenderHost.
 //
 open class NativeRenderSurfaceView(
     context: android.content.Context,

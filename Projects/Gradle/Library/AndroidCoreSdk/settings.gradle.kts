@@ -1,30 +1,30 @@
 //
-// Описывает состав Gradle-проекта и репозитории для его зависимостей и плагинов.
+// Defines the Gradle project and its dependency and plugin repositories.
 //
 pluginManagement {
     repositories {
-        // Репозиторий Android Gradle Plugin.
+        // Android Gradle Plugin repository.
         google()
-        // Репозиторий Kotlin и остальных общих зависимостей.
+        // Repository for Kotlin and other shared dependencies.
         mavenCentral()
-        // Репозиторий плагинов Gradle.
+        // Gradle plugin repository.
         gradlePluginPortal()
     }
 }
 
 dependencyResolutionManagement {
-    // Не разрешает модулям менять единый список репозиториев зависимостей.
+    // Require modules to use the shared dependency repositories.
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        // Репозиторий Android-зависимостей.
+        // Android dependency repository.
         google()
-        // Репозиторий общих JVM-зависимостей.
+        // Shared JVM dependency repository.
         mavenCentral()
     }
 }
 
-// Имя корневого Gradle-проекта.
+// Root Gradle project name.
 rootProject.name = "AndroidCoreSdk"
 
-// Единственный модуль, формирующий публикуемую Android-библиотеку.
+// The only module that produces the published Android library.
 include(":androidcoresdk")

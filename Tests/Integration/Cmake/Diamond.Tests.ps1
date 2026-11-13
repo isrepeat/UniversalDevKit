@@ -67,7 +67,7 @@ try {
         $case = Join-Path $run $caseName
         $library = Join-Path $case 'udk'
         [void][IO.Directory]::CreateDirectory($library)
-        # Git выбирает исходники рабочей версии; библиотеки Diamond накладываются только в копию.
+        # Git selects working-tree sources. Overlay Diamond libraries only in the copy.
         $files = @(& git -C $repository -c core.quotepath=false ls-files --cached --others --exclude-standard)
         if ($LASTEXITCODE -ne 0) { throw 'Cannot enumerate repository files.' }
         foreach ($file in ($files | Sort-Object -Unique)) {
@@ -126,7 +126,7 @@ try {
                     $expected = if ($mode -eq 'Static') { @() } elseif ($caseName -in @('PrivateStatic', 'PublicStaticDynamic')) { if ($app -eq 'App1') { @('A','C') } else { @('C') } } elseif ($app -eq 'App1') { @('A','B','C','D') } else { @('C','D') }
                     CheckRuntime (Join-Path $build "bin/$app/$configuration") $app $expected (Join-Path $case "run-$deliveryName-$configuration-$app")
                 }
-                # App2 собирается отдельно, без зависимости от сборки App1.
+                # Build App2 independently of App1.
                 InvokeChecked $CMake @('--build', $build, '--config', $configuration, '--target', 'App2') (Join-Path $case "$deliveryName-App2-$configuration.log")
             }
             $conflictArgs = @($args)
@@ -136,7 +136,7 @@ try {
             $results += [pscustomobject]@{ Delivery=$deliveryName; Variant=$caseName; Status='Passed' }
         }
         if ('NuGet' -in $Delivery) {
-            # Пакетные определения используют штатную интеграцию; исходники компонентов остаются в fixture.
+            # Package definitions use the standard integration while component sources stay in the fixture.
             $basePackage = Join-Path $repository 'Tests/Fixtures/Packages/NativeComponent'
             foreach ($component in @('A','B','C','D')) {
                 $packageRoot = Join-Path $library "Packages/CrossPlatform/$component"
@@ -170,7 +170,7 @@ try {
                         & $NuGet install "UniversalDevKit.$component" -Version $version -Source $feed -OutputDirectory (Join-Path $appRoot 'packages') -NoHttpCache -DirectDownload -NonInteractive -ForceEnglishOutput | Out-Host
                         if ($LASTEXITCODE -ne 0) { throw 'Diamond NuGet restore failed.' }
                     }
-                    # packages.config требует явных импортов props/targets восстановленных зависимостей.
+                    # packages.config needs explicit imports of restored package props and targets.
                     $dependencies = if ($component -eq 'A') { @('B','C','D') } else { @('D') }
                     $props = @($dependencies | ForEach-Object { '  <Import Project="packages\UniversalDevKit.' + $_ + '.' + $version + '\build\native\UniversalDevKit.' + $_ + '.props" />' }) -join "`r`n"
                     $targets = @($dependencies | ForEach-Object { '  <Import Project="packages\UniversalDevKit.' + $_ + '.' + $version + '\build\native\UniversalDevKit.' + $_ + '.targets" />' }) -join "`r`n"

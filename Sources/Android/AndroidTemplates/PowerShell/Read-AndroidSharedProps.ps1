@@ -1,7 +1,7 @@
 function Read-AndroidSharedProps {
     param([Parameter(Mandatory)] [string]$ProjectRoot)
 
-    # Ближайший файл целиком заменяет родительский; пути привязаны к его каталогу.
+    # The nearest file replaces its parent entirely. Resolve paths from its directory.
     $directory = [IO.DirectoryInfo]::new([IO.Path]::GetFullPath($ProjectRoot))
     while ($null -ne $directory) {
         $path = Join-Path $directory.FullName 'Android.SharedProps.json'

@@ -42,7 +42,7 @@ function(fn_androidappkit_write_if_changed path contents)
     if (EXISTS "${path}")
         file(READ "${path}" androidappkit_existing_contents)
     endif()
-    # Сохраняем время неизменённого файла, чтобы не запускать лишнюю компиляцию.
+    # Keep the timestamp of an unchanged file to avoid recompilation.
     if (NOT EXISTS "${path}" OR NOT androidappkit_existing_contents STREQUAL contents)
         file(WRITE "${path}" "${contents}")
     endif()

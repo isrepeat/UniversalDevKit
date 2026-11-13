@@ -347,7 +347,7 @@ namespace universaldevkit::xamlruntime {
         const auto now = std::chrono::steady_clock::now();
         this->roots.erase(std::remove_if(this->roots.begin(), this->roots.end(),
             [](const Root& root) { return root.lifetime.expired(); }), this->roots.end());
-        // Обновляем только внешние корни: Animate() может отдельно отслеживать и дочерний элемент.
+        // Update only outer roots because Animate() can also track individual descendants.
         for (const auto& root : this->roots) {
             if (root.lifetime.expired()) {
                 continue;
@@ -395,7 +395,7 @@ namespace universaldevkit::xamlruntime {
         while (root->parent != nullptr) {
             root = root->parent;
         }
-        // Время простоя перед новым переходом не должно учитываться в его длительности.
+        // Exclude idle time before a new transition from its duration.
         if (!IsAnimating(*root)) {
             root->animationState.updatedAt = std::chrono::steady_clock::now();
         }
@@ -622,7 +622,7 @@ namespace universaldevkit::xamlruntime {
         if (animateInitial && state.targetVisible) {
             state.targetVisible = false;
             state.phase = PresencePhase::hidden;
-            // Сбрасываем и потомков, чтобы их первое появление начиналось из скрытого состояния.
+            // Reset descendants as well so their first appearance starts hidden.
             for (const auto& child : element.children) {
                 AttachTree(*child, state.registry, false, false, parameters);
             }
@@ -660,7 +660,7 @@ namespace universaldevkit::xamlruntime {
         for (const auto& child : element.children) {
             SynchronizeTree(*child, parentVisible, state.parameters);
         }
-        // Visibility ребёнка не зависит от Visibility родителя.
+        // A child's visibility is independent of its parent's visibility.
         if (!HasPresenceTracks(element)) {
             state.phase = state.targetVisible ? PresencePhase::visible : PresencePhase::hidden;
         }

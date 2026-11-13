@@ -13,7 +13,7 @@ foreach ($file in ($files | Sort-Object -Unique)) {
     if ($file -notmatch '\.(ps1|psm1|cmd|bat)$') { continue }
     $path = Join-Path $RepositoryPath $file
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { continue }
-    # Строгое декодирование выявляет повреждённый UTF-8; BOM разрешён.
+    # Strict decoding detects invalid UTF-8 and allows a BOM.
     $text = [Text.UTF8Encoding]::new($false, $true).GetString([IO.File]::ReadAllBytes($path)).TrimStart([char]0xFEFF)
     if ($file -match '\.ps(m)?1$') {
         $tokens = $null

@@ -17,7 +17,7 @@ if ((& $loader -LocalPath $tool) -ne $tool) { throw 'Explicit NuGet path was not
 & $tool help | Out-Null
 if ($LASTEXITCODE -ne 0) { throw 'NuGet could not run.' }
 
-# Проверяем повреждённый кеш в изолированном каталоге, не меняя рабочий инструмент.
+# Check a damaged cache in isolation without changing the active tool.
 . (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
 $run = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/TestRepositoryTools')
 $scripts = Join-Path $run 'Scripts/PowerShell'

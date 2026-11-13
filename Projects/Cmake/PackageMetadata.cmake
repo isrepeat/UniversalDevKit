@@ -1,4 +1,4 @@
-# Единый контракт выпуска не зависит от способа доставки бинарников.
+# The same release contract applies to every binary delivery method.
 function(udkJsonString output value)
     string(REPLACE "\\" "\\\\" escaped "${value}")
     string(REPLACE "\"" "\\\"" escaped "${escaped}")
@@ -124,7 +124,7 @@ foreach(componentTarget IN LISTS exportedComponentTargets)
         string(JSON udkRuntimeFiles SET "${udkRuntimeFiles}" ${runtimeIndex} "${quoted}")
         math(EXPR runtimeIndex "${runtimeIndex} + 1")
         if(UNIX)
-            # ELF loader использует SONAME; доставляются и файл, и его версионная ссылка.
+            # Install both the SONAME symlink used by the ELF loader and the versioned file.
             udkJsonString(quoted "${runtimeDirectory}/$<TARGET_SONAME_FILE_NAME:${componentTarget}>")
             string(JSON udkRuntimeFiles SET "${udkRuntimeFiles}" ${runtimeIndex} "${quoted}")
             math(EXPR runtimeIndex "${runtimeIndex} + 1")
@@ -150,7 +150,7 @@ if(MSVC)
     string(JSON udkPackageRecord SET "${udkPackageRecord}" abi iteratorDebugLevel "\"$<IF:$<CONFIG:Debug>,2,0>\"")
 endif()
 string(JSON udkPackageRecord SET "${udkPackageRecord}" abi standardLibrary "${quoted}")
-# Числовые ABI-значения с generator expressions добавляем после обработки JSON.
+# Add numeric ABI values using generator expressions after processing JSON.
 if(MSVC)
     string(REPLACE "\"$<IF:$<CONFIG:Debug>,2,0>\"" "$<IF:$<CONFIG:Debug>,2,0>" udkPackageRecord "${udkPackageRecord}")
 endif()
@@ -166,7 +166,7 @@ if(MSVC)
     configure_file("${CMAKE_CURRENT_LIST_DIR}/PackageAbi.h.in" "${CMAKE_CURRENT_BINARY_DIR}/PackageAbi.h.in" @ONLY)
     file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKit.Abi-$<CONFIG>.h" INPUT "${CMAKE_CURRENT_BINARY_DIR}/PackageAbi.h.in")
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKit.Abi-$<CONFIG>.h" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/UniversalDevKit")
-    # Проверка действует также при собственной сборке: метаданные не обещают иной STL ABI.
+    # Apply the check to standalone builds too so metadata describes the actual STL ABI.
     foreach(componentTarget IN LISTS exportedComponentTargets)
         get_target_property(componentType ${componentTarget} TYPE)
         if(NOT componentType STREQUAL "INTERFACE_LIBRARY")

@@ -4,7 +4,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
 //
-// Связывает coroutine с жизненным циклом владельца, не раскрывая AndroidX в вызывающем коде.
+// Bind the coroutine to its owner lifecycle without exposing AndroidX to callers.
 //
 object LifecycleCoroutineRunner {
     fun launch(

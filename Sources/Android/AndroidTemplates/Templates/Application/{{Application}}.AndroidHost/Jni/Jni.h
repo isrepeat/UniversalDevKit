@@ -11,7 +11,7 @@
 #include <array>
 
 namespace {{application}}::android_host::jni {
-    // Маркеры явно различают Kotlin String (UTF-16) и ByteArray (UTF-8).
+    // Markers explicitly distinguish Kotlin String (UTF-16) and ByteArray (UTF-8).
     struct String final {};
     struct Utf8Bytes final {};
 
@@ -65,7 +65,7 @@ namespace {{application}}::android_host::jni {
         JNIEnv* environment;
     };
 
-    // Единственный владелец global reference; методы удерживают его до завершения вызовов.
+    // The sole owner holds the global reference until method calls finish.
     class ObjectState final {
     public:
         ObjectState(JNIEnv* environment, jobject object);

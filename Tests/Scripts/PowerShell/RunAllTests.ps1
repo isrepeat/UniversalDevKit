@@ -66,7 +66,7 @@ $report = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/te
 $results = @($cases | ForEach-Object {
     [pscustomobject]@{ Test = $_.Name; Status = if ($_ -in $selected) { 'NotRun' } else { 'NotSelected' }; ExitCode = ''; Log = ''; Error = '' }
 })
-# Дочерние процессы изолируют exit и изменения окружения отдельных сценариев.
+# Child processes isolate exit and environment changes made by each script.
 foreach ($case in $selected) {
     $record = $results | Where-Object Test -eq $case.Name
     $record.Status = 'Running'
@@ -79,7 +79,7 @@ foreach ($case in $selected) {
         if (@($case.Args | Where-Object { $null -eq $_ -or "$_" -eq '' }).Count) { throw 'Required tool path or parameter is missing.' }
         $previousPreference = $ErrorActionPreference
         try {
-            # stderr может содержать предупреждения успешной сборки; результат задаёт exit code.
+            # A successful build can warn on stderr. Check the exit code.
             $ErrorActionPreference = 'Continue'
             & $engine -NoProfile -ExecutionPolicy Bypass -File (Join-Path $repository $case.Path) @($case.Args) 2>&1 |
                 Tee-Object -FilePath $record.Log | Out-Host

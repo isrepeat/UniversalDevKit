@@ -4,7 +4,7 @@ function(fn_androidappkit_install_android_app_previewer_plugin_sdk packages_root
     endif()
     set(package_name UniversalDevKit.AndroidAppPreviewer.PluginSDK)
     set(package_directory "${packages_root}/${package_name}.${ANDROID_UDK_VERSION}")
-    # Восстанавливаем пакет вместе с NuGet-зависимостями; распаковка одного архива их пропускает.
+    # Restore the package and its NuGet dependencies together.
     find_program(nuget_executable NAMES nuget.exe REQUIRED)
     execute_process(
         COMMAND "${nuget_executable}" install "${package_name}"

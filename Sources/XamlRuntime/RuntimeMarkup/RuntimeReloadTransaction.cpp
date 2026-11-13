@@ -39,13 +39,13 @@ namespace universaldevkit::xamlruntime::runtimemarkup {
             throw RuntimeDiagnostic(ast.location, "Page markup requires a Page root");
         }
         auto result = RuntimeTreeBuilder{}.BuildPage(ast, context, availableSize);
-        // DataContext задаёт страница-хозяин, а не XAML: так разметка не может
-        // подменить ViewModel при горячей замене.
+        // The host page supplies DataContext, preventing hot-reloaded XAML
+        // from replacing the ViewModel.
         result.root->SetDataContext(previous.DataContext());
         std::map<std::string, const Element*> elements;
         details::Collect(previous, elements);
-        // Переносим только состояние одноимённых элементов того же типа. Иначе
-        // состояние старого контрола могло бы быть неприменимо к новому.
+        // Transfer state only between elements with matching names and types.
+        // State from the old control may be incompatible with the new one.
         details::Restore(*result.root, elements);
         result.root->SetVisibility(previous.VisibilityValue());
         layout(*result.root, availableSize);

@@ -44,6 +44,6 @@ extern "C" __declspec(dllexport) HRESULT __stdcall DllGetActivationFactory(HSTRI
 }
 
 STDAPI DllCanUnloadNow() {
-    // Тестовый компонент остаётся загруженным до завершения процесса.
+    // Keep the test component loaded until the process exits.
     return S_FALSE;
 }

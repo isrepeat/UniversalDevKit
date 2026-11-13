@@ -1,6 +1,6 @@
 #include <UniversalDevKit/ExportProbe/Probe.h>
 
-// Внутренняя функция имеет внешнее связывание, но не входит в публичный экспорт.
+// The internal function has external linkage and stays outside the public exports.
 extern "C" UNIVERSALDEVKIT_API_LOCAL int UdkInternalProbe() {
     return 42;
 }

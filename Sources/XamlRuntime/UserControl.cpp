@@ -35,7 +35,7 @@ namespace universaldevkit::xamlruntime {
         if (!root || !bindings) {
             throw std::invalid_argument("UserControl replacement requires content and bindings");
         }
-        // Старый scope должен исчезнуть раньше, чем удаляется прежнее дерево.
+        // The old binding scope must be released before the old tree.
         this->ClearContentBindings();
         Element* const previous = this->content;
         this->AddChild(std::move(root));
@@ -47,8 +47,8 @@ namespace universaldevkit::xamlruntime {
     }
 
     void UserControl::ClearContentBindings() {
-        // Element уничтожит дочерний Content в своём деструкторе. Сначала снимаем
-        // callbacks, которые могут хранить указатели на элементы этого дерева.
+        // Element destroys its child Content in its destructor. First remove
+        // callbacks that might retain pointers to elements in that tree.
         this->contentBindings.reset();
     }
 

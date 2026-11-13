@@ -1,1 +1,1 @@
-// Общая Android-конфигурация поступает из AndroidBuildTools.
+// AndroidBuildTools supplies the shared Android configuration.

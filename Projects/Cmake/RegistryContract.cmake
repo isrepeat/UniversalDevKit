@@ -1,4 +1,4 @@
-# Общие правила версии и структуры реестра проверяются до создания targets.
+# Validate the registry version and structure before creating targets.
 include("${CMAKE_CURRENT_LIST_DIR}/ComponentCompile.cmake")
 function(udkCheckObjectKeys json allowed label)
     string(JSON kind TYPE "${json}")

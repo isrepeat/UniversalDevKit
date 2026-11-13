@@ -3,21 +3,21 @@ param(
     [Parameter(Mandatory)]
     [string]$ProjectRoot,
 
-    # Заново конфигурирует CMake перед компиляцией нативной библиотеки.
+    # Reconfigure CMake before compiling the native library.
     [switch]$Clean,
 
-    # Собирает только нативную библиотеку.
+    # Build only the native library.
     [switch]$NativeOnly,
 
-    # Конфигурация нативной и Android-сборки.
+    # Native and Android build configuration.
     [ValidateSet('Debug', 'Release')]
     [string]$Configuration = 'Debug',
 
-    # Проект поддерживает только физические устройства ARM64.
+    # The project supports only physical ARM64 devices.
     [ValidateSet('arm64-v8a')]
     [string]$Architecture = 'arm64-v8a',
 
-    # Версия передаётся build-and-distribute.ps1 и не записывается в Git-файлы.
+    # build-and-distribute.ps1 supplies the version without changing Git files.
     [int]$AppVersionCode,
 
     [string]$AppVersionName,
@@ -50,7 +50,7 @@ function Invoke-Checked {
     }
 }
 
-# Нативные инструменты нужны только проектам с CMake.
+# Only projects that use CMake need native tools.
 $usesPrefab = $androidProjectConfig.Native -and $androidProjectConfig.Native.Prefab
 $hasNativeBuild = $null -ne $androidProjectConfig.Native -or -not [string]::IsNullOrWhiteSpace($androidProjectConfig.NativeLibrary)
 if ($NativeOnly -and -not $hasNativeBuild) {
@@ -85,7 +85,7 @@ $env:Path = "$(Join-Path $javaHome 'bin');$env:Path"
 if ($PSBoundParameters.ContainsKey('AppVersionCode') -xor $PSBoundParameters.ContainsKey('AppVersionName')) {
     throw 'AppVersionCode and AppVersionName must be specified together.'
 }
-# Передаём версию явно, чтобы CMake не сохранил номер предыдущей distribution-сборки.
+# Pass the version explicitly to avoid reusing the last distribution build's version.
 if (-not $PSBoundParameters.ContainsKey('AppVersionName')) {
     $baseVersion = ConvertFrom-StringData ([System.IO.File]::ReadAllText((Join-Path $ProjectRoot $androidProjectConfig.VersionFile)))
     $AppVersionCode = [int]$baseVersion.VERSION_CODE_BASE
@@ -138,7 +138,7 @@ if ($usesPrefab) {
     [IO.File]::WriteAllText((Join-Path $gradleRoot 'local.properties'), $localProperties, [Text.UTF8Encoding]::new($false))
     & (Join-Path $PSScriptRoot 'generate-xaml.ps1') -ProjectRoot $ProjectRoot
 }
-# Kotlin-проект собирается только Gradle; нативный проект дополнительно упаковывает библиотеку CMake.
+# Gradle builds Kotlin projects. Native projects also package the CMake library.
 $gradleTasks = @(
     ":$($androidProjectConfig.AndroidModule):assemble$Configuration"
 )
@@ -158,8 +158,8 @@ if ($PSBoundParameters.ContainsKey('TargetsConfigUrl')) {
 Write-Host "==> Running Gradle tasks: $($gradleTasks -join ', ')"
 Write-Host "==> Using Java: $javaHome"
 Write-Host "==> Using Android SDK: $androidSdk"
-# Gradle определяет Android-проект по текущему каталогу. Launcher и settings
-# находятся в Tools/Gradle, поэтому Gradle запускается оттуда.
+# Gradle finds the Android project from the working directory. The launcher and settings
+# live in Tools/Gradle, so run Gradle from there.
 Push-Location $gradleRoot
 try {
     Invoke-Checked $gradleWrapper ($gradleArguments + $gradleTasks)

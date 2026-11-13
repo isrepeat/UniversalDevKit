@@ -71,14 +71,14 @@ function TestActivationDeployment([string]$SourceDirectory, [string]$Executable,
         finally { $process.Dispose() }
     }
 }
-# Сохраняем окружение для диагностики; test-feed не затрагивает пользовательские feeds.
+# Keep the environment for diagnostics. The test feed leaves user feeds alone.
 $oldJava = $env:JAVA_HOME
 $oldSdk = $env:ANDROID_HOME
 $oldGradle = $env:GRADLE_USER_HOME
 $results = @()
 try {
     $nugetFamilies = @($Family | Where-Object { $_ -in @('Managed', 'BuildTools', 'Templates', 'AndroidNative', 'WinRt') })
-    # Managed и BuildTools проверяются вместе реальным consumer.
+    # A real consumer exercises Managed and BuildTools together.
     if ('Managed' -in $nugetFamilies -or 'BuildTools' -in $nugetFamilies) {
         $nugetFamilies = @(@($nugetFamilies) + @('Managed', 'BuildTools') | Select-Object -Unique)
     }
@@ -115,7 +115,7 @@ try {
         $results += [pscustomobject]@{ Family = 'NativeDesktopWinRt+HostTool'; Status = 'Passed' }
         $csConsumer = Join-Path $run 'cswinrt-consumer'
         CopyFixture 'CsWinRtConsumer' $csConsumer
-        # Конфигурация восстановления генерируется только во временном окружении.
+        # Generate restore configuration only in the temporary environment.
         $config = [IO.File]::ReadAllText((Join-Path $csConsumer 'NuGet.Config.in')).Replace('{{FEED}}', [Security.SecurityElement]::Escape($feed))
         [IO.File]::WriteAllText((Join-Path $csConsumer 'NuGet.Config'), $config, [Text.UTF8Encoding]::new($false))
         $csCache = Join-Path $run 'cswinrt-cache'

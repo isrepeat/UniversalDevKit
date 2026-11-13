@@ -283,8 +283,8 @@ namespace universaldevkit::android::androidbuildtools::applicationframework {
         std::vector<preview_Route> result;
         for (const auto& navigationRoute : this->Routes()) {
             if (navigationRoute.targetKind == NavigationTargetKind::previousPage) {
-                // Граф показывает обратные рёбра для входящих маршрутов. Выполнение
-                // всегда использует фактическую историю, а не цель из графа.
+                // The graph shows reverse edges for incoming routes. Execution always
+                // uses the actual history for the destination.
                 for (const auto& incoming : this->Routes()) {
                     if (incoming.targetKind == NavigationTargetKind::page && incoming.target == navigationRoute.source) {
                         result.push_back({navigationRoute.id, navigationRoute.source, incoming.source, incoming.id, navigationRoute.title,
@@ -309,7 +309,7 @@ namespace universaldevkit::android::androidbuildtools::applicationframework {
             error = "Navigation requires transition IDs and an idle page";
             return false;
         }
-        // Проверяем весь путь до первого изменения страниц и истории.
+        // Validate the entire path before changing pages or history.
         std::vector<std::string_view> simulated;
         for (const auto& entry : this->history) {
             simulated.push_back(entry.page->Name());
@@ -349,8 +349,8 @@ namespace universaldevkit::android::androidbuildtools::applicationframework {
                 return false;
             }
             if (i + 1 < routes.size() && this->IsTransitioning()) {
-                // Промежуточные страницы пути графа доводим до конечного состояния;
-                // последний переход проигрывается обычным циклом кадров.
+                // Advance intermediate pages on the graph path to their final state.
+                // Play the last transition through the normal frame loop.
                 const auto elapsed = std::chrono::duration<float, std::milli>(std::numeric_limits<float>::max());
                 xaml::AnimationController::Update(this->outgoingPage->Root(), elapsed);
                 xaml::AnimationController::Update(this->Root(), elapsed);
@@ -372,7 +372,7 @@ namespace universaldevkit::android::androidbuildtools::applicationframework {
             xaml::runtime::XamlParser{}.Parse(markup, sourcePath), target->preview_RuntimeContext(), this->viewport);
         this->inputDispatcher.Cancel();
         target->preview_ReplaceRuntimeTree(std::move(tree));
-        // Новый runtime-корень тоже подключается к общему контроллеру.
+        // Attach the new runtime root to the shared controller too.
         this->AttachAnimations();
         this->dirty = true;
         error.clear();
@@ -445,7 +445,7 @@ namespace universaldevkit::android::androidbuildtools::applicationframework {
         this->animationController = xaml::AnimationController{};
         this->outgoingPage = nullptr;
         this->pageRegistry.ForEach([this](Page& page) {
-            // Видимость устанавливаем до Attach, без проигрывания перехода при загрузке.
+            // Set visibility before Attach without playing a transition on load.
             page.Root().SetVisibility(&page == this->currentPage
                 ? xaml::attr::Visibility::visible : xaml::attr::Visibility::collapsed);
             this->animationController.Attach(page.Root(), xaml::AnimationRegistry{});

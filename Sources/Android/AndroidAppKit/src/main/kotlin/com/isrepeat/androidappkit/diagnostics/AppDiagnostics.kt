@@ -1,7 +1,7 @@
 package com.isrepeat.androidappkit.diagnostics
 
 //
-// Диагностика пакетов и APK без знания конкретного приложения или native-рендерера.
+// Package and APK diagnostics independent of any particular app or native renderer.
 //
 class AppDiagnostics(private val logger: (String) -> Unit) {
     fun logArchive(context: android.content.Context, archive: java.io.File) {

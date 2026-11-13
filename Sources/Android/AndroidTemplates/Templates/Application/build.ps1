@@ -6,7 +6,7 @@ param(
 
 dynamicparam {
     $ErrorActionPreference = 'Stop'
-    # До restore модуль AndroidBuildTools ещё не существует в проекте.
+    # Restore makes AndroidBuildTools available to the project.
     $utf8Encoding = [System.Text.UTF8Encoding]::new($false)
     [Console]::InputEncoding = $utf8Encoding
     [Console]::OutputEncoding = $utf8Encoding
@@ -21,7 +21,7 @@ dynamicparam {
     $packageVersion = $androidProjectConfig.AndroidBuildToolsVersion
     if ($Command -eq 'update-build-tools') {
         $nuget = (Get-Command nuget.exe -ErrorAction Stop).Source
-        # Обновление выполняет загрузчик независимо от возможностей старого пакета.
+        # The bootstrap script updates independently of the old package's capabilities.
         if ($BuildToolsVersion) {
             $packageVersion = $BuildToolsVersion
         } else {
@@ -39,7 +39,7 @@ dynamicparam {
     $packageVersion = $packageVersion.ToString()
 
     $entryPoint = Join-Path $packagesRoot "$packageName.$packageVersion\tools\Invoke-Build.ps1"
-    # Закреплённую распакованную версию повторно не восстанавливаем.
+    # Reuse an already unpacked pinned version.
     if (-not (Test-Path -LiteralPath $entryPoint -PathType Leaf)) {
         $nuget = (Get-Command nuget.exe -ErrorAction Stop).Source
         & $nuget install $packageName -Version $packageVersion -Source $source -OutputDirectory $packagesRoot -NonInteractive -DirectDownload -NoHttpCache -ForceEnglishOutput -Verbosity quiet | Out-Host
@@ -51,7 +51,7 @@ dynamicparam {
         throw "$packageName $packageVersion did not provide tools\Invoke-Build.ps1 in $packagesRoot."
     }
 
-    # Получаем параметры из пакета: загрузчик не содержит списка команд и опций.
+    # Read command parameters from the package to keep the bootstrap script generic.
     $metadata = Get-Command -Name $entryPoint -ErrorAction Stop
     $common = [System.Management.Automation.PSCmdlet]::CommonParameters + [System.Management.Automation.PSCmdlet]::OptionalCommonParameters
     $parameters = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
@@ -64,7 +64,7 @@ dynamicparam {
 }
 
 end {
-    # Прямой запуск CMake из IDE использует тот же feed, что и сборочные команды.
+    # Direct CMake runs from the IDE use the same feed as build commands.
     if ($Command -eq 'get-packages-feed') {
         Write-Output $androidProjectSharedConfig.Paths.PackagesFeed
         return
@@ -82,7 +82,7 @@ end {
         Write-Host "AndroidBuildToolsVersion updated to $packageVersion."
         return
     }
-    # Сценарий приложения проверяет Updater; общий сборщик не знает о зависимых проектах.
+    # The app script checks Updater because the shared builder has no dependency-project knowledge.
     $command = if ($PSBoundParameters.Command) { $PSBoundParameters.Command } else { 'build-android' }
     if ($command -in @('build-android', 'build-and-distribute', 'build-for-drive', 'build-all')) {
         $configuration = if ($PSBoundParameters.Configuration) { $PSBoundParameters.Configuration } elseif ($command -eq 'build-android') { 'Debug' } else { 'Release' }

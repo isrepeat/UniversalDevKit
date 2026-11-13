@@ -3,7 +3,7 @@ package com.isrepeat.androidappkit.update
 import com.isrepeat.androidappkit.androidappkit
 
 //
-// Ищет APK на Google Drive, проверяет его и передаёт доверенному updater-приложению.
+// Find the APK on Google Drive, validate it, and pass it to the trusted updater.
 //
 class GoogleDriveUpdateController(
     private val activity: androidx.activity.ComponentActivity,
@@ -96,7 +96,7 @@ class GoogleDriveUpdateController(
         val apk = java.io.File(activity.cacheDir, "self-updates/update.apk").apply { parentFile?.mkdirs() }
         try {
             reportDownloadStatus("Downloading ${candidate.first.name}…")
-            // Ограничиваем частоту уведомлений, чтобы не перегружать главный поток.
+            // Throttle notifications to keep the main thread responsive.
             var lastProgressTime = 0L
             client.download(candidate.first.id, apk) { downloaded, total ->
                 val now = android.os.SystemClock.elapsedRealtime()
@@ -145,7 +145,7 @@ class GoogleDriveUpdateController(
         }
         logger.log("Downloaded APK matches the installed version. Requesting reinstall confirmation.")
         if (configuration.confirmSameVersionInUpdater && supportsPreparedReinstallConfirmation()) {
-            // Updater сначала готовит сессию, затем показывает подтверждение.
+            // Updater prepares the session before requesting confirmation.
             launchUpdaterAndFinish(apk, confirmSameVersion = true)
             return
         }
@@ -196,7 +196,7 @@ class GoogleDriveUpdateController(
     }
 
     private fun reportDownloadStatus(message: String) {
-        // UI и JNI-обработчики статуса вызываются только в главном потоке.
+        // UI and JNI status callbacks run on the main thread.
         activity.runOnUiThread { status(message) }
     }
 

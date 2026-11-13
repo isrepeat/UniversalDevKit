@@ -1,7 +1,7 @@
 package com.isrepeat.androidcoresdk.diagnostics
 
 //
-// Единая точка записи диагностических сообщений AndroidCoreSdk.
+// Common entry point for AndroidCoreSdk diagnostics.
 //
 fun interface SdkLogger {
     fun log(message: String)

@@ -68,7 +68,7 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Input {
             var message = Marshal.PtrToStructure<MSG>(address);
             var keyData = message.lParam.ToInt64();
             var scanCode = (keyData >> 16) & 0xFF;
-            // Синтетические нажатия могут приходить без скан-кода.
+            // Synthetic key events may lack a scan code.
             if ((message.message != KeyDown && message.message != SystemKeyDown) ||
                 (scanCode != RScanCode && (scanCode != 0 || message.wParam != ShortcutBindings.VirtualKeyR)) ||
                 (keyData & ExtendedKey) != 0 ||
@@ -89,7 +89,7 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Input {
                 }
                 Marshal.WriteInt32(address, MessageIdOffset, NullMessage);
             } catch (COMException) {
-                // Если Visual Studio не смогла проверить назначение, оставляем сообщение в её очереди.
+                // Keep the message queued if Visual Studio cannot verify its destination.
             }
             return result;
         }
@@ -101,7 +101,7 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Input {
             }
         }
 
-        // AltGr может добавлять синтетический левый Ctrl.
+        // AltGr can add a synthetic left Ctrl event.
         private static bool IsControlAltDown() => IsDown(Control) && (IsDown(LeftAlt) || (IsDown(RightAlt) && IsDown(RightControl)));
 
         private static bool IsDown(int key) => GetKeyState(key) < 0;

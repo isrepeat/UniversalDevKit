@@ -29,7 +29,7 @@ android {
             manifestPlaceholders["appTitle"] = "{{Application}}"
         }
     }
-    // Оба AAR доставляют один и тот же Diagnostic.Dynamic одной версии UDK.
+    // Both AARs ship Diagnostic.Dynamic from the same UDK version.
     packaging.jniLibs.pickFirsts += "lib/arm64-v8a/libuniversaldevkit_diagnostic_dynamic.so"
 }
 dependencies {

@@ -60,8 +60,8 @@ if (-not (Test-Path -LiteralPath $resolvedKeystorePath -PathType Leaf)) {
     }
 
     [IO.Directory]::CreateDirectory((Split-Path -Parent $resolvedKeystorePath)) | Out-Null
-    # keytool печатает полученные аргументы. Передаём пароли через временные
-    # переменные окружения, чтобы они не попали в вывод сборки.
+    # keytool prints its arguments. Pass passwords via temporary environment
+    # variables to keep them out of the build output.
     $passwordVariableSuffix = [Guid]::NewGuid().ToString('N')
     $storePasswordVariable = "ANDROID_TEMPLATES_STORE_PASSWORD_$passwordVariableSuffix"
     $keyPasswordVariable = "ANDROID_TEMPLATES_KEY_PASSWORD_$passwordVariableSuffix"

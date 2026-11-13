@@ -1,5 +1,5 @@
-# Выполняется до project(), включая проверки компилятора.
-# Явно заданный CMAKE_ANDROID_NDK имеет приоритет.
+# Runs before project(), including its compiler checks.
+# An explicitly set CMAKE_ANDROID_NDK takes precedence.
 set(CMAKE_SYSTEM_NAME Android)
 if(NOT CMAKE_ANDROID_NDK)
     set(_android_build_tools_ndk_candidates "$ENV{ANDROID_NDK_HOME}" "$ENV{ANDROID_NDK_ROOT}")

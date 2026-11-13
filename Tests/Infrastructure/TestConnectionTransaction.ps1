@@ -39,7 +39,7 @@ $solutionHash = (Get-FileHash $solution).Hash
         if (-not $failed -or (Get-FileHash $project).Hash -cne $projectHash -or (Get-FileHash $solution).Hash -cne $solutionHash) { throw "Rollback assertion failed: $stage" }
         if (Test-Path ($project + '.UniversalDevKit.transaction')) { throw 'Completed rollback left a snapshot.' }
     }
-    # Имитируем аварийное прерывание: сохраняем снимок и намеренно прерываем откат.
+    # Simulate interruption by taking a snapshot and stopping rollback.
     $script:transactionTestLock = $null
     try {
         try {

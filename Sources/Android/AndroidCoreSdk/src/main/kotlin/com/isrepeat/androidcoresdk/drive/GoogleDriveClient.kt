@@ -7,7 +7,7 @@ data class GoogleDriveFile(
 )
 
 //
-// Транспорт Google Drive v3. Авторизацию и прикладной выбор файлов выполняет вызывающее приложение.
+// Google Drive v3 transport. The caller handles authorization and file selection.
 //
 class GoogleDriveClient(private val accessToken: String) {
     fun ensureFolderPath(path: List<String>): String {

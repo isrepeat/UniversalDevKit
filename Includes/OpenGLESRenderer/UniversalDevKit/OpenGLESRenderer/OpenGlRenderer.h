@@ -20,15 +20,15 @@ namespace universaldevkit::openglesrenderer {
             std::string_view vertex;
             std::string_view fragment;
         };
-        // Ключи для необязательной подмены стандартных программ библиотеки.
+        // Keys for optional overrides of built-in programs.
         struct ShaderRoles {
             static constexpr char text[] = "core.text";
             static constexpr char solid[] = "core.solid";
             static constexpr char roundedRectangle[] = "core.roundedRectangle";
             static constexpr char image[] = "core.image";
         };
-        // Дополнительные программы хоста и явные подмены стандартных ролей.
-        // Набор может быть пустым. Исходники должны жить до завершения конструктора.
+        // Additional host programs and explicit overrides of standard roles.
+        // The set may be empty. Sources must remain valid until construction finishes.
         using ShaderProgramSources = std::unordered_map<std::string, ShaderProgramSource>;
 
         OpenGlRenderer(

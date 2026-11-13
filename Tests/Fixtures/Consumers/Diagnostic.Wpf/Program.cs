@@ -25,9 +25,9 @@ internal static class Program {
 
     private static void VerifyPackage() {
         const uint loggerId = 42;
-        const string message = "Сообщение {WPF} 日本語";
+        const string message = "\u0421\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435 {WPF} 日本語";
         string directory = Path.Combine(Path.GetTempPath(), $"udk-wpf-{Guid.NewGuid():N}");
-        string filePath = Path.Combine(directory, "журнал.log");
+        string filePath = Path.Combine(directory, "\u0436\u0443\u0440\u043d\u0430\u043b.log");
         Directory.CreateDirectory(directory);
         try {
             var options = new LoggerOptions { FilePath = filePath };

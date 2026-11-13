@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Android 12 и новее показывают системный splash screen перед Activity. -->
+    <!-- Android 12 and later show the system splash screen before the Activity. -->
     <style name="AppTheme" parent="android:style/Theme.Material.NoActionBar">
         <item name="android:windowBackground">#1E1E1E</item>
         <item name="android:colorBackground">#1E1E1E</item>

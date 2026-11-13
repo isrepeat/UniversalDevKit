@@ -251,8 +251,8 @@ namespace universaldevkit::xamlruntime::runtimemarkup {
             context.controlXmlNamespace,
             controls);
         RuntimeBuildResult result;
-        // BindingScope владеет подписками и целевыми элементами. Он передаётся вместе
-        // с корнем, чтобы подписки старого дерева уничтожились при его замене.
+        // BindingScope owns subscriptions and target elements. Move it with the root
+        // so replacing the tree also destroys the old subscriptions.
         result.bindings = std::make_unique<BindingScope>();
         result.root = this->BuildElement(root, context, *result.bindings);
         details::ValidateStateTargets(*result.root);
@@ -295,8 +295,8 @@ namespace universaldevkit::xamlruntime::runtimemarkup {
             }
             if (attribute.name == "itemsSource" && entry->kind == RuntimeBindingRegistry::Entry::Kind::collection && !twoWay) {
                 if (control) {
-                    // Native-контрол сам интерпретирует ItemsSource в своём шаблоне.
-                    // Автоматическое создание ListView здесь привело бы к двум владельцам коллекции.
+                    // The native control interprets ItemsSource in its own template.
+                    // Creating a ListView here would give the collection two owners.
                     continue;
                 }
                 const auto property = std::find_if(node.children.begin(), node.children.end(), [](const auto& child) {
@@ -307,8 +307,8 @@ namespace universaldevkit::xamlruntime::runtimemarkup {
                 }
                 const auto itemNode = property->children.at(0).children.at(0);
                 const auto descriptor = entry->collection;
-                // Проверяем весь шаблон даже у пустой коллекции, чтобы ошибка была
-                // показана сразу, а не при появлении первого элемента.
+                // Validate the whole template even when the collection is empty
+                // so errors surface before the first item appears.
                 RuntimeBindingContext itemContext = context;
                 itemContext.bindings = descriptor.itemBindings(nullptr);
                 itemContext.owner += " item";
@@ -349,8 +349,8 @@ namespace universaldevkit::xamlruntime::runtimemarkup {
                 throw RuntimeDiagnostic(attribute.location, error.what());
             }
             if (entry->subscribe) {
-                // Подписка принадлежит BindingScope и автоматически снимается вместе
-                // с заменённым деревом, поэтому старый UI больше не получает обновления.
+                // BindingScope owns the subscription and removes it with the old tree,
+                // so the old UI stops receiving updates.
                 bindings.AddRuntimeSubscription(entry->subscribe(apply));
             }
             if ((twoWay || name == "isOn") && entry->setBoolean) {

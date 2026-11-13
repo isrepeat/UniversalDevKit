@@ -10,7 +10,7 @@ function(udk_extend_GeneratedProbe target variant outputRoot)
     )
     target_sources(${target} PRIVATE "${source}" "${header}")
     target_include_directories(${target} PUBLIC "$<BUILD_INTERFACE:${outputRoot}/Includes>")
-    # Заголовок доступен consumer только после завершения генерации библиотеки.
+    # The consumer can use the header only after library generation completes.
     if(UniversalDevKit_INSTALL)
         install(FILES "${header}" DESTINATION "include/UniversalDevKit/GeneratedProbe/Generated")
     endif()

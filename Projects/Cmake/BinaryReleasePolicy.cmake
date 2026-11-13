@@ -1,4 +1,4 @@
-# Политика выпуска ограничивает поддерживаемые бинарники, а не экспериментальные сборки.
+# The release policy constrains supported binaries while allowing experimental builds.
 function(udkValidateBinaryRelease policyFile)
     file(READ "${policyFile}" policy)
     string(JSON schema GET "${policy}" schemaVersion)

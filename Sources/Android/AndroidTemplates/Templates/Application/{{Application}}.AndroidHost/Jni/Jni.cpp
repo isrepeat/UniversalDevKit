@@ -7,7 +7,7 @@
 namespace _details {
     template <typename TAttach>
     jint AttachJniThread(TAttach attach, JavaVM* vm, JNIEnv** environment) {
-        // NDK принимает JNIEnv**, desktop JDK — void**.
+        // The NDK expects JNIEnv**, and the desktop JDK expects void**.
         if constexpr (std::is_invocable_r_v<jint, TAttach, JavaVM*, JNIEnv**, void*>) {
             return attach(vm, environment, nullptr);
         } else {
@@ -19,7 +19,7 @@ namespace _details {
 namespace {{application}}::android_host::jni {
     void Check(JNIEnv* environment, const std::string& operation) {
         if (environment->ExceptionCheck()) {
-            // Java stack trace остаётся в журнале; JNI-исключение переводится в C++.
+            // Keep the Java stack trace in the log and translate the JNI exception to C++.
             environment->ExceptionDescribe();
             environment->ExceptionClear();
             throw std::runtime_error("JNI failure: " + operation + "; see Java exception in logcat");
@@ -87,7 +87,7 @@ namespace {{application}}::android_host::jni {
             Environment environment(this->vm);
             environment.Get()->DeleteGlobalRef(this->object);
         } catch (...) {
-            // Деструктор не выбрасывает исключения при недоступной JVM.
+            // The destructor must not throw when the JVM is unavailable.
             std::fputs("Could not release JNI global reference: JavaVM unavailable\n", stderr);
         }
     }
@@ -125,7 +125,7 @@ namespace {{application}}::android_host::jni {
         if (value.size() > static_cast<size_t>(std::numeric_limits<jsize>::max())) {
             throw std::length_error("JNI String is too large");
         }
-        // Копирование исключает aliasing между char16_t и jchar; суррогатные пары сохраняются.
+        // Copying avoids aliasing between char16_t and jchar while preserving surrogate pairs.
         const std::basic_string<jchar> characters(value.begin(), value.end());
         jvalue result{};
         result.l = environment->NewString(characters.data(), static_cast<jsize>(characters.size()));

@@ -20,8 +20,8 @@ namespace {{application}}::application::interface {
         virtual bool Trigger(
             core::NavigationTrigger navigationTrigger,
             std::unique_ptr<base::NavigationStateBase> navigationState) = 0;
-        // result отделяет результат действия от самого возврата. Например, диалог выбора
-        // передаёт выбранное значение предыдущей странице, а кнопка «Назад» не передаёт ничего.
+        // The result parameter carries a value independently of returning. A picker can
+        // send a selection to the previous page, while Back returns without a value.
         virtual bool NavigateBack(std::unique_ptr<base::NavigationStateBase> navigationState = {}) = 0;
 
         template <typename TPage>

@@ -6,10 +6,10 @@ param(
     [ValidateSet('Local', 'Drive')]
     [string]$Destination = 'Local',
 
-    # Пересобирает APK с текущим versionCode для быстрой тестовой переустановки.
+    # Rebuild the APK with the current versionCode for a quick test reinstall.
     [switch]$KeepVersion,
 
-    # Конфигурация нативной и Android-сборки.
+    # Native and Android build configuration.
     [ValidateSet('Debug', 'Release')]
     [string]$Configuration = 'Release',
 
@@ -53,7 +53,7 @@ Write-Host "Distribution APK ready: $destinationApk"
 
 if ($Destination -eq 'Drive') {
     Write-Host "==> Uploading $($androidProjectConfig.ArtifactName) APK to Google Drive"
-    # Имя содержит версию, поэтому Google Drive хранит историю релизов.
+    # The filename includes the version so Google Drive keeps release history.
     & $uploadToDrive -ApkPath $destinationApk -OAuthClientPath $androidProjectSharedConfig.Paths.DriveOAuthClientPath -TokenPath $androidProjectSharedConfig.Paths.DriveTokenPath -DrivePath $androidProjectConfig.Drive.Path
     Write-Host "APK uploaded to Google Drive: $destinationApk"
 }

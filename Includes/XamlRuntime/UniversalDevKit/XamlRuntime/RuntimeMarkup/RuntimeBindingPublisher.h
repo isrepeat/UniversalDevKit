@@ -9,8 +9,8 @@
 #include <string>
 
 namespace universaldevkit::xamlruntime::runtimemarkup {
-    // Объединяет повторяющуюся механику runtime-байндинга с контрактом ViewModel:
-    // получение значения, подписка на Property и отписка вместе с BindingScope.
+    // Combines runtime binding with the ViewModel contract:
+    // read a value, subscribe to Property, and unsubscribe with BindingScope.
     template <typename TViewModel>
     class RuntimeBindingPublisher final {
     public:

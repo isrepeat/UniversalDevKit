@@ -24,7 +24,7 @@ gradlePlugin {
     }
 }
 
-// Пакет использует локальные src, checkout — общие исходники репозитория.
+// The package uses local src files. A checkout uses the shared repository sources.
 if (!file('src/main/groovy').isDirectory()) {
     sourceSets.main.groovy.setSrcDirs([file('../../../../Sources/Android/AndroidBuildTools/Gradle/src/main/groovy')])
     layout.buildDirectory.set(file('../../../../!artifacts/projects/Windows-x64/gradle/AndroidBuildTools'))

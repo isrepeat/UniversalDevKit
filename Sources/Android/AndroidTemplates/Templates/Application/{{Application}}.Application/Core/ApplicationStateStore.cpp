@@ -19,11 +19,11 @@ namespace {{application}}::application::core {
     }
 
     bool ApplicationStateStore::TrySaveDocument(model::ApplicationStateDocument applicationStateDocument) {
-        // Обычный документ сначала записывается через handler; при ошибке текущее
-        // состояние в памяти не меняется и UI не видит несохранённые данные.
+        // Write a regular document through the handler first. On failure,
+        // retain the in-memory state and keep unsaved data out of the UI.
 #if defined(ANDROID_APP_PREVIEWER)
-        // Документ сценария живёт только в памяти preview-сеанса. Изменения UI
-        // применяются к нему, но не затрагивают постоянный storage до экспорта.
+        // A scenario document lives in preview session memory. UI edits
+        // stay out of persistent storage until export.
         if (!this->preview_isUsingPreviewSessionDocument && this->documentSaveHandler && !this->documentSaveHandler(applicationStateDocument)) {
 #else
         if (this->documentSaveHandler && !this->documentSaveHandler(applicationStateDocument)) {
@@ -36,18 +36,18 @@ namespace {{application}}::application::core {
 
 #if defined(ANDROID_APP_PREVIEWER)
     void ApplicationStateStore::preview_LoadSessionDocument(model::ApplicationStateDocument applicationStateDocument) {
-        // Замена полного документа переводит storage в memory-only режим preview.
+        // Replacing the entire document switches storage to memory-only preview mode.
         *this->applicationStateDocument = std::move(applicationStateDocument);
         this->preview_isUsingPreviewSessionDocument = true;
     }
 
     bool ApplicationStateStore::preview_SaveSessionDocumentToPersistentStorage() {
-        // Повторный экспорт обычного документа не требуется.
+        // A regular document needs no second export.
         if (!this->preview_isUsingPreviewSessionDocument) {
             return true;
         }
-        // Только успешная запись завершает preview-режим; иначе пользователь может
-        // повторить экспорт, не теряя изменений текущего сеанса.
+        // End preview mode only after a successful write so the user can
+        // retry export without losing current session changes.
         if (this->documentSaveHandler && !this->documentSaveHandler(*this->applicationStateDocument)) {
             return false;
         }

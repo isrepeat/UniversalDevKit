@@ -1,7 +1,7 @@
 function Initialize-AndroidBuildConsole {
-    # Задаём единый формат для сообщений PowerShell и данных, передаваемых
-    # внешним программам через pipeline. Кодировку вывода самой программы
-    # без поддержки UTF-8 эта функция изменить не может.
+    # Use a consistent encoding for PowerShell messages and data sent
+    # to external programs through the pipeline. Programs without UTF-8 support
+    # still control their own output encoding.
     $utf8Encoding = [System.Text.UTF8Encoding]::new($false)
     [Console]::InputEncoding = $utf8Encoding
     [Console]::OutputEncoding = $utf8Encoding
@@ -11,9 +11,9 @@ function Initialize-AndroidBuildConsole {
 function Import-AndroidBuildDataFile {
     param([Parameter(Mandatory)] [string]$Path)
 
-    # android-build.psd1 — контролируемый файл конфигурации проекта. Не зависим
-    # от Import-PowerShellDataFile: в урезанном окружении CMake этот cmdlet
-    # может отсутствовать даже в Windows PowerShell.
+    # android-build.psd1 is a controlled project configuration file. Avoid
+    # Import-PowerShellDataFile because restricted CMake environments may
+    # lack this cmdlet even under Windows PowerShell.
     $config = & ([scriptblock]::Create([System.IO.File]::ReadAllText($Path)))
     if ($config -isnot [hashtable]) {
         throw "Configuration must return a hashtable: $Path"
@@ -36,7 +36,7 @@ function Read-AndroidBuildConfiguration {
 function Read-AndroidBuildSharedConfiguration {
     param([Parameter(Mandatory)] [string]$ProjectRoot)
 
-    # Общие настройки читаются отдельно и не изменяют конфигурацию проекта.
+    # Read shared settings separately without changing the project configuration.
     . (Join-Path $PSScriptRoot '..\..\Read-AndroidSharedProps.ps1')
     return Read-AndroidSharedProps -ProjectRoot $ProjectRoot
 }
@@ -232,7 +232,7 @@ function Resolve-XamlCompiler {
     )
 
     $packageName = 'UniversalDevKit.XamlCompiler'
-    # Локальный feed проверяем по версиям архивов без запуска NuGet.
+    # Check local feed archive versions without starting NuGet.
     if (Test-Path -LiteralPath $Source -PathType Container) {
         $archives = Get-ChildItem -LiteralPath $Source -Filter "$packageName.*.nupkg" -File |
             ForEach-Object {
@@ -253,14 +253,14 @@ function Resolve-XamlCompiler {
     }
     $nuget = (Get-Command nuget.exe -ErrorAction Stop).Source
 
-    # Для удалённого feed или отсутствующей версии выполняем обычный restore.
+    # Use normal restore for a remote feed or when the version is unavailable.
     & $nuget install $packageName -Source $Source -OutputDirectory $PackagesRoot -NonInteractive -ForceEnglishOutput -Verbosity quiet | Out-Host
     if ($LASTEXITCODE -ne 0) {
         throw "XamlRuntime restore failed with exit code $LASTEXITCODE."
     }
 
-    # NuGet распаковывает каждую версию в каталог XamlRuntime.<версия>.
-    # Сортировка версий ставит 1.0.23 выше 1.0.9.
+    # NuGet unpacks each version into an XamlRuntime.<version> directory.
+    # Version sorting ranks 1.0.23 above 1.0.9.
     $candidates = Get-ChildItem -LiteralPath $PackagesRoot -Directory -Filter "$packageName.*" |
         Sort-Object @{ Expression = {
                 [version]$_.Name.Substring($packageName.Length + 1)

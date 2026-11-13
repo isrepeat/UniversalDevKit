@@ -24,7 +24,7 @@ if (-not $SecretsRoot) {
     $SecretsRoot = $sharedProps.Paths.SecretsRoot
 }
 
-# У старых проектов package ID читаем из Gradle; новые сохраняют его в конфигурации.
+# Read the package ID from Gradle in older projects and from config in newer ones.
 $packageId = $configuration.PackageId
 if (-not $packageId) {
     $gradlePath = Join-Path $projectRoot "$($configuration.AndroidModule)\build.gradle.kts"
@@ -34,7 +34,7 @@ if (-not $packageId) {
 if ($packageId -notmatch '^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$') {
     throw 'A valid project PackageId is required to remove project secrets.'
 }
-# Удаляем только непосредственный каталог пакета внутри SecretsRoot, никогда shared.
+# Remove only the immediate package directory under SecretsRoot. Preserve shared.
 $secretsRootPath = [System.IO.Path]::GetFullPath($SecretsRoot).TrimEnd('\', '/')
 $secretsDirectory = [System.IO.Path]::GetFullPath((Join-Path $secretsRootPath $packageId))
 if ([System.IO.Path]::GetDirectoryName($secretsDirectory) -ne $secretsRootPath -or $secretsDirectory -eq $projectRoot -or $projectRoot.StartsWith($secretsDirectory + '\', [System.StringComparison]::OrdinalIgnoreCase)) {

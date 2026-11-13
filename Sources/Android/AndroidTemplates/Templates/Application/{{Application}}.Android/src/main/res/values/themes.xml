@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Тёмный фон применяется ещё до создания Activity и загрузки native UI. -->
+    <!-- Apply the dark background before creating the Activity or loading native UI. -->
     <style name="AppTheme" parent="android:style/Theme.Material.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen</item>
         <item name="android:colorBackground">#1E1E1E</item>

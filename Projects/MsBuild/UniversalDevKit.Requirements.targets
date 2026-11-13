@@ -3,7 +3,7 @@
   <PropertyGroup>
     <__IsUniversalDevKitRequirementsImported>true</__IsUniversalDevKitRequirementsImported>
   </PropertyGroup>
-  <!-- Проверяем эффективный стандарт каждого C++-файла, не понижая настройки consumer. -->
+  <!-- Check the effective C++ standard per file and preserve higher consumer settings. -->
   <Target Name="__UniversalDevKitValidateRequirements" BeforeTargets="ClCompile" Condition="'$(DesignTimeBuild)' != 'true'">
     <PropertyGroup>
       <__UniversalDevKitRequiredStandards>@(__UniversalDevKitCompileRequirement-&gt;'%(MinimumStandard)', ';')</__UniversalDevKitRequiredStandards>
@@ -27,7 +27,7 @@
     <Error Condition="'@(__UniversalDevKitUnsupportedSystemRequirement)' != ''"
            Text="UniversalDevKit: no MSBuild system-library adapter for $(UniversalDevKitTargetOS)." />
   </Target>
-  <!-- Link-элементы уже сформированы зависимостями цели; системные .lib добавляем финальному линкеру. -->
+  <!-- Target dependencies provide link items. Add system libraries to the final linker invocation. -->
   <Target Name="__UniversalDevKitApplySystemLibraries" BeforeTargets="Link" Condition="'@(__UniversalDevKitSystemLibrary)' != '' and '$(DesignTimeBuild)' != 'true'">
     <ItemGroup>
       <__UniversalDevKitUniqueSystemLibrary Remove="@(__UniversalDevKitUniqueSystemLibrary)" />

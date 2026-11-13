@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 project(BinaryCompatibility LANGUAGES CXX)
 if(TEST_COMPILER_VERSION)
-    # Проверяем отказ политики метаданных, не имитируя сборку другим компилятором.
+    # Exercise metadata policy rejection without simulating a build with another compiler.
     set(CMAKE_CXX_COMPILER_VERSION "${TEST_COMPILER_VERSION}")
 endif()
 if(TEST_TOOLSET)

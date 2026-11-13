@@ -5,7 +5,7 @@ if(NOT UDK_REPOSITORY)
     message(FATAL_ERROR "UDK_REPOSITORY is required")
 endif()
 
-# Получаем реальные требования и публичные корни компонентов из сборки UDK.
+# Read actual compile requirements and public include roots from the UDK build.
 set(UniversalDevKit_INSTALL OFF CACHE BOOL "" FORCE)
 add_subdirectory("${UDK_REPOSITORY}" udk EXCLUDE_FROM_ALL)
 file(READ "${UDK_REPOSITORY}/Components.json" manifest)
@@ -28,7 +28,7 @@ foreach(index RANGE ${last})
         file(RELATIVE_PATH include_path "${UDK_REPOSITORY}/Includes/${component}" "${header}")
         string(MD5 identity "${header}")
         set(source "${CMAKE_CURRENT_BINARY_DIR}/${identity}.cpp")
-        # Каждый translation unit содержит только один include; линковка не требуется.
+        # Each translation unit contains a single include and requires no linking.
         file(WRITE "${source}" "#include <${include_path}>")
         add_library(header_${identity} OBJECT "${source}")
         target_link_libraries(header_${identity} PRIVATE ${component_target})
@@ -37,7 +37,7 @@ foreach(index RANGE ${last})
     endforeach()
 endforeach()
 
-# Общие Export/Version также являются публичными заголовками.
+# The common Export and Version headers are public too.
 file(GLOB_RECURSE core_headers "${UDK_REPOSITORY}/Includes/Core/*.h")
 foreach(header IN LISTS core_headers)
     file(RELATIVE_PATH include_path "${UDK_REPOSITORY}/Includes/Core" "${header}")

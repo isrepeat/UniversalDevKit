@@ -1,16 +1,16 @@
 import groovy.json.JsonSlurper
 
 //
-// Собирает AndroidCoreSdk как AAR и публикует его в локальный Maven feed.
+// Build AndroidCoreSdk as an AAR and publish it to the local Maven feed.
 //
 plugins {
-    // Формирует Android-библиотеку и компилирует исходники Kotlin встроенными средствами AGP.
+    // Build the Android library and compile Kotlin through AGP.
     id("com.android.library")
-    // Добавляет задачи публикации Maven-пакета.
+    // Add Maven publishing tasks.
     id("maven-publish")
 }
 
-// Версия прямой сборки берётся из описания пакета.
+// Read the direct build version from the package description.
 group = providers.gradleProperty("packageGroup").get()
 version = providers.gradleProperty("packageVersion").orElse(providers.provider {
     val manifest = rootProject.file("../../../../Packages/Android/AndroidCoreSdk/Package.json")
@@ -23,27 +23,27 @@ extensions.configure<com.android.build.api.dsl.LibraryExtension>("android") {
         java.setSrcDirs(listOf("../../../../../Sources/Android/AndroidCoreSdk/src/main/java"))
         kotlin.setSrcDirs(listOf("../../../../../Sources/Android/AndroidCoreSdk/src/main/kotlin"))
     }
-    // Пространство имён сгенерированных Android-ресурсов библиотеки.
+    // Namespace for the generated Android library resources.
     namespace = "com.isrepeat.androidcoresdk"
 
-    // Версия Android API, с которой компилируется библиотека.
+    // Android API level used to compile the library.
     compileSdk = providers.gradleProperty("androidCompileSdk").get().toInt()
 
     defaultConfig {
-        // Минимальная версия Android API для потребляющего приложения.
+        // Minimum Android API level for consuming apps.
         minSdk = providers.gradleProperty("androidMinSdk").get().toInt()
     }
 
     publishing {
         singleVariant("release") {
-            // Публикует архив исходников вместе с AAR.
+            // Publish the sources archive alongside the AAR.
             withSourcesJar()
         }
     }
 }
 
 dependencies {
-    // Публичные API SDK используют эти Android-библиотеки.
+    // These Android libraries appear in the public SDK APIs.
     api("androidx.activity:activity-ktx:1.8.0")
     api("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     api("com.google.android.gms:play-services-auth:21.3.0")
@@ -52,13 +52,13 @@ dependencies {
 publishing {
     publications {
         register<MavenPublication>("release") {
-            // Maven-координаты, по которым библиотека подключается в Android-проекте.
+            // Maven coordinates used by Android consumers.
             groupId = project.group.toString()
             artifactId = "androidcoresdk"
             version = project.version.toString()
 
             afterEvaluate {
-                // Добавляет release-вариант с AAR и архивом исходников в публикацию.
+                // Publish the release AAR and sources archive.
                 from(components["release"])
             }
         }
@@ -66,9 +66,9 @@ publishing {
 
     repositories {
         maven {
-            // Имя задачи публикации в общий локальный Maven feed.
+            // Task name for publication to the shared local Maven feed.
             name = "AndroidPackagesFeed"
-            // Каталог общего локального Maven feed для Android-пакетов.
+            // Shared local Maven feed for Android packages.
             url = uri(providers.gradleProperty("udkPublicationFeedPath").orElse(providers.gradleProperty("androidPackagesFeedPath")).get())
         }
     }

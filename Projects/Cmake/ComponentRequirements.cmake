@@ -1,4 +1,4 @@
-# Проверяем общий контракт до создания targets, включая требования других платформ.
+# Validate the shared contract and other platforms' requirements before creating targets.
 function(udkReadComponentRequirements componentDefinitionJson)
     set(componentRequiredStandard 20)
     set(componentRequiresThreads FALSE)

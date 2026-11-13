@@ -16,7 +16,7 @@ foreach ($line in @(& subst)) {
 }
 if ($LASTEXITCODE -ne 0) { throw 'Cannot enumerate substituted drives.' }
 
-# Раскрываем вложенные подключения ANGLE до физического пути.
+# Resolve nested ANGLE drive mappings to their physical paths.
 function ResolveDriveTarget([string]$Path) {
     $visited = @{}
     while ($Path -match '^([A-Za-z]:)[\\/]') {
@@ -48,7 +48,7 @@ try {
         }
         $candidates += [pscustomobject]@{ Drive = $drive; Target = $target }
     }
-    # Сначала снимаем более глубокие подключения; файлы и маркеры сохраняются.
+    # Remove deeper mappings first while preserving files and markers.
     foreach ($candidate in ($candidates | Sort-Object { $_.Target.Length } -Descending)) {
         if ($PSCmdlet.ShouldProcess("$($candidate.Drive) => $($candidate.Target)", 'Remove substituted build drive')) {
             & subst $candidate.Drive /d | Out-Host

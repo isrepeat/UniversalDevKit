@@ -37,7 +37,7 @@ namespace universaldevkit::xamlruntime {
         }
     } // namespace details
 
-    // Общие каналы композиции, не зависящие от конкретного эффекта.
+    // Shared compositing channels independent of any specific effect.
     struct VisualTransform {
         float opacity = 1.0f;
         float offsetX = 0.0f;
@@ -159,7 +159,7 @@ namespace universaldevkit::xamlruntime {
         std::unordered_map<std::type_index, std::function<std::shared_ptr<void>()>> factories;
     };
 
-    // Принадлежит одному Element. Адреса подготовленных объектов сохраняются до вызова Clear().
+    // Owned by one Element. Prepared object addresses remain valid until Clear().
     class UNIVERSALDEVKIT_XAMLRUNTIME_API ElementStates final {
     public:
         ElementStates() = default;

@@ -9,7 +9,7 @@
     <StackPanel Margin="24">
         <TextBlock Text="Remove UDK CLI for the current user?" />
         <CheckBox x:Name="RemoveVersionCacheCheckBox"
-                  Content="Удалить также кеш версий UDK"
+                  Content="Also remove the UDK version cache"
                   IsChecked="False"
                   Margin="0,16,0,18" />
         <StackPanel Orientation="Horizontal"

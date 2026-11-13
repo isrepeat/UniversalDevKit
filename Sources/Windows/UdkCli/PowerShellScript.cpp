@@ -64,7 +64,7 @@ namespace universaldevkit::cli {
 			throw std::system_error(static_cast<int>(::GetLastError()), std::system_category(), "Cannot start the UDK CLI uninstaller");
 		}
 
-		// Завершаем CLI сразу, чтобы деинсталлятор мог удалить его файл.
+		// Exit the CLI immediately so the uninstaller can remove its executable.
 		::CloseHandle(processInformation.hThread);
 		::CloseHandle(processInformation.hProcess);
 	}

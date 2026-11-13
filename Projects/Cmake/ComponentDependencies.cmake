@@ -1,9 +1,9 @@
-# JSON задаёт исходники и зависимости; файлы компонентов расширяют системные настройки.
+# JSON defines sources and dependencies. Component files add system settings.
 include("${CMAKE_CURRENT_LIST_DIR}/ComponentRequirements.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/RegistryContract.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/ComponentFiles.cmake")
 
-# 1. Проверяем корневой реестр до чтения описаний и создания targets.
+# 1. Validate the root registry before reading component descriptions or creating targets.
 file(READ "${PROJECT_SOURCE_DIR}/Components.json" registryManifest)
 string(JSON registrySchemaVersion GET "${registryManifest}" schemaVersion)
 string(JSON registrySchemaType TYPE "${registryManifest}" schemaVersion)
@@ -25,7 +25,7 @@ if(registryEntryCount LESS 1)
     message(FATAL_ERROR "Empty component registry")
 endif()
 
-# 2. Загружаем компоненты, проверяем уникальность и сохраняем их требования.
+# 2. Load components, enforce unique names, and record their requirements.
 math(EXPR registryEntryLastIndex "${registryEntryCount} - 1")
 set(registeredComponentNames)
 set(registeredComponentGuids)
@@ -117,7 +117,7 @@ foreach(registryEntryIndex RANGE ${registryEntryLastIndex})
     endif()
     list(APPEND registeredComponentGuids "${componentGuid}")
 
-    # Нормализуем необязательный список, чтобы дальнейший обход всегда видел массив.
+    # Normalize the optional list so traversal always receives an array.
     string(JSON componentDependencyType ERROR_VARIABLE missingDependencies TYPE "${componentDefinitionJson}" dependencies)
     if(missingDependencies)
         string(JSON componentDefinitionJson SET "${componentDefinitionJson}" dependencies "[]")
@@ -132,7 +132,7 @@ foreach(registryEntryIndex RANGE ${registryEntryLastIndex})
     set(componentDefinitionJson_${componentName} "${componentDefinitionJson}")
     set(componentKind_${componentName} "${componentKind}")
 
-    # Требования и область состояния сохраняются отдельно для каждого компонента.
+    # Store requirements and state scope per component.
     udkReadComponentRequirements("${componentDefinitionJson}")
     set(componentRequiredStandard_${componentName} "${componentRequiredStandard}")
     set(componentRequiresThreads_${componentName} "${componentRequiresThreads}")
@@ -149,9 +149,9 @@ endforeach()
 
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/Components.json")
 
-# Варианты зависимостей включаются независимо от выбора вариантов корней.
+# Dependency variants are selected independently of the root variants.
 function(udkRequireComponentVariant componentName componentVariant dependencyTraversalChain)
-    # Проверяем текущую цепочку до пропуска уже обработанного варианта: иначе потеряем цикл.
+    # Check the current chain before skipping an already processed variant to catch cycles.
     if(NOT componentName IN_LIST registeredComponentNames)
         message(FATAL_ERROR "Unknown component: ${componentName}")
     endif()
@@ -159,7 +159,7 @@ function(udkRequireComponentVariant componentName componentVariant dependencyTra
         message(FATAL_ERROR "Dependency cycle: ${dependencyTraversalChain};${componentName}")
     endif()
     if(componentKind_${componentName} STREQUAL "headerOnly")
-        # Заголовки не наследуют Static/Dynamic и не требуют бинарной реализации.
+        # Headers require neither a Static/Dynamic variant nor a binary implementation.
         set(componentVariant Headers)
     endif()
     if(componentStateScope_${componentName} STREQUAL "process" AND NOT componentVariant STREQUAL "Dynamic")
@@ -179,7 +179,7 @@ function(udkRequireComponentVariant componentName componentVariant dependencyTra
             message(FATAL_ERROR "Unsupported platform for ${componentName}: ${CMAKE_SYSTEM_NAME}")
         endif()
     endif()
-    # GLOBAL сохраняет результат рекурсивных вызовов, имеющих собственную область переменных.
+    # GLOBAL preserves results from recursive calls with separate variable scopes.
     get_property(componentVariantRequired GLOBAL PROPERTY "udkRequiredVariant_${componentName}_${componentVariant}")
     if(componentVariantRequired)
         return()
@@ -199,7 +199,7 @@ function(udkRequireComponentVariant componentName componentVariant dependencyTra
             if(NOT dependencyLinkage MATCHES "^(same|static|dynamic)$" OR NOT dependencyVisibility MATCHES "^(private|public)$")
                 message(FATAL_ERROR "Invalid dependency contract: ${componentName}")
             endif()
-            # same наследует вариант родителя; static/dynamic задают его явно.
+            # The same mode inherits the parent's variant. Static and Dynamic select it explicitly.
             set(dependencyVariant "${componentVariant}")
             if(dependencyLinkage STREQUAL "static")
                 set(dependencyVariant Static)
@@ -211,7 +211,7 @@ function(udkRequireComponentVariant componentName componentVariant dependencyTra
     endif()
 endfunction()
 
-# 3. Рассчитываем нужные варианты от выбранных корней, включая транзитивные зависимости.
+# 3. Resolve required variants from the selected roots and their transitive dependencies.
 foreach(componentName IN LISTS registeredComponentNames)
     foreach(componentVariant IN ITEMS Static Dynamic)
         set_property(GLOBAL PROPERTY "udkRequiredVariant_${componentName}_${componentVariant}" FALSE)
@@ -248,8 +248,8 @@ foreach(componentName IN LISTS requestedComponentNames)
     endif()
 endforeach()
 
-# 4. Создаём targets; зависимости между ними связываются отдельным проходом ниже.
-# Эти списки также определяют состав установки и команды find_dependency пакета.
+# 4. Create targets. A later pass links their dependencies.
+# These lists also drive installation and the package's find_dependency calls.
 set(exportedComponentTargets)
 set(availablePackageComponents)
 set(packageDependencyCommands "")
@@ -257,7 +257,7 @@ foreach(componentName IN LISTS registeredComponentNames)
     string(TOLOWER "${componentName}" componentNameLower)
     string(TOUPPER "${componentName}" componentNameUpper)
     set(currentComponentTargets)
-    # Расширение задаёт функцию настройки одного варианта после создания target.
+    # The extension defines a function to configure one variant after target creation.
     string(JSON componentExtensionCount ERROR_VARIABLE componentExtensionError LENGTH "${componentDefinitionJson_${componentName}}" buildExtensions)
     set(componentCmakeExtension "")
     if(NOT componentExtensionError)
@@ -287,7 +287,7 @@ foreach(componentName IN LISTS registeredComponentNames)
             endforeach()
         endif()
     endif()
-    # У компонента свой include-корень; общий Headers предоставляет только Core.
+    # Each component has its own include root. The shared Headers target provides Core.
     set(componentHeadersTarget "universaldevkit_${componentNameLower}_headers")
     set(componentIncludeRoot_${componentName} "Includes/${componentName}")
     string(JSON publicHeaderCount LENGTH "${componentDefinitionJson_${componentName}}" headers)
@@ -314,7 +314,7 @@ foreach(componentName IN LISTS registeredComponentNames)
     target_compile_features(${componentHeadersTarget} INTERFACE cxx_std_${componentRequiredStandard_${componentName}})
     set_target_properties(${componentHeadersTarget} PROPERTIES EXPORT_NAME ${componentName}.Headers)
 
-    # Header-only передаёт требования через INTERFACE и завершает создание без lib/DLL.
+    # Header-only components expose INTERFACE requirements and skip library creation.
     if(componentKind_${componentName} STREQUAL "headerOnly")
         get_property(headersRequired GLOBAL PROPERTY "udkRequiredVariant_${componentName}_Headers")
         if(headersRequired)
@@ -331,7 +331,7 @@ foreach(componentName IN LISTS registeredComponentNames)
         target_link_libraries(${componentHeadersTarget} INTERFACE ${componentSystemLibraries_${componentName}})
         continue()
     endif()
-    # Компилируемые варианты создаём только если они востребованы рассчитанным графом.
+    # Create compiled variants only when the resolved graph requires them.
     foreach(componentVariant IN ITEMS Static Dynamic)
         get_property(componentVariantRequired GLOBAL PROPERTY "udkRequiredVariant_${componentName}_${componentVariant}")
         if(NOT componentVariantRequired)
@@ -343,7 +343,7 @@ foreach(componentName IN LISTS registeredComponentNames)
             string(APPEND componentTargetName "_dynamic")
             set(cmakeLibraryType SHARED)
         endif()
-        # Общие исходники и заголовки берём из единого описания компонента.
+        # Read shared sources and headers from the component description.
         set(componentFilePaths)
         foreach(componentFileListKey IN ITEMS sources headers)
             string(JSON componentFileCount LENGTH "${componentDefinitionJson_${componentName}}" "${componentFileListKey}")
@@ -358,7 +358,7 @@ foreach(componentName IN LISTS registeredComponentNames)
                 endforeach()
             endif()
         endforeach()
-        # Добавляем только реализацию текущей целевой ОС, а не все платформенные файлы.
+        # Add only the implementation for the current target OS.
         string(JSON platformSourceCount ERROR_VARIABLE platformSourcesJsonError LENGTH "${componentDefinitionJson_${componentName}}" "platformSources" "${CMAKE_SYSTEM_NAME}")
         if(NOT platformSourcesJsonError AND platformSourceCount GREATER 0)
             math(EXPR platformSourceLastIndex "${platformSourceCount} - 1")
@@ -370,7 +370,7 @@ foreach(componentName IN LISTS registeredComponentNames)
                 list(APPEND componentFilePaths "${PROJECT_SOURCE_DIR}/${platformSourcePath}")
             endforeach()
         endif()
-        # Публичное имя и Headers сохраняют одинаковый контракт checkout и пакета.
+        # Use the same public name and headers in the checkout and installed package.
         add_library(${componentTargetName} ${cmakeLibraryType} ${componentFilePaths})
         udkApplyComponentCompile(${componentTargetName} "${componentDefinitionJson_${componentName}}")
         add_library(UniversalDevKit::${componentName}.${componentVariant} ALIAS ${componentTargetName})
@@ -386,7 +386,7 @@ foreach(componentName IN LISTS registeredComponentNames)
         if(componentSystemLibraries_${componentName})
             target_link_libraries(${componentTargetName} PRIVATE ${componentSystemLibraries_${componentName}})
         endif()
-        # Разделяем Debug-имена, задаём CRT и ограничиваем экспорт Dynamic публичным API.
+        # Use distinct Debug names, select the CRT, and export only the Dynamic public API.
         set_target_properties(${componentTargetName} PROPERTIES EXPORT_NAME ${componentName}.${componentVariant} POSITION_INDEPENDENT_CODE ON DEBUG_POSTFIX d)
         if(MSVC AND DEFINED udkMsvcRuntime)
             set_target_properties(${componentTargetName} PROPERTIES MSVC_RUNTIME_LIBRARY "${udkMsvcRuntime}")
@@ -400,7 +400,7 @@ foreach(componentName IN LISTS registeredComponentNames)
         endif()
         list(APPEND currentComponentTargets "${componentTargetName}")
         if(componentCmakeExtension)
-            # Доверенное расширение настраивает только переданный target.
+            # Trusted extensions configure only the target they receive.
             include("${componentCmakeExtension}")
             set(componentExtensionFunction "udk_extend_${componentName}")
             if(NOT COMMAND ${componentExtensionFunction})
@@ -412,17 +412,17 @@ foreach(componentName IN LISTS registeredComponentNames)
         list(APPEND exportedComponentTargets "${componentTargetName}")
     endforeach()
     if(currentComponentTargets)
-        # В пакет попадают заголовки компонентов с созданными библиотечными вариантами.
+        # Package the headers for components whose library variants were created.
         list(APPEND exportedComponentTargets "${componentHeadersTarget}")
         list(APPEND availablePackageComponents "${componentName}")
         if(EXISTS "${PROJECT_SOURCE_DIR}/${registryLibraryDirectory}/${componentName}/CMakeLists.txt")
-            # Сохраняем прежнюю точку расширения для существующих компонентов.
+            # Keep the existing extension entry point for current components.
             include("${PROJECT_SOURCE_DIR}/${registryLibraryDirectory}/${componentName}/CMakeLists.txt")
         endif()
     endif()
 endforeach()
 
-# 5. Связываем готовые targets независимо от порядка компонентов в реестре.
+# 5. Link targets independently of their order in the registry.
 foreach(componentName IN LISTS registeredComponentNames)
     string(TOLOWER "${componentName}" componentNameLower)
     string(JSON dependencyCount LENGTH "${componentDefinitionJson_${componentName}}" "dependencies")
@@ -436,7 +436,7 @@ foreach(componentName IN LISTS registeredComponentNames)
         string(JSON dependencyVisibility GET "${componentDefinitionJson_${componentName}}" "dependencies" ${dependencyIndex} "visibility")
         string(TOUPPER "${dependencyVisibility}" dependencyVisibility)
         if(dependencyVisibility STREQUAL "PUBLIC")
-            # Публичные заголовки зависимости нужны и потребителю заголовков родителя.
+            # Consumers of the parent headers also need the dependency's public headers.
             target_link_libraries(universaldevkit_${componentNameLower}_headers INTERFACE UniversalDevKit::${dependencyComponentName}.Headers)
         endif()
         foreach(componentVariant IN ITEMS Static Dynamic)
@@ -460,8 +460,8 @@ foreach(componentName IN LISTS registeredComponentNames)
     endforeach()
 endforeach()
 
-# 6. Передаём требования вариантов всего графа, включая внутренние зависимости DLL.
-# CMake проверяет их совместимость для каждого consumer при генерации сборки.
+# 6. Propagate variant requirements for the whole graph, including internal DLL dependencies.
+# CMake checks each consumer's compatibility during generation.
 function(udkCollectVariantRequirements componentName componentVariant)
     if(componentKind_${componentName} STREQUAL "headerOnly")
         set(componentVariant Headers)
@@ -490,7 +490,7 @@ function(udkCollectVariantRequirements componentName componentVariant)
     endif()
 endfunction()
 
-# Для каждого бинарного target отдельно проверяем его граф и публикуем ограничения.
+# Validate and publish graph constraints separately for each binary target.
 foreach(componentName IN LISTS availablePackageComponents)
     string(TOLOWER "${componentName}" componentNameLower)
     foreach(componentVariant IN ITEMS Static Dynamic)
@@ -502,7 +502,7 @@ foreach(componentName IN LISTS availablePackageComponents)
             continue()
         endif()
 
-        # Начинаем независимый обход: результаты предыдущего target не должны влиять на этот.
+        # Start a fresh traversal so the previous target's results cannot affect this one.
         set_property(GLOBAL PROPERTY udkVisitedVariantRequirements "")
         foreach(registeredComponentName IN LISTS registeredComponentNames)
             set_property(GLOBAL PROPERTY "udkVariantValues_${registeredComponentName}" "")
@@ -516,7 +516,7 @@ foreach(componentName IN LISTS availablePackageComponents)
                 message(FATAL_ERROR "Conflicting linkage for ${registeredComponentName} in ${componentName}.${componentVariant}")
             endif()
             if(componentRequiredVariantCount EQUAL 1)
-                # COMPATIBLE_INTERFACE_STRING обнаружит конфликт при объединении targets consumer.
+                # COMPATIBLE_INTERFACE_STRING catches conflicts when consumers combine targets.
                 set(componentCompatibilityKey "UDK_COMPONENT_VARIANT_${registeredComponentName}")
                 set_property(TARGET ${componentTargetName} PROPERTY "INTERFACE_${componentCompatibilityKey}" "${componentRequiredVariants}")
                 set_property(TARGET ${componentTargetName} APPEND PROPERTY COMPATIBLE_INTERFACE_STRING "${componentCompatibilityKey}")

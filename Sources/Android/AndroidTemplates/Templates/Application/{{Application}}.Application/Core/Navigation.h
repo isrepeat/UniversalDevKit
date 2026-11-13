@@ -7,8 +7,8 @@
 #include <memory>
 
 namespace {{application}}::application::core {
-    // Описывает данные, допустимые для конкретного ребра графа. Preview-default
-    // создаёт сам native-тип, поэтому previewer не конструирует бизнес-объекты.
+    // Defines data accepted on a particular graph edge. The native type creates
+    // the preview default so the previewer never constructs domain objects.
     struct NavigationDataContract final {
         std::string_view typeId;
 #if defined(ANDROID_APP_PREVIEWER)
@@ -17,8 +17,8 @@ namespace {{application}}::application::core {
         bool isRequired;
     };
 
-    // Общая часть контрактов данных перехода. Конкретный тип задаёт только
-    // идентификатор, обязательность и способ построения preview-состояния.
+    // Shared navigation payload contract. A concrete type specifies its ID,
+    // whether it is required, and how to construct preview state.
     template <typename TDerived>
     class NavigationState : public base::NavigationStateBase {
     public:
@@ -38,7 +38,7 @@ namespace {{application}}::application::core {
         }
     };
 
-    // Маркер для переходов, которым payload не требуется и не разрешён.
+    // Marker for transitions that accept no payload.
     struct NoNavigationData final {};
 
     enum class NavigationTrigger {
@@ -48,7 +48,7 @@ namespace {{application}}::application::core {
 
     enum class NavigationTargetKind {
         page,
-        // Цель определяется предпоследней записью фактической истории PageManager.
+        // The previous entry in the actual PageManager history determines the destination.
         previousPage,
     };
 

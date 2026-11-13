@@ -66,7 +66,7 @@ try {
                 $configPath = Join-Path $consumer 'NuGet.Config'
                 [IO.File]::WriteAllText($configPath, $config, [Text.UTF8Encoding]::new($false))
                 $common = @($project, '/nologo', '/v:minimal', '/p:Platform=x64', "/p:RestorePackagesPath=$cache", "/p:RestoreConfigFile=$configPath", '/p:NuGetAudit=false')
-                # Восстановление отдельно от сборки, только из локального feed и в пустой кеш.
+                # Restore separately from build using only a local feed and an empty cache.
                 InvokeChecked ($common + @('/t:Restore', '/p:Configuration=Debug', '/p:RestoreNoCache=true')) (Join-Path $consumer 'restore.log')
                 $assetsPath = Join-Path $consumer 'obj/project.assets.json'
                 if (-not (Test-Path -LiteralPath $assetsPath)) { throw 'Native PackageReference restore did not produce project.assets.json. A supporting Visual Studio is required.' }

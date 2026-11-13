@@ -1,10 +1,10 @@
 package com.isrepeat.androidappkit
 
 //
-// Псевдопространства имён и типизированные фасады для публичного API AppKit.
+// Namespace-style aliases and typed facades for the public AppKit API.
 //
 object androidappkit {
-    // Короткая публичная точка входа для Activity с native OpenGL-сессией.
+    // Convenient public entry point for an Activity with a native OpenGL session.
     abstract class NativeOpenGlActivity : com.isrepeat.androidappkit.NativeOpenGlActivity()
 
     data class AppIdentity(val name: String, val storageDirectory: String)

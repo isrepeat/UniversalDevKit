@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- Общая схема артефактов для собственных Static/Dynamic-проектов UniversalDevKit.
-       Если исходники UniversalDevKit подключены через Sources.targets к приложению,
-       их компилирует проект приложения и сохраняет результаты в свои каталоги.
-       Поэтому этот файл там не подключается, чтобы не менять пути сборки приложения. -->
+  <!-- Shared artifact layout for UniversalDevKit's own Static and Dynamic projects.
+       When an application imports UDK sources through Sources.targets,
+       the application compiles them into its own output directories.
+       Skip this import there to preserve the application's build paths. -->
   <PropertyGroup>
-    <!-- Путь относительно этого файла не зависит от рабочего каталога или расположения solution. -->
+    <!-- Resolve paths relative to this file regardless of the working directory or solution location. -->
     <UniversalDevKitArtifactsRoot>$(MSBuildThisFileDirectory)..\..\!artifacts\projects\</UniversalDevKitArtifactsRoot>
-    <!-- По умолчанию ОС и архитектура образуют Windows-x64; платформу можно задать заранее. -->
+    <!-- The default combines OS and architecture as Windows-x64. Callers may set the platform earlier. -->
     <UniversalDevKitTargetPlatform Condition="'$(UniversalDevKitTargetPlatform)' == ''">Windows-$(Platform)</UniversalDevKitTargetPlatform>
-    <!-- Вид CRT независим от Static/Dynamic компонента; Debug выбирает отладочный CRT. -->
+    <!-- CRT selection is independent of component linkage. Debug selects the debug CRT. -->
     <UniversalDevKitRuntime Condition="'$(UniversalDevKitRuntime)' == ''">Dynamic</UniversalDevKitRuntime>
     <__UniversalDevKitRuntimeDirectory Condition="'$(UniversalDevKitRuntime)' == 'Dynamic'">md</__UniversalDevKitRuntimeDirectory>
     <__UniversalDevKitRuntimeDirectory Condition="'$(UniversalDevKitRuntime)' == 'Static'">mt</__UniversalDevKitRuntimeDirectory>
@@ -17,11 +17,11 @@
     <__UniversalDevKitRuntimeLibrary Condition="'$(UniversalDevKitRuntime)' == 'Dynamic' and '$(Configuration)' != 'Debug'">MultiThreadedDLL</__UniversalDevKitRuntimeLibrary>
     <__UniversalDevKitRuntimeLibrary Condition="'$(UniversalDevKitRuntime)' == 'Static' and '$(Configuration)' == 'Debug'">MultiThreadedDebug</__UniversalDevKitRuntimeLibrary>
     <__UniversalDevKitRuntimeLibrary Condition="'$(UniversalDevKitRuntime)' == 'Static' and '$(Configuration)' != 'Debug'">MultiThreaded</__UniversalDevKitRuntimeLibrary>
-    <!-- Короткое имя сохраняет запас длины пути при подключении через submodule. -->
+    <!-- Short project names leave room for longer submodule paths. -->
     <__UniversalDevKitArtifactProject>$([System.String]::Copy('$(MSBuildProjectName)').Replace('UniversalDevKit.', ''))</__UniversalDevKitArtifactProject>
 
-		<!-- Разделяем платформу, систему сборки, проект и конфигурацию.
-         bin содержит результат сборки, obj — промежуточные файлы компиляции. -->
+		<!-- Separate outputs by platform, build system, project, and configuration.
+         bin contains build outputs and obj contains intermediate files. -->
     <OutDir>$(UniversalDevKitArtifactsRoot)$(UniversalDevKitTargetPlatform)\msbuild\$(__UniversalDevKitArtifactProject)\$(PlatformToolset)\$(VCToolsVersion)\$(__UniversalDevKitRuntimeDirectory)\$(Configuration)\bin\</OutDir>
     <IntDir>$(UniversalDevKitArtifactsRoot)$(UniversalDevKitTargetPlatform)\msbuild\$(__UniversalDevKitArtifactProject)\$(PlatformToolset)\$(VCToolsVersion)\$(__UniversalDevKitRuntimeDirectory)\$(Configuration)\obj\</IntDir>
     <TLogLocation>$(IntDir)tlog\</TLogLocation>

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- Подключается явно через Import: добавляет общий Core и доступные метаданные версии.
-       Сохраняет include-пути потребителя; не подключает исходники или библиотеки
-       и не меняет стандарт C++, CRT или каталоги сборки. -->
+  <!-- Explicit imports add the common Core headers and available version metadata.
+       The consumer retains its include paths, sources, libraries,
+       C++ standard, CRT, and build directories. -->
   <Import Project="$(MSBuildThisFileDirectory)UniversalDevKit.Version.props"
           Condition="Exists('$(MSBuildThisFileDirectory)UniversalDevKit.Version.props')" />
 
   <PropertyGroup>
-    <!-- Импортирующие файлы проверяют этот признак, чтобы избежать повторного импорта. -->
+    <!-- Importers use this flag to avoid loading the file twice. -->
     <__IsUniversalDevKitPublicPropsImported>true</__IsUniversalDevKitPublicPropsImported>
     <UniversalDevKitTargetOS Condition="'$(UniversalDevKitTargetOS)' == ''">Windows</UniversalDevKitTargetOS>
   </PropertyGroup>
 
   <ItemDefinitionGroup>
     <ClCompile>
-      <!-- Заголовки компонентов добавляются отдельно согласно графу зависимостей.
-           Существующие include-пути проекта сохраняются через наследуемое значение. -->
+      <!-- Component headers are added separately according to the dependency graph.
+           Inherit the project's existing include paths. -->
       <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\Includes\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>

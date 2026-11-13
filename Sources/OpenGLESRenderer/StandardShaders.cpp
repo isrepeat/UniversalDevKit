@@ -2,8 +2,8 @@
 
 namespace universaldevkit::openglesrenderer {
     namespace details {
-        // Текстовый pipeline передаёт в шейдер позицию вершины и UV-координаты
-        // альфа-канала glyph atlas. Геометрия уже приходит в NDC.
+        // The text pipeline sends vertex positions and UV coordinates
+        // for the glyph atlas alpha channel. Geometry is already in NDC.
         const char TextVertexShader[] = R"(#version 300 es
         layout (location = 0) in vec2 position;
         layout (location = 1) in vec2 textureCoordinate;
@@ -26,7 +26,7 @@ namespace universaldevkit::openglesrenderer {
         }
     )";
 
-        // Программа заливки используется для фона, границ и контуров без текстуры.
+        // The fill program draws backgrounds, borders, and untextured outlines.
         const char SolidVertexShader[] = R"(#version 300 es
         layout (location = 0) in vec2 position;
         void main() {
@@ -43,8 +43,8 @@ namespace universaldevkit::openglesrenderer {
         }
     )";
 
-        // Скругление рассчитывается для прямоугольника из двух треугольников.
-        // Это дешевле, чем строить на CPU дуги для каждого угла каждого элемента.
+        // Compute rounded corners on a rectangle made of two triangles.
+        // This avoids building arcs on the CPU for every element corner.
         const char RoundedRectangleVertexShader[] = R"(#version 300 es
         layout (location = 0) in vec2 position;
         layout (location = 1) in vec2 localPosition;

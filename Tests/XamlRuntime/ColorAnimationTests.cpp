@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
         auto runtime = xaml::runtime::RuntimeTreeBuilder{}.BuildPage(
             xaml::runtime::XamlParser{}.Parse(markup, argv[1]), {}, {100, 100});
         TestColor(*runtime.root);
-        // Каждый множитель ограничивается отдельно, до композиции с альфой цвета.
+        // Clamp each factor separately before multiplying it by the color alpha.
         auto nested = xaml::runtime::RuntimeTreeBuilder{}.BuildPage(xaml::runtime::XamlParser{}.Parse(
             R"(<Page xmlns="urn:xaml" opacity="0.5"><Border opacity="2" background="#80FFFFFF"/></Page>)", "opacity.xaml"), {}, {100, 100});
         xaml::AnimationController nestedController;
@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
         backend.alpha = -1;
         xaml::Render(*nested.root, backend);
         Check(backend.alpha <= 0, "Negative opacity does not render visible content");
-        // Ошибки разметки должны обнаруживаться до замены рабочего дерева.
+        // Detect markup errors before replacing the active tree.
         for (const auto* track : {
             R"(<ColorAnimation property="background" from="#GG112233" to="blue" duration="1"/>)",
             R"(<ColorAnimation property="opacity" from="red" to="blue" duration="1"/>)",

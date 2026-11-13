@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- Проверяем CRT каждого файла до сборки ссылок; Shared не получает новых настроек. -->
+  <!-- Validate the CRT for every file before building references. Shared items keep their settings. -->
   <Target Name="__UniversalDevKitConfigureConsumerRuntime"
           BeforeTargets="AssignProjectConfiguration"
           Condition="'$(DesignTimeBuild)' != 'true'">
@@ -46,12 +46,12 @@
     <PropertyGroup>
       <__UniversalDevKitRuntimeBuildProperties>Configuration=$(Configuration);Platform=$(Platform)</__UniversalDevKitRuntimeBuildProperties>
       <__UniversalDevKitRuntimeBuildProperties Condition="'@(__UniversalDevKitBinaryReference)' != ''">$(__UniversalDevKitRuntimeBuildProperties);UniversalDevKitRuntime=$(__UniversalDevKitSelectedRuntime);PlatformToolset=$(PlatformToolset);VCToolsVersion=$(VCToolsVersion)</__UniversalDevKitRuntimeBuildProperties>
-      <!-- Solution не знает о нескольких CRT одного проекта; варианты строятся через consumer. -->
+      <!-- The solution has one CRT per project. Consumers build the other variants. -->
       <BuildProjectReferences Condition="'@(__UniversalDevKitBinaryReference)' != ''">true</BuildProjectReferences>
     </PropertyGroup>
   </Target>
-  <!-- VC использует SetConfiguration также при получении библиотек для линковки.
-       Дополняем его после назначения конфигурации, до разделения ссылок. -->
+  <!-- VC also uses SetConfiguration to obtain link libraries.
+       Extend it after assigning configurations and before splitting references. -->
   <Target Name="__UniversalDevKitConfigureReferenceContext"
           AfterTargets="AssignProjectConfiguration"
           Condition="'$(DesignTimeBuild)' != 'true' and '@(__UniversalDevKitBinaryReference)' != ''">
@@ -62,7 +62,7 @@
       </ProjectReferenceWithConfiguration>
     </ItemGroup>
   </Target>
-  <!-- После изменения реестра компонентов нужно повторно рассчитать ссылки и runtime-набор. -->
+  <!-- Recompute references and runtime files when the component registry changes. -->
   <Target Name="__UniversalDevKitValidateComponentRegistry"
           BeforeTargets="PrepareForBuild"
           Condition="'$(DesignTimeBuild)' != 'true' and '@(__UniversalDevKitComponentRegistryFile)' != ''">
@@ -74,7 +74,7 @@
     <Error Condition="'%(__UniversalDevKitComponentRegistryHash.FileHash)' != '%(__UniversalDevKitComponentRegistryHash.ExpectedHash)'"
            Text="UniversalDevKit component registry changed: %(__UniversalDevKitComponentRegistryHash.Identity). Update the connection using Connect." />
   </Target>
-  <!-- Получаем фактические TargetPath всех транзитивных DLL после успешной сборки. -->
+  <!-- Read the actual TargetPath of every transitive DLL after a successful build. -->
   <Target Name="__UniversalDevKitCopyDynamicLibraries"
           AfterTargets="Build"
           Condition="'$(DesignTimeBuild)' != 'true' and ('@(__UniversalDevKitRuntimeProject)' != '' or Exists('$(OutDir).UniversalDevKitRuntime'))">

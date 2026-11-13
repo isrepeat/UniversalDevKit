@@ -162,8 +162,8 @@ namespace diagnostic_tests {
         diagnostic::Logger::SetLevel(diagnostic::Level::Trace);
         UDK_LOG_TRACE("Test", "visible-trace");
         UDK_LOG_DEBUG("Test", "visible-debug");
-        UDK_LOG_INFO("Unicode", "Кириллица 日本 😀");
-        UDK_LOG_INFO("Unicode", L"Кириллица 日本 😀");
+        UDK_LOG_INFO("Unicode", "\u041a\u0438\u0440\u0438\u043b\u043b\u0438\u0446\u0430 日本 😀");
+        UDK_LOG_INFO("Unicode", L"\u041a\u0438\u0440\u0438\u043b\u043b\u0438\u0446\u0430 日本 😀");
         UDK_LOG_INFO("Custom", "custom-narrow {}", ContractValue{42});
         UDK_LOG_INFO("Custom", L"custom-wide {}", ContractValue{43});
         diagnostic::Logger::Write(diagnostic::Level::Info, "Ready", "literal {} braces");
@@ -187,7 +187,7 @@ namespace diagnostic_tests {
         for (const auto* token : { "visible-info", "visible-warning", "visible-error", "visible-critical", "visible-debug", "visible-trace", "custom-narrow 42", "custom-wide 43", "literal {} braces", "ready-wide 😀", "Worker[one]", ">> operation 17", "<< operation 17", ", exception)", "us)" }) {
             diagnostic_tests::Check(text.find(token) != std::string::npos, token);
         }
-        diagnostic_tests::Check(diagnostic_tests::Count(text, "Кириллица 日本 😀") == 2, "Narrow/wide UTF-8 must agree");
+        diagnostic_tests::Check(diagnostic_tests::Count(text, "\u041a\u0438\u0440\u0438\u043b\u043b\u0438\u0446\u0430 日本 😀") == 2, "Narrow/wide UTF-8 must agree");
         diagnostic_tests::Check(text.find(std::string("embedded\0value", 14)) != std::string::npos, "Embedded NUL was lost");
         diagnostic_tests::Check(text.find("Failed to convert wide log message to UTF-8") != std::string::npos, "Invalid wide input did not produce an error record");
         diagnostic_tests::Check(text.find("hidden-") == std::string::npos && text.find('\x1b') == std::string::npos, "Filtered messages or color escaped into file");
@@ -204,7 +204,7 @@ namespace diagnostic_tests {
         loggerOptions.fileMode = diagnostic::FileMode::Truncate;
         loggerOptions.appendNewSession = false;
         diagnostic_tests::Initialize(loggerOptions);
-        auto second = diagnostic_tests::Options(root / "subdirectory" / fs::path(u8"журнал😀.log"));
+        auto second = diagnostic_tests::Options(root / "subdirectory" / fs::path(u8"\u0436\u0443\u0440\u043d\u0430\u043b😀.log"));
         second.minimumLevel = diagnostic::Level::Warning;
         diagnostic_tests::Initialize(second, 7);
         UDK_LOG_INFO("Test", "fresh-only");

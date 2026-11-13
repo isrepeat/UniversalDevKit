@@ -15,7 +15,7 @@ namespace {{application}}::application::model {
     }
 
     void ApplicationRepository::preview_ReloadFromStateStore() {
-        // Репозиторий читает документ напрямую, отдельного кэша нет.
+        // The repository reads the document directly without a separate cache.
     }
 #endif
     //

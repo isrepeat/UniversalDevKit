@@ -1,4 +1,4 @@
-# Восстанавливаем закреплённый пакет также при конфигурации напрямую из IDE.
+# Restore the pinned package when configuring directly from the IDE too.
 find_program(android_build_tools_powershell NAMES powershell.exe REQUIRED)
 execute_process(
     COMMAND "${android_build_tools_powershell}" -NoProfile -ExecutionPolicy Bypass
@@ -11,7 +11,7 @@ execute_process(
 if(NOT android_build_tools_result EQUAL 0)
     message(FATAL_ERROR "AndroidBuildTools restore failed: ${android_build_tools_output}\n${android_build_tools_error}")
 endif()
-# NuGet выводит журнал восстановления; последняя строка всегда содержит путь пакета.
+# NuGet prints the restore log, followed by the package path on the last line.
 string(REGEX MATCH "[^\r\n]+$" android_build_tools_root "${android_build_tools_output}")
 file(TO_CMAKE_PATH "${android_build_tools_root}" android_build_tools_root)
 set(ANDROID_BUILD_TOOLS_ROOT "${android_build_tools_root}" CACHE INTERNAL "Restored AndroidBuildTools package root")

@@ -21,7 +21,7 @@ namespace universaldevkit::xamlruntime {
 
     private:
         Element* content = nullptr;
-        // Scope существует ровно столько же, сколько текущее дерево Content.
+        // The scope lives as long as the current Content tree.
         std::unique_ptr<BindingScope> contentBindings;
     };
 }

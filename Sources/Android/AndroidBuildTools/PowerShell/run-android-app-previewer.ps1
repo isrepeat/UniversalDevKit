@@ -20,7 +20,7 @@ function Initialize-VisualStudioEnvironment {
         [string]$VisualStudioRoot
     )
 
-    # Передаём окружение Visual Studio компилятору, запущенному через Ninja.
+    # Pass the Visual Studio environment to the compiler launched by Ninja.
     $developerCommand = Join-Path $VisualStudioRoot 'Common7\Tools\VsDevCmd.bat'
     if (-not (Test-Path -LiteralPath $developerCommand)) {
         throw "Visual Studio developer command was not found: $developerCommand"
@@ -64,7 +64,7 @@ try {
     $xamlPackages = Module.AndroidBuildTools\Resolve-AndroidBuildConfigurationPath -Configuration $androidProjectConfig -ProjectRoot $ProjectRoot -Name 'PackageDirectories.XamlRuntime'
     $compiler = Module.AndroidBuildTools\Resolve-XamlCompiler -PackagesRoot $xamlPackages -Source $androidProjectSharedConfig.Paths.PackagesFeed
     & $generateXamlScript -ProjectRoot $ProjectRoot -XamlCompiler $compiler
-    # Пропуск повторной генерации действует только внутри текущего запуска.
+    # Skipping regeneration applies only to the current invocation.
     $env:ANDROID_BUILD_XAML_GENERATED_PROJECT = [IO.Path]::GetFullPath($ProjectRoot)
 
     Write-Host "==> Rebuilding Application preview plugin $Configuration x64"
@@ -79,7 +79,7 @@ try {
         $ninja = (Get-Command ninja.exe -ErrorAction Stop).Source
     }
     $cmakeArguments = @('-S', $projectRoot, '-B', $cmakeBuildDirectory, '-G', 'Ninja', "-DCMAKE_BUILD_TYPE=$Configuration", "-DCMAKE_MAKE_PROGRAM=$ninja")
-    # Источник нативных пакетов передаётся из отдельной общей конфигурации.
+    # Read the native package source from the separate shared config.
     $cmakeArguments += "-DANDROID_PACKAGES_FEED=$($androidProjectSharedConfig.Paths.PackagesFeed)"
     $packageRoot = Split-Path -Parent $PSScriptRoot
     $sdkPackages = Module.AndroidBuildTools\Resolve-AndroidBuildConfigurationPath -Configuration $androidProjectConfig -ProjectRoot $ProjectRoot -Name 'PackageDirectories.AndroidAppPreviewerPluginSdk'

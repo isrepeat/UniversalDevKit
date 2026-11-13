@@ -1,7 +1,7 @@
 package com.isrepeat.androidcoresdk
 
 //
-// Псевдопространства имён для краткого обращения к публичным объектам SDK.
+// Namespace-style facades for concise access to public SDK objects.
 //
 object androidcoresdk {
     object coroutines {

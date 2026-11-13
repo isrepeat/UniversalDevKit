@@ -4,7 +4,7 @@ import com.isrepeat.androidappkit.androidappkit
 import com.isrepeat.androidcoresdk.androidcoresdk
 
 //
-// Создаёт один журнал сеанса и передаёт file descriptor нативной части приложения.
+// Create a single session log and pass its file descriptor to native app code.
 //
 class NativeSessionLog(
     private val identity: androidappkit.AppIdentity,

@@ -1,1 +1,1 @@
-// Исходник позволяет создать target до добавления генерируемой реализации.
+// This source allows target creation before adding the generated implementation.

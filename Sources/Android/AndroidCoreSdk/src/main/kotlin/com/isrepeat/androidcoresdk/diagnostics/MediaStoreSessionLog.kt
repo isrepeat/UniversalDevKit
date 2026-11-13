@@ -3,7 +3,7 @@ package com.isrepeat.androidcoresdk.diagnostics
 data class SessionLog(val uri: android.net.Uri, val nativePath: String)
 
 //
-// Создаёт доступный пользователю файл журнала и возвращает путь для native-кода.
+// Create a user-accessible log file and return its path to native code.
 //
 object MediaStoreSessionLog {
     fun create(

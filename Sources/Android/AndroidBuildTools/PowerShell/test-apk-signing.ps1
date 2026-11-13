@@ -22,7 +22,7 @@ if (-not $apksigner) {
 }
 $apksigner = Join-Path $apksigner 'lib\apksigner.jar'
 
-# Пароль передаётся через временную переменную окружения, а не аргументы процесса.
+# Pass the password through a temporary environment variable.
 $previousPassword = $env:ANDROID_CERTIFICATE_STORE_PASSWORD
 $env:ANDROID_CERTIFICATE_STORE_PASSWORD = $signing[$passwordKey]
 try {

@@ -3,7 +3,7 @@
 
 namespace universaldevkit::openglesrenderer {
     namespace details {
-        // Встроенные GLSL-программы базовой отрисовки.
+        // Built-in GLSL programs for basic rendering.
         extern const char TextVertexShader[];
         extern const char TextFragmentShader[];
         extern const char SolidVertexShader[];

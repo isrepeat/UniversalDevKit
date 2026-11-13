@@ -1,7 +1,7 @@
 package com.isrepeat.androidappkit.diagnostics
 
 //
-// Принимает сообщения AndroidAppKit и передаёт их logger приложения.
+// Forward AndroidAppKit messages to the application's logger.
 //
 fun interface AppKitLogger {
     fun log(message: String)

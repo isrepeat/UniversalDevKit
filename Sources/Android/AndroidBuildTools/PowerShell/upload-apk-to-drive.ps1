@@ -12,11 +12,11 @@ param(
     [Parameter(Mandatory)]
     [string]$TokenPath,
 
-    # Относительный путь от корня «Мой диск», а не путь локальной синхронизации.
+    # Path relative to the My Drive root.
     [Parameter(Mandatory)]
     [string[]]$DrivePath,
 
-    # Пустое значение сохраняет имя локального APK, включая версию релиза.
+    # An empty value keeps the local APK name and release version.
     [string]$DriveFileName
 )
 
@@ -185,7 +185,7 @@ function Get-DriveFolderId {
     foreach ($segment in $PathSegments) {
         $folder = Get-DriveItem -AccessToken $AccessToken -ParentId $parentId -Name $segment -MimeType 'application/vnd.google-apps.folder'
         if ($null -eq $folder) {
-            # Первая публикация может выполняться до ручного создания папки.
+            # The first publication can create the destination folder.
             $folder = New-DriveFolder -AccessToken $AccessToken -ParentId $parentId -Name $segment
         }
         $parentId = $folder.id

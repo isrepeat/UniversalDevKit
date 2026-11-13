@@ -48,7 +48,7 @@ namespace universaldevkit::xamlruntime {
         std::array<float, 4> toColor{};
     };
 
-    // Служебное состояние анимации элемента; обработчики получают доступ через контексты.
+    // Internal element animation state accessed by handlers through contexts.
     struct AnimationState {
         std::shared_ptr<const AnimationRegistry> registry;
         AnimationParameters parameters;
@@ -60,7 +60,7 @@ namespace universaldevkit::xamlruntime {
         std::chrono::steady_clock::time_point updatedAt{};
     };
 
-    // Нетипизированный контекст вызова. Типизированные контексты предоставляют своё состояние и общую трансформацию.
+    // Untyped call context. Typed contexts expose their own state and the shared transform.
     class UNIVERSALDEVKIT_XAMLRUNTIME_API AnimationInvocation {
     public:
         AnimationInvocation(Element& element, AnimationTrigger trigger, bool startingFromHidden = false,

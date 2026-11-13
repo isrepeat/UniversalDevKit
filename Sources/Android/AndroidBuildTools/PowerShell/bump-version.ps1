@@ -3,7 +3,7 @@ param(
     [Parameter(Mandatory)]
     [string]$ProjectRoot,
 
-# Возвращает последнюю опубликованную версию вместо следующей.
+# Return the last published version instead of the next one.
     [switch]$KeepVersion
 )
 

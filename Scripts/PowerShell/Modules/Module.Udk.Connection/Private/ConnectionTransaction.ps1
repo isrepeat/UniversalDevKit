@@ -13,7 +13,7 @@ function Restore-UdkConnectionTransaction {
     $manifestPath = Join-Path $directory 'manifest.json'
     $manifest = [IO.File]::ReadAllText($manifestPath) | ConvertFrom-Json
     if ($manifest.schemaVersion -ne 1 -or @($manifest.files).Count -ne $paths.Count) { throw "Invalid transaction manifest: $manifestPath" }
-    # Проверяем весь снимок до первой записи; пути ограничены явно указанными файлами.
+    # Validate the entire snapshot before writing. Paths must stay within the configured roots.
     $snapshots = @()
     for ($index = 0; $index -lt $paths.Count; $index++) {
         $entry = $manifest.files[$index]
@@ -25,7 +25,7 @@ function Restore-UdkConnectionTransaction {
     $failures = @()
     for ($index = 0; $index -lt $paths.Count; $index++) {
         try {
-            # Не перезаписываем неизменённый файл, который может быть открыт только для чтения.
+            # Avoid rewriting an unchanged file that may be open for reading only.
             if (-not (Test-Path -LiteralPath $paths[$index] -PathType Leaf) -or (Get-FileHash -LiteralPath $paths[$index] -Algorithm SHA256).Hash -cne $manifest.files[$index].hash) {
                 [IO.File]::WriteAllBytes($paths[$index], $snapshots[$index])
             }
@@ -38,7 +38,7 @@ function Restore-UdkConnectionTransaction {
 
 function Remove-UdkTransactionSnapshot {
     param([string]$Directory, [int]$Count)
-    # Удаляем только известные файлы снимка, не используя рекурсивное удаление.
+    # Remove only known snapshot files without deleting directories recursively.
     for ($index = 0; $index -lt $Count; $index++) { [IO.File]::Delete((Join-Path $Directory "$index.bin")) }
     [IO.File]::Delete((Join-Path $Directory 'manifest.json'))
     [IO.Directory]::Delete($Directory)
@@ -52,7 +52,7 @@ function Invoke-UdkConnectionTransaction {
     if (Test-Path -LiteralPath $directory) {
         throw "Unfinished transaction detected: $directory. Run Restore-UdkConnectionTransaction with the same ProjectPath and SolutionPath before retrying."
     }
-    # Снимки создаются до запуска кода, изменяющего solution или consumer.
+    # Take snapshots before running code that changes the solution or consumer.
     $entries = @()
     $bytes = @()
     foreach ($path in $paths) { $bytes += ,([IO.File]::ReadAllBytes($path)) }
@@ -73,6 +73,6 @@ function Invoke-UdkConnectionTransaction {
         catch { throw "Connection failed: $($operationError.Exception.Message). $($_.Exception.Message)" }
         throw $operationError
     }
-    # Удаление снимка выполняется после всей операции, включая очистку solution.
+    # Remove the snapshot after the entire operation, including solution cleanup.
     Remove-UdkTransactionSnapshot $directory $paths.Count
 }

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 project(RegistryFixture VERSION 0.1.0 LANGUAGES CXX)
 if(UDK_TEST_PLATFORM)
-    # Используется только для проверки отказа до создания targets, без имитации toolchain.
+    # Exercise rejection before target creation without simulating a toolchain.
     set(CMAKE_SYSTEM_NAME "${UDK_TEST_PLATFORM}")
 endif()
 
@@ -43,7 +43,7 @@ endif()
 enable_testing()
 add_test(NAME ProcessState COMMAND state_consumer)
 
-# Экспорт нового компонента проверяется тем же Config-шаблоном, что и основной пакет.
+# Use the same Config template to test new component exports and the main package.
 set_target_properties(headers PROPERTIES EXPORT_NAME Headers)
 include(CMakePackageConfigHelpers)
 install(TARGETS headers ${exportedComponentTargets} EXPORT UniversalDevKitTargets ARCHIVE DESTINATION lib LIBRARY DESTINATION lib RUNTIME DESTINATION bin)

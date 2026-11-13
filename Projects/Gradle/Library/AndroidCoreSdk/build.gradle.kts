@@ -1,8 +1,8 @@
 //
-// Задаёт версии Gradle-плагинов, используемых всеми модулями пакета.
+// Gradle plugin versions shared by all package modules.
 //
 plugins {
-    // Поддержка сборки Android-библиотеки в формате AAR.
+    // Enable Android AAR builds.
     id("com.android.library") version "9.3.2" apply false
 }
 

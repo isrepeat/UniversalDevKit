@@ -3,7 +3,7 @@ package com.isrepeat.build
 
 class AndroidSettingsPlugin implements org.gradle.api.Plugin<org.gradle.api.initialization.Settings> {
     void apply(org.gradle.api.initialization.Settings settings) {
-        // Ближайший общий JSON задаёт источник библиотек так же, как PowerShell-сборка.
+        // The nearest shared JSON defines the library source for both Gradle and PowerShell.
         def directory = settings.settingsDir
         def sharedFile = null
         while (directory != null && sharedFile == null) {

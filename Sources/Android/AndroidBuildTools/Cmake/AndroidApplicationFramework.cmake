@@ -1,6 +1,6 @@
 include_guard(GLOBAL)
 
-# Общие исходники собираются тем же toolchain, что и приложение.
+# Build shared sources with the same toolchain as the application.
 if (NOT TARGET AndroidApplication::Framework)
     add_subdirectory(
         "${CMAKE_CURRENT_LIST_DIR}/../build/native/Android/AndroidBuildTools/ApplicationFramework"

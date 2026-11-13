@@ -1,4 +1,4 @@
-# Проверяем общие настройки компиляции независимо от происхождения исходников.
+# Validate common compile settings regardless of source origin.
 function(udkReadCompile settings)
     udkCheckObjectKeys("${settings}" "includeDirectories;preprocessorDefinitions;precompiledHeader" compile)
     set(includes)
@@ -139,7 +139,7 @@ function(udkApplyComponentCompile target json)
     if(compileDefinitions)
         target_compile_definitions(${target} PRIVATE ${compileDefinitions})
     endif()
-    # По умолчанию исходники компонента наследуют настройки PCH сборки.
+    # Component sources inherit the build's PCH settings by default.
     get_target_property(paths ${target} SOURCES)
     foreach(path IN LISTS paths)
         if(path MATCHES "\\.cpp$")

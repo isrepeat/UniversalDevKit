@@ -22,7 +22,7 @@ function Deliver([string]$Owner, [string[]]$Files) {
 function AssertExists([string]$Name, [bool]$Expected) {
     if ((Test-Path -LiteralPath (Join-Path $output $Name)) -ne $Expected) { throw "Unexpected file state: $Name" }
 }
-# Повторная доставка, общий OutDir и снятие последнего владельца.
+# Test repeated deployment, a shared OutDir, and removal of the last owner.
 Deliver 'App1|Debug|x64' @($dll)
 Deliver 'App1|Debug|x64' @($dll)
 Deliver 'App2|Debug|x64' @($dll)
@@ -30,12 +30,12 @@ Deliver 'App1|Debug|x64' @()
 AssertExists 'Probe.dll' $true
 Deliver 'App2|Debug|x64' @()
 AssertExists 'Probe.dll' $false
-# Ручные изменения не удаляются, даже после Disconnect.
+# Preserve manual changes even after Disconnect.
 Deliver 'App1|Debug|x64' @($dll)
 [IO.File]::WriteAllBytes((Join-Path $output 'Probe.dll'), [byte[]]@(4, 5))
 Deliver 'App1|Debug|x64' @()
 AssertExists 'Probe.dll' $true
-# Идентичный файл, размещённый вручную, также не становится собственностью UDK.
+# A manually placed identical file remains outside UDK ownership.
 $manual = Join-Path $sources 'Manual.dll'
 [IO.File]::WriteAllBytes($manual, [byte[]]@(8, 9))
 Copy-Item -LiteralPath $manual -Destination $output
@@ -43,7 +43,7 @@ Deliver 'App1|Debug|x64' @($manual)
 Deliver 'App1|Debug|x64' @($manual)
 Deliver 'App1|Debug|x64' @()
 AssertExists 'Manual.dll' $true
-# Несовместимые копии в общем OutDir отклоняются до перезаписи.
+# Reject incompatible copies in a shared OutDir before overwriting files.
 $other = Join-Path $sources 'Other.dll'
 [IO.File]::WriteAllBytes($other, [byte[]]@(7, 8))
 Deliver 'App1|Debug|x64' @($other)
@@ -52,7 +52,7 @@ $failed = $false
 try { Deliver 'App2|Debug|x64' @($other) } catch { $failed = $_.Exception.Message -like 'Another consumer requires*' }
 if (-not $failed) { throw 'Conflicting owners were not rejected.' }
 if ((Get-FileHash -LiteralPath (Join-Path $output 'Other.dll')).Hash -eq (Get-FileHash -LiteralPath $other).Hash) { throw 'Conflicting DLL was overwritten.' }
-# Проверяем настоящий target: доставка DLL и повторный Build с пустым runtime-набором.
+# Exercise the real target by deploying a DLL and rebuilding with an empty runtime set.
 . (Join-Path $PSScriptRoot 'BuildTools.ps1')
 $msbuild = Get-TestMSBuild
 $project = Join-Path $repository 'Tests/Fixtures/RuntimeCleanup/Consumer.proj'

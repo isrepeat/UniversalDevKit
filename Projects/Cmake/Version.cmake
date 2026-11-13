@@ -1,4 +1,4 @@
-# Единый источник версии выпуска и поколения ABI.
+# Single source of truth for the release version and ABI generation.
 file(READ "${CMAKE_CURRENT_LIST_DIR}/../../Version.json" udkVersionDescription)
 string(JSON udkReleaseVersion GET "${udkVersionDescription}" version)
 string(JSON udkAbiVersion GET "${udkVersionDescription}" abiVersion)

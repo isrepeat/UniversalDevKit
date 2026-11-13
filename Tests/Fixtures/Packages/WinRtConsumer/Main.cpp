@@ -5,7 +5,7 @@
 int main() {
     try {
         winrt::init_apartment(winrt::apartment_type::multi_threaded);
-        // Штатная активация использует манифест EXE и DLL из восстановленного пакета.
+        // Normal activation uses the EXE manifest and DLL from the restored package.
         const winrt::UniversalDevKit::TestPackages::Probe probe;
         if (probe.GetValue() != 42) { return 1; }
         std::cout << "Native Desktop WinRT activation passed\n";

@@ -27,7 +27,7 @@ function InvokeChecked([string]$Tool, [string[]]$Arguments) {
     if ($LASTEXITCODE -ne 0) { throw "$Tool failed: $LASTEXITCODE" }
 }
 foreach ($name in $Family) {
-    # Каждая сборка использует отдельную копию: исходные fixtures не получают obj/bin.
+    # Build each fixture in a separate copy to keep obj/bin out of the originals.
     . (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
     $work = Reset-UdkArtifactDirectory -Root $output -Path (Join-Path $output "build-$name")
     Copy-Item -Path (Join-Path $fixtures "$name/*") -Destination $work -Recurse

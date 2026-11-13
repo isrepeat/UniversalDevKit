@@ -2,14 +2,14 @@ package com.isrepeat.build
 
 class AndroidApplicationPlugin implements org.gradle.api.Plugin<org.gradle.api.Project> {
     void apply(org.gradle.api.Project project) {
-        // Подключаем Android-плагин и размещаем результаты вне исходных каталогов.
-        // Корень Gradle расположен в Tools/Gradle, поэтому поднимаемся на два уровня.
+        // Apply the Android plugin and write outputs outside the source directories.
+        // The Gradle root is Tools/Gradle, so go up two levels.
         project.pluginManager.apply('com.android.application')
         def repositoryRoot = project.rootProject.projectDir.parentFile.parentFile
         project.layout.buildDirectory.set(new java.io.File(repositoryRoot, "Build/${project.name}"))
 
-        // Явно переданная версия имеет приоритет над базовой версией проекта.
-        // Чтение через providers позволяет Gradle учитывать файл при кешировании конфигурации.
+        // An explicitly supplied version overrides the project's base version.
+        // Using providers lets Gradle track the file in the configuration cache.
         def versionFile = project.providers.gradleProperty('appVersionFile')
             .map { new java.io.File(repositoryRoot, it) }.getOrElse(new java.io.File(repositoryRoot, 'version.properties'))
         def versions = new java.util.Properties()
@@ -26,10 +26,10 @@ class AndroidApplicationPlugin implements org.gradle.api.Plugin<org.gradle.api.P
         if (code == null || name == null || !(code ==~ /[1-9][0-9]*/) || code.toLong() > 2100000000L) {
             throw new org.gradle.api.GradleException('Provide valid appVersionCode/appVersionName or VERSION_CODE_BASE/VERSION_NAME_BASE.')
         }
-        // Параметр Gradle переопределяет переменную окружения, затем используется JSON.
+        // The Gradle property overrides the environment variable, with JSON as fallback.
         def signingPath = project.providers.gradleProperty('androidSigningProperties')
             .orElse(project.providers.environmentVariable('ANDROID_SIGNING_PROPERTIES')).orNull
-        // Ищем ближайший JSON вверх от корня приложения, без слияния с родительскими файлами.
+        // Find the nearest JSON above the app root without merging parent files.
         def androidSharedPropsDirectory = repositoryRoot
         def androidSharedPropsFile = null
         while (androidSharedPropsDirectory != null) {
@@ -43,7 +43,7 @@ class AndroidApplicationPlugin implements org.gradle.api.Plugin<org.gradle.api.P
         if (androidSharedPropsFile == null) {
             throw new org.gradle.api.GradleException("Android.SharedProps.json was not found above ${repositoryRoot}.")
         }
-        // Проверяем версию контракта и обязательные пути до настройки подписи APK.
+        // Validate the contract version and required paths before configuring APK signing.
         def androidSharedPropsText = project.providers.fileContents(project.layout.projectDirectory.file(androidSharedPropsFile.absolutePath)).asText.get()
         def androidSharedProps = new groovy.json.JsonSlurper().parseText(androidSharedPropsText)
         if (!(androidSharedProps instanceof java.util.Map) || androidSharedProps.SchemaVersion != 1 || !(androidSharedProps.Paths?.SigningProperties instanceof java.lang.String) || androidSharedProps.Paths.SigningProperties.trim().isEmpty()) {
@@ -55,14 +55,14 @@ class AndroidApplicationPlugin implements org.gradle.api.Plugin<org.gradle.api.P
             }
         }
         if (signingPath == null) {
-            // Относительный путь привязан к каталогу JSON, а не к текущему каталогу Gradle.
+            // Resolve relative paths from the JSON directory.
             def sharedSigning = new java.io.File(androidSharedProps.Paths.SigningProperties)
             signingPath = (sharedSigning.isAbsolute() ? sharedSigning : new java.io.File(androidSharedPropsFile.parentFile, androidSharedProps.Paths.SigningProperties)).absolutePath
         }
         if (!project.file(signingPath).isFile()) {
             throw new org.gradle.api.GradleException("Shared signing properties were not found: ${signingPath}.")
         }
-        // Пароли и keystore читаются из отдельного файла, они не хранятся в общем JSON.
+        // Read passwords and the keystore from a separate file outside the shared JSON.
         def signing = new java.util.Properties()
         if (signingPath != null && project.file(signingPath).isFile()) {
             def signingFile = project.layout.projectDirectory.file(project.file(signingPath).absolutePath)
@@ -73,7 +73,7 @@ class AndroidApplicationPlugin implements org.gradle.api.Plugin<org.gradle.api.P
                 }
             }
         }
-        // Задаём общие версии SDK, версию приложения и единственную поддерживаемую ABI.
+        // Set the shared SDK versions, app version, and only supported ABI.
         project.extensions.configure(com.android.build.api.dsl.ApplicationExtension) { android ->
             android.compileSdk = 36
             android.defaultConfig {
@@ -87,10 +87,10 @@ class AndroidApplicationPlugin implements org.gradle.api.Plugin<org.gradle.api.P
                 sourceCompatibility = org.gradle.api.JavaVersion.VERSION_11
                 targetCompatibility = org.gradle.api.JavaVersion.VERSION_11
             }
-            // В AGP 9 встроенный Kotlin наследует JVM target из compileOptions.
+            // In AGP 9, built-in Kotlin inherits the JVM target from compileOptions.
             android.buildTypes.getByName('release').optimization.enable = false
             if (!signing.isEmpty()) {
-                // Все приложения и updater используют одинаковый общий ключ для Release.
+                // All apps and the updater share the same Release key.
                 def releaseSigning = android.signingConfigs.maybeCreate('release')
                 releaseSigning.storeFile = project.file(signing.getProperty('storeFile'))
                 releaseSigning.storePassword = signing.getProperty('storePassword')
@@ -100,7 +100,7 @@ class AndroidApplicationPlugin implements org.gradle.api.Plugin<org.gradle.api.P
 
                 def debugSigningKeys = ['debugStoreFile', 'debugStorePassword', 'debugKeyAlias', 'debugKeyPassword']
                 if (debugSigningKeys.every { signing.getProperty(it) }) {
-                    // Для Debug используется отдельный общий ключ из того же файла настроек.
+                    // Debug uses a separate key from the same settings file.
                     def debugSigning = android.signingConfigs.maybeCreate('debug')
                     debugSigning.storeFile = project.file(signing.getProperty('debugStoreFile'))
                     debugSigning.storePassword = signing.getProperty('debugStorePassword')
@@ -109,7 +109,7 @@ class AndroidApplicationPlugin implements org.gradle.api.Plugin<org.gradle.api.P
                     android.buildTypes.getByName('debug').signingConfig = debugSigning
                 }
             }
-            // После завершения настройки DSL проверяем наличие Release-keystore перед сборкой.
+            // Validate the Release keystore after configuring the DSL and before building.
             def verifySigning = project.tasks.register('verifyReleaseSigning', VerifyReleaseSigning)
             project.extensions.getByName('androidComponents').finalizeDsl { finalized ->
                 verifySigning.configure {
@@ -119,16 +119,16 @@ class AndroidApplicationPlugin implements org.gradle.api.Plugin<org.gradle.api.P
             project.tasks.matching { it.name == 'preReleaseBuild' }.configureEach {
                 dependsOn(verifySigning)
             }
-            // Если нативная библиотека уже собрана CMake, включаем её каталог в APK.
+            // Include the CMake output directory in the APK when the native library already exists.
             def nativeDirectory = project.providers.gradleProperty('appNativeLibraries').orNull
             if (nativeDirectory != null) {
                 android.sourceSets.getByName('main').jniLibs.srcDir(new java.io.File(repositoryRoot, nativeDirectory))
             }
         }
-        // Общие AndroidX-зависимости добавляются каждому приложению автоматически.
+        // Add shared AndroidX dependencies to every application.
         project.dependencies.add('implementation', 'androidx.activity:activity-ktx:1.8.0')
         project.dependencies.add('implementation', 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1')
-        // Динамические версии проверяются при каждой сборке, без кеша разрешения версий.
+        // Check dynamic versions on every build without caching resolution.
         project.configurations.configureEach {
             resolutionStrategy.cacheDynamicVersionsFor(0, 'seconds')
         }

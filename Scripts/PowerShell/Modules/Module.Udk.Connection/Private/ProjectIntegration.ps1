@@ -8,7 +8,7 @@ function Invoke-UdkConnectionPlan {
     if ($Preview) {
         return Invoke-UdkConnectionPlanCore -Plan $Plan -Preview -WriteStatus $WriteStatus -ResolveTool $ResolveTool
     }
-    # Проверяем формат consumer до сохранения снимков и изменения solution.
+    # Validate the consumer format before taking snapshots or changing the solution.
     $projectFile = (Resolve-Path -LiteralPath $Plan.Request.ProjectPath -ErrorAction Stop).Path
     if ([IO.Path]::GetExtension($projectFile) -ne '.vcxproj') { throw 'Expected .vcxproj file.' }
     $document = [Xml.XmlDocument]::new()
@@ -120,7 +120,7 @@ function Invoke-UdkConnectionPlanCore {
         }
     }
     if ($Disconnect -and $cleanupPath) {
-        # После Disconnect оставляем только очистку: без ссылок, макросов и исходников.
+        # After Disconnect, keep only cleanup and remove references, macros, and sources.
         $cleanup = $document.CreateElement('Import', $namespace)
         $cleanup.SetAttribute('Label', 'UniversalDevKitRuntimeCleanup')
         $cleanup.SetAttribute('Project', $cleanupPath)

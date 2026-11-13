@@ -40,8 +40,8 @@ namespace universaldevkit::openglesrenderer {
         constexpr int AtlasHeight = 1024;
         constexpr int MaximumTextGlyphs = 256;
 
-        // Команды runtime хранят текст в UTF-8, а stb_truetype ожидает code point.
-        // Повреждённая либо неподдерживаемая последовательность заменяется на '?'.
+        // Runtime commands store UTF-8 text, and stb_truetype expects code points.
+        // Replace invalid or unsupported sequences with '?'.
     } // namespace details
 
     class OpenGlRenderer::Implementation {
@@ -170,8 +170,8 @@ namespace universaldevkit::openglesrenderer {
             throw std::invalid_argument("Invalid OpenGL renderer arguments");
         }
 
-        // Стандартная графика работает без программ от хоста. Явная подмена
-        // по ключу роли имеет приоритет над встроенным исходником.
+        // Built-in programs support standard rendering without host shaders.
+        // An explicit override for a role takes precedence over the built-in source.
         shaderPrograms.try_emplace(ShaderRoles::text,
             ShaderProgramSource{details::TextVertexShader, details::TextFragmentShader});
         shaderPrograms.try_emplace(ShaderRoles::solid,
@@ -248,8 +248,8 @@ namespace universaldevkit::openglesrenderer {
         glDisable(GL_SCISSOR_TEST);
         this->clipStack.clear();
         glEnable(GL_BLEND);
-        // Шейдеры возвращают straight alpha, а поверхность Android ожидает
-        // premultiplied RGB. Альфа накапливается отдельно, без повторного умножения.
+        // Shaders output straight alpha, and the Android surface expects premultiplied RGB.
+        // Accumulate alpha separately to avoid multiplying it twice.
         glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -305,7 +305,7 @@ namespace universaldevkit::openglesrenderer {
     void OpenGlRenderer::Implementation::CreateFontAtlas(
         const unsigned char* fontData,
         FontAtlas& fontAtlas) {
-        // Один atlas покрывает ASCII, кириллицу и значок настроек из тестовой разметки.
+        // One atlas covers ASCII, Cyrillic, and the settings icon used in test markup.
         std::vector<unsigned char> atlas(details::AtlasWidth * details::AtlasHeight, 0);
         stbtt_pack_context packingContext{};
         const int packingStarted = stbtt_PackBegin(
@@ -421,8 +421,8 @@ namespace universaldevkit::openglesrenderer {
         float cornerRadius,
         bool outline,
         float thickness) {
-        // Радиус ограничивается половиной каждой стороны: иначе дуги углов
-        // пересекаются на очень узких прямоугольниках.
+        // Clamp the radius to half of each side so corner arcs
+        // cannot overlap in very narrow rectangles.
         const float maximumRadius = std::max(
             0.0f,
             std::min(bounds.width / 2.0f, bounds.height / 2.0f));
@@ -431,9 +431,9 @@ namespace universaldevkit::openglesrenderer {
         if (outline && borderThickness <= 0.0f) {
             return;
         }
-        // Заливка прямоугольника без скругления не требует shader-пути. Контур
-        // всё же рисуем шейдером: GL_LINE_LOOP не гарантирует заданную ширину
-        // линии в ANGLE и даёт другой результат, чем скруглённая рамка.
+        // Plain rectangles can be filled without the shader path.
+        // Use the shader for outlines because ANGLE's GL_LINE_LOOP cannot guarantee
+        // the requested width and differs from rounded outlines.
         if (radius == 0.0f && !outline) {
             const std::array<float, 8> vertices{
                 bounds.x * 2.0f / this->width - 1.0f,
@@ -578,8 +578,8 @@ namespace universaldevkit::openglesrenderer {
             return;
         }
         const FontAtlas& fontAtlas = this->GetFontAtlas(fontWeight);
-        // stb_truetype выдаёт метрики для размера atlas; scale переводит их
-        // обратно в fontSize, заданный XAML-командой.
+        // stb_truetype returns metrics at the atlas size. Scale them
+        // back to the fontSize specified by the XAML command.
         const float scale = fontSize / details::AtlasFontSize;
         float textWidth = 0.0f;
         float minimumY = std::numeric_limits<float>::max();
@@ -598,8 +598,8 @@ namespace universaldevkit::openglesrenderer {
             ++glyphCount;
         }
 
-        // Первый проход собрал метрики всей строки. Теперь выравниваем её в
-        // bounds и вторым проходом формируем по два треугольника на glyph.
+        // The first pass collects metrics for the entire line. Align it within
+        // the bounds and emit two triangles per glyph in the second pass.
         float cursorX = bounds.x / scale;
         if (horizontalAlignment == xaml::attr::Alignment::center) {
             cursorX = (bounds.x + (bounds.width - textWidth) * 0.5f) / scale;
@@ -795,15 +795,15 @@ namespace universaldevkit::openglesrenderer {
     }
 
     void OpenGlRenderer::Implementation::ApplyClip(const xaml::Rect& bounds) const {
-        // Пустое пересечение должно оставаться пустым: floor/ceil дробной
-        // координаты иначе превращают нулевой размер в полосу из одного пикселя.
+        // Keep empty intersections empty because rounding fractional coordinates
+        // could otherwise turn a zero-sized area into a one-pixel strip.
         if (bounds.width <= 0.0f || bounds.height <= 0.0f) {
             glEnable(GL_SCISSOR_TEST);
             glScissor(0, 0, 0, 0);
             return;
         }
-        // Координаты XAML отсчитываются сверху, тогда как glScissor — снизу.
-        // Поэтому вертикальные границы инвертируются перед включением scissor.
+        // XAML measures from the top, and glScissor measures from the bottom.
+        // Invert the vertical bounds before enabling scissoring.
         const auto pixels = universaldevkit::helpers::math::Geometry::Intersect(
             universaldevkit::helpers::math::Geometry::RoundOut(bounds),
             universaldevkit::helpers::math::Bounds<int>{0, 0, this->width, this->height});
@@ -815,7 +815,7 @@ namespace universaldevkit::openglesrenderer {
         std::vector<float>& vertices,
         float x,
         float y) const {
-        // Преобразуем пиксельные координаты XAML в normalized device coordinates.
+        // Convert XAML pixel coordinates to normalized device coordinates.
         vertices.push_back(x * 2.0f / this->width - 1.0f);
         vertices.push_back(1.0f - y * 2.0f / this->height);
     }

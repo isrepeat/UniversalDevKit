@@ -41,7 +41,7 @@ function Assert-PackageEntries([string]$Path, [string[]]$Required) {
     } finally { $archive.Dispose() }
 }
 
-# Планирование работает отдельно от инструментов и в чужом корне репозитория.
+# Planning runs without build tools and works from a separate repository root.
 $plan = & $builder -RepositoryPath $external -PackagePath Package.json -Plan
 if (($plan.Order -join ',') -cne 'Managed,Native,CMake') { throw 'Unexpected project dependency order.' }
 if ($plan.Version -cne '1.0.0' -or ($plan.AbiVersion -isnot [int] -and $plan.AbiVersion -isnot [long]) -or $plan.AbiVersion -ne 0) { throw 'JSON reference resolution failed.' }
@@ -81,7 +81,7 @@ Expect-Failure { & $builder -RepositoryPath $external -PackagePath Package.json 
 Copy-Item -LiteralPath (Join-Path $fixture 'Managed.json') -Destination (Join-Path $external 'Managed.json') -Force
 Copy-Item -LiteralPath (Join-Path $fixture 'Native.json') -Destination (Join-Path $external 'Native.json') -Force
 
-# Реальная сборка смешанного пакета проверяет все три проектных адаптера и NuGet.
+# Building a mixed package exercises all three project adapters and NuGet.
 $packagePath = & $builder -RepositoryPath $external -PackagePath Package.json -OutputDirectory (Join-Path $run 'packages') -CMake $CMake -NuGet $NuGet
 Assert-PackageEntries $packagePath @('lib/net8.0/Probe.dll', 'include/Probe/Probe.h', 'src/Internal/Hidden.h', 'src/Probe.cpp', 'cmake/Component.json', 'native/share/marker.txt', 'README.txt')
 $registry = Read-TestJson 'Projects.json'
@@ -120,7 +120,7 @@ Copy-Item -LiteralPath (Join-Path $fixture 'Delivery.json') -Destination (Join-P
 Copy-Item -LiteralPath (Join-Path $fixture 'Package.nuspec') -Destination (Join-Path $external 'Package.nuspec') -Force
 Write-TestJson 'Package.json' $originalPackage
 
-# Тот же пакет собирается без внешнего реестра; имена проектов локальны для пакета.
+# Build the same package without an external registry. Project names are package-local.
 $inline = Read-TestJson 'Package.json'
 $inline.name = 'InlineProbe'
 $inline.projects = [pscustomobject]@{}
@@ -164,7 +164,7 @@ $package.contents[0] | Add-Member path 'missing'
 Write-TestJson 'Package.json' $package
 Expect-Failure { & $builder -RepositoryPath $external -PackagePath Package.json -OutputDirectory (Join-Path $run 'missing') -NuGet $NuGet } 'Missing path'
 
-# Выбор доставки ограничивает граф проектов; явная версия заменяет ссылку.
+# Delivery selection limits the project graph. An explicit version overrides the reference.
 Write-TestJson 'Package.json' $originalPackage
 $package = Read-TestJson 'Package.json'
 $package.deliveries | Add-Member Android 'Maven.json'
