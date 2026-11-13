@@ -1,8 +1,20 @@
 function Invoke-UdkComponentSourcesProject($Project, $Context) {
-    # Select public and internal headers only from the component registry.
+    # Получаем список файлов компонента.
     $root = $Context.RepositoryPath
-    $componentPath = Resolve-UdkBuildPath $root $root $Project.component -Existing
-    $component = Read-UdkBuildJson $componentPath
+    if ($Project.adapter -eq 'udk-component-sources') {
+        . (Join-Path $PSScriptRoot '../../ProjectTools/Private/Contract.ps1')
+        $model = Read-ProjectToolsModel (Join-Path $root 'Components.json')
+        $components = @($model.Components.Values | Where-Object name -eq $Project.component)
+        if ($components.Count -ne 1 -or $components[0].platformSources) {
+            throw "Expected one native component without platformSources: $($Project.component)"
+        }
+        $component = $components[0]
+    } else {
+        $componentPath = Resolve-UdkBuildPath $root $root $Project.component -Existing
+        $component = Read-UdkBuildJson $componentPath
+    }
+
+    # Раскладываем исходники и заголовки по каталогам пакета.
     $sourceRoot = Resolve-UdkBuildPath $root $root $Project.sourceRoot -Existing
     $includeRoot = Resolve-UdkBuildPath $root $root $Project.includeRoot -Existing
     $output = Reset-UdkArtifactDirectory -Root $Context.WorkDirectory -Path (Join-Path $Context.WorkDirectory 'output')
@@ -35,12 +47,19 @@ function Invoke-UdkComponentSourcesProject($Project, $Context) {
         [void][IO.Directory]::CreateDirectory((Split-Path -Parent $target))
         Copy-Item -LiteralPath $source -Destination $target
     }
+
+    # Записываем список файлов для потребителей пакета.
     $manifest = Resolve-UdkBuildPath $output $output $Project.manifestDestination
     if ($seen.ContainsKey($manifest)) {
         throw 'Component manifest collides with source files.'
     }
     [void][IO.Directory]::CreateDirectory((Split-Path -Parent $manifest))
-    Copy-Item -LiteralPath $componentPath -Destination $manifest
+    if ($Project.adapter -eq 'udk-component-sources') {
+        $manifestJson = [ordered]@{ headers = @($component.headers); sources = @($component.sources) } | ConvertTo-Json -Compress
+        [IO.File]::WriteAllText($manifest, $manifestJson, [Text.UTF8Encoding]::new($false))
+    } else {
+        Copy-Item -LiteralPath $componentPath -Destination $manifest
+    }
     return @{
         output = $output
     }

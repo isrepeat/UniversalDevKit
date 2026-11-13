@@ -11,6 +11,14 @@
     "Projects/Components/Application/XamlCompiler.json"
   ],
   "generation": {
-    "profile": "udk"
+    "profile": "udk",
+    "msbuild": {
+      "solution": "UniversalDevKit.sln",
+      "projectDirectory": "Projects/MsBuild/{kind}/{name}",
+      "projectName": "UniversalDevKit.{name}.{variant}",
+      "configurations": ["Debug", "Release"],
+      "platforms": ["x64"],
+      "solutionFolder": "Projects"
+    }
   }
 }

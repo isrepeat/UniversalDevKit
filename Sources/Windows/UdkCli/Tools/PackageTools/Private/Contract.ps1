@@ -265,9 +265,9 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
                 @('project', 'operation', 'configuration', 'runtime', 'selfContained')
             }
             'udk-dotnet' {
-                @('component', 'projectId', 'configuration')
+                @('component', 'projectId', 'operation', 'configuration', 'runtime', 'selfContained')
             }
-            'component-sources' {
+            { $_ -in @('component-sources', 'udk-component-sources') } {
                 @('component', 'sourceRoot', 'includeRoot', 'publicHeaders', 'headerDestination', 'sourceDestination', 'manifestDestination')
             }
             {
@@ -338,14 +338,20 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
                     throw 'selfContained requires publish with a runtime.'
                 }
             }
-            'component-sources' {
+            { $_ -in @('component-sources', 'udk-component-sources') } {
                 Assert-UdkFields $project ($common + $specific) $specific $projectPath
-                foreach ($field in @('component', 'sourceRoot', 'includeRoot')) {
+                foreach ($field in @('sourceRoot', 'includeRoot')) {
                     [void](Resolve-UdkBuildPath $root $root $project.$field -Existing)
                 }
-                $component = Read-UdkBuildJson (Join-Path $root $project.component)
-                if ($component.headers -isnot [array] -or $component.sources -isnot [array] -or $component.platformSources) {
-                    throw 'Source distribution requires headers/sources arrays without platformSources.'
+                if ($project.adapter -eq 'udk-component-sources') {
+                    Assert-UdkBuildName $project.component
+                    [void](Resolve-UdkBuildPath $root $root 'Components.json' -Existing)
+                } else {
+                    $componentPath = Resolve-UdkBuildPath $root $root $project.component -Existing
+                    $component = Read-UdkBuildJson $componentPath
+                    if ($component.headers -isnot [array] -or $component.sources -isnot [array] -or $component.platformSources) {
+                        throw 'Source distribution requires headers/sources arrays without platformSources.'
+                    }
                 }
                 if ($project.publicHeaders -isnot [array] -or -not $project.publicHeaders.Count) {
                     throw 'publicHeaders must be a nonempty array.'
@@ -402,6 +408,12 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
             }
             if ($project.PSObject.Properties['configuration'] -and $project.configuration -cnotin @('Debug', 'Release')) {
                 throw "Invalid udk-dotnet configuration: $projectPath"
+            }
+            if ($project.PSObject.Properties['operation'] -and $project.operation -cnotin @('build', 'publish')) {
+                throw "Invalid udk-dotnet operation: $projectPath"
+            }
+            if ($null -ne $project.selfContained -and ($project.selfContained -isnot [bool] -or -not $project.runtime -or $project.operation -ne 'publish')) {
+                throw 'selfContained requires publish with a runtime.'
             }
             [void](Resolve-UdkBuildPath $root $root 'Components.json' -Existing)
         }

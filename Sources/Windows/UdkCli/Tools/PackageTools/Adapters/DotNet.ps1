@@ -36,9 +36,12 @@ function Invoke-UdkComponentDotNetProject($Project, $Context) {
         throw "Generated project is missing: $path. Run ProjectTools generation for Components.json."
     }
     $configuration = if ($Project.configuration) { $Project.configuration } else { 'Release' }
+    $operation = if ($Project.operation) { $Project.operation } else { 'build' }
     Invoke-UdkDotNetProject @{
         project = $path
-        operation = 'build'
+        operation = $operation
         configuration = $configuration
+        runtime = $Project.runtime
+        selfContained = $Project.selfContained
     } $Context
 }

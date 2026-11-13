@@ -167,7 +167,7 @@ try {
                 'udk-dotnet' {
                     Invoke-UdkComponentDotNetProject $project $context
                 }
-                'component-sources' {
+                { $_ -in @('component-sources', 'udk-component-sources') } {
                     Invoke-UdkComponentSourcesProject $project $context
                 }
                 {
