@@ -116,7 +116,14 @@ function New-ProjectToolsDotNetProject($Model, $Component, [string]$Path) {
         elseif ($Component.projectType -eq 'classLibrary') { @('ProjectGuid', 'OutputType', 'EnableDefaultNoneItems') }
         else { @('ProjectGuid', 'GeneratePkgDefFile', 'CreateVsixContainer', 'IncludeAssemblyInVSIXContainer', 'VSSDKTargetPlatformVersion', 'VSSDKBuildToolsAutoSetup', 'LangVersion') }
     $reserved += @('EnableDefaultCompileItems', 'EnableDefaultPageItems', 'EnableDefaultApplicationDefinition')
+    $udkCliVsix = $Model.Profile -eq 'udk' -and $Component.name -ceq 'UdkCli.VisualStudio' -and $Component.projectType -ceq 'vsix'
+    if ($udkCliVsix) { $reserved += 'UniversalDevKitGitHubVersion' }
     $properties = Get-ProjectToolsApplicationProperties $Component $reserved
+    if ($udkCliVsix) {
+        $cli = $Model.Applications['Projects/Components/Application/UdkCli.json']
+        if (-not $cli.githubVersion) { throw 'Missing UdkCli githubVersion for the Visual Studio extension.' }
+        $properties = @('    <UniversalDevKitGitHubVersion>' + (ConvertTo-ProjectToolsXml $cli.githubVersion) + '</UniversalDevKitGitHubVersion>') + @($properties)
+    }
     $directory = Split-Path -Parent (Resolve-ProjectToolsPath $Model.Root $Path)
     $sourceFiles = @($Component.sources | Sort-Object -CaseSensitive)
     $buildExtensions = @($Component.buildExtensions.msbuildProps, $Component.buildExtensions.msbuildTargets) |

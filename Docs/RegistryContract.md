@@ -113,7 +113,7 @@ CMake предоставляет `UniversalDevKit::<компонент>.Headers`
 `RegistryContract.cmake` проверяет версию, неизвестные поля, базовые типы, файлы и зависимости до создания targets. Генератор проектов проверяет реестр до записи. Специализированные поля проверяются соответствующими readers.
 
 ```powershell
-pwsh -NoProfile -File Tests/Infrastructure/TestRegistryContract.ps1
+powershell.exe -NoProfile -File Tests/Infrastructure/TestRegistryContract.ps1
 ```
 
 Сценарий проверяет общий набор неверных JSON fixtures, Shared MSBuild и установленный CMake-пакет с цепочкой header-only зависимостей.

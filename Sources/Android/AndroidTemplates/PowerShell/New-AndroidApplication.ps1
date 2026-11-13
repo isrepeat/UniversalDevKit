@@ -179,9 +179,9 @@ This application's secrets are outside Git:
 
 ```text
 {{SecretsDirectory}}
-├─ debug.keystore
-├─ release.keystore
-└─ signing.properties
+- debug.keystore
+- release.keystore
+- signing.properties
 ```
 '@
 $setupUrl = if ($releaseCertificate.SetupUrl) { $releaseCertificate.SetupUrl } else { 'pass -GoogleCloudProject to get a link to the Clients page' }

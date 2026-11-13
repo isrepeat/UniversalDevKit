@@ -10,4 +10,12 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <!-- Resolve and validate the numeric VSIX version when VSSDK requests it.
+       VsixReplacement would require computing the same value before substitution. -->
+  <Target Name="GetVsixVersion" Outputs="$(__UniversalDevKitVsixVersion)">
+    <PropertyGroup>
+      <__UniversalDevKitVsixVersion>$([System.Text.RegularExpressions.Regex]::Match('$(UniversalDevKitGitHubVersion)', '^[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?(?=$|[-+])'))</__UniversalDevKitVsixVersion>
+    </PropertyGroup>
+    <Error Condition="'$(__UniversalDevKitVsixVersion)' == ''" Text="Invalid UDK CLI version for VSIX: $(UniversalDevKitGitHubVersion)" />
+  </Target>
 </Project>

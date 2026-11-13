@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,8 +16,8 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Generation {
             var script = Path.Combine(root, "Sources", "Windows", "UdkCli", "Tools", "ProjectTools", "Generate.ps1");
             var local = File.Exists(script);
             var start = new ProcessStartInfo {
-                FileName = local ? "pwsh.exe" : FindUdk(),
-                Arguments = local ? $"-NoProfile -File \"{script}\" -ManifestPath Components.json" : "project generate",
+                FileName = local ? Path.Combine(Environment.SystemDirectory, "WindowsPowerShell", "v1.0", "powershell.exe") : FindUdk(),
+                Arguments = local ? $"-NoProfile -ExecutionPolicy Bypass -File \"{script}\" -ManifestPath Components.json" : "project generate",
                 WorkingDirectory = root,
                 UseShellExecute = false,
                 CreateNoWindow = true,

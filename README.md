@@ -21,7 +21,7 @@ Helpers — единый header-only компонент с папками Meta, 
 
 ## Подключение к приложению
 
-Перед первым использованием запустите [Scripts/Setup.cmd](Scripts/Setup.cmd) либо `pwsh -File Scripts/PowerShell/Setup.ps1`: закреплённые версии SolutionInjector и NuGet будут загружены и проверены в `!tools/`. Setup можно пропустить: Connect подготовит SolutionInjector при работе с solution, а упаковка и пакетные тесты подготовят NuGet при запуске. Visual Studio, CMake и SDK устанавливаются отдельно. Подробнее — [инструменты](Docs/Tools.md).
+Перед первым использованием запустите [Scripts/Setup.cmd](Scripts/Setup.cmd) либо `powershell.exe -File Scripts/PowerShell/Setup.ps1`: закреплённые версии SolutionInjector и NuGet будут загружены и проверены в `!tools/`. Setup можно пропустить: Connect подготовит SolutionInjector при работе с solution, а упаковка и пакетные тесты подготовят NuGet при запуске. Visual Studio, CMake и SDK устанавливаются отдельно. Подробнее — [инструменты](Docs/Tools.md).
 
 [Diagnostic](Docs/Diagnostic.md) — сервис логирования в общей DLL/SO (`stateScope=process`): stderr или файлы по ID, append/truncate, ротация и маркеры сессий. Для его сборки получите закреплённый spdlog: `git submodule update --init ThirdParty/spdlog`. Публичный API не требует заголовков spdlog.
 

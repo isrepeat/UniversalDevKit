@@ -2,7 +2,7 @@
 
 **Навигация:** [Документация](README.md) → Выпуск пакетов
 
-PackageTools входит в поставку [UdkCli](UdkCli.md). Для работы из стороннего репозитория нужны `udk.exe`, его каталог `Tools` и PowerShell 7.
+PackageTools входит в поставку [UdkCli](UdkCli.md). Для работы из стороннего репозитория нужны `udk.exe`, его каталог `Tools` и Windows PowerShell 5.1.
 
 ## Запуск из другого репозитория
 

@@ -1,4 +1,4 @@
-#requires -Version 7.0
+#requires -Version 5.1
 param(
     [ValidateSet('Windows', 'Android')][string]$Platform = 'Windows',
     [ValidateSet('Debug', 'Release')][string[]]$Configuration = @('Debug', 'Release'),
@@ -39,7 +39,11 @@ function Invoke-Tool([string]$Tool, [string[]]$ToolArguments, [string]$Log, [int
     $startInfo.CreateNoWindow = $true
     $startInfo.RedirectStandardOutput = $true
     $startInfo.RedirectStandardError = $true
-    foreach ($argument in $ToolArguments) { [void]$startInfo.ArgumentList.Add($argument) }
+    $startInfo.Arguments = ($ToolArguments | ForEach-Object {
+        $escaped = $_ -creplace '(\\*)"', '$1$1\"'
+        $escaped = $escaped -creplace '(\\+)\z', '$1$1'
+        '"' + $escaped + '"'
+    }) -join ' '
     $process = [Diagnostics.Process]::new()
     $process.StartInfo = $startInfo
     try {
@@ -47,7 +51,7 @@ function Invoke-Tool([string]$Tool, [string[]]$ToolArguments, [string]$Log, [int
         $stdout = $process.StandardOutput.ReadToEndAsync()
         $stderr = $process.StandardError.ReadToEndAsync()
         if (-not $process.WaitForExit($TimeoutSeconds * 1000)) {
-            $process.Kill($true)
+            & "$env:SystemRoot/System32/taskkill.exe" /PID $process.Id /T /F | Out-Null
             $process.WaitForExit()
             [IO.File]::WriteAllText($Log, $stdout.GetAwaiter().GetResult() + $stderr.GetAwaiter().GetResult())
             throw "Tool timed out after ${TimeoutSeconds}s: $Tool"

@@ -8,7 +8,7 @@ $env:VSLANG = '1033'
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
 $OutputEncoding = [Text.UTF8Encoding]::new($false)
 $ErrorActionPreference = 'Stop'
-# MSBuild может наследовать PSModulePath от pwsh; загружаем Utility текущего host.
+# Загружаем Utility из каталога Windows PowerShell, независимо от унаследованного PSModulePath.
 Import-Module (Join-Path $PSHOME 'Modules/Microsoft.PowerShell.Utility') -ErrorAction Stop
 $output = [IO.Path]::GetFullPath($OutputDirectory)
 [void][IO.Directory]::CreateDirectory($output)

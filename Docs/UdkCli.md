@@ -15,7 +15,7 @@
 | `udk package plan <package-path>` | PackageTools/Build.ps1 с параметром -Plan |
 | `udk uninstall` | Открывает окно подтверждения удаления установленного UDK CLI |
 
-Команды запускаются из корня потребляющего репозитория. По умолчанию команды проектов используют Components.json из текущего каталога. CLI запускает pwsh.exe и передаёт код завершения скрипта вызывающей стороне.
+Команды запускаются из корня потребляющего репозитория. По умолчанию команды проектов используют Components.json из текущего каталога. CLI запускает Windows PowerShell 5.1 (`powershell.exe`). Код завершения скрипта передаётся вызывающей стороне.
 
 ## Версия CLI в репозитории
 
@@ -31,7 +31,7 @@
 msbuild Projects/MsBuild/Application/UdkCli/UdkCli.vcxproj /p:Configuration=Release /p:Platform=x64
 ```
 
-Исходники ProjectTools и PackageTools находятся в `Sources/Windows/UdkCli/Tools`. При сборке каталог `Tools` копируется рядом с `udk.exe` с сохранением структуры. Для запуска нужен PowerShell 7. Требования к сборке конкретного пакета определяются PackageTools.
+Исходники ProjectTools и PackageTools находятся в `Sources/Windows/UdkCli/Tools`. При сборке каталог `Tools` копируется рядом с `udk.exe` с сохранением структуры. Для запуска подходит Windows PowerShell 5.1. Требования к сборке конкретного пакета определяются PackageTools.
 
 При первой установке можно выбрать пустую папку через **Browse**. По умолчанию используется `%LOCALAPPDATA%\Programs\UdkCli`. При обновлении установщик использует сохранённый `InstallLocation` текущего пользователя. Папка установки автоматически добавляется в пользовательский `PATH`. После установки откройте новый терминал и запустите `udk --help`.
 
@@ -39,7 +39,7 @@ msbuild Projects/MsBuild/Application/UdkCli/UdkCli.vcxproj /p:Configuration=Rele
 
 ## Команда в Visual Studio 2026
 
-Установщик UDK включает VSIX для Visual Studio 2026 x64 и устанавливает его для текущего пользователя в совместимые экземпляры IDE. При обновлении UDK установщик передаёт новый VSIX штатному `VSIXInstaller.exe`. ID расширения остаётся постоянным. Версию в `Projects\MsBuild\Application\UdkCli.VisualStudio\source.extension.vsixmanifest` повышают при выпуске новой версии расширения. Если установить расширение не удалось, UDK Setup откроет отдельное окно. Если Visual Studio открыта, закройте её и нажмите **Install extension**. Чтобы завершить установку CLI без расширения, нажмите **Skip** или закройте окно.
+Установщик UDK включает VSIX для Visual Studio 2026 x64 и устанавливает его для текущего пользователя в совместимые экземпляры IDE. При обновлении UDK установщик передаёт новый VSIX штатному `VSIXInstaller.exe`. ID расширения остаётся постоянным. Версия VSIX берётся из версии UDK CLI. При публикации используется выбранная версия выпуска, а при обычной сборке — `githubVersion` из `UdkCli.json`. В манифест VSIX записывается числовая часть версии. Если установить расширение не удалось, UDK Setup откроет отдельное окно. Если Visual Studio открыта, закройте её и нажмите **Install extension**. Чтобы завершить установку CLI без расширения, нажмите **Skip** или закройте окно.
 
 Откройте решение и выберите **Tools → Regenerate UDK Solution**. Расширение ищет `Components.json` от каталога решения вверх до корня Git. В репозитории UDK оно вызывает локальный `ProjectTools/Generate.ps1`, в остальных случаях запускает `udk project generate`. Результат доступен в панели **Output → UDK CLI**.
 

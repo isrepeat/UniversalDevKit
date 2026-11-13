@@ -49,7 +49,7 @@ namespace UniversalDevKit.UdkCli.Setup {
                 }
                 var message = "UDK CLI is installed. Open a new terminal and run udk --help.";
                 if (!Installation.HasPowerShell()) {
-                    message += "\n\nPowerShell 7 (pwsh.exe) must be on PATH to run UDK CLI commands.";
+                    message += "\n\nUDK CLI commands require Windows PowerShell 5.1.";
                 }
                 try {
                     message += await this.InstallExtensionAsync();

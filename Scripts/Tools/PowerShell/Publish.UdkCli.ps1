@@ -75,7 +75,7 @@ try {
         Copy-Item -LiteralPath $archive -Destination $cachedPayload -Force
     }
 
-    & $msbuild $vsixProject /nologo /m /restore /p:Configuration=Release "/p:OutDir=$vsixOutput\" "/p:ArtifactsPath=$cacheDirectory\vsix" "/p:UdkDiagnosticPayload=$diagnostic"
+    & $msbuild $vsixProject /nologo /m /restore /p:Configuration=Release "/p:UniversalDevKitGitHubVersion=$Version" "/p:OutDir=$vsixOutput\" "/p:ArtifactsPath=$cacheDirectory\vsix" "/p:UdkDiagnosticPayload=$diagnostic"
     if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $vsix -PathType Leaf)) { throw 'UDK Visual Studio extension build failed.' }
 
     $setupProject = Join-Path $root 'Projects\MsBuild\Application\UdkCli.Setup\UdkCli.Setup.csproj'

@@ -126,9 +126,7 @@ namespace UniversalDevKit.UdkCli.Setup {
             Microsoft.Win32.Registry.CurrentUser.DeleteSubKeyTree(RegistryPath);
         }
 
-        public static bool HasPowerShell() => (Environment.GetEnvironmentVariable("PATH") ?? "").Split(';')
-            .Where(entry => !string.IsNullOrWhiteSpace(entry))
-            .Any(entry => File.Exists(Path.Combine(Environment.ExpandEnvironmentVariables(entry.Trim().Trim('"')), "pwsh.exe")));
+        public static bool HasPowerShell() => File.Exists(Path.Combine(Environment.SystemDirectory, "WindowsPowerShell", "v1.0", "powershell.exe"));
 
         private static void RemoveVersionCache(string installDirectory) {
             var cacheRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "UdkCli");

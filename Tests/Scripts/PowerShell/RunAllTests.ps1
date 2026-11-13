@@ -36,16 +36,16 @@ $cases = @(
     @{ Name = 'RegistryContract'; Group = 'Windows'; Path = 'Tests/Infrastructure/TestRegistryContract.ps1'; Args = @('-CMake', $CMake) }
     @{ Name = 'ComponentRegistry'; Group = 'Windows'; Path = 'Tests/Infrastructure/TestComponentRegistry.ps1'; Args = @() }
     @{ Name = 'BuildExtensions'; Group = 'Windows'; Path = 'Tests/Infrastructure/TestBuildExtensions.ps1'; Args = @('-CMake', $CMake) }
-    @{ Name = 'ConnectAndPublicHeaders'; Group = 'Windows'; Path = 'Tests/Scripts/PowerShell/RunTests.ps1'; Args = @(); Engine = 'powershell.exe' }
-    @{ Name = 'DiamondMatrix'; Group = 'Windows'; Path = 'Tests/Integration/Cmake/Diamond.Tests.ps1'; Args = @('-CMake', $CMake); Engine = 'powershell.exe' }
+    @{ Name = 'ConnectAndPublicHeaders'; Group = 'Windows'; Path = 'Tests/Scripts/PowerShell/RunTests.ps1'; Args = @() }
+    @{ Name = 'DiamondMatrix'; Group = 'Windows'; Path = 'Tests/Integration/Cmake/Diamond.Tests.ps1'; Args = @('-CMake', $CMake) }
     @{ Name = 'BinaryCompatibility'; Group = 'Windows'; Path = 'Tests/Integration/Cmake/TestBinaryCompatibility.ps1'; Args = @('-CMake', $CMake) }
     @{ Name = 'NuGetRegistry'; Group = 'Windows'; Path = 'Tests/Integration/Packages/NuGet.Registry.Tests.ps1'; Args = @('-CMake', $CMake) }
-    @{ Name = 'NativePackageReference'; Group = 'Windows'; Path = 'Tests/Integration/Packages/NuGet.PackageReference.Tests.ps1'; Args = @('-CMake', $CMake); Engine = 'powershell.exe' }
-    @{ Name = 'DiamondPackageReference'; Group = 'Windows'; Path = 'Tests/Integration/Cmake/Diamond.Tests.ps1'; Args = @('-CMake', $CMake, '-Delivery', 'NuGet', '-PackageReference'); Engine = 'powershell.exe' }
+    @{ Name = 'NativePackageReference'; Group = 'Windows'; Path = 'Tests/Integration/Packages/NuGet.PackageReference.Tests.ps1'; Args = @('-CMake', $CMake) }
+    @{ Name = 'DiamondPackageReference'; Group = 'Windows'; Path = 'Tests/Integration/Cmake/Diamond.Tests.ps1'; Args = @('-CMake', $CMake, '-Delivery', 'NuGet', '-PackageReference') }
     @{ Name = 'PackageDelivery'; Group = 'Windows'; Path = 'Tests/Integration/Packages/PackageDelivery.Tests.ps1'; Args = @() }
     @{ Name = 'WinRtDelivery'; Group = 'Windows'; Path = 'Tests/Integration/Packages/PackageDelivery.Tests.ps1'; Args = @('-Family', 'WinRt', '-CMake', $CMake) }
     @{ Name = 'AndroidNativeDelivery'; Group = 'Android'; Path = 'Tests/Integration/Packages/PackageDelivery.Tests.ps1'; Args = @('-Family', 'AndroidNative', '-CMake', $CMake, '-AndroidNdk', $AndroidNdk) }
-    @{ Name = 'AndroidPrefabBuild'; Group = 'Android'; Path = 'Tests/Integration/Packages/AndroidPrefab.Tests.ps1'; Args = @('-CMake', $CMake, '-AndroidNdk', $AndroidNdk, '-AndroidSdk', $AndroidSdk, '-JavaHome', $JavaHome, '-Gradle', $Gradle, '-SkipDevice'); Engine = 'powershell.exe' }
+    @{ Name = 'AndroidPrefabBuild'; Group = 'Android'; Path = 'Tests/Integration/Packages/AndroidPrefab.Tests.ps1'; Args = @('-CMake', $CMake, '-AndroidNdk', $AndroidNdk, '-AndroidSdk', $AndroidSdk, '-JavaHome', $JavaHome, '-Gradle', $Gradle, '-SkipDevice') }
     @{ Name = 'AndroidMavenDelivery'; Group = 'Android'; Path = 'Tests/Integration/Packages/PackageDelivery.Tests.ps1'; Args = @('-Family', 'AndroidMaven', '-Gradle', $Gradle, '-JavaHome', $JavaHome, '-AndroidSdk', $AndroidSdk) }
 )
 if ($GradleCache) { $cases[-1].Args += @('-GradleCache', $GradleCache) }
@@ -74,7 +74,7 @@ foreach ($case in $selected) {
     $results | Export-Csv (Join-Path $report 'summary.csv') -NoTypeInformation -Encoding UTF8
     Write-Host "RUN: $($case.Name)"
     try {
-        $engine = if ($case.Engine) { $case.Engine } else { 'pwsh.exe' }
+        $engine = 'powershell.exe'
         if (-not (Get-Command $engine -ErrorAction SilentlyContinue)) { throw "Required engine missing: $engine" }
         if (@($case.Args | Where-Object { $null -eq $_ -or "$_" -eq '' }).Count) { throw 'Required tool path or parameter is missing.' }
         $previousPreference = $ErrorActionPreference

@@ -77,9 +77,15 @@ namespace universaldevkit::cli {
 		}
 
 		// Build the child process arguments without invoking cmd.exe.
-		std::vector<std::wstring> childArguments{L"-NoProfile", L"-File", scriptPath.native()};
+		std::vector<std::wstring> childArguments{L"-NoProfile", L"-ExecutionPolicy", L"Bypass", L"-File", scriptPath.native()};
 		childArguments.insert(childArguments.end(), arguments.begin(), arguments.end());
-		return cli::RunExecutable(L"pwsh.exe", childArguments);
+		wchar_t systemDirectory[MAX_PATH];
+		const auto length = ::GetSystemDirectoryW(systemDirectory, MAX_PATH);
+		if (length == 0 || length >= MAX_PATH) {
+			throw std::runtime_error("Cannot resolve the Windows PowerShell path.");
+		}
+		const auto windowsPowerShell = std::filesystem::path(systemDirectory) / L"WindowsPowerShell" / L"v1.0" / L"powershell.exe";
+		return cli::RunExecutable(windowsPowerShell, childArguments);
 	}
 
 	int RunExecutable(const std::filesystem::path& path, const std::vector<std::wstring>& arguments) {

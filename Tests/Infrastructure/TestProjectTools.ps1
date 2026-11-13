@@ -1,4 +1,4 @@
-#requires -Version 7.0
+#requires -Version 5.1
 param()
 
 $ErrorActionPreference = 'Stop'
@@ -51,8 +51,9 @@ try {
     & $tool -ManifestPath $manifest -Check
 
     $settings = (Get-Content -LiteralPath $manifest -Raw | ConvertFrom-Json).generation
-    @{ schemaVersion = 5; components = @('Component.json'); generation = $settings } |
-        ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $manifest -Encoding utf8NoBOM -NoNewline
+    $registry = @{ schemaVersion = 5; components = @('Component.json'); generation = $settings }
+    $utf8 = [Text.UTF8Encoding]::new($false)
+    [IO.File]::WriteAllText($manifest, ($registry | ConvertTo-Json -Depth 10), $utf8)
     $component.PSObject.Properties.Remove('name')
     $component.kind = 'library'
     $component | Add-Member language 'cpp'
@@ -65,7 +66,7 @@ try {
         runtimeDependencies = @($runtime)
     }
     $description = @{ name = 'Probe'; projects = @($managed, $component) }
-    $description | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $componentPath -Encoding utf8NoBOM -NoNewline
+    [IO.File]::WriteAllText($componentPath, ($description | ConvertTo-Json -Depth 10), $utf8)
     & $tool -ManifestPath $manifest
     $managedPath = Join-Path $temporary 'Projects/Probe/UniversalDevKit.Probe.Net8.csproj'
     [xml]$managedProject = Get-Content -LiteralPath $managedPath -Raw
@@ -77,7 +78,7 @@ try {
     & $tool -ManifestPath $manifest -Check
     $runtime.Remove('projectId')
     $runtime.project = 'native'
-    $description | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $componentPath -Encoding utf8NoBOM -NoNewline
+    [IO.File]::WriteAllText($componentPath, ($description | ConvertTo-Json -Depth 10), $utf8)
     $rejected = $false
     try { & $tool -ManifestPath $manifest -Check } catch { $rejected = $_.Exception.Message -match 'Expected projectId' }
     if (-not $rejected) { throw 'A runtime dependency using project instead of projectId was accepted.' }
