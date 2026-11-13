@@ -25,7 +25,7 @@ function Get-UdkComponentRegistry {
         if ($manifest.schemaVersion -eq 5) {
             $name = $component.name
             $nativeLibraries = @($component.projects | Where-Object {
-                $_.kind -ceq 'library' -and $_.language -ceq 'cpp' -and $_.projectType -ceq 'native'
+                $_.kind -ceq 'library' -and $_.projectType -ceq 'native'
             })
             if (-not $nativeLibraries.Count) { continue }
             if ($nativeLibraries.Count -ne 1) { throw "Duplicate native library: $include" }

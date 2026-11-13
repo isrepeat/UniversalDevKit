@@ -42,13 +42,11 @@ namespace UniversalDevKit.UdkCli.Setup {
             }).ToArray();
         }
 
-        public static async Task<string> InstallAsync(Stream package) {
+        public static async Task<string> InstallAsync(Stream package, Action<int> reportProgress) {
             var installations = await FindInstancesAsync();
             if (installations.Length == 0) {
+                reportProgress(100);
                 return "";
-            }
-            if (IsVisualStudioRunning()) {
-                throw new InvalidOperationException("Close Visual Studio, then click Install extension.");
             }
 
             var packagePath = Path.Combine(Path.GetTempPath(), $"UdkCli-{Guid.NewGuid():N}.vsix");
@@ -58,6 +56,9 @@ namespace UniversalDevKit.UdkCli.Setup {
                     await package.CopyToAsync(file);
                 }
                 var expected = ReadPackageVersion(packagePath);
+                var completed = 1;
+                var total = installations.Length + 2;
+                reportProgress(100 * completed / total);
                 foreach (var installation in installations) {
                     var log = Path.Combine(Path.GetTempPath(), $"UdkCli-Vsix-{Guid.NewGuid():N}.log");
                     try {
@@ -68,6 +69,10 @@ namespace UniversalDevKit.UdkCli.Setup {
                         if (installed.Any(version => version > expected)) {
                             failures.Add($"{installation.Name} ({installation.Id}): installed UDK extension {string.Join(", ", installed.Select(version => version.ToString()))}; this Setup contains {expected}. Use a newer UDK Setup.");
                             continue;
+                        }
+                        if (IsVisualStudioRunning()) {
+                            failures.Add("Close Visual Studio, then click Install extension.");
+                            break;
                         }
                         using var process = Start(installation.Installer, false, "/quiet",
                             $"/instanceIds:{installation.Id}", $"/logFile:{log}", packagePath);
@@ -80,6 +85,8 @@ namespace UniversalDevKit.UdkCli.Setup {
                         }
                     } catch (Exception exception) {
                         failures.Add($"{installation.Name} ({installation.Id}): {exception.Message}");
+                    } finally {
+                        reportProgress(100 * ++completed / total);
                     }
                 }
             } finally {
@@ -88,6 +95,7 @@ namespace UniversalDevKit.UdkCli.Setup {
             if (failures.Count != 0) {
                 throw new InvalidOperationException(string.Join(Environment.NewLine, failures));
             }
+            reportProgress(100);
             return "\n\nIn Visual Studio, select Tools > Regenerate UDK Solution.";
         }
 

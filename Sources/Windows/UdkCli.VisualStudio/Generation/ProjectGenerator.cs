@@ -35,7 +35,11 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Generation {
                 } else {
                     ActivityLog.LogWarning(VsShell.VsixLog.Category, exception.Message);
                 }
-                return "UDK CLI was not found. Install UDK CLI and reopen Visual Studio, then run Tools > Regenerate UDK Solution again.\r\n";
+                return $"UDK CLI was not found. Could not start '{start.FileName}' in '{root}' (Win32 error {exception.NativeErrorCode}). Install UDK CLI and reopen Visual Studio.\r\n";
+            } catch (Win32Exception exception) {
+                throw new InvalidOperationException(
+                    $"Could not start '{start.FileName}' with arguments '{start.Arguments}' in '{root}' (Win32 error {exception.NativeErrorCode}): {exception.Message}",
+                    exception);
             }
             var stdout = process.StandardOutput.ReadToEndAsync();
             var stderr = process.StandardError.ReadToEndAsync();

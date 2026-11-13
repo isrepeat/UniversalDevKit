@@ -176,6 +176,15 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         $projectTypes = @{}
         foreach ($project in $definition.projects) {
             if ($project -isnot [pscustomobject] -or $project.PSObject.Properties['name']) { throw "Invalid project object: $include" }
+            $language = switch -CaseSensitive ($project.projectType) {
+                'native' { 'cpp' }
+                { $_ -cin @('classLibrary', 'wpf', 'vsix') } { 'csharp' }
+                default { throw "Unsupported projectType in ${include}: $($project.projectType)" }
+            }
+            if ($project.PSObject.Properties['language']) {
+                throw "Unknown project field 'language' in ${include}."
+            }
+            $project | Add-Member language $language
             $identity = "$($project.kind)/$($project.language)/$($project.projectType)"
             if ($projectTypes.ContainsKey($identity)) { throw "Duplicate project type $identity in $include" }
             $projectTypes[$identity] = $true
@@ -251,8 +260,16 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
             throw "Invalid application registration: $include"
         }
         if ($isDotNet) {
+            if ($component.PSObject.Properties['version']) {
+                $version = $null
+                if ($component.projectType -cne 'vsix' -or $component.version -isnot [string] -or
+                    $component.version -cnotmatch '\A[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?\z' -or
+                    -not [Version]::TryParse($component.version, [ref]$version)) {
+                    throw "Expected a numeric version with three or four parts for a VSIX project: $include"
+                }
+            }
             foreach ($field in $component.PSObject.Properties.Name) {
-                if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'abiVersion', 'msbuildGuid', 'msbuild', 'buildExtensions', 'filters', 'sources', 'excludeSources')) { throw "Unsupported C# application field: $field" }
+                if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'version', 'abiVersion', 'msbuildGuid', 'msbuild', 'buildExtensions', 'filters', 'sources', 'excludeSources')) { throw "Unsupported C# application field: $field" }
             }
             foreach ($field in $component.msbuild.PSObject.Properties.Name) {
                 if ($field -ne 'properties') { throw "Unsupported C# MSBuild setting: $field" }

@@ -302,7 +302,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application"
 	ProjectSection(SolutionItems) = preProject
 		Projects\Components\Application\UdkCli.json = Projects\Components\Application\UdkCli.json
 		Projects\Components\Application\UdkCli.Setup.json = Projects\Components\Application\UdkCli.Setup.json
-		Projects\Components\Application\UdkCli.VisualStudio.json = Projects\Components\Application\UdkCli.VisualStudio.json
+		Projects\Components\Application\UdkCli.VSIX.json = Projects\Components\Application\UdkCli.VSIX.json
 		Projects\Components\Application\XamlCompiler.json = Projects\Components\Application\XamlCompiler.json
 	EndProjectSection
 EndProject
@@ -372,9 +372,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli.Setup", "UdkCli.Setu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UdkCli.Setup", "Projects\MsBuild\Application\UdkCli.Setup\UdkCli.Setup.csproj", "{C27A6217-35E3-4AD1-BBC7-71438D8E1E16}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli.VisualStudio", "UdkCli.VisualStudio", "{77E1CCF9-8A94-F936-8B78-9D8D40B142D3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli.VSIX", "UdkCli.VSIX", "{77E1CCF9-8A94-F936-8B78-9D8D40B142D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UdkCli.VisualStudio", "Projects\MsBuild\Application\UdkCli.VisualStudio\UdkCli.VisualStudio.csproj", "{5217622B-841E-4635-BA5D-8DE005125B16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UdkCli.VSIX.Net472", "Projects\MsBuild\Application\UdkCli.VSIX\UdkCli.VSIX.Net472.csproj", "{5217622B-841E-4635-BA5D-8DE005125B16}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{15C9DD02-133A-0D54-8BE8-73206CCE738F}"
 EndProject
@@ -2303,7 +2303,7 @@ Global
 		{220B0789-1F04-54D3-18E5-5DB99E91172F} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Static.vcxproj
 		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems
 		{3E00A02D-46F3-432B-91C8-5D459F70C525} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems
-		{5217622B-841E-4635-BA5D-8DE005125B16} = ProjectTools|{9A19103F-16F7-4668-BE54-9A1E7A4F7556}|Projects\MsBuild\Application\UdkCli.VisualStudio\UdkCli.VisualStudio.csproj
+		{5217622B-841E-4635-BA5D-8DE005125B16} = ProjectTools|{9A19103F-16F7-4668-BE54-9A1E7A4F7556}|Projects\MsBuild\Application\UdkCli.VSIX\UdkCli.VSIX.Net472.csproj
 		{6A761B26-8F57-927B-0812-7CCD23F050D1} = ProjectTools|{9A19103F-16F7-4668-BE54-9A1E7A4F7556}|Projects\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Net8.csproj
 		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Static.vcxproj
 		{77311056-84A3-4B57-AEF1-7A76F17C500C} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dynamic.vcxproj

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Import Project="..\UdkCli.Diagnostic.targets" />
+  <PropertyGroup>
+    <TargetVsixContainerName>UdkCli.VisualStudio.vsix</TargetVsixContainerName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Design" />
+    <VSCTCompile Include="UdkCli.VisualStudio.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <None Update="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <Target Name="GetVsixVersion" Outputs="$(UniversalDevKitVsixVersion)">
+    <Error Condition="'$(UniversalDevKitVsixVersion)' == ''" Text="Set version in UdkCli.VSIX.json and regenerate projects." />
+  </Target>
+</Project>

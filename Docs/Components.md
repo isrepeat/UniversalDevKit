@@ -38,7 +38,7 @@ ProjectTools выбирает приложения по `kind: application` в �
 
 Списки `headers` и `sources` принимают шаблоны путей. Настройки MSBuild подключаются через `buildExtensions.msbuildProps` и `buildExtensions.msbuildTargets`. Пример — [UdkCli.json](../Projects/Components/Application/UdkCli.json).
 
-Для WPF-приложения укажите `kind: application`, `language: csharp`, `projectType: wpf` и Windows-фреймворк в `msbuild.properties.TargetFramework`. ProjectTools генерирует SDK-style `.csproj` в `Projects\MsBuild\Application\{name}` для профиля UDK. Шаблон задаёт `UseWPF`, `OutputType` и `Nullable`. В WPF и VSIX состав исходников задаётся в `sources` и `excludeSources`, с теми же масками, что и у C++. Генератор записывает C# как `Compile`, XAML в WPF как `Page`, а `App.xaml` как `ApplicationDefinition`. Примеры — [UdkCli.Setup.json](../Projects/Components/Application/UdkCli.Setup.json) и [UdkCli.VisualStudio.json](../Projects/Components/Application/UdkCli.VisualStudio.json).
+Для WPF-приложения укажите `kind: application`, `projectType: wpf` и Windows-фреймворк в `msbuild.properties.TargetFramework`. ProjectTools генерирует SDK-style `.csproj` в `Projects\MsBuild\Application\{name}` для профиля UDK. Шаблон задаёт `UseWPF`, `OutputType` и `Nullable`. В WPF и VSIX состав исходников задаётся в `sources` и `excludeSources`, с теми же масками, что и у C++. Генератор записывает C# как `Compile`, XAML в WPF как `Page`, а `App.xaml` как `ApplicationDefinition`. Примеры — [UdkCli.Setup.json](../Projects/Components/Application/UdkCli.Setup.json) и [UdkCli.VSIX.json](../Projects/Components/Application/UdkCli.VSIX.json).
 
 В профиле UDK `.props` и `.targets` из `buildExtensions` относятся ко всему компоненту. ProjectTools показывает их вместе со сгенерированным `Dependencies.props` библиотеки в фильтре `Shared → Build`. Импорты MSBuild задаются отдельно от элементов дерева Visual Studio.
 
@@ -80,7 +80,7 @@ Include-каталоги должны существовать. Определе
 
 Корневой `Components.json` схемы 5 содержит один явный список `components`. Пути отсчитываются от корневого файла. Описания библиотек находятся в `Projects/Components/Library`, а приложения — в `Projects/Components/Application`. CMake и Connect выбирают нативные библиотеки. ProjectTools обрабатывает все поддерживаемые типы проектов. Состав выпуска задаётся отдельно в `Packages/**/Package.json`.
 
-Описание компонента содержит `name` и массив `projects`. Запись C++-проекта содержит `kind`, `language`, `projectType`, `msbuildGuid`, `headers` и `sources`, а также необязательный массив `filters`. Для библиотеки `libraryType` по умолчанию равен `compiled`. Для библиотеки из одних заголовков укажите `headerOnly`.
+Описание компонента содержит `name` и массив `projects`. Запись C++-проекта содержит `kind`, `projectType`, `msbuildGuid`, `headers` и `sources`, а также необязательный массив `filters`. Для библиотеки `libraryType` по умолчанию равен `compiled`. Для библиотеки из одних заголовков укажите `headerOnly`.
 
 После изменения реестра компонентов запустите `Scripts/GenerateComponentProjects.cmd` либо `powershell.exe -File Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1 -ManifestPath Components.json`. Один запуск обновляет `.vcxitems`, затем вызывает внутренний `UpdateProjectFilters.ps1` для обновления `.filters` всех проектов. Сгенерированные файлы хранятся в Git. После завершения обоих этапов перезагрузите проект или solution в Visual Studio.
 

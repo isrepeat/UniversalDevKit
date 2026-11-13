@@ -111,18 +111,24 @@ function New-ProjectToolsApplicationProject($Model, $Component, [string]$Path, [
     return [regex]::Replace($template, '@([A-Z]+)@', { param($match) $values[$match.Groups[1].Value] })
 }
 
+function Get-ProjectToolsFrameworkSuffix([string]$Framework) {
+    switch -Regex ($framework) {
+        '^netstandard(.+)$' { 'NetStandard' + $Matches[1] }
+        '^netcoreapp(.+)$' { 'NetCoreApp' + $Matches[1] }
+        '^net([0-9]+)\.0(-.*)?$' { 'Net' + $Matches[1] + $Matches[2] }
+        default { 'Net' + $framework.Substring(3) }
+    }
+}
+
 function New-ProjectToolsDotNetProject($Model, $Component, [string]$Path) {
     $reserved = if ($Component.projectType -eq 'wpf') { @('ProjectGuid', 'OutputType', 'UseWPF', 'Nullable') }
         elseif ($Component.projectType -eq 'classLibrary') { @('ProjectGuid', 'OutputType', 'EnableDefaultNoneItems') }
         else { @('ProjectGuid', 'GeneratePkgDefFile', 'CreateVsixContainer', 'IncludeAssemblyInVSIXContainer', 'VSSDKTargetPlatformVersion', 'VSSDKBuildToolsAutoSetup', 'LangVersion') }
     $reserved += @('EnableDefaultCompileItems', 'EnableDefaultPageItems', 'EnableDefaultApplicationDefinition')
-    $udkCliVsix = $Model.Profile -eq 'udk' -and $Component.name -ceq 'UdkCli.VisualStudio' -and $Component.projectType -ceq 'vsix'
-    if ($udkCliVsix) { $reserved += 'UniversalDevKitGitHubVersion' }
+    if ($Component.version) { $reserved += 'UniversalDevKitVsixVersion' }
     $properties = Get-ProjectToolsApplicationProperties $Component $reserved
-    if ($udkCliVsix) {
-        $cli = $Model.Applications['Projects/Components/Application/UdkCli.json']
-        if (-not $cli.githubVersion) { throw 'Missing UdkCli githubVersion for the Visual Studio extension.' }
-        $properties = @('    <UniversalDevKitGitHubVersion>' + (ConvertTo-ProjectToolsXml $cli.githubVersion) + '</UniversalDevKitGitHubVersion>') + @($properties)
+    if ($Component.version) {
+        $properties = @('    <UniversalDevKitVsixVersion>' + (ConvertTo-ProjectToolsXml $Component.version) + '</UniversalDevKitVsixVersion>') + @($properties)
     }
     $directory = Split-Path -Parent (Resolve-ProjectToolsPath $Model.Root $Path)
     $sourceFiles = @($Component.sources | Sort-Object -CaseSensitive)
@@ -319,13 +325,7 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
     foreach ($component in $Model.ManagedLibraries.Values) {
         $directory = Get-ProjectToolsDirectory $Model $component
         $guid = ([Guid]$component.msbuildGuid).ToString('B').ToUpperInvariant()
-        $framework = $component.msbuild.properties.TargetFramework
-        $frameworkSuffix = switch -Regex ($framework) {
-            '^netstandard(.+)$' { 'NetStandard' + $Matches[1] }
-            '^netcoreapp(.+)$' { 'NetCoreApp' + $Matches[1] }
-            '^net([0-9]+)\.0(-.*)?$' { 'Net' + $Matches[1] + $Matches[2] }
-            default { 'Net' + $framework.Substring(3) }
-        }
+        $frameworkSuffix = Get-ProjectToolsFrameworkSuffix $component.msbuild.properties.TargetFramework
         $path = "$directory/UniversalDevKit.$($component.name).$frameworkSuffix.csproj"
         $projects.Add([pscustomobject]@{ Path = $path; Guid = $guid; Variant = 'DotNet'; Component = $component.name })
         AddOutput $path (New-ProjectToolsDotNetProject $Model $component $path)
@@ -334,7 +334,11 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
         $guid = ([Guid]$component.msbuildGuid).ToString('B').ToUpperInvariant()
         $directory = Get-ProjectToolsDirectory $Model $component
         if ($component.language -ceq 'csharp') {
-            $path = "$directory/$($component.name).csproj"
+            $name = $component.name
+            if ($component.projectType -ceq 'vsix') {
+                $name += '.' + (Get-ProjectToolsFrameworkSuffix $component.msbuild.properties.TargetFramework)
+            }
+            $path = "$directory/$name.csproj"
             $projects.Add([pscustomobject]@{ Path = $path; Guid = $guid; Variant = 'DotNet'; Component = $component.name })
             AddOutput $path (New-ProjectToolsDotNetProject $Model $component $path)
             continue

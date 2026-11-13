@@ -3,10 +3,18 @@ using System.IO;
 using System.Windows;
 using System.Threading.Tasks;
 using System.Reflection;
+using System.ComponentModel;
 
 namespace UniversalDevKit.UdkCli.Setup {
     public partial class SetupWindow : Window {
         private readonly SetupLog log;
+
+        protected override void OnClosing(CancelEventArgs args) {
+            base.OnClosing(args);
+            if (ExtensionProgress.Visibility == Visibility.Visible) {
+                args.Cancel = true;
+            }
+        }
 
         internal SetupWindow(SetupLog log) {
             this.log = log;
@@ -52,7 +60,7 @@ namespace UniversalDevKit.UdkCli.Setup {
                     message += "\n\nUDK CLI commands require Windows PowerShell 5.1.";
                 }
                 try {
-                    message += await this.InstallExtensionAsync();
+                    message += await this.InstallExtensionWithProgressAsync();
                 } catch (Exception exception) {
                     var extensionWindow = new ExtensionWindow(message, exception.Message, this.log.Location, this.InstallExtensionAsync) {
                         Owner = this
@@ -81,11 +89,26 @@ namespace UniversalDevKit.UdkCli.Setup {
             }
         }
 
-        private async Task<string> InstallExtensionAsync() {
+        private async Task<string> InstallExtensionWithProgressAsync() {
+            ExtensionProgressBar.Value = 0;
+            ExtensionProgress.Visibility = Visibility.Visible;
+            CancelButton.IsEnabled = false;
+            try {
+                await System.Windows.Threading.Dispatcher.Yield();
+                var result = await this.InstallExtensionAsync(value => ExtensionProgressBar.Value = value);
+                await System.Windows.Threading.Dispatcher.Yield();
+                return result;
+            } finally {
+                ExtensionProgress.Visibility = Visibility.Collapsed;
+                CancelButton.IsEnabled = true;
+            }
+        }
+
+        private async Task<string> InstallExtensionAsync(Action<int> reportProgress) {
             try {
                 using var extension = Assembly.GetExecutingAssembly().GetManifestResourceStream("UdkCli.VisualStudio.vsix")
                     ?? throw new InvalidDataException("The installer does not contain the UDK CLI extension.");
-                var result = await VisualStudioIntegration.InstallAsync(extension);
+                var result = await VisualStudioIntegration.InstallAsync(extension, reportProgress);
                 if (this.log.IsInitialized) {
                     Diagnostic.Log.Write(Diagnostic.Level.Info, "UdkCli.Setup", $"Visual Studio integration completed. {result.Trim()}");
                 }

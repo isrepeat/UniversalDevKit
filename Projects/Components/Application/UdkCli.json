@@ -3,9 +3,8 @@
   "projects": [
     {
       "kind": "application",
-      "language": "cpp",
       "projectType": "native",
-      "githubVersion": "0.1.7",
+      "githubVersion": "0.2.0",
       "msbuildGuid": "{9C7AAB80-FA41-4925-95FA-06409E32E4E1}",
       "headers": ["Sources/Windows/UdkCli/**/*.h"],
       "sources": ["Sources/Windows/UdkCli/**/*.cpp"],

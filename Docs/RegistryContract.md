@@ -29,8 +29,9 @@
 | Поле | Значения | По умолчанию |
 |---|---|---|
 | `kind` | `library`, `application` | Обязателен в схемах 4 и 5 |
-| `language` | `cpp`, `csharp` | Обязателен в схемах 4 и 5 |
+| `language` | `cpp`, `csharp` | Поле схемы 4. В схеме 5 язык определяется по `projectType` |
 | `projectType` | `native` для C++, `wpf` и `vsix` для C#-приложений, `classLibrary` для C#-библиотек в схеме 5 | Обязателен в схемах 4 и 5 |
+| `version` | Числовая версия из трёх или четырёх частей для проекта `vsix` | Необязательное поле |
 | `libraryType` | `compiled`, `headerOnly` | `compiled` для библиотек |
 | `stateScope` | `module`, `process` | `module` |
 | `requirements.cxxStandard` | `20`, `23` | `20` |

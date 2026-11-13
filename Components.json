@@ -7,7 +7,7 @@
     "Projects/Components/Library/OpenGLESRenderer.json",
     "Projects/Components/Application/UdkCli.json",
     "Projects/Components/Application/UdkCli.Setup.json",
-    "Projects/Components/Application/UdkCli.VisualStudio.json",
+    "Projects/Components/Application/UdkCli.VSIX.json",
     "Projects/Components/Application/XamlCompiler.json"
   ],
   "generation": {

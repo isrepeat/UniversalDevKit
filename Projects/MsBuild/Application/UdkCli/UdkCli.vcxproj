@@ -15,7 +15,7 @@
     <ProjectGuid>{9C7AAB80-FA41-4925-95FA-06409E32E4E1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <UniversalDevKitGitHubVersion>0.1.7</UniversalDevKitGitHubVersion>
+    <UniversalDevKitGitHubVersion>0.2.0</UniversalDevKitGitHubVersion>
     <TargetName>udk</TargetName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

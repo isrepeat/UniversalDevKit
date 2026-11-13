@@ -16,6 +16,11 @@
                       VerticalScrollBarVisibility="Auto">
             <TextBlock x:Name="DetailsText" TextWrapping="Wrap" />
         </ScrollViewer>
+        <DockPanel x:Name="ExtensionProgress" Visibility="Collapsed" Margin="0,8,0,0">
+            <TextBlock DockPanel.Dock="Right" Margin="8,0,0,0"
+                       Text="{Binding Value, ElementName=ExtensionProgressBar, StringFormat={}{0:0}%}" />
+            <ProgressBar x:Name="ExtensionProgressBar" Height="8" />
+        </DockPanel>
         <StackPanel Orientation="Horizontal"
                     Margin="0,18,0,0"
                     HorizontalAlignment="Right">

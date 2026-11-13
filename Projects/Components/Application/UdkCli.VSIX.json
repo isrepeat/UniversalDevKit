@@ -1,10 +1,10 @@
 {
-  "name": "UdkCli.VisualStudio",
+  "name": "UdkCli.VSIX",
   "projects": [
     {
       "kind": "application",
-      "language": "csharp",
       "projectType": "vsix",
+      "version": "0.1.9",
       "msbuildGuid": "{5217622B-841E-4635-BA5D-8DE005125B16}",
       "sources": ["Sources/Windows/UdkCli.VisualStudio/**/*.cs", "Sources/Diagnostic/DotNet/*.cs"],
       "filters": [
@@ -17,7 +17,7 @@
         }
       },
       "buildExtensions": {
-        "msbuildTargets": "Projects/MsBuild/Application/UdkCli.VisualStudio/UdkCli.VisualStudio.targets"
+        "msbuildTargets": "Projects/MsBuild/Application/UdkCli.VSIX/UdkCli.VisualStudio.targets"
       }
     }
   ]

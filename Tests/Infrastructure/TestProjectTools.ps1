@@ -56,12 +56,11 @@ try {
     [IO.File]::WriteAllText($manifest, ($registry | ConvertTo-Json -Depth 10), $utf8)
     $component.PSObject.Properties.Remove('name')
     $component.kind = 'library'
-    $component | Add-Member language 'cpp'
     $component | Add-Member projectType 'native'
     $component | Add-Member id 'native'
     $runtime = @{ projectId = 'native'; variant = 'Dynamic' }
     $managed = @{
-        kind = 'library'; language = 'csharp'; projectType = 'classLibrary'; sources = @()
+        kind = 'library'; projectType = 'classLibrary'; sources = @()
         msbuild = @{ properties = @{ TargetFramework = 'net8.0' } }
         runtimeDependencies = @($runtime)
     }
