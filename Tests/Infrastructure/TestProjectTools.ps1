@@ -69,6 +69,8 @@ try {
     if ([IO.File]::ReadAllText($solution) -cne $cleaned) { throw 'Repeated cleanup rewrote the solution.' }
 
     $settings = (Get-Content -LiteralPath $manifest -Raw | ConvertFrom-Json).generation
+    $settings.msbuild.PSObject.Properties.Remove('projectName')
+    $settings.msbuild | Add-Member projectNames ([pscustomobject]@{ default = '{name}'; DotNet = 'Root.{name}' })
     $registry = @{ schemaVersion = 5; components = @('Component.json'); generation = $settings }
     $utf8 = [Text.UTF8Encoding]::new($false)
     [IO.File]::WriteAllText($manifest, ($registry | ConvertTo-Json -Depth 10), $utf8)
@@ -76,20 +78,24 @@ try {
     $component.kind = 'library'
     $component | Add-Member projectType 'native'
     $component | Add-Member id 'native'
+    $component | Add-Member msbuild @{ projectNames = @{ default = '{name}.{variant}'; Static = '{name}.Archive' } }
     $runtime = @{ projectId = 'native'; variant = 'Dynamic' }
     $managed = @{
         kind = 'library'; projectType = 'classLibrary'; sources = @()
-        msbuild = @{ properties = @{ TargetFramework = 'net8.0' } }
+        msbuild = @{ projectNames = @{ DotNet = '{name}.{framework}' }; properties = @{ TargetFramework = 'net8.0' } }
         runtimeDependencies = @($runtime)
     }
     $description = @{ name = 'Probe'; projects = @($managed, $component) }
     [IO.File]::WriteAllText($componentPath, ($description | ConvertTo-Json -Depth 10), $utf8)
     & $tool -ManifestPath $manifest
-    $managedPath = Join-Path $temporary 'Projects/Probe/UniversalDevKit.Probe.Net8.csproj'
+    $managedPath = Join-Path $temporary 'Projects/Probe/Probe.net8.0.csproj'
     [xml]$managedProject = Get-Content -LiteralPath $managedPath -Raw
+    if (-not (Test-Path -LiteralPath (Join-Path $temporary 'Projects/Probe/Probe.Archive.vcxproj') -PathType Leaf)) {
+        throw 'The Static naming rule did not override the component default.'
+    }
     $reference = $managedProject.SelectSingleNode('/Project/ItemGroup/ProjectReference')
     if ($reference.Include -cne 'Probe.Dynamic.vcxproj' -or $reference.ReferenceOutputAssembly -cne 'false' -or
-        -not [IO.File]::ReadAllText($solution).Contains('"UniversalDevKit.Probe.Net8", "Projects\Probe\UniversalDevKit.Probe.Net8.csproj"')) {
+        -not [IO.File]::ReadAllText($solution).Contains('"Probe.net8.0", "Projects\Probe\Probe.net8.0.csproj"')) {
         throw 'The solution or runtime reference for the C# library was not generated.'
     }
     & $tool -ManifestPath $manifest -Check

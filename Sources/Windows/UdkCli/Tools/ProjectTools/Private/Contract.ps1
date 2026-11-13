@@ -108,6 +108,22 @@ function Expand-ProjectToolsFiles($Root, $Patterns, $Excludes) {
     return @($selected)
 }
 
+function Assert-ProjectToolsProjectNames($Names, [string]$Label) {
+    if ($Names -isnot [pscustomobject] -or -not @($Names.PSObject.Properties.Name).Count) {
+        throw "Expected a nonempty projectNames object: $Label"
+    }
+    foreach ($rule in $Names.PSObject.Properties) {
+        if ($rule.Name -cnotin @('default', 'Static', 'Dynamic', 'Shared', 'Application', 'HeaderCheck', 'Dependencies', 'DotNet')) {
+            throw "Unknown projectNames role '$($rule.Name)': $Label"
+        }
+        $template = $rule.Value
+        if ($template -isnot [string] -or $template -cnotmatch '^[A-Za-z0-9_.{}-]+$' -or
+            ($template -creplace '\{(?:name|kind|variant|framework)\}', '') -match '[{}]') {
+            throw "Invalid projectNames template for '$($rule.Name)': $Label"
+        }
+    }
+}
+
 function Read-ProjectToolsModel([string]$ManifestPath) {
     $path = (Resolve-Path -LiteralPath $ManifestPath -ErrorAction Stop).Path
     $root = Split-Path -Parent $path
@@ -154,11 +170,25 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         $settings = [pscustomobject]@{ solution = 'UniversalDevKit.sln'; projectDirectory = $projectDirectory; projectName = 'UniversalDevKit.{name}.{variant}'; configurations = @('Debug', 'Release'); platforms = @('x64'); solutionFolder = 'Projects' }
     }
     foreach ($field in $settings.PSObject.Properties.Name) {
-        if ($field -notin @('solution', 'projectDirectory', 'projectName', 'configurations', 'platforms', 'solutionFolder', 'props', 'nativeProps', 'targets')) { throw "Unknown MSBuild generation setting: $field" }
+        if ($field -notin @('solution', 'projectDirectory', 'projectNames', 'projectName', 'sharedProjectName', 'configurations', 'platforms', 'solutionFolder', 'props', 'nativeProps', 'targets')) { throw "Unknown MSBuild generation setting: $field" }
     }
     $null = Resolve-ProjectToolsPath $root $settings.solution
-    if ($settings.projectDirectory -notmatch '\{name\}' -or $settings.projectName -notmatch '\{name\}' -or $settings.projectName -notmatch '\{variant\}') { throw 'Project layout must contain {name} and {variant} placeholders.' }
-    if ($settings.projectName -match '[/\\]' -or $settings.projectName.Replace('{name}', '').Replace('{variant}', '') -match '[{}]') { throw 'Invalid projectName template.' }
+    if ($settings.projectDirectory -notmatch '\{name\}') { throw 'projectDirectory must contain {name}.' }
+    if ($settings.PSObject.Properties['projectNames']) {
+        Assert-ProjectToolsProjectNames $settings.projectNames 'generation.msbuild'
+        if (-not $settings.projectNames.default -or $settings.PSObject.Properties['projectName'] -or $settings.PSObject.Properties['sharedProjectName']) {
+            throw 'generation.msbuild.projectNames requires default and cannot be combined with legacy naming fields.'
+        }
+    }
+    foreach ($field in @('projectName', 'sharedProjectName')) {
+        if ($settings.projectNames) { break }
+        if ($field -eq 'sharedProjectName' -and -not $settings.PSObject.Properties[$field]) { continue }
+        $template = $settings.$field
+        if ($template -isnot [string] -or $template -cnotmatch '^[A-Za-z0-9_.{}-]+$' -or
+            $template -creplace '\{(?:name|kind|variant|framework)\}', '' -match '[{}]') {
+            throw "Invalid $field template."
+        }
+    }
     if ($settings.PSObject.Properties['nativeProps'] -and $settings.nativeProps -isnot [array]) {
         throw 'generation.msbuild.nativeProps must be an array.'
     }
@@ -301,7 +331,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
                 if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'version', 'abiVersion', 'msbuildGuid', 'msbuild', 'buildExtensions', 'filters', 'sources', 'excludeSources')) { throw "Unsupported C# application field: $field" }
             }
             foreach ($field in $component.msbuild.PSObject.Properties.Name) {
-                if ($field -ne 'properties') { throw "Unsupported C# MSBuild setting: $field" }
+                if ($field -notin @('properties', 'projectName', 'projectNames')) { throw "Unsupported C# MSBuild setting: $field" }
             }
             $framework = $component.msbuild.properties.TargetFramework
             if ($isManagedLibrary -and ($framework -isnot [string] -or $framework -cnotmatch '^net(?:standard|coreapp)?[0-9]+(?:\.[0-9]+)*(?:-[a-z]+[0-9.]*)?$')) {
@@ -339,12 +369,12 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
                     if ($field -ne 'includeDirectories') { throw "Unsupported application compile setting: $field" }
                 }
                 foreach ($field in $component.msbuild.PSObject.Properties.Name) {
-                    if ($field -ne 'properties') { throw "Unsupported application MSBuild setting: $field" }
+                    if ($field -notin @('properties', 'projectName', 'projectNames')) { throw "Unsupported application MSBuild setting: $field" }
                 }
             } elseif ($component.kind -notin @('compiled', 'headerOnly')) { throw 'Invalid library component kind.' }
             if (-not ($profile -or $integration) -and ($component.platformSources -or $component.platformRequirements -or $component.sourceSettings)) { throw 'MSBuild generation of platformSources, platformRequirements and sourceSettings requires generation.integration.' }
             if ($component.PSObject.Properties['variants'] -and ($component.variants -isnot [Array] -or ($component.kind -eq 'compiled' -and -not $component.variants.Count))) { throw 'Compiled variants must be a nonempty array.' }
-            foreach ($field in $component.msbuild.PSObject.Properties.Name) { if ($field -notin @('properties', 'dynamicDefinitions')) { throw "Unknown component MSBuild setting: $field" } }
+            foreach ($field in $component.msbuild.PSObject.Properties.Name) { if ($field -notin @('properties', 'dynamicDefinitions', 'projectName', 'projectNames')) { throw "Unknown component MSBuild setting: $field" } }
             foreach ($field in $component.compile.PSObject.Properties.Name) { if ($field -notin @('includeDirectories', 'preprocessorDefinitions', 'precompiledHeader')) { throw "Unknown compile setting: $field" } }
             if ($component.requirements.cxxStandard -and $component.requirements.cxxStandard -notin @(20, 23)) { throw 'Supported C++ standards are 20 and 23.' }
             foreach ($dependency in $component.dependencies) {
@@ -364,6 +394,18 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
             if (($isApplication -or $isManagedLibrary) -and $extensionEntry.Name -eq 'cmake') { throw 'This project supports MSBuild extensions only.' }
             $extension = Resolve-ProjectToolsPath $root $extensionEntry.Value
             if (-not (Test-Path -LiteralPath $extension -PathType Leaf)) { throw "Missing build extension: $($extensionEntry.Value)" }
+        }
+        if ($component.msbuild -and $component.msbuild.PSObject.Properties['projectNames']) {
+            Assert-ProjectToolsProjectNames $component.msbuild.projectNames $include
+        }
+        if ($component.msbuild -and $component.msbuild.PSObject.Properties['projectName']) {
+            if ($component.msbuild.projectNames -or $settings.projectNames) { throw "Use projectNames in $include." }
+            $template = $component.msbuild.projectName
+            if ($template -isnot [string] -or $template -cnotmatch '^[A-Za-z0-9_.{}-]+$' -or
+                $template -in @('.', '..') -or ($template -creplace '\{(?:name|kind|variant|framework)\}', '') -match '[{}]' -or
+                (-not $isApplication -and -not $isDotNet -and $template -cnotmatch '\{variant\}')) {
+                throw "Invalid component MSBuild projectName template: $include"
+            }
         }
         if (-not $component.msbuildGuid) {
             $identity = if ($isManagedLibrary) { 'ClassLibrary' } elseif ($isApplication) { 'Application' } else { 'Shared' }

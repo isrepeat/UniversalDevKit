@@ -23,7 +23,9 @@
     "msbuild": {
       "solution": "UniversalDevKit.sln",
       "projectDirectory": "Projects/MsBuild/{kind}/{name}",
-      "projectName": "UniversalDevKit.{name}.{variant}",
+      "projectNames": {
+        "default": "{name}"
+      },
       "configurations": ["Debug", "Release"],
       "platforms": ["x64"],
       "solutionFolder": "Projects/MsBuild/{kind}/{name}",
@@ -34,6 +36,8 @@
 ```
 
 **Неизвестные поля отклоняются.** Пути в `components` перечисляются явно, без wildcard.
+
+`generation.msbuild.projectNames` задаёт шаблоны имён без расширения. Корневой объект требует `default`. Проект может задать свой `msbuild.projectNames`. Порядок выбора — роль проекта, `default` проекта, роль в корневом реестре, корневой `default`. Доступные роли — `Static`, `Dynamic`, `Shared`, `Application`, `HeaderCheck`, `Dependencies` и `DotNet`. Доступны `{name}` и `{kind}`, для C++ также `{variant}`, для C# — `{framework}` со значением `TargetFramework` из манифеста без преобразований. Недоступный плейсхолдер вызывает ошибку. Старые поля `projectName` и `sharedProjectName` поддерживаются для существующих манифестов.
 
 `generation.msbuild.nativeProps` задаёт импорты для проектов C++. Общий список `props` применяется также к C#-проектам. Пути задаются относительно корня репозитория.
 

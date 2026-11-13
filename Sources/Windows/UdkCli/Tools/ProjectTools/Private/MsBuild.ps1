@@ -14,13 +14,34 @@ function Get-ProjectToolsDirectory($Model, $Component) {
     return $Model.Settings.projectDirectory.Replace('{kind}', $kind).Replace('{name}', $Component.name)
 }
 
-function Get-ProjectToolsLocation($Model, $Component, [string]$Variant) {
+function Get-ProjectToolsLocation($Model, $Component, [string]$Variant, [string]$Extension) {
     $directory = Get-ProjectToolsDirectory $Model $Component
-    $name = $Model.Settings.projectName.Replace('{name}', $Component.name).Replace('{variant}', $Variant)
-    $extension = switch ($Variant) {
-        'Shared' { '.vcxitems' }
-        'Dependencies' { '.props' }
-        default { '.vcxproj' }
+    $template = $Model.Settings.projectName
+    if ($Model.Settings.projectNames -or $Component.msbuild.projectNames) {
+        $role = if ($Extension -eq '.csproj') { 'DotNet' } else { $Variant }
+        $local = $Component.msbuild.projectNames
+        $global = $Model.Settings.projectNames
+        $template = @($local.$role, $local.default, $global.$role, $global.default, $template) |
+            Where-Object { $_ } | Select-Object -First 1
+        if (-not $template) { throw "No projectNames template for '$($Component.name)' ($role)." }
+    } elseif ($Component.msbuild.projectName -and ($Variant -ne 'Shared' -or $Component.kind -ne 'application')) {
+        $template = $Component.msbuild.projectName
+    } elseif ($Variant -eq 'Shared' -and $Model.Settings.sharedProjectName) {
+        $template = $Model.Settings.sharedProjectName
+    }
+    $name = $template.Replace('{name}', $Component.name).Replace('{kind}', $Component.kind)
+    if ($Variant) { $name = $name.Replace('{variant}', $Variant) }
+    $framework = $Component.msbuild.properties.TargetFramework
+    if ($framework) { $name = $name.Replace('{framework}', $framework) }
+    if ($name -cnotmatch '^[A-Za-z0-9_.-]+$' -or $name -in @('.', '..') -or $name.EndsWith('.')) {
+        throw "Invalid project name '$name' for '$($Component.name)'. Check the template and available placeholders."
+    }
+    if (-not $Extension) {
+        $Extension = switch ($Variant) {
+            'Shared' { '.vcxitems' }
+            'Dependencies' { '.props' }
+            default { '.vcxproj' }
+        }
     }
     $path = $directory + '/' + $name + $extension
     $null = Resolve-ProjectToolsPath $Model.Root $path
@@ -156,25 +177,8 @@ function New-ProjectToolsApplicationProject($Model, $Component, [string]$Path, [
     return [regex]::Replace($template, '@([A-Z]+)@', { param($match) $values[$match.Groups[1].Value] })
 }
 
-function Get-ProjectToolsFrameworkSuffix([string]$Framework) {
-    switch -Regex ($framework) {
-        '^netstandard(.+)$' { 'NetStandard' + $Matches[1] }
-        '^netcoreapp(.+)$' { 'NetCoreApp' + $Matches[1] }
-        '^net([0-9]+)\.0(-.*)?$' { 'Net' + $Matches[1] + $Matches[2] }
-        default { 'Net' + $framework.Substring(3) }
-    }
-}
-
 function Get-ProjectToolsDotNetLocation($Model, $Component) {
-    $directory = Get-ProjectToolsDirectory $Model $Component
-    $name = $Component.name
-    if ($Component.projectType -eq 'classLibrary') {
-        $name = "UniversalDevKit.$name"
-    }
-    if ($Component.projectType -in @('classLibrary', 'vsix')) {
-        $name += '.' + (Get-ProjectToolsFrameworkSuffix $Component.msbuild.properties.TargetFramework)
-    }
-    return "$directory/$name.csproj"
+    Get-ProjectToolsLocation $Model $Component '' '.csproj'
 }
 
 function New-ProjectToolsDotNetProject($Model, $Component, [string]$Path) {
@@ -383,14 +387,13 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
     }
     foreach ($component in $Model.Applications.Values) {
         $guid = ([Guid]$component.msbuildGuid).ToString('B').ToUpperInvariant()
-        $directory = Get-ProjectToolsDirectory $Model $component
         if ($component.language -ceq 'csharp') {
             $path = Get-ProjectToolsDotNetLocation $Model $component
             $projects.Add([pscustomobject]@{ Path = $path; Guid = $guid; Variant = 'DotNet'; Component = $component.name })
             AddOutput $path (New-ProjectToolsDotNetProject $Model $component $path)
             continue
         }
-        $path = "$directory/$($component.name).vcxproj"
+        $path = Get-ProjectToolsLocation $Model $component 'Application'
         $projects.Add([pscustomobject]@{ Path = $path; Guid = $guid; Variant = 'Application'; Component = $component.name })
         $sharedPath = Get-ProjectToolsLocation $Model $component 'Shared'
         $sharedGuid = Get-ProjectToolsGuid (([Guid]$guid).ToString('D') + ':Shared')
@@ -399,5 +402,6 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
         AddOutput $path (New-ProjectToolsApplicationProject $Model $component $path $sharedPath)
     }
     if (@($projects.Guid | Sort-Object -Unique).Count -ne $projects.Count) { throw 'Duplicate project GUID.' }
+    if (@($projects.Path | Sort-Object -Unique).Count -ne $projects.Count) { throw 'Duplicate project path.' }
     return [pscustomobject]@{ Files = $plan; Projects = $projects }
 }

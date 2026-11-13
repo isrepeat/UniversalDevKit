@@ -12,6 +12,9 @@
         { "path": "Sources/Diagnostic/DotNet", "filter": "Diagnostic" }
       ],
       "msbuild": {
+        "projectNames": {
+          "DotNet": "{name}.Net472"
+        },
         "properties": {
           "TargetFramework": "net472"
         }

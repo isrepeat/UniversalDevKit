@@ -4,7 +4,7 @@
     {
       "kind": "application",
       "projectType": "native",
-      "githubVersion": "0.2.4",
+      "githubVersion": "0.2.5",
       "msbuildGuid": "{9C7AAB80-FA41-4925-95FA-06409E32E4E1}",
       "headers": ["Sources/Windows/UdkCli/**/*.h"],
       "sources": ["Sources/Windows/UdkCli/**/*.cpp"],
@@ -18,6 +18,9 @@
         "includeDirectories": ["Includes/Diagnostic", "Includes/Core"]
       },
       "msbuild": {
+        "projectNames": {
+          "Shared": "UniversalDevKit.{name}.Shared"
+        },
         "properties": {
           "TargetName": "udk"
         }

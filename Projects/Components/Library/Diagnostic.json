@@ -5,6 +5,11 @@
       "id": "native",
       "kind": "library",
       "projectType": "native",
+      "msbuild": {
+        "projectNames": {
+          "default": "UniversalDevKit.{name}.{variant}"
+        }
+      },
       "msbuildGuid": "{AB97876A-F25A-4AAE-BACD-D32C776BB261}",
       "stateScope": "process",
       "dependencies": [
@@ -47,6 +52,9 @@
       "projectType": "classLibrary",
       "sources": ["Sources/Diagnostic/DotNet/**/*.cs"],
       "msbuild": {
+        "projectNames": {
+          "DotNet": "UniversalDevKit.{name}.Net8"
+        },
         "properties": {
           "TargetFramework": "net8.0",
           "AssemblyName": "UniversalDevKit.Diagnostic",
