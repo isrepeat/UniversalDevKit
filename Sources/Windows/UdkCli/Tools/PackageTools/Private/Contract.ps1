@@ -264,6 +264,9 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
             'dotnet' {
                 @('project', 'operation', 'configuration', 'runtime', 'selfContained')
             }
+            'udk-dotnet' {
+                @('component', 'projectId', 'configuration')
+            }
             'component-sources' {
                 @('component', 'sourceRoot', 'includeRoot', 'publicHeaders', 'headerDestination', 'sourceDestination', 'manifestDestination')
             }
@@ -273,7 +276,7 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
                 @('sourceDirectory','generator','architecture','configurations','parallel','variables','preparation')
             }
             'udk-native' {
-                @('component','generator')
+                @('component','cmakeGeneratorWindows')
             }
             'udk-prefab' {
                 @('component','configuration','abis','apiLevel','toolchain')
@@ -389,6 +392,18 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
                     $roots += $project.preparation.properties
                 }
             }
+        }
+        if ($project.adapter -eq 'udk-dotnet') {
+            Assert-UdkFields $project ($common + $specific) @('component') $projectPath
+            Assert-UdkBuildName $project.component
+            if ($project.PSObject.Properties['projectId'] -and
+                ($project.projectId -isnot [string] -or $project.projectId -cnotmatch '^[A-Za-z][A-Za-z0-9_-]*$')) {
+                throw "Invalid udk-dotnet projectId: $projectPath"
+            }
+            if ($project.PSObject.Properties['configuration'] -and $project.configuration -cnotin @('Debug', 'Release')) {
+                throw "Invalid udk-dotnet configuration: $projectPath"
+            }
+            [void](Resolve-UdkBuildPath $root $root 'Components.json' -Existing)
         }
         if ($project.adapter -in @('udk-native','udk-prefab')) {
             Assert-UdkFields $project ($common + $specific) $specific $projectPath

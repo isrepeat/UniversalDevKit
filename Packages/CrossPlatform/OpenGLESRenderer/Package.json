@@ -6,7 +6,7 @@
     "windows": {
       "adapter": "udk-native",
       "component": "OpenGLESRenderer",
-      "generator": "Visual Studio 18 2026"
+      "cmakeGeneratorWindows": "Visual Studio 18 2026"
     },
     "android": {
       "adapter": "udk-prefab",

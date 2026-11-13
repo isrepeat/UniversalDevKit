@@ -1,7 +1,7 @@
 function Invoke-UdkNativeProject($Project, $Context) {
     $repository = $Context.RepositoryPath
     $version = $Context.Version
-    $Generator = $Project.generator
+    $Generator = $Project.cmakeGeneratorWindows
     $CMake = Resolve-UdkCMake $Context.CMake
     $output = $Context.WorkDirectory
     [void][IO.Directory]::CreateDirectory($output)

@@ -161,7 +161,8 @@ contents может содержать deliveries: ["NuGet"] или ["Android"].
 | Проект | Назначение |
 |---|---|
 | cmake-build | sourceDirectory, generator, configurations; корень build, без install |
-| udk-native | component, generator; корень output с native NuGet payload |
+| udk-native | component, cmakeGeneratorWindows (имя генератора CMake для Windows); корень output с native NuGet payload |
+| udk-dotnet | component, необязательные projectId и configuration (по умолчанию Release); корень output. Адаптер собирает C#-проект компонента из Components.json и определяет путь к сгенерированному .csproj по правилам ProjectTools. Если C#-проектов несколько, укажите projectId. |
 | udk-prefab | component, toolchain, configuration, abis, apiLevel; корень output с вариантами Prefab |
 | gradle-publish | projectDirectory, toolchain, tasks, refreshDependencies; корень output с Maven-публикацией |
 

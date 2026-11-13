@@ -221,9 +221,10 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
                 })
                 $project.PSObject.Properties.Remove('runtimeDependencies')
             }
+            $projectId = $project.id
             $project.PSObject.Properties.Remove('id')
             $project | Add-Member name $definition.name
-            [pscustomobject]@{ Include = $include; Component = $project; RuntimeProjects = $runtimeProjects }
+            [pscustomobject]@{ Include = $include; Component = $project; RuntimeProjects = $runtimeProjects; ProjectId = $projectId }
         }
     }
     foreach ($definition in $definitions) {
@@ -344,6 +345,9 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         if (-not [Guid]::TryParse($component.msbuildGuid, [ref]$parsedGuid) -or $guids.ContainsKey($parsedGuid.ToString())) { throw 'Invalid or duplicate component GUID.' }
         $guids[$parsedGuid.ToString()] = $true
         if ($component.kind -eq 'headerOnly' -and ($component.sources.Count -or $component.platformSources -or $component.variants)) { throw 'Header-only component cannot have sources or binary variants.' }
+        if ($isDotNet) {
+            $component | Add-Member projectId $definition.ProjectId
+        }
         if ($isManagedLibrary) {
             $component | Add-Member runtimeProjects $definition.RuntimeProjects
             $managedLibraries[$include] = $component

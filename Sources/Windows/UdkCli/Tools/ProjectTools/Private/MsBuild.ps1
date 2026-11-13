@@ -120,6 +120,18 @@ function Get-ProjectToolsFrameworkSuffix([string]$Framework) {
     }
 }
 
+function Get-ProjectToolsDotNetLocation($Model, $Component) {
+    $directory = Get-ProjectToolsDirectory $Model $Component
+    $name = $Component.name
+    if ($Component.projectType -eq 'classLibrary') {
+        $name = "UniversalDevKit.$name"
+    }
+    if ($Component.projectType -in @('classLibrary', 'vsix')) {
+        $name += '.' + (Get-ProjectToolsFrameworkSuffix $Component.msbuild.properties.TargetFramework)
+    }
+    return "$directory/$name.csproj"
+}
+
 function New-ProjectToolsDotNetProject($Model, $Component, [string]$Path) {
     $reserved = if ($Component.projectType -eq 'wpf') { @('ProjectGuid', 'OutputType', 'UseWPF', 'Nullable') }
         elseif ($Component.projectType -eq 'classLibrary') { @('ProjectGuid', 'OutputType', 'EnableDefaultNoneItems') }
@@ -323,10 +335,8 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
         }
     }
     foreach ($component in $Model.ManagedLibraries.Values) {
-        $directory = Get-ProjectToolsDirectory $Model $component
         $guid = ([Guid]$component.msbuildGuid).ToString('B').ToUpperInvariant()
-        $frameworkSuffix = Get-ProjectToolsFrameworkSuffix $component.msbuild.properties.TargetFramework
-        $path = "$directory/UniversalDevKit.$($component.name).$frameworkSuffix.csproj"
+        $path = Get-ProjectToolsDotNetLocation $Model $component
         $projects.Add([pscustomobject]@{ Path = $path; Guid = $guid; Variant = 'DotNet'; Component = $component.name })
         AddOutput $path (New-ProjectToolsDotNetProject $Model $component $path)
     }
@@ -334,11 +344,7 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
         $guid = ([Guid]$component.msbuildGuid).ToString('B').ToUpperInvariant()
         $directory = Get-ProjectToolsDirectory $Model $component
         if ($component.language -ceq 'csharp') {
-            $name = $component.name
-            if ($component.projectType -ceq 'vsix') {
-                $name += '.' + (Get-ProjectToolsFrameworkSuffix $component.msbuild.properties.TargetFramework)
-            }
-            $path = "$directory/$name.csproj"
+            $path = Get-ProjectToolsDotNetLocation $Model $component
             $projects.Add([pscustomobject]@{ Path = $path; Guid = $guid; Variant = 'DotNet'; Component = $component.name })
             AddOutput $path (New-ProjectToolsDotNetProject $Model $component $path)
             continue

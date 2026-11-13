@@ -164,6 +164,9 @@ try {
                 'dotnet' {
                     Invoke-UdkDotNetProject $project $context
                 }
+                'udk-dotnet' {
+                    Invoke-UdkComponentDotNetProject $project $context
+                }
                 'component-sources' {
                     Invoke-UdkComponentSourcesProject $project $context
                 }

@@ -6,13 +6,11 @@
     "windows": {
       "adapter": "udk-native",
       "component": "Diagnostic",
-      "generator": "Visual Studio 18 2026"
+      "cmakeGeneratorWindows": "Visual Studio 18 2026"
     },
     "dotnet": {
-      "adapter": "dotnet",
-      "project": "Projects/MsBuild/Library/Diagnostic/UniversalDevKit.Diagnostic.Net8.csproj",
-      "operation": "build",
-      "configuration": "Release"
+      "adapter": "udk-dotnet",
+      "component": "Diagnostic"
     },
     "android": {
       "adapter": "udk-prefab",
