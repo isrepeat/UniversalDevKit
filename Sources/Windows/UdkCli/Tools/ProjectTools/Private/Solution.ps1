@@ -70,34 +70,65 @@ function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, 
         if ($previous) { return $previous }
         return Get-ProjectToolsGuid $Identity
     }
-    $rootName = if ($Model.Settings.solutionFolder) { $Model.Settings.solutionFolder } else { 'Projects' }
-    $rootFolderGuid = FindFolderGuid $rootName '' ('ProjectTools.SolutionFolder:' + $rootName)
-    $lines += @(('Project("' + $folderType + '") = "' + $rootName + '", "' + $rootName + '", "' + $rootFolderGuid + '"'), 'EndProject')
-    $msbuildGuid = FindFolderGuid 'MsBuild' $rootFolderGuid 'UDK.SolutionFolder:Projects/MsBuild'
-    if ($Model.Profile -eq 'udk') { $lines += @(('Project("' + $folderType + '") = "MsBuild", "MsBuild", "' + $msbuildGuid + '"'), 'EndProject') }
-    if ($Model.Profile -eq 'udk') { $nested += "`t`t$msbuildGuid = $rootFolderGuid" }
-    $technologyGuid = if ($Model.Profile -eq 'udk') { $msbuildGuid } else { $rootFolderGuid }
+    $explicitLayout = $Model.Manifest.schemaVersion -ge 6
+    $templateFolders = [ordered]@{}
+    function Add-TemplateFolders([string]$Kind, [string]$Name) {
+        $path = $Model.Settings.solutionFolder.TrimEnd('/').Replace('{kind}', $Kind).Replace('{name}', $Name)
+        $parent = ''
+        $segments = @()
+        foreach ($segment in $path.Split('/')) {
+            $segments += $segment
+            $key = $segments -join '/'
+            if (-not $templateFolders.Contains($key)) {
+                $guid = FindFolderGuid $segment $parent ('ProjectTools.SolutionFolder:' + $key)
+                $templateFolders[$key] = [pscustomobject]@{ Name = $segment; Guid = $guid; Parent = $parent }
+            }
+            $parent = $templateFolders[$key].Guid
+        }
+        return $parent
+    }
+    $writtenFolders = @{}
+    if (-not $explicitLayout) {
+        $rootName = if ($Model.Settings.solutionFolder) { $Model.Settings.solutionFolder } else { 'Projects' }
+        $rootFolderGuid = FindFolderGuid $rootName '' ('ProjectTools.SolutionFolder:' + $rootName)
+        $lines += @(('Project("' + $folderType + '") = "' + $rootName + '", "' + $rootName + '", "' + $rootFolderGuid + '"'), 'EndProject')
+        $msbuildGuid = FindFolderGuid 'MsBuild' $rootFolderGuid 'UDK.SolutionFolder:Projects/MsBuild'
+        if ($Model.Profile -eq 'udk') { $lines += @(('Project("' + $folderType + '") = "MsBuild", "MsBuild", "' + $msbuildGuid + '"'), 'EndProject') }
+        if ($Model.Profile -eq 'udk') { $nested += "`t`t$msbuildGuid = $rootFolderGuid" }
+        $technologyGuid = if ($Model.Profile -eq 'udk') { $msbuildGuid } else { $rootFolderGuid }
+    }
     foreach ($project in $Projects) {
         $name = [IO.Path]::GetFileNameWithoutExtension($project.Path)
         $relative = Get-ProjectToolsRelativePath $directory (Join-Path $Model.Root $project.Path)
         $group = if ($project.Component -in $applicationNames) { 'Application' } else { 'Library' }
-        $groupKey = "$technologyGuid/$group"
-        if (-not $groupFolders.ContainsKey($groupKey)) {
-            $groupGuid = FindFolderGuid $group $technologyGuid ('ProjectTools.SolutionFolder:' + $groupKey)
-            $groupFolders[$groupKey] = $groupGuid
-            $lines += @(('Project("' + $folderType + '") = "' + $group + '", "' + $group + '", "' + $groupGuid + '"'), 'EndProject')
-            $nested += "`t`t$groupGuid = $technologyGuid"
+        if ($explicitLayout) {
+            $parent = Add-TemplateFolders $group $project.Component
+            foreach ($folder in $templateFolders.Values) {
+                if ($writtenFolders.ContainsKey($folder.Guid)) { continue }
+                $writtenFolders[$folder.Guid] = $true
+                $lines += @(('Project("' + $folderType + '") = "' + $folder.Name + '", "' + $folder.Name + '", "' + $folder.Guid + '"'), 'EndProject')
+                if ($folder.Parent) { $nested += "`t`t$($folder.Guid) = $($folder.Parent)" }
+            }
+            $nested += "`t`t$($project.Guid) = $parent"
+        } else {
+            $groupKey = "$technologyGuid/$group"
+            if (-not $groupFolders.ContainsKey($groupKey)) {
+                $groupGuid = FindFolderGuid $group $technologyGuid ('ProjectTools.SolutionFolder:' + $groupKey)
+                $groupFolders[$groupKey] = $groupGuid
+                $lines += @(('Project("' + $folderType + '") = "' + $group + '", "' + $group + '", "' + $groupGuid + '"'), 'EndProject')
+                $nested += "`t`t$groupGuid = $technologyGuid"
+            }
+            $parentGuid = $groupFolders[$groupKey]
+            $folderName = $project.Component
+            if (-not $folderNames.ContainsKey($folderName)) {
+                $folderGuid = FindFolderGuid $folderName $parentGuid ('ProjectTools.SolutionFolder:' + $groupKey + '/' + $folderName) $technologyGuid
+                $folderNames[$folderName] = $folderGuid
+                $folderMoves[$folderGuid] = @{ From = $technologyGuid; To = $parentGuid }
+                $nested += "`t`t$folderGuid = $parentGuid"
+                $lines += @(('Project("' + $folderType + '") = "' + $folderName + '", "' + $folderName + '", "' + $folderGuid + '"'), 'EndProject')
+            }
+            $nested += "`t`t$($project.Guid) = $($folderNames[$folderName])"
         }
-        $parentGuid = $groupFolders[$groupKey]
-        $folderName = $project.Component
-        if (-not $folderNames.ContainsKey($folderName)) {
-            $folderGuid = FindFolderGuid $folderName $parentGuid ('ProjectTools.SolutionFolder:' + $groupKey + '/' + $folderName) $technologyGuid
-            $folderNames[$folderName] = $folderGuid
-            $folderMoves[$folderGuid] = @{ From = $technologyGuid; To = $parentGuid }
-            $nested += "`t`t$folderGuid = $parentGuid"
-            $lines += @(('Project("' + $folderType + '") = "' + $folderName + '", "' + $folderName + '", "' + $folderGuid + '"'), 'EndProject')
-        }
-        $nested += "`t`t$($project.Guid) = $($folderNames[$folderName])"
         if ($project.Variant -eq 'DotNet') {
             $lines += @(('Project("' + $dotnetProjectType + '") = "' + $name + '", "' + $relative + '", "' + $project.Guid + '"'), 'EndProject')
             foreach ($configuration in $Model.Settings.configurations) { foreach ($platform in $Model.Settings.platforms) {
@@ -146,17 +177,29 @@ function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, 
         $relativeVersion = Get-ProjectToolsRelativePath $directory $versionPath
         if ($Clean) {
             $content = Update-ProjectToolsVersionItem $content $relativeVersion -Clean
-            $rootGuid = Get-ProjectToolsGuid ('ProjectTools.SolutionFolder:' + $rootName)
-            $technologyGuid = if ($Model.Profile -eq 'udk') { Get-ProjectToolsGuid 'UDK.SolutionFolder:Projects/MsBuild' } else { $rootGuid }
-            $folderGuids = @($rootGuid, $technologyGuid, (Get-ProjectToolsGuid 'ProjectTools.SolutionFolder:!Repository'))
-            foreach ($group in @('Application', 'Library')) {
-                $groupKey = "$technologyGuid/$group"
-                $folderGuids += Get-ProjectToolsGuid ('ProjectTools.SolutionFolder:' + $groupKey)
-                foreach ($folder in [regex]::Matches($content, '(?m)^Project\("\{2150E333-8FDC-42A3-9474-1A3956D46DE8\}"\) = "([^"]+)"')) {
-                    $folderGuids += Get-ProjectToolsGuid ('ProjectTools.SolutionFolder:' + $groupKey + '/' + $folder.Groups[1].Value)
+            if ($explicitLayout) {
+                foreach ($component in $Model.Applications.Values) {
+                    $null = Add-TemplateFolders 'Application' $component.name
                 }
+                foreach ($component in @($Model.Components.Values) + @($Model.ManagedLibraries.Values)) {
+                    $null = Add-TemplateFolders 'Library' $component.name
+                }
+                $folderGuids = @($templateFolders.Keys | ForEach-Object { Get-ProjectToolsGuid ('ProjectTools.SolutionFolder:' + $_) })
+                $folderGuids += Get-ProjectToolsGuid 'ProjectTools.SolutionFolder:!Repository'
+                $content = Remove-ProjectToolsEmptyFolders $content $folderGuids
+            } else {
+                $rootGuid = Get-ProjectToolsGuid ('ProjectTools.SolutionFolder:' + $rootName)
+                $technologyGuid = if ($Model.Profile -eq 'udk') { Get-ProjectToolsGuid 'UDK.SolutionFolder:Projects/MsBuild' } else { $rootGuid }
+                $folderGuids = @($rootGuid, $technologyGuid, (Get-ProjectToolsGuid 'ProjectTools.SolutionFolder:!Repository'))
+                foreach ($group in @('Application', 'Library')) {
+                    $groupKey = "$technologyGuid/$group"
+                    $folderGuids += Get-ProjectToolsGuid ('ProjectTools.SolutionFolder:' + $groupKey)
+                    foreach ($folder in [regex]::Matches($content, '(?m)^Project\("\{2150E333-8FDC-42A3-9474-1A3956D46DE8\}"\) = "([^"]+)"')) {
+                        $folderGuids += Get-ProjectToolsGuid ('ProjectTools.SolutionFolder:' + $groupKey + '/' + $folder.Groups[1].Value)
+                    }
+                }
+                $content = Remove-ProjectToolsEmptyFolders $content $folderGuids
             }
-            $content = Remove-ProjectToolsEmptyFolders $content $folderGuids
         } elseif (Test-Path -LiteralPath $versionPath -PathType Leaf) {
             $content = Update-ProjectToolsVersionItem $content $relativeVersion
         }

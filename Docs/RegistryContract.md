@@ -6,17 +6,29 @@
 
 ```json
 {
-  "schemaVersion": 5,
+  "schemaVersion": 6,
   "components": [
     "Projects/Components/Library/Helpers.json",
     "Projects/Components/Library/Diagnostic.json",
     "Projects/Components/Application/UdkCli.json"
   ],
-  "generation": { "profile": "udk" }
+  "generation": {
+    "profile": "udk",
+    "msbuild": {
+      "solution": "UniversalDevKit.sln",
+      "projectDirectory": "Projects/MsBuild/{kind}/{name}",
+      "projectName": "UniversalDevKit.{name}.{variant}",
+      "configurations": ["Debug", "Release"],
+      "platforms": ["x64"],
+      "solutionFolder": "Projects/MsBuild/{kind}/{name}"
+    }
+  }
 }
 ```
 
 **Неизвестные поля отклоняются.** Пути в `components` перечисляются явно, без wildcard.
+
+В схеме 6 `generation.msbuild.solutionFolder` задаёт полный путь в дереве решения через `/`. Подстановки `{kind}` и `{name}` дают категорию (`Application` или `Library`) и имя компонента. `Projects/` помещает проекты непосредственно в папку `Projects`. Путь на диске задаёт `projectDirectory`. Схемы 2–5 сохраняют прежнюю группировку в дереве решения.
 
 В схеме 5 описание компонента содержит `name` и непустой массив `projects`. Настройки сборки и поля из таблицы ниже относятся к записи проекта. Библиотека может содержать нативный проект `cpp/native` и управляемый проект `csharp/classLibrary`. Приложение содержит одну запись `application`. Для C# class library задайте `msbuild.properties.TargetFramework` и исходники `sources`. ProjectTools генерирует SDK-style проект под узлом компонента в solution.
 

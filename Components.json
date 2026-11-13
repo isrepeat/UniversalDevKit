@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 5,
+  "schemaVersion": 6,
   "components": [
     "Projects/Components/Library/Diagnostic.json",
     "Projects/Components/Library/Helpers.json",
@@ -14,11 +14,11 @@
     "profile": "udk",
     "msbuild": {
       "solution": "UniversalDevKit.sln",
-      "solutionFolder": "Projects"
+      "solutionFolder": "Projects/MsBuild/{kind}/{name}",
       "projectDirectory": "Projects/MsBuild/{kind}/{name}",
       "projectName": "UniversalDevKit.{name}.{variant}",
       "configurations": ["Debug", "Release"],
-      "platforms": ["x64"],
+      "platforms": ["x64"]
     }
   }
 }
