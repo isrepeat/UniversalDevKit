@@ -9,6 +9,8 @@ $temporary = Join-Path ([IO.Path]::GetTempPath()) ('ProjectTools.Tests.' + [Guid
 try {
     Copy-Item -LiteralPath $fixture -Destination $temporary -Recurse
     $manifest = Join-Path $temporary 'Components.json'
+    $versionPath = Join-Path $temporary '.udk-version'
+    [IO.File]::WriteAllText($versionPath, '0.2.0')
     & $tool -ManifestPath $manifest
     if (-not (Test-Path -LiteralPath (Join-Path $temporary 'Projects/Probe/Probe.Dynamic.vcxproj'))) { throw 'Dynamic project was not generated.' }
     $shared = [IO.File]::ReadAllText((Join-Path $temporary 'Projects/Probe/Probe.Shared.vcxitems'))
@@ -22,6 +24,7 @@ try {
     if (-not $binary.Contains('Custom.targets')) { throw 'Missing target extension.' }
     $solution = Join-Path $temporary 'Probe.sln'
     $before = [IO.File]::ReadAllText($solution)
+    if ($before -notmatch '"!Repository"' -or $before -notmatch '\.udk-version = \.udk-version') { throw 'Missing version solution item.' }
     & $tool -ManifestPath $manifest -Check
     & $tool -ManifestPath $manifest
     if ([IO.File]::ReadAllText($solution) -cne $before) { throw 'Repeated generation rewrote the solution.' }
@@ -49,6 +52,21 @@ try {
     & $tool -ManifestPath $manifest
     if (-not [IO.File]::ReadAllText($solution).Contains('Probe.Dynamic')) { throw 'Restored variant was not added.' }
     & $tool -ManifestPath $manifest -Check
+
+    $userFolder = 'Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "User", "User", "{3CD447C2-9345-4C0C-9F57-9BE45728E021}"' + "`nEndProject`n"
+    [IO.File]::WriteAllText($solution, ([IO.File]::ReadAllText($solution) -replace '(?m)^Global\r?$', ($userFolder + 'Global')))
+    $dynamicProject = Join-Path $temporary 'Projects/Probe/Probe.Dynamic.vcxproj'
+    [IO.File]::WriteAllText(($dynamicProject + '.user'), '<Project />')
+    & $tool -ManifestPath $manifest -Clean
+    $cleaned = [IO.File]::ReadAllText($solution)
+    if ($cleaned -match 'Probe\.(Dynamic|Static|Shared)|\.udk-version|"!Repository"|"Projects"' -or $cleaned -notmatch '"User", "User"') {
+        throw 'Cleanup did not preserve the user folder or left generated entries.'
+    }
+    foreach ($path in @($versionPath, $dynamicProject, ($dynamicProject + '.filters'), ($dynamicProject + '.user'), $filtersPath)) {
+        if (Test-Path -LiteralPath $path) { throw "Cleanup left generated file: $path" }
+    }
+    & $tool -ManifestPath $manifest -Clean
+    if ([IO.File]::ReadAllText($solution) -cne $cleaned) { throw 'Repeated cleanup rewrote the solution.' }
 
     $settings = (Get-Content -LiteralPath $manifest -Raw | ConvertFrom-Json).generation
     $registry = @{ schemaVersion = 5; components = @('Component.json'); generation = $settings }

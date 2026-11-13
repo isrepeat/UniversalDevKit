@@ -3,14 +3,7 @@
 <Project DefaultTargets="Build"
          xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
+@PROJECT_CONFIGURATIONS@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{@GUID@}</ProjectGuid>
@@ -26,7 +19,7 @@
     <UseDebugLibraries Condition="'$(Configuration)' != 'Debug'">false</UseDebugLibraries>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <Import Project="..\BuildLayout.props" />
+  <Import Project="@BUILD_LAYOUT@" />
   <ItemDefinitionGroup>
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -35,9 +28,9 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ImportGroup Label="Shared">
-    <Import Project="UniversalDevKit.@COMPONENT@.Shared.vcxitems"
+    <Import Project="@SHARED_PROJECT@"
             Label="Shared" />
   </ImportGroup>
-  <Import Project="UniversalDevKit.@COMPONENT@.Dependencies.props" />
+  <Import Project="@DEPENDENCIES_PROPS@" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

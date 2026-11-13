@@ -1,5 +1,5 @@
 function Invoke-UdkComponentSourcesProject($Project, $Context) {
-    # Получаем список файлов компонента.
+    # Resolve the component's file list.
     $root = $Context.RepositoryPath
     if ($Project.adapter -eq 'udk-component-sources') {
         . (Join-Path $PSScriptRoot '../../ProjectTools/Private/Contract.ps1')
@@ -14,7 +14,7 @@ function Invoke-UdkComponentSourcesProject($Project, $Context) {
         $component = Read-UdkBuildJson $componentPath
     }
 
-    # Раскладываем исходники и заголовки по каталогам пакета.
+    # Stage sources and headers in the package layout.
     $sourceRoot = Resolve-UdkBuildPath $root $root $Project.sourceRoot -Existing
     $includeRoot = Resolve-UdkBuildPath $root $root $Project.includeRoot -Existing
     $output = Reset-UdkArtifactDirectory -Root $Context.WorkDirectory -Path (Join-Path $Context.WorkDirectory 'output')
@@ -48,7 +48,7 @@ function Invoke-UdkComponentSourcesProject($Project, $Context) {
         Copy-Item -LiteralPath $source -Destination $target
     }
 
-    # Записываем список файлов для потребителей пакета.
+    # Write the file manifest for package consumers.
     $manifest = Resolve-UdkBuildPath $output $output $Project.manifestDestination
     if ($seen.ContainsKey($manifest)) {
         throw 'Component manifest collides with source files.'

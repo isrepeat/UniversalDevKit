@@ -26,23 +26,23 @@
     <__HasUniversalDevKitXamlRuntime Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">true</__HasUniversalDevKitXamlRuntime>
   </PropertyGroup>
   <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
-    <ProjectReference Include="$(MSBuildThisFileDirectory)Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj">
+    <ProjectReference Include="$(MSBuildThisFileDirectory)Library\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj">
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
       <LinkLibraryDependencies Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">true</LinkLibraryDependencies>
     </ProjectReference>
-    <__UniversalDevKitRuntimeProject Include="$(MSBuildThisFileDirectory)Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj" />
+    <__UniversalDevKitRuntimeProject Include="$(MSBuildThisFileDirectory)Library\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
     <ClCompile><AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\Includes\Diagnostic;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile>
     <ClCompile><PreprocessorDefinitions>UNIVERSALDEVKIT_DIAGNOSTIC_DYNAMIC;%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile>
   </ItemDefinitionGroup>
-  <Import Project="Helpers\UniversalDevKit.Helpers.Shared.vcxitems"
+  <Import Project="Library\Helpers\UniversalDevKit.Helpers.Shared.vcxitems"
           Condition="'$(__HasUniversalDevKitHelpers)' == 'true'"
           Label="Shared" />
-  <Import Project="OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems"
+  <Import Project="Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems"
           Condition="'$(__HasUniversalDevKitOpenGLESRenderer)' == 'true'"
           Label="Shared" />
-  <Import Project="XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems"
+  <Import Project="Library\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems"
           Condition="'$(__HasUniversalDevKitXamlRuntime)' == 'true'"
           Label="Shared" />
   <Import Project="UniversalDevKit.Runtime.targets" />

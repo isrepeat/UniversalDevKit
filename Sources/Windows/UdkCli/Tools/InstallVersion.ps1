@@ -35,6 +35,7 @@ try {
         throw "Archive SHA-256 mismatch for UDK CLI $Version."
     }
 
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
     [IO.Compression.ZipFile]::ExtractToDirectory($archive, $payload)
     if (-not (Test-Path -LiteralPath (Join-Path $payload 'udk.exe') -PathType Leaf) -or
         -not (Test-Path -LiteralPath (Join-Path $payload 'Tools') -PathType Container)) {

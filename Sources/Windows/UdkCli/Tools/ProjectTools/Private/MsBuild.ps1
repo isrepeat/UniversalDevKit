@@ -17,10 +17,34 @@ function Get-ProjectToolsDirectory($Model, $Component) {
 function Get-ProjectToolsLocation($Model, $Component, [string]$Variant) {
     $directory = Get-ProjectToolsDirectory $Model $Component
     $name = $Model.Settings.projectName.Replace('{name}', $Component.name).Replace('{variant}', $Variant)
-    $extension = if ($Variant -eq 'Shared') { '.vcxitems' } else { '.vcxproj' }
+    $extension = switch ($Variant) {
+        'Shared' { '.vcxitems' }
+        'Dependencies' { '.props' }
+        default { '.vcxproj' }
+    }
     $path = $directory + '/' + $name + $extension
     $null = Resolve-ProjectToolsPath $Model.Root $path
     return $path
+}
+
+function Get-ProjectToolsUdkProjectTemplate($Model, $Component, [string]$Path) {
+    $template = [IO.File]::ReadAllText((Join-Path $PSScriptRoot '../Templates/Component.vcxproj.in'))
+    $newline = if ($template.Contains("`r`n")) { "`r`n" } else { "`n" }
+    $configurations = foreach ($configuration in $Model.Settings.configurations) {
+        foreach ($platform in $Model.Settings.platforms) {
+            '    <ProjectConfiguration Include="' + $configuration + '|' + $platform + '">'
+            '      <Configuration>' + $configuration + '</Configuration>'
+            '      <Platform>' + $platform + '</Platform>'
+            '    </ProjectConfiguration>'
+        }
+    }
+    $buildLayout = Get-ProjectToolsRelativeImport $Model $Path 'Projects/MsBuild/BuildLayout.props'
+    $shared = Get-ProjectToolsLocation $Model $Component 'Shared'
+    $dependencies = Get-ProjectToolsLocation $Model $Component 'Dependencies'
+    return $template.Replace('@PROJECT_CONFIGURATIONS@', ($configurations -join $newline)).
+        Replace('@BUILD_LAYOUT@', (ConvertTo-ProjectToolsXml $buildLayout.Replace('$(MSBuildThisFileDirectory)', ''))).
+        Replace('@SHARED_PROJECT@', (ConvertTo-ProjectToolsXml ([IO.Path]::GetFileName($shared)))).
+        Replace('@DEPENDENCIES_PROPS@', (ConvertTo-ProjectToolsXml ([IO.Path]::GetFileName($dependencies))))
 }
 
 function Get-ProjectToolsRelativeImport($Model, [string]$ProjectPath, [string]$Target) {
@@ -229,7 +253,6 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
         $sharedPath = Get-ProjectToolsLocation $Model $component 'Shared'
         $projects.Add([pscustomobject]@{ Path = $sharedPath; Guid = $component.msbuildGuid; Variant = 'Shared'; Component = $component.name })
         $sharedItems = [Collections.Generic.List[object]]::new()
-        if ($component.msbuild.resolvedFiles) { AddOutput $component.msbuild.resolvedFiles (([ordered]@{ headers = @($component.headers); sources = @($component.sources) } | ConvertTo-Json -Depth 10 -Compress)) }
         if ($Model.Profile -ne 'udk') {
             $lines = [Collections.Generic.List[string]]::new()
             $lines.Add('<?xml version="1.0" encoding="utf-8"?>')
@@ -290,9 +313,7 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
             }
             $projects.Add([pscustomobject]@{ Path = $path; Guid = $guid; Variant = $variant; Component = $component.name })
             if ($Model.Profile -eq 'udk') {
-                $template = [IO.File]::ReadAllText((Join-Path $PSScriptRoot '../Templates/Component.vcxproj.in'))
-                $buildLayout = Get-ProjectToolsRelativeImport $Model $path 'Projects/MsBuild/BuildLayout.props'
-                $template = $template.Replace('..\BuildLayout.props', (ConvertTo-ProjectToolsXml $buildLayout.Replace('$(MSBuildThisFileDirectory)', '')))
+                $template = Get-ProjectToolsUdkProjectTemplate $Model $component $path
                 $definitions = if ($variant -eq 'Dynamic') { '      <PreprocessorDefinitions>UNIVERSALDEVKIT_' + $component.name.ToUpperInvariant() + '_DYNAMIC;UNIVERSALDEVKIT_' + $component.name.ToUpperInvariant() + '_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>' } else { '' }
                 $type = if ($variant -eq 'Dynamic') { 'DynamicLibrary' } else { 'StaticLibrary' }
                 $content = $template.Replace('@COMPONENT@', $component.name).Replace('@GUID@', $guid.Trim('{}')).Replace('@CONFIGURATION_TYPE@', $type).Replace('@DYNAMIC_DEFINITIONS@', $definitions)

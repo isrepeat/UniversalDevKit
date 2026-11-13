@@ -108,6 +108,7 @@ namespace universaldevkit::cli::details {
 		output << "version: " UDK_CLI_VERSION "\n\n"
 			"Usage:\n"
 			"  udk project generate [manifest]\n"
+			"  udk project generate --clean [manifest]\n"
 			"  udk project check [manifest]\n"
 			"  udk project update [manifest]\n"
 			"  udk package build <package-path>\n"
@@ -118,28 +119,39 @@ namespace universaldevkit::cli::details {
 		return invalidArguments ? 2 : 0;
 	}
 
-	int RunProject(const std::filesystem::path& path, bool check) {
+	int RunProject(const std::filesystem::path& path, bool check, bool clean) {
 		std::vector<std::wstring> arguments{L"-ManifestPath", std::filesystem::absolute(path).wstring()};
 		if (check) {
 			arguments.emplace_back(L"-Check");
+		}
+		if (clean) {
+			arguments.emplace_back(L"-Clean");
 		}
 		return universaldevkit::cli::RunPowerShellScript(L"ProjectTools/Generate.ps1", arguments);
 	}
 
 	int RunRepositoryCommand(int argc, wchar_t* argv[], bool dispatched) {
-		if (argc != 3 && argc != 4) {
+		if (argc < 3 || argc > 5) {
 			return details::ShowHelp(true);
 		}
 		const std::wstring_view group = argv[1];
 		const std::wstring_view command = argv[2];
+		const bool clean = group == L"project" && command == L"generate" && argc >= 4 && std::wstring_view(argv[3]) == L"--clean";
+		if (argc == 5 && !clean) {
+			return details::ShowHelp(true);
+		}
 		const bool project = group == L"project" && (command == L"generate" || command == L"check" || command == L"update");
 		const bool package = group == L"package" && (command == L"build" || command == L"plan") && argc == 4;
 		if (!project && !package) {
 			return details::ShowHelp(true);
 		}
-		const auto manifest = project ? std::filesystem::absolute(argc == 4 ? argv[3] : L"Components.json") : std::filesystem::path{};
+		const int manifestIndex = clean ? 4 : 3;
+		const auto manifest = project ? std::filesystem::absolute(argc > manifestIndex ? argv[manifestIndex] : L"Components.json") : std::filesystem::path{};
 		const auto versionPath = (project ? manifest.parent_path() : std::filesystem::current_path()) / L".udk-version";
 
+		if (clean) {
+			return details::RunProject(manifest, false, true);
+		}
 		if (project && command == L"update") {
 			details::WriteVersion(versionPath, true);
 		} else if (!dispatched) {
@@ -152,7 +164,7 @@ namespace universaldevkit::cli::details {
 			}
 		}
 		if (project) {
-			return details::RunProject(manifest, command == L"check");
+			return details::RunProject(manifest, command == L"check", false);
 		}
 		std::vector<std::wstring> arguments{L"-PackagePath", argv[3]};
 		if (command == L"plan") {

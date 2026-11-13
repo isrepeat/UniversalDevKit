@@ -14,11 +14,11 @@
     "profile": "udk",
     "msbuild": {
       "solution": "UniversalDevKit.sln",
+      "solutionFolder": "Projects"
       "projectDirectory": "Projects/MsBuild/{kind}/{name}",
       "projectName": "UniversalDevKit.{name}.{variant}",
       "configurations": ["Debug", "Release"],
       "platforms": ["x64"],
-      "solutionFolder": "Projects"
     }
   }
 }
