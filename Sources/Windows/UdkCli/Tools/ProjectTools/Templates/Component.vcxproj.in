@@ -10,6 +10,7 @@
     <RootNamespace>universaldevkit</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+@GLOBALS@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
@@ -19,7 +20,7 @@
     <UseDebugLibraries Condition="'$(Configuration)' != 'Debug'">false</UseDebugLibraries>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <Import Project="@BUILD_LAYOUT@" />
+@NATIVE_PROPS@
   <ItemDefinitionGroup>
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -31,6 +32,6 @@
     <Import Project="@SHARED_PROJECT@"
             Label="Shared" />
   </ImportGroup>
-  <Import Project="@DEPENDENCIES_PROPS@" />
+@DEPENDENCY_IMPORT@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

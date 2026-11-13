@@ -11,14 +11,21 @@
     "Projects/Components/Application/XamlCompiler.json"
   ],
   "generation": {
-    "profile": "udk",
+    "integration": {
+      "coreExportHeader": "Includes/Core/UniversalDevKit/Export.h",
+      "sourcesTargets": "Projects/MsBuild/UniversalDevKit.Sources.targets",
+      "versionSource": "Version.json",
+      "versionHeader": "Includes/Core/UniversalDevKit/Version.h",
+      "versionProps": "Projects/MsBuild/UniversalDevKit.Version.props"
+    },
     "msbuild": {
       "solution": "UniversalDevKit.sln",
       "solutionFolder": "Projects/MsBuild/{kind}/{name}",
       "projectDirectory": "Projects/MsBuild/{kind}/{name}",
       "projectName": "UniversalDevKit.{name}.{variant}",
       "configurations": ["Debug", "Release"],
-      "platforms": ["x64"]
+      "platforms": ["x64"],
+      "nativeProps": ["Projects/MsBuild/BuildLayout.props"]
     }
   }
 }

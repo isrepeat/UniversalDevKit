@@ -54,7 +54,7 @@ if ($Clean) {
     Write-Host 'ProjectTools solution cleanup completed.'
     return
 }
-$udkPlan = if ($model.Profile -eq 'udk') { @(& (Join-Path $PSScriptRoot 'Profiles/Udk.ps1') -Model $model) } else { @() }
+$udkPlan = if ($model.Integration -or $model.Profile -eq 'udk') { @(& (Join-Path $PSScriptRoot 'Profiles/Udk.ps1') -Model $model) } else { @() }
 $plan = New-ProjectToolsMsBuildPlan $model $udkPlan
 $executable = & (Join-Path $PSScriptRoot 'Private/GetSolutionInjector.ps1') -LocalPath $SolutionInjectorPath
 $solutionUpdate = Get-ProjectToolsSolutionUpdate $model $plan.Projects $executable
@@ -73,5 +73,5 @@ if (-not $Check) {
         Write-Host ('Updated: ' + $update.RelativePath)
     }
 }
-if ($model.Profile -eq 'udk') { & (Join-Path $PSScriptRoot 'Private/UpdateProjectFilters.ps1') -RepositoryRoot $model.Root -Check:$Check }
+if ($model.Integration -or $model.Profile -eq 'udk') { & (Join-Path $PSScriptRoot 'Private/UpdateProjectFilters.ps1') -RepositoryRoot $model.Root -Check:$Check }
 Write-Host 'ProjectTools generation completed.'

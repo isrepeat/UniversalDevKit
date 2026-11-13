@@ -13,20 +13,31 @@
     "Projects/Components/Application/UdkCli.json"
   ],
   "generation": {
-    "profile": "udk",
+    "integration": {
+      "sourcesTargets": "Projects/MsBuild/UniversalDevKit.Sources.targets",
+      "coreExportHeader": "Includes/Core/UniversalDevKit/Export.h",
+      "versionSource": "Version.json",
+      "versionHeader": "Includes/Core/UniversalDevKit/Version.h",
+      "versionProps": "Projects/MsBuild/UniversalDevKit.Version.props"
+    },
     "msbuild": {
       "solution": "UniversalDevKit.sln",
       "projectDirectory": "Projects/MsBuild/{kind}/{name}",
       "projectName": "UniversalDevKit.{name}.{variant}",
       "configurations": ["Debug", "Release"],
       "platforms": ["x64"],
-      "solutionFolder": "Projects/MsBuild/{kind}/{name}"
+      "solutionFolder": "Projects/MsBuild/{kind}/{name}",
+      "nativeProps": ["Projects/MsBuild/BuildLayout.props"]
     }
   }
 }
 ```
 
 **Неизвестные поля отклоняются.** Пути в `components` перечисляются явно, без wildcard.
+
+`generation.msbuild.nativeProps` задаёт импорты для проектов C++. Общий список `props` применяется также к C#-проектам. Пути задаются относительно корня репозитория.
+
+Необязательный блок `generation.integration` включает генерацию интеграции по графу компонентов, экспортных заголовков и метаданных версии. В нём задаются входной файл версии и пути выходных файлов. Профиль `udk` поддерживается для совместимости со старыми манифестами.
 
 В схеме 6 `generation.msbuild.solutionFolder` задаёт полный путь в дереве решения через `/`. Подстановки `{kind}` и `{name}` дают категорию (`Application` или `Library`) и имя компонента. `Projects/` помещает проекты непосредственно в папку `Projects`. Путь на диске задаёт `projectDirectory`. Схемы 2–5 сохраняют прежнюю группировку в дереве решения.
 
@@ -53,7 +64,7 @@
 
 ## Версия схемы и идентификаторы
 
-Реестр — внутренний API сборки UDK. Схемы 4 и 5 содержат непустой массив `components`. В схеме 4 поля проекта лежат непосредственно в описании компонента. ProjectTools также принимает схемы 2 и 3 для существующих манифестов. Для профиля UDK задайте `generation.profile: udk`.
+Схемы 4, 5 и 6 содержат непустой массив `components`. В схеме 4 поля проекта лежат непосредственно в описании компонента. ProjectTools также принимает схемы 2 и 3 для существующих манифестов.
 
 `msbuildGuid` записывается в форме `{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}`. Имена и GUID уникальны без учёта регистра. В именах C++-компонентов допустимы латинские буквы и цифры, первая буква заглавная. В именах существующих C#-проектов также допускаются точки.
 

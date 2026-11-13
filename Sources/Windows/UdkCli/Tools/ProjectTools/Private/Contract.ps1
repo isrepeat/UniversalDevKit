@@ -121,6 +121,10 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
     foreach ($field in $manifest.PSObject.Properties.Name) { if ($field -notin $manifestFields) { throw "Unknown manifest field: $field" } }
     $settings = $manifest.generation.msbuild
     $profile = $manifest.generation.profile
+    $integration = $manifest.generation.integration
+    foreach ($field in $manifest.generation.PSObject.Properties.Name) {
+        if ($field -notin @('profile', 'msbuild', 'integration')) { throw "Unknown generation setting: $field" }
+    }
     if ($manifest.schemaVersion -eq 6 -and (-not $settings -or $settings.solutionFolder -isnot [string] -or
         $settings.solutionFolder -cnotmatch '^[A-Za-z0-9_. {}-]+(?:/[A-Za-z0-9_. {}-]+)*/?$' -or
         $settings.solutionFolder.Replace('{kind}', '').Replace('{name}', '') -match '[{}]' -or
@@ -129,18 +133,36 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
     }
     if (-not $profile -and $manifest.schemaVersion -eq 2) { $profile = 'udk' }
     if ($profile -and $profile -ne 'udk') { throw "Unknown generation profile: $profile" }
+    if ($profile -and $integration) { throw 'Use either generation.profile or generation.integration.' }
+    if ($manifest.generation.PSObject.Properties['integration']) {
+        if ($integration -isnot [pscustomobject]) { throw 'generation.integration must be an object.' }
+        $integrationFields = @('sourcesTargets', 'coreExportHeader', 'versionSource', 'versionHeader', 'versionProps')
+        foreach ($field in $integration.PSObject.Properties.Name) {
+            if ($field -notin $integrationFields) { throw "Unknown integration setting: $field" }
+        }
+        foreach ($field in $integrationFields) {
+            if ($integration.$field -isnot [string]) { throw "Expected generation.integration.$field." }
+            $null = Resolve-ProjectToolsPath $root $integration.$field
+        }
+        if (-not (Test-Path -LiteralPath (Join-Path $root $integration.versionSource) -PathType Leaf)) {
+            throw "Missing integration version source: $($integration.versionSource)"
+        }
+    }
     if (-not $settings) {
         if ($profile -ne 'udk') { throw 'generation.msbuild is required.' }
         $projectDirectory = if ($unified) { 'Projects/MsBuild/{kind}/{name}' } else { 'Projects/MsBuild/{name}' }
         $settings = [pscustomobject]@{ solution = 'UniversalDevKit.sln'; projectDirectory = $projectDirectory; projectName = 'UniversalDevKit.{name}.{variant}'; configurations = @('Debug', 'Release'); platforms = @('x64'); solutionFolder = 'Projects' }
     }
     foreach ($field in $settings.PSObject.Properties.Name) {
-        if ($field -notin @('solution', 'projectDirectory', 'projectName', 'configurations', 'platforms', 'solutionFolder', 'props', 'targets')) { throw "Unknown MSBuild generation setting: $field" }
+        if ($field -notin @('solution', 'projectDirectory', 'projectName', 'configurations', 'platforms', 'solutionFolder', 'props', 'nativeProps', 'targets')) { throw "Unknown MSBuild generation setting: $field" }
     }
     $null = Resolve-ProjectToolsPath $root $settings.solution
     if ($settings.projectDirectory -notmatch '\{name\}' -or $settings.projectName -notmatch '\{name\}' -or $settings.projectName -notmatch '\{variant\}') { throw 'Project layout must contain {name} and {variant} placeholders.' }
     if ($settings.projectName -match '[/\\]' -or $settings.projectName.Replace('{name}', '').Replace('{variant}', '') -match '[{}]') { throw 'Invalid projectName template.' }
-    foreach ($extensionPath in @($settings.props) + @($settings.targets)) {
+    if ($settings.PSObject.Properties['nativeProps'] -and $settings.nativeProps -isnot [array]) {
+        throw 'generation.msbuild.nativeProps must be an array.'
+    }
+    foreach ($extensionPath in @($settings.props) + @($settings.nativeProps) + @($settings.targets)) {
         if (-not $extensionPath) { continue }
         $extension = Resolve-ProjectToolsPath $root $extensionPath
         if (-not (Test-Path -LiteralPath $extension -PathType Leaf)) { throw "Missing build extension: $extensionPath" }
@@ -320,7 +342,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
                     if ($field -ne 'properties') { throw "Unsupported application MSBuild setting: $field" }
                 }
             } elseif ($component.kind -notin @('compiled', 'headerOnly')) { throw 'Invalid library component kind.' }
-            if (-not $profile -and ($component.platformSources -or $component.platformRequirements -or $component.sourceSettings)) { throw 'Standalone MSBuild generation does not yet support platformSources, platformRequirements or sourceSettings. Use explicit build extensions.' }
+            if (-not ($profile -or $integration) -and ($component.platformSources -or $component.platformRequirements -or $component.sourceSettings)) { throw 'MSBuild generation of platformSources, platformRequirements and sourceSettings requires generation.integration.' }
             if ($component.PSObject.Properties['variants'] -and ($component.variants -isnot [Array] -or ($component.kind -eq 'compiled' -and -not $component.variants.Count))) { throw 'Compiled variants must be a nonempty array.' }
             foreach ($field in $component.msbuild.PSObject.Properties.Name) { if ($field -notin @('properties', 'dynamicDefinitions')) { throw "Unknown component MSBuild setting: $field" } }
             foreach ($field in $component.compile.PSObject.Properties.Name) { if ($field -notin @('includeDirectories', 'preprocessorDefinitions', 'precompiledHeader')) { throw "Unknown compile setting: $field" } }
@@ -361,5 +383,5 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         elseif ($isApplication) { $applications[$include] = $component }
         else { $components[$include] = $component }
     }
-    return [pscustomobject]@{ Root = $root; Manifest = $manifest; Components = $components; Applications = $applications; ManagedLibraries = $managedLibraries; Settings = $settings; Profile = $profile }
+    return [pscustomobject]@{ Root = $root; Manifest = $manifest; Components = $components; Applications = $applications; ManagedLibraries = $managedLibraries; Settings = $settings; Profile = $profile; Integration = $integration }
 }
