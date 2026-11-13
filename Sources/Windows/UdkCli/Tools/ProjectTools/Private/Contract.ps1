@@ -112,8 +112,8 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
     $path = (Resolve-Path -LiteralPath $ManifestPath -ErrorAction Stop).Path
     $root = Split-Path -Parent $path
     $manifest = Get-Content -LiteralPath $path -Raw -Encoding UTF8 | ConvertFrom-Json
-    if (($manifest.schemaVersion -isnot [int] -and $manifest.schemaVersion -isnot [long]) -or $manifest.schemaVersion -notin @(2, 3, 4, 5)) { throw 'Unsupported component schemaVersion.' }
-    $unified = $manifest.schemaVersion -in @(4, 5)
+    if (($manifest.schemaVersion -isnot [int] -and $manifest.schemaVersion -isnot [long]) -or $manifest.schemaVersion -notin @(2, 3, 4, 5, 6)) { throw 'Unsupported component schemaVersion.' }
+    $unified = $manifest.schemaVersion -in @(4, 5, 6)
     $listField = if ($unified) { 'components' } else { 'includes' }
     if ($manifest.$listField -isnot [Array] -or -not $manifest.$listField.Count) { throw "$listField must be a nonempty array." }
     $manifestFields = @('schemaVersion', 'generation', $listField)
@@ -121,6 +121,12 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
     foreach ($field in $manifest.PSObject.Properties.Name) { if ($field -notin $manifestFields) { throw "Unknown manifest field: $field" } }
     $settings = $manifest.generation.msbuild
     $profile = $manifest.generation.profile
+    if ($manifest.schemaVersion -eq 6 -and (-not $settings -or $settings.solutionFolder -isnot [string] -or
+        $settings.solutionFolder -cnotmatch '^[A-Za-z0-9_. {}-]+(?:/[A-Za-z0-9_. {}-]+)*/?$' -or
+        $settings.solutionFolder.Replace('{kind}', '').Replace('{name}', '') -match '[{}]' -or
+        @($settings.solutionFolder.TrimEnd('/').Split('/') | Where-Object { $_.Trim() -in @('', '.', '..') }).Count)) {
+        throw 'Schema 6 requires generation.msbuild.solutionFolder with optional {kind} and {name} placeholders.'
+    }
     if (-not $profile -and $manifest.schemaVersion -eq 2) { $profile = 'udk' }
     if ($profile -and $profile -ne 'udk') { throw "Unknown generation profile: $profile" }
     if (-not $settings) {
@@ -164,7 +170,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
             throw "Invalid or duplicate component name: $($definition.name)"
         }
         $names[$definition.name] = $true
-        if ($manifest.schemaVersion -ne 5) {
+        if ($manifest.schemaVersion -lt 5) {
             [pscustomobject]@{ Include = $include; Component = $definition; RuntimeProjects = @() }
             continue
         }
@@ -243,7 +249,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         } elseif ($component.PSObject.Properties['language'] -or $component.PSObject.Properties['projectType']) {
             throw "language and projectType require schemaVersion 4: $include"
         }
-        $isManagedLibrary = $manifest.schemaVersion -eq 5 -and $component.kind -ceq 'library' -and
+        $isManagedLibrary = $manifest.schemaVersion -ge 5 -and $component.kind -ceq 'library' -and
             $component.language -ceq 'csharp' -and $component.projectType -ceq 'classLibrary'
         $isDotNet = $isManagedLibrary -or ($unified -and $isApplication -and $component.language -ceq 'csharp' -and $component.projectType -cin @('wpf', 'vsix'))
         if (-not $isDotNet -and $component.name -notmatch '^[A-Z][A-Za-z0-9]*$') { throw "Invalid native component name: $($component.name)" }
