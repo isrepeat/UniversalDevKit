@@ -20,11 +20,20 @@
     },
     "msbuild": {
       "solution": "UniversalDevKit.sln",
-      "solutionFolder": "Projects/MsBuild/{kind}/{name}",
-      "projectDirectory": "Projects/MsBuild/{kind}/{name}",
-      "projectNames": {
-        "default": "{name}"
-      },
+      "solutionFolder": [
+        { "template": "Projects/MsBuild/{kind:title}/{name}" }
+      ],
+      "projectDirectory": [
+        { "template": "Projects/MsBuild/{kind:title}/{name}" }
+      ],
+      "projectNames": [
+        { "when": { "artifact": "sharedItems" }, "template": "UniversalDevKit.{name}.Shared" },
+        { "when": { "artifact": "dependencies" }, "template": "UniversalDevKit.{name}.Dependencies" },
+        { "when": { "artifact": "headerCheck" }, "template": "UniversalDevKit.{name}.HeaderCheck" },
+        { "when": { "artifact": "project", "variant": ["static", "dynamic"] }, "template": "UniversalDevKit.{name}.{variant:title}" },
+        { "when": { "artifact": "project", "projectType": "classLibrary" }, "template": "{name}.{framework}" },
+        { "template": "{name}" }
+      ],
       "configurations": ["Debug", "Release"],
       "platforms": ["x64"],
       "nativeProps": ["Projects/MsBuild/BuildLayout.props"]

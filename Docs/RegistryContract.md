@@ -22,13 +22,21 @@
     },
     "msbuild": {
       "solution": "UniversalDevKit.sln",
-      "projectDirectory": "Projects/MsBuild/{kind}/{name}",
-      "projectNames": {
-        "default": "{name}"
-      },
+      "projectDirectory": [
+        { "template": "Projects/MsBuild/{kind:title}/{name}" }
+      ],
+      "projectNames": [
+        { "when": { "artifact": "sharedItems" }, "template": "UniversalDevKit.{name}.Shared" },
+        { "when": { "artifact": "dependencies" }, "template": "UniversalDevKit.{name}.Dependencies" },
+        { "when": { "artifact": "headerCheck" }, "template": "UniversalDevKit.{name}.HeaderCheck" },
+        { "when": { "artifact": "project", "variant": ["static", "dynamic"] }, "template": "UniversalDevKit.{name}.{variant:title}" },
+        { "template": "{name}" }
+      ],
       "configurations": ["Debug", "Release"],
       "platforms": ["x64"],
-      "solutionFolder": "Projects/MsBuild/{kind}/{name}",
+      "solutionFolder": [
+        { "template": "Projects/MsBuild/{kind:title}/{name}" }
+      ],
       "nativeProps": ["Projects/MsBuild/BuildLayout.props"]
     }
   }
@@ -37,7 +45,13 @@
 
 **Неизвестные поля отклоняются.** Пути в `components` перечисляются явно, без wildcard.
 
-`generation.msbuild.projectNames` задаёт шаблоны имён без расширения. Корневой объект требует `default`. Проект может задать свой `msbuild.projectNames`. Порядок выбора — роль проекта, `default` проекта, роль в корневом реестре, корневой `default`. Доступные роли — `Static`, `Dynamic`, `Shared`, `Application`, `HeaderCheck`, `Dependencies` и `DotNet`. Доступны `{name}` и `{kind}`, для C++ также `{variant}`, для C# — `{framework}` со значением `TargetFramework` из манифеста без преобразований. Недоступный плейсхолдер вызывает ошибку. Старые поля `projectName` и `sharedProjectName` поддерживаются для существующих манифестов.
+`projectNames` — упорядоченный список правил с обязательным `template` и необязательным `when`. Первое совпадение ищется в `msbuild.projectNames` проекта, затем в `generation.msbuild.projectNames`. Поля `when` объединяются через И, значения массива одного поля — через ИЛИ. Отсутствующее значение пропускает правило. Правило без `when` должно быть последним.
+
+Доступны `name`, `kind` (`library` или `application`), `projectType`, `artifact` (`project`, `sharedItems`, `dependencies`, `headerCheck`), `variant` (`static`, `dynamic`) и `framework` (буквальный `TargetFramework`). Поля `platform` и `architecture` предусмотрены для генераторов с конкретной целью. Текущие выходы MSBuild не предоставляют этих значений. Форматеры `:title` и `:upper` преобразуют регистр независимо от локали. Расширение файла добавляет генератор.
+
+Начиная со схемы 6, `projectDirectory` и `solutionFolder` принимают строку или список правил `when` / `template` с теми же полями и форматерами. Настройка проекта в `msbuild` имеет приоритет над корневой. Пути вычисляются отдельно для каждого выхода. Сегменты разделяются через `/`. Если в выбранном шаблоне указано недоступное значение, например `{framework}` для C++-проекта, генерация завершается ошибкой. Если недоступное поле указано в `when`, генератор пропускает правило.
+
+Старые строковые шаблоны и объект `projectNames` с ключами ролей поддерживаются для существующих манифестов. В пределах одного реестра формат `projectNames` должен совпадать в корне и компонентах.
 
 `generation.msbuild.nativeProps` задаёт импорты для проектов C++. Общий список `props` применяется также к C#-проектам. Пути задаются относительно корня репозитория.
 

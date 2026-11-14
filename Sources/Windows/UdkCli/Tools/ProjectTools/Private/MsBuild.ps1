@@ -9,15 +9,58 @@ function Get-ProjectToolsApplicationProperties($Component, [string[]]$Reserved) 
     }
 }
 
-function Get-ProjectToolsDirectory($Model, $Component) {
-    $kind = if ($Component.kind -eq 'application') { 'Application' } else { 'Library' }
-    return $Model.Settings.projectDirectory.Replace('{kind}', $kind).Replace('{name}', $Component.name)
+function Get-ProjectToolsTemplateValues($Component, [string]$Variant) {
+    $artifact = switch ($Variant) {
+        'Shared' { 'sharedItems' }
+        'Dependencies' { 'dependencies' }
+        'HeaderCheck' { 'headerCheck' }
+        default { 'project' }
+    }
+    $kind = if ($Component.kind -eq 'application') { 'application' } else { 'library' }
+    $values = @{
+        name = $Component.name
+        kind = $kind
+        projectType = $Component.projectType
+        artifact = $artifact
+        framework = $Component.msbuild.properties.TargetFramework
+    }
+    if ($Variant -in @('Static', 'Dynamic')) { $values.variant = $Variant.ToLowerInvariant() }
+    return $values
+}
+
+function Resolve-ProjectToolsRuleTemplate($Local, $Root, [hashtable]$Values, [string]$Field) {
+    foreach ($rule in @($Local) + @($Root)) {
+        if (-not $rule) { continue }
+        if ($rule -is [string]) { return $rule }
+        $mismatches = $rule.when.PSObject.Properties | Where-Object {
+            $_ -and (-not $Values[$_.Name] -or $Values[$_.Name] -cnotin @($_.Value))
+        }
+        if (-not $mismatches) { return $rule.template }
+    }
+    throw "No $Field rule for '$($Values.name)' ($($Values.artifact))."
+}
+
+function Get-ProjectToolsLayout($Model, $Component, [string]$Variant, [string]$Field) {
+    $values = Get-ProjectToolsTemplateValues $Component $Variant
+    $local = $Component.msbuild.$Field
+    $root = $Model.Settings.$Field
+    $template = Resolve-ProjectToolsRuleTemplate $local $root $values $Field
+    if (-not $local -and $root -is [string] -and $Model.Settings.projectNames -isnot [array]) {
+        $values.kind = $values.kind.Substring(0, 1).ToUpperInvariant() + $values.kind.Substring(1)
+    }
+    $path = (Expand-ProjectToolsTemplate $template $values).TrimEnd('/')
+    Assert-ProjectToolsLayout $path $Field
+    return $path
 }
 
 function Get-ProjectToolsLocation($Model, $Component, [string]$Variant, [string]$Extension) {
-    $directory = Get-ProjectToolsDirectory $Model $Component
+    $directory = Get-ProjectToolsLayout $Model $Component $Variant 'projectDirectory'
     $template = $Model.Settings.projectName
-    if ($Model.Settings.projectNames -or $Component.msbuild.projectNames) {
+    if ($Model.Settings.projectNames -is [array]) {
+        $values = Get-ProjectToolsTemplateValues $Component $Variant
+        $template = Resolve-ProjectToolsRuleTemplate $Component.msbuild.projectNames $Model.Settings.projectNames $values 'projectNames'
+        $name = Expand-ProjectToolsTemplate $template $values
+    } elseif ($Model.Settings.projectNames -or $Component.msbuild.projectNames) {
         $role = if ($Extension -eq '.csproj') { 'DotNet' } else { $Variant }
         $local = $Component.msbuild.projectNames
         $global = $Model.Settings.projectNames
@@ -29,10 +72,12 @@ function Get-ProjectToolsLocation($Model, $Component, [string]$Variant, [string]
     } elseif ($Variant -eq 'Shared' -and $Model.Settings.sharedProjectName) {
         $template = $Model.Settings.sharedProjectName
     }
-    $name = $template.Replace('{name}', $Component.name).Replace('{kind}', $Component.kind)
-    if ($Variant) { $name = $name.Replace('{variant}', $Variant) }
-    $framework = $Component.msbuild.properties.TargetFramework
-    if ($framework) { $name = $name.Replace('{framework}', $framework) }
+    if ($Model.Settings.projectNames -isnot [array]) {
+        $name = $template.Replace('{name}', $Component.name).Replace('{kind}', $Component.kind)
+        if ($Variant) { $name = $name.Replace('{variant}', $Variant) }
+        $framework = $Component.msbuild.properties.TargetFramework
+        if ($framework) { $name = $name.Replace('{framework}', $framework) }
+    }
     if ($name -cnotmatch '^[A-Za-z0-9_.-]+$' -or $name -in @('.', '..') -or $name.EndsWith('.')) {
         throw "Invalid project name '$name' for '$($Component.name)'. Check the template and available placeholders."
     }
@@ -69,9 +114,9 @@ function Get-ProjectToolsNativeProjectTemplate($Model, $Component, [string]$Path
         '  <Import Project="' + (ConvertTo-ProjectToolsXml $import) + '" />'
     }
     $shared = Get-ProjectToolsLocation $Model $Component 'Shared'
-    $dependencies = Get-ProjectToolsLocation $Model $Component 'Dependencies'
     $dependencyImport = if ($Model.Integration -or $Model.Profile -eq 'udk') {
-        '  <Import Project="' + (ConvertTo-ProjectToolsXml ([IO.Path]::GetFileName($dependencies))) + '" />' + $newline
+        $dependencies = Get-ProjectToolsLocation $Model $Component 'Dependencies'
+        '  <Import Project="' + (ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeFile $Model $Path $dependencies)) + '" />' + $newline
     } else { '' }
     $globals = foreach ($property in $Component.msbuild.properties.PSObject.Properties) {
         if ($property.Name -notmatch '^[A-Za-z_][A-Za-z0-9_]*$' -or $property.Name -eq 'ProjectGuid') { throw 'Invalid MSBuild property.' }
@@ -79,7 +124,7 @@ function Get-ProjectToolsNativeProjectTemplate($Model, $Component, [string]$Path
     }
     return $template.Replace('@PROJECT_CONFIGURATIONS@', ($configurations -join $newline)).
         Replace('@NATIVE_PROPS@', ($imports -join $newline)).
-        Replace('@SHARED_PROJECT@', (ConvertTo-ProjectToolsXml ([IO.Path]::GetFileName($shared)))).
+        Replace('@SHARED_PROJECT@', (ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeFile $Model $Path $shared))).
         Replace('@DEPENDENCY_IMPORT@' + $newline, $dependencyImport).
         Replace('@GLOBALS@' + $newline, ($globals -join ''))
 }
@@ -88,6 +133,10 @@ function Get-ProjectToolsRelativeImport($Model, [string]$ProjectPath, [string]$T
     $directory = Split-Path -Parent (Join-Path $Model.Root $ProjectPath)
     $targetPath = Resolve-ProjectToolsPath $Model.Root $Target
     return '$(MSBuildThisFileDirectory)' + (Get-ProjectToolsRelativePath $directory $targetPath)
+}
+
+function Get-ProjectToolsRelativeFile($Model, [string]$From, [string]$To) {
+    (Get-ProjectToolsRelativeImport $Model $From $To).Replace('$(MSBuildThisFileDirectory)', '')
 }
 
 function Get-ProjectToolsBuildItems($Model, $Component, [string]$SharedPath, [string]$DependenciesPath) {
@@ -402,6 +451,15 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
         AddOutput $path (New-ProjectToolsApplicationProject $Model $component $path $sharedPath)
     }
     if (@($projects.Guid | Sort-Object -Unique).Count -ne $projects.Count) { throw 'Duplicate project GUID.' }
+    if ($Model.Manifest.schemaVersion -ge 6) {
+        foreach ($project in $projects) {
+            $component = switch ($project.Variant) {
+                'DotNet' { @($Model.ManagedLibraries.Values) + @($Model.Applications.Values) | Where-Object { $_.name -eq $project.Component -and $_.language -eq 'csharp' } }
+                default { @($Model.Components.Values) + @($Model.Applications.Values) | Where-Object { $_.name -eq $project.Component -and $_.language -ne 'csharp' } }
+            }
+            $project | Add-Member SolutionFolder (Get-ProjectToolsLayout $Model $component $project.Variant 'solutionFolder')
+        }
+    }
     if (@($projects.Path | Sort-Object -Unique).Count -ne $projects.Count) { throw 'Duplicate project path.' }
     return [pscustomobject]@{ Files = $plan; Projects = $projects }
 }

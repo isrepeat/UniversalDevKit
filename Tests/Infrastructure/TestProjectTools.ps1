@@ -70,7 +70,13 @@ try {
 
     $settings = (Get-Content -LiteralPath $manifest -Raw | ConvertFrom-Json).generation
     $settings.msbuild.PSObject.Properties.Remove('projectName')
-    $settings.msbuild | Add-Member projectNames ([pscustomobject]@{ default = '{name}'; DotNet = 'Root.{name}' })
+    $settings.msbuild | Add-Member projectNames @(
+        @{ when = @{ platform = 'android' }; template = 'Android.{name}' }
+        @{ when = @{ artifact = 'sharedItems' }; template = '{name}.Shared' }
+        @{ when = @{ artifact = 'project'; variant = @('static', 'dynamic') }; template = '{name}.{variant:title}' }
+        @{ when = @{ projectType = 'classLibrary' }; template = 'Root.{name}' }
+        @{ template = '{name}' }
+    )
     $registry = @{ schemaVersion = 5; components = @('Component.json'); generation = $settings }
     $utf8 = [Text.UTF8Encoding]::new($false)
     [IO.File]::WriteAllText($manifest, ($registry | ConvertTo-Json -Depth 10), $utf8)
@@ -78,11 +84,13 @@ try {
     $component.kind = 'library'
     $component | Add-Member projectType 'native'
     $component | Add-Member id 'native'
-    $component | Add-Member msbuild @{ projectNames = @{ default = '{name}.{variant}'; Static = '{name}.Archive' } }
+    $component | Add-Member msbuild @{ projectNames = @(
+        @{ when = @{ artifact = 'project'; kind = 'library'; variant = 'static' }; template = '{name}.Archive' }
+    ) }
     $runtime = @{ projectId = 'native'; variant = 'Dynamic' }
     $managed = @{
         kind = 'library'; projectType = 'classLibrary'; sources = @()
-        msbuild = @{ projectNames = @{ DotNet = '{name}.{framework}' }; properties = @{ TargetFramework = 'net8.0' } }
+        msbuild = @{ projectNames = @(@{ template = '{name}.{framework}' }); properties = @{ TargetFramework = 'net8.0' } }
         runtimeDependencies = @($runtime)
     }
     $description = @{ name = 'Probe'; projects = @($managed, $component) }

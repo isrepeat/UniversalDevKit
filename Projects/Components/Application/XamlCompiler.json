@@ -4,11 +4,6 @@
     {
       "kind": "application",
       "projectType": "native",
-      "msbuild": {
-        "projectNames": {
-          "Shared": "UniversalDevKit.{name}.Shared"
-        }
-      },
       "headers": ["Sources/Windows/XamlCompiler/**/*.h"],
       "sources": ["Sources/Windows/XamlCompiler/**/*.cpp"],
       "filters": [

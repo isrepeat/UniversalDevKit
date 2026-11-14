@@ -4,11 +4,6 @@
     {
       "kind": "library",
       "projectType": "native",
-      "msbuild": {
-        "projectNames": {
-          "default": "UniversalDevKit.{name}.{variant}"
-        }
-      },
       "libraryType": "headerOnly",
       "msbuildGuid": "{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}",
       "headers": [

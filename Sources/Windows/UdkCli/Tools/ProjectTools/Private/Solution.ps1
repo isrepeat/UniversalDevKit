@@ -72,8 +72,7 @@ function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, 
     }
     $explicitLayout = $Model.Manifest.schemaVersion -ge 6
     $templateFolders = [ordered]@{}
-    function Add-TemplateFolders([string]$Kind, [string]$Name) {
-        $path = $Model.Settings.solutionFolder.TrimEnd('/').Replace('{kind}', $Kind).Replace('{name}', $Name)
+    function Add-TemplateFolders([string]$Path) {
         $parent = ''
         $segments = @()
         foreach ($segment in $path.Split('/')) {
@@ -98,11 +97,12 @@ function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, 
         $technologyGuid = if ($Model.Profile -eq 'udk') { $msbuildGuid } else { $rootFolderGuid }
     }
     foreach ($project in $Projects) {
+        if ($Clean) { break }
         $name = [IO.Path]::GetFileNameWithoutExtension($project.Path)
         $relative = Get-ProjectToolsRelativePath $directory (Join-Path $Model.Root $project.Path)
         $group = if ($project.Component -in $applicationNames) { 'Application' } else { 'Library' }
         if ($explicitLayout) {
-            $parent = Add-TemplateFolders $group $project.Component
+            $parent = Add-TemplateFolders $project.SolutionFolder
             foreach ($folder in $templateFolders.Values) {
                 if ($writtenFolders.ContainsKey($folder.Guid)) { continue }
                 $writtenFolders[$folder.Guid] = $true
@@ -160,7 +160,9 @@ function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, 
         [IO.File]::WriteAllText($target, $(if ($null -ne $original) { $original } else { $empty }), [Text.UTF8Encoding]::new($false))
         $arguments = @('sync', $source, $target, '--owner', 'ProjectTools', '--apply', '--json')
         # The component contract explicitly selects these project identities for migration.
-        foreach ($project in $Projects) { $arguments += @('--adopt', $project.Guid) }
+        if (-not $Clean) {
+            foreach ($project in $Projects) { $arguments += @('--adopt', $project.Guid) }
+        }
         $result = & $Executable @arguments
         if ($LASTEXITCODE -ne 0) { throw "SolutionInjector sync failed: $result" }
         $report = $result | ConvertFrom-Json
@@ -178,11 +180,8 @@ function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, 
         if ($Clean) {
             $content = Update-ProjectToolsVersionItem $content $relativeVersion -Clean
             if ($explicitLayout) {
-                foreach ($component in $Model.Applications.Values) {
-                    $null = Add-TemplateFolders 'Application' $component.name
-                }
-                foreach ($component in @($Model.Components.Values) + @($Model.ManagedLibraries.Values)) {
-                    $null = Add-TemplateFolders 'Library' $component.name
+                foreach ($project in $Projects) {
+                    $null = Add-TemplateFolders $project.SolutionFolder
                 }
                 $folderGuids = @($templateFolders.Keys | ForEach-Object { Get-ProjectToolsGuid ('ProjectTools.SolutionFolder:' + $_) })
                 $folderGuids += Get-ProjectToolsGuid 'ProjectTools.SolutionFolder:!Repository'

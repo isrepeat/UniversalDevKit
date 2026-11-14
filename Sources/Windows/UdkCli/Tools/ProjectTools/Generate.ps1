@@ -31,7 +31,7 @@ if ($Clean) {
             }
         }
         $executable = & (Join-Path $PSScriptRoot 'Private/GetSolutionInjector.ps1') -LocalPath $SolutionInjectorPath
-        $update = Get-ProjectToolsSolutionUpdate $model @() $executable -Clean
+        $update = Get-ProjectToolsSolutionUpdate $model $projectPlan.Projects $executable -Clean
         if ([IO.File]::ReadAllText($solution) -cne $original) { throw "File changed during cleanup: $($model.Settings.solution)" }
     }
     $cleanupPaths = foreach ($projectPath in $projectPaths | Sort-Object -Unique) {

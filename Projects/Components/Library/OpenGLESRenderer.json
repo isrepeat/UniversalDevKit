@@ -4,11 +4,6 @@
     {
       "kind": "library",
       "projectType": "native",
-      "msbuild": {
-        "projectNames": {
-          "default": "UniversalDevKit.{name}.{variant}"
-        }
-      },
       "msbuildGuid": "{364E96CB-9D8A-40B0-8455-6A31A15A36B0}",
       "supportedPlatforms": [
         "Windows",

@@ -18,9 +18,6 @@
         "includeDirectories": ["Includes/Diagnostic", "Includes/Core"]
       },
       "msbuild": {
-        "projectNames": {
-          "Shared": "UniversalDevKit.{name}.Shared"
-        },
         "properties": {
           "TargetName": "udk"
         }

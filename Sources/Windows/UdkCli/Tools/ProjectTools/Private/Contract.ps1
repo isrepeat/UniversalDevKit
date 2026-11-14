@@ -108,7 +108,51 @@ function Expand-ProjectToolsFiles($Root, $Patterns, $Excludes) {
     return @($selected)
 }
 
-function Assert-ProjectToolsProjectNames($Names, [string]$Label) {
+function Expand-ProjectToolsTemplate([string]$Template, [hashtable]$Values) {
+    return [regex]::Replace($Template, '\{([a-zA-Z]+)(?::([a-z]+))?\}', {
+        param($match)
+        $field = $match.Groups[1].Value
+        $value = [string]$Values[$field]
+        if (-not $value) { throw "Unavailable placeholder '$field' in template '$Template'." }
+        switch -CaseSensitive ($match.Groups[2].Value) {
+            'upper' { return $value.ToUpperInvariant() }
+            'title' { return $value.Substring(0, 1).ToUpperInvariant() + $value.Substring(1).ToLowerInvariant() }
+            '' { return $value }
+            default { throw "Unknown formatter in template '$Template'." }
+        }
+    })
+}
+
+function Assert-ProjectToolsProjectNames($Names, [string]$Label, [switch]$PathTemplate) {
+    if ($Names -is [array]) {
+        if (-not $Names.Count) { throw "Expected a nonempty rules array: $Label" }
+        $fields = @('name', 'kind', 'projectType', 'artifact', 'variant', 'framework', 'platform', 'architecture')
+        for ($index = 0; $index -lt $Names.Count; $index++) {
+            $rule = $Names[$index]
+            if ($rule -isnot [pscustomobject] -or @($rule.PSObject.Properties.Name | Where-Object { $_ -cnotin @('when', 'template') }).Count -or
+                $rule.template -isnot [string] -or
+                (-not $PathTemplate -and $rule.template -cnotmatch '^[A-Za-z0-9_.{}:-]+$') -or
+                ($rule.template -creplace ('\{(?:' + ($fields -join '|') + ')(?::(?:title|upper))?\}'), '') -match '[{}:]') {
+                throw "Invalid projectNames rule at index ${index}: $Label"
+            }
+            if ($PathTemplate) { Assert-ProjectToolsLayout $rule.template $Label }
+            if (-not $rule.PSObject.Properties['when']) {
+                if ($index -ne $Names.Count - 1) { throw "Unconditional projectNames rule must be last: $Label" }
+                continue
+            }
+            if ($rule.when -isnot [pscustomobject] -or -not @($rule.when.PSObject.Properties.Name).Count) {
+                throw "Expected a nonempty when object: $Label"
+            }
+            foreach ($condition in $rule.when.PSObject.Properties) {
+                $values = @($condition.Value)
+                if ($condition.Name -cnotin $fields -or -not $values.Count -or
+                    @($values | Where-Object { $_ -isnot [string] -or [string]::IsNullOrWhiteSpace($_) }).Count) {
+                    throw "Invalid projectNames condition '$($condition.Name)': $Label"
+                }
+            }
+        }
+        return
+    }
     if ($Names -isnot [pscustomobject] -or -not @($Names.PSObject.Properties.Name).Count) {
         throw "Expected a nonempty projectNames object: $Label"
     }
@@ -121,6 +165,18 @@ function Assert-ProjectToolsProjectNames($Names, [string]$Label) {
             ($template -creplace '\{(?:name|kind|variant|framework)\}', '') -match '[{}]') {
             throw "Invalid projectNames template for '$($rule.Name)': $Label"
         }
+    }
+}
+
+function Assert-ProjectToolsLayout($Layout, [string]$Label) {
+    if ($Layout -is [array]) {
+        Assert-ProjectToolsProjectNames $Layout $Label -PathTemplate
+        return
+    }
+    if ($Layout -isnot [string] -or
+        ($Layout -creplace '\{(?:name|kind|projectType|artifact|variant|framework|platform|architecture)(?::(?:title|upper))?\}', 'X') -cnotmatch '^[A-Za-z0-9_. -]+(?:/[A-Za-z0-9_. -]+)*/?$' -or
+        @($Layout.TrimEnd('/').Split('/') | Where-Object { $_.Trim() -in @('', '.', '..') }).Count) {
+        throw "Invalid layout template: $Label"
     }
 }
 
@@ -140,12 +196,6 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
     $integration = $manifest.generation.integration
     foreach ($field in $manifest.generation.PSObject.Properties.Name) {
         if ($field -notin @('profile', 'msbuild', 'integration')) { throw "Unknown generation setting: $field" }
-    }
-    if ($manifest.schemaVersion -eq 6 -and (-not $settings -or $settings.solutionFolder -isnot [string] -or
-        $settings.solutionFolder -cnotmatch '^[A-Za-z0-9_. {}-]+(?:/[A-Za-z0-9_. {}-]+)*/?$' -or
-        $settings.solutionFolder.Replace('{kind}', '').Replace('{name}', '') -match '[{}]' -or
-        @($settings.solutionFolder.TrimEnd('/').Split('/') | Where-Object { $_.Trim() -in @('', '.', '..') }).Count)) {
-        throw 'Schema 6 requires generation.msbuild.solutionFolder with optional {kind} and {name} placeholders.'
     }
     if (-not $profile -and $manifest.schemaVersion -eq 2) { $profile = 'udk' }
     if ($profile -and $profile -ne 'udk') { throw "Unknown generation profile: $profile" }
@@ -173,11 +223,16 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         if ($field -notin @('solution', 'projectDirectory', 'projectNames', 'projectName', 'sharedProjectName', 'configurations', 'platforms', 'solutionFolder', 'props', 'nativeProps', 'targets')) { throw "Unknown MSBuild generation setting: $field" }
     }
     $null = Resolve-ProjectToolsPath $root $settings.solution
-    if ($settings.projectDirectory -notmatch '\{name\}') { throw 'projectDirectory must contain {name}.' }
+    if ($manifest.schemaVersion -ge 6) {
+        Assert-ProjectToolsLayout $settings.projectDirectory 'generation.msbuild.projectDirectory'
+        Assert-ProjectToolsLayout $settings.solutionFolder 'generation.msbuild.solutionFolder'
+    } elseif ($settings.projectDirectory -cnotmatch '\{name\}') {
+        throw 'projectDirectory must contain {name}.'
+    }
     if ($settings.PSObject.Properties['projectNames']) {
         Assert-ProjectToolsProjectNames $settings.projectNames 'generation.msbuild'
-        if (-not $settings.projectNames.default -or $settings.PSObject.Properties['projectName'] -or $settings.PSObject.Properties['sharedProjectName']) {
-            throw 'generation.msbuild.projectNames requires default and cannot be combined with legacy naming fields.'
+        if (($settings.projectNames -isnot [array] -and -not $settings.projectNames.default) -or $settings.PSObject.Properties['projectName'] -or $settings.PSObject.Properties['sharedProjectName']) {
+            throw 'Invalid root projectNames default or conflicting legacy naming fields.'
         }
     }
     foreach ($field in @('projectName', 'sharedProjectName')) {
@@ -331,7 +386,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
                 if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'version', 'abiVersion', 'msbuildGuid', 'msbuild', 'buildExtensions', 'filters', 'sources', 'excludeSources')) { throw "Unsupported C# application field: $field" }
             }
             foreach ($field in $component.msbuild.PSObject.Properties.Name) {
-                if ($field -notin @('properties', 'projectName', 'projectNames')) { throw "Unsupported C# MSBuild setting: $field" }
+if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirectory', 'solutionFolder')) { throw "Unsupported C# MSBuild setting: $field" }
             }
             $framework = $component.msbuild.properties.TargetFramework
             if ($isManagedLibrary -and ($framework -isnot [string] -or $framework -cnotmatch '^net(?:standard|coreapp)?[0-9]+(?:\.[0-9]+)*(?:-[a-z]+[0-9.]*)?$')) {
@@ -369,12 +424,12 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
                     if ($field -ne 'includeDirectories') { throw "Unsupported application compile setting: $field" }
                 }
                 foreach ($field in $component.msbuild.PSObject.Properties.Name) {
-                    if ($field -notin @('properties', 'projectName', 'projectNames')) { throw "Unsupported application MSBuild setting: $field" }
+                    if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirectory', 'solutionFolder')) { throw "Unsupported application MSBuild setting: $field" }
                 }
             } elseif ($component.kind -notin @('compiled', 'headerOnly')) { throw 'Invalid library component kind.' }
             if (-not ($profile -or $integration) -and ($component.platformSources -or $component.platformRequirements -or $component.sourceSettings)) { throw 'MSBuild generation of platformSources, platformRequirements and sourceSettings requires generation.integration.' }
             if ($component.PSObject.Properties['variants'] -and ($component.variants -isnot [Array] -or ($component.kind -eq 'compiled' -and -not $component.variants.Count))) { throw 'Compiled variants must be a nonempty array.' }
-            foreach ($field in $component.msbuild.PSObject.Properties.Name) { if ($field -notin @('properties', 'dynamicDefinitions', 'projectName', 'projectNames')) { throw "Unknown component MSBuild setting: $field" } }
+            foreach ($field in $component.msbuild.PSObject.Properties.Name) { if ($field -notin @('properties', 'dynamicDefinitions', 'projectName', 'projectNames', 'projectDirectory', 'solutionFolder')) { throw "Unknown component MSBuild setting: $field" } }
             foreach ($field in $component.compile.PSObject.Properties.Name) { if ($field -notin @('includeDirectories', 'preprocessorDefinitions', 'precompiledHeader')) { throw "Unknown compile setting: $field" } }
             if ($component.requirements.cxxStandard -and $component.requirements.cxxStandard -notin @(20, 23)) { throw 'Supported C++ standards are 20 and 23.' }
             foreach ($dependency in $component.dependencies) {
@@ -395,8 +450,17 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
             $extension = Resolve-ProjectToolsPath $root $extensionEntry.Value
             if (-not (Test-Path -LiteralPath $extension -PathType Leaf)) { throw "Missing build extension: $($extensionEntry.Value)" }
         }
+        foreach ($field in @('projectDirectory', 'solutionFolder')) {
+            if ($component.msbuild -and $component.msbuild.PSObject.Properties[$field]) {
+                if ($manifest.schemaVersion -lt 6) { throw "$field overrides require schema 6: $include" }
+                Assert-ProjectToolsLayout $component.msbuild.$field "$include/msbuild/$field"
+            }
+        }
         if ($component.msbuild -and $component.msbuild.PSObject.Properties['projectNames']) {
             Assert-ProjectToolsProjectNames $component.msbuild.projectNames $include
+            if (($component.msbuild.projectNames -is [array]) -ne ($settings.projectNames -is [array])) {
+                throw "Use the same projectNames syntax in the component and root manifest: $include"
+            }
         }
         if ($component.msbuild -and $component.msbuild.PSObject.Properties['projectName']) {
             if ($component.msbuild.projectNames -or $settings.projectNames) { throw "Use projectNames in $include." }

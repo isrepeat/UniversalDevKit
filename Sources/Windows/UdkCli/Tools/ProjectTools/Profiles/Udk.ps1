@@ -693,7 +693,7 @@ foreach ($name in $componentNames) {
         '    </ClCompile>'
         '  </ItemGroup>'
     ) -join "`n"
-    $dependenciesName = EscapeXml ([IO.Path]::GetFileName((Get-UdkProjectPath $name 'Dependencies')))
+    $dependenciesName = EscapeXml (Get-ProjectToolsRelativeFile $Model $headerCheckPath (Get-UdkProjectPath $name 'Dependencies'))
     $content = $content.Replace('  <Import Project="' + $dependenciesName + '" />', $headerCheckItem)
     $source = [IO.File]::ReadAllText((Join-Path $PSScriptRoot '../Templates/HeaderCheck.cpp.in')).TrimEnd([char[]]"`r`n") + "`n"
     $definition = @($Model.Components.Values | Where-Object name -eq $name)[0]
@@ -702,7 +702,7 @@ foreach ($name in $componentNames) {
         $source += '#include <' + $header.Substring($binaryComponentRegistry[$name].IncludeRoot.Length + 1) + '>' + "`n"
     }
     $source += "`nint main() { return 0; }"
-    $headerCheckSource = (Get-ProjectToolsDirectory $Model $componentsByName[$name]) + '/HeaderCheck.cpp'
+    $headerCheckSource = ([IO.Path]::GetDirectoryName($headerCheckPath).Replace('\', '/')) + '/HeaderCheck.cpp'
     foreach ($item in @(@{ Path = $headerCheckPath; Content = $content.TrimEnd([char[]]"`r`n") }, @{ Path = $headerCheckSource; Content = $source })) {
         $path = Join-Path $repositoryPath $item.Path
         $original = if (Test-Path -LiteralPath $path) { [IO.File]::ReadAllText($path) } else { $null }
