@@ -301,9 +301,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{9DE65AD6-7269-4A1C-9443-DFD2F2F0BC63}"
 	ProjectSection(SolutionItems) = preProject
-		Projects\Components\Application\UdkCli.xml = Projects\Components\Application\UdkCli.xml
 		Projects\Components\Application\UdkCli.Setup.xml = Projects\Components\Application\UdkCli.Setup.xml
-		Projects\Components\Application\UdkCli.VSIX.xml = Projects\Components\Application\UdkCli.VSIX.xml
+		Projects\Components\Application\UdkCli.VisualStudio.xml = Projects\Components\Application\UdkCli.VisualStudio.xml
+		Projects\Components\Application\UdkCli.xml = Projects\Components\Application\UdkCli.xml
 		Projects\Components\Application\XamlCompiler.xml = Projects\Components\Application\XamlCompiler.xml
 	EndProjectSection
 EndProject
@@ -373,9 +373,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli.Setup", "UdkCli.Setu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UdkCli.Setup", "Projects\MsBuild\Application\UdkCli.Setup\UdkCli.Setup.csproj", "{C27A6217-35E3-4AD1-BBC7-71438D8E1E16}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli.VSIX", "UdkCli.VSIX", "{77E1CCF9-8A94-F936-8B78-9D8D40B142D3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli.VisualStudio", "UdkCli.VisualStudio", "{90A10E88-67A9-2FB3-20E4-596F669A5610}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UdkCli.VSIX.Net472", "Projects\MsBuild\Application\UdkCli.VSIX\UdkCli.VSIX.Net472.csproj", "{5217622B-841E-4635-BA5D-8DE005125B16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UdkCli.VisualStudio.Net472", "Projects\MsBuild\Application\UdkCli.VisualStudio\UdkCli.VisualStudio.Net472.csproj", "{5217622B-841E-4635-BA5D-8DE005125B16}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{15C9DD02-133A-0D54-8BE8-73206CCE738F}"
 EndProject
@@ -1121,7 +1121,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Compile", "Compile", "{CC89C2C2-F7AC-77A4-EF49-E15654FE3679}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Compile\Components.json = Tests\Fixtures\Libraries\Compile\Components.json
+		Tests\Fixtures\Libraries\Compile\Components.xml = Tests\Fixtures\Libraries\Compile\Components.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Consumer", "Consumer", "{B3225B2C-37B3-570B-E6EA-931DC332FF4D}"
@@ -1138,7 +1138,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{2EB6EB53
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{4A053E88-395D-C4F3-5C0D-5B7AE5D467B6}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Compile\Projects\Components\CompileProbe.json = Tests\Fixtures\Libraries\Compile\Projects\Components\CompileProbe.json
+		Tests\Fixtures\Libraries\Compile\Projects\Components\CompileProbe.xml = Tests\Fixtures\Libraries\Compile\Projects\Components\CompileProbe.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{96DC448B-865F-D58B-FAAF-C39E70A5E902}"
@@ -1167,7 +1167,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "local", "local", "{8A71B622
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diamond", "Diamond", "{251B385E-47BF-B2D1-67F5-E0B127BD3BB0}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Diamond\Components.json = Tests\Fixtures\Libraries\Diamond\Components.json
+		Tests\Fixtures\Libraries\Diamond\Components.xml = Tests\Fixtures\Libraries\Diamond\Components.xml
 		Tests\Fixtures\Libraries\Diamond\UniversalDevKit.sln = Tests\Fixtures\Libraries\Diamond\UniversalDevKit.sln
 	EndProjectSection
 EndProject
@@ -1226,18 +1226,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "D", "D", "{B71B873F-FFBF-75
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PrivateStatic", "PrivateStatic", "{3FDBCA45-CAB2-7AD6-A399-913B03239153}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Diamond\PrivateStatic\A.json = Tests\Fixtures\Libraries\Diamond\PrivateStatic\A.json
-		Tests\Fixtures\Libraries\Diamond\PrivateStatic\C.json = Tests\Fixtures\Libraries\Diamond\PrivateStatic\C.json
+		Tests\Fixtures\Libraries\Diamond\PrivateStatic\A.xml = Tests\Fixtures\Libraries\Diamond\PrivateStatic\A.xml
+		Tests\Fixtures\Libraries\Diamond\PrivateStatic\C.xml = Tests\Fixtures\Libraries\Diamond\PrivateStatic\C.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{22056DE8-405A-EA5C-24AA-16749A411DC5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{8B6FD443-4C74-073A-E2DB-727CAECBAF5B}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Diamond\Projects\Components\A.json = Tests\Fixtures\Libraries\Diamond\Projects\Components\A.json
-		Tests\Fixtures\Libraries\Diamond\Projects\Components\B.json = Tests\Fixtures\Libraries\Diamond\Projects\Components\B.json
-		Tests\Fixtures\Libraries\Diamond\Projects\Components\C.json = Tests\Fixtures\Libraries\Diamond\Projects\Components\C.json
-		Tests\Fixtures\Libraries\Diamond\Projects\Components\D.json = Tests\Fixtures\Libraries\Diamond\Projects\Components\D.json
+		Tests\Fixtures\Libraries\Diamond\Projects\Components\A.xml = Tests\Fixtures\Libraries\Diamond\Projects\Components\A.xml
+		Tests\Fixtures\Libraries\Diamond\Projects\Components\B.xml = Tests\Fixtures\Libraries\Diamond\Projects\Components\B.xml
+		Tests\Fixtures\Libraries\Diamond\Projects\Components\C.xml = Tests\Fixtures\Libraries\Diamond\Projects\Components\C.xml
+		Tests\Fixtures\Libraries\Diamond\Projects\Components\D.xml = Tests\Fixtures\Libraries\Diamond\Projects\Components\D.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{7EEE693B-6900-E5DA-9801-E7FE2312975E}"
@@ -1264,7 +1264,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "D", "D", "{9E06F2A8-3994-F8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Export", "Export", "{0E9C6721-99EB-69B7-68AB-E769DBFC3064}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Export\Components.json = Tests\Fixtures\Libraries\Export\Components.json
+		Tests\Fixtures\Libraries\Export\Components.xml = Tests\Fixtures\Libraries\Export\Components.xml
 		Tests\Fixtures\Libraries\Export\Main.cpp = Tests\Fixtures\Libraries\Export\Main.cpp
 	EndProjectSection
 EndProject
@@ -1283,7 +1283,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{65
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{5BFE5281-777C-A5A1-9048-AA92B7C9E68A}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Export\Projects\Components\ExportProbe.json = Tests\Fixtures\Libraries\Export\Projects\Components\ExportProbe.json
+		Tests\Fixtures\Libraries\Export\Projects\Components\ExportProbe.xml = Tests\Fixtures\Libraries\Export\Projects\Components\ExportProbe.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{A89536C1-FB69-8756-A3D4-5410E9D33209}"
@@ -1295,7 +1295,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExportProbe", "ExportProbe"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Generated", "Generated", "{1B0C1E44-05E1-977E-0A2E-5A96858B0170}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Generated\Components.json = Tests\Fixtures\Libraries\Generated\Components.json
+		Tests\Fixtures\Libraries\Generated\Components.xml = Tests\Fixtures\Libraries\Generated\Components.xml
 		Tests\Fixtures\Libraries\Generated\Consumer.cpp = Tests\Fixtures\Libraries\Generated\Consumer.cpp
 	EndProjectSection
 EndProject
@@ -1309,7 +1309,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{C1
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{B606B627-657B-BAAD-B732-67C8DD42B1E0}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Generated\Projects\Components\GeneratedProbe.json = Tests\Fixtures\Libraries\Generated\Projects\Components\GeneratedProbe.json
+		Tests\Fixtures\Libraries\Generated\Projects\Components\GeneratedProbe.xml = Tests\Fixtures\Libraries\Generated\Projects\Components\GeneratedProbe.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Generation", "Generation", "{B9B6E234-129B-A53A-548F-EB4A837CD135}"
@@ -1329,7 +1329,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GeneratedProbe", "Generated
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeaderOnly", "HeaderOnly", "{0C74E9B0-71D5-9D37-4F7C-E5D67CD59541}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\HeaderOnly\Components.json = Tests\Fixtures\Libraries\HeaderOnly\Components.json
+		Tests\Fixtures\Libraries\HeaderOnly\Components.xml = Tests\Fixtures\Libraries\HeaderOnly\Components.xml
 		Tests\Fixtures\Libraries\HeaderOnly\Consumer.cpp = Tests\Fixtures\Libraries\HeaderOnly\Consumer.cpp
 	EndProjectSection
 EndProject
@@ -1365,14 +1365,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CrossPlatform", "CrossPlatf
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeaderLeaf", "HeaderLeaf", "{D5527E2F-9D5A-D918-8C25-FD596025E178}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Package.json = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Package.json
+		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Package.xml = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Package.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{8EDCE682-137A-9FB5-0667-6A8F6014C58D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{CFA41DD8-1FEF-3822-DA65-9CCFE8D71538}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\Delivery.json = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\Delivery.json
+		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\Delivery.xml = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\Delivery.xml
 		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\UniversalDevKit.HeaderLeaf.nuspec = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\UniversalDevKit.HeaderLeaf.nuspec
 		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\UniversalDevKit.HeaderLeaf.props = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\UniversalDevKit.HeaderLeaf.props
 		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\UniversalDevKit.HeaderLeaf.targets = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderLeaf\Delivery\NuGet\UniversalDevKit.HeaderLeaf.targets
@@ -1380,14 +1380,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{CFA41DD8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HeaderProbe", "HeaderProbe", "{3CD23986-BDFD-6E46-D7CB-F36CD668D181}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Package.json = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Package.json
+		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Package.xml = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Package.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{CCA3F8A1-11BB-1E0B-4847-6205BFE19E62}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{860387F4-0876-CEFD-92C9-DEE5174A8EA9}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\Delivery.json = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\Delivery.json
+		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\Delivery.xml = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\Delivery.xml
 		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\UniversalDevKit.HeaderProbe.nuspec = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\UniversalDevKit.HeaderProbe.nuspec
 		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\UniversalDevKit.HeaderProbe.props = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\UniversalDevKit.HeaderProbe.props
 		Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\UniversalDevKit.HeaderProbe.targets = Tests\Fixtures\Libraries\HeaderOnly\Packages\CrossPlatform\HeaderProbe\Delivery\NuGet\UniversalDevKit.HeaderProbe.targets
@@ -1397,14 +1397,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{08
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{BF821DC5-82BB-2A13-3770-28E91674F750}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\HeaderOnly\Projects\Components\HeaderLeaf.json = Tests\Fixtures\Libraries\HeaderOnly\Projects\Components\HeaderLeaf.json
-		Tests\Fixtures\Libraries\HeaderOnly\Projects\Components\HeaderProbe.json = Tests\Fixtures\Libraries\HeaderOnly\Projects\Components\HeaderProbe.json
+		Tests\Fixtures\Libraries\HeaderOnly\Projects\Components\HeaderLeaf.xml = Tests\Fixtures\Libraries\HeaderOnly\Projects\Components\HeaderLeaf.xml
+		Tests\Fixtures\Libraries\HeaderOnly\Projects\Components\HeaderProbe.xml = Tests\Fixtures\Libraries\HeaderOnly\Projects\Components\HeaderProbe.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Registry", "Registry", "{77336912-E72C-B9C9-D67A-9B603122CE4C}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Fixtures\Libraries\Registry\CMakeLists.txt = Tests\Fixtures\Libraries\Registry\CMakeLists.txt
-		Tests\Fixtures\Libraries\Registry\Components.json = Tests\Fixtures\Libraries\Registry\Components.json
+		Tests\Fixtures\Libraries\Registry\Components.xml = Tests\Fixtures\Libraries\Registry\Components.xml
 		Tests\Fixtures\Libraries\Registry\Main.cpp = Tests\Fixtures\Libraries\Registry\Main.cpp
 		Tests\Fixtures\Libraries\Registry\Plugin.cpp = Tests\Fixtures\Libraries\Registry\Plugin.cpp
 		Tests\Fixtures\Libraries\Registry\UniversalDevKit.sln = Tests\Fixtures\Libraries\Registry\UniversalDevKit.sln
@@ -1434,8 +1434,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{F4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{1781DA6C-1D23-9B78-9F26-C328EAA4E7E4}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Libraries\Registry\Projects\Components\Example.json = Tests\Fixtures\Libraries\Registry\Projects\Components\Example.json
-		Tests\Fixtures\Libraries\Registry\Projects\Components\Service.json = Tests\Fixtures\Libraries\Registry\Projects\Components\Service.json
+		Tests\Fixtures\Libraries\Registry\Projects\Components\Example.xml = Tests\Fixtures\Libraries\Registry\Projects\Components\Example.xml
+		Tests\Fixtures\Libraries\Registry\Projects\Components\Service.xml = Tests\Fixtures\Libraries\Registry\Projects\Components\Service.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{A1AAAFAC-6063-B20F-1747-B531146BC377}"
@@ -1461,13 +1461,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{282C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PackageComposition", "PackageComposition", "{F351CF4D-D1F0-9897-C845-7251F801DB30}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\PackageComposition\CMake.json = Tests\Fixtures\PackageComposition\CMake.json
-		Tests\Fixtures\PackageComposition\Delivery.json = Tests\Fixtures\PackageComposition\Delivery.json
-		Tests\Fixtures\PackageComposition\Managed.json = Tests\Fixtures\PackageComposition\Managed.json
-		Tests\Fixtures\PackageComposition\Native.json = Tests\Fixtures\PackageComposition\Native.json
-		Tests\Fixtures\PackageComposition\Package.json = Tests\Fixtures\PackageComposition\Package.json
+		Tests\Fixtures\PackageComposition\CMake.xml = Tests\Fixtures\PackageComposition\CMake.xml
+		Tests\Fixtures\PackageComposition\Delivery.xml = Tests\Fixtures\PackageComposition\Delivery.xml
+		Tests\Fixtures\PackageComposition\Managed.xml = Tests\Fixtures\PackageComposition\Managed.xml
+		Tests\Fixtures\PackageComposition\Native.xml = Tests\Fixtures\PackageComposition\Native.xml
+		Tests\Fixtures\PackageComposition\Package.xml = Tests\Fixtures\PackageComposition\Package.xml
 		Tests\Fixtures\PackageComposition\Package.nuspec = Tests\Fixtures\PackageComposition\Package.nuspec
-		Tests\Fixtures\PackageComposition\Projects.json = Tests\Fixtures\PackageComposition\Projects.json
+		Tests\Fixtures\PackageComposition\Projects.xml = Tests\Fixtures\PackageComposition\Projects.xml
 		Tests\Fixtures\PackageComposition\Version.json = Tests\Fixtures\PackageComposition\Version.json
 	EndProjectSection
 EndProject
@@ -1485,7 +1485,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Managed", "Managed", "{63E2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Native", "Native", "{80E54E02-7003-6E7A-6B51-CDB1A7BFEFA4}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\PackageComposition\Native\Component.json = Tests\Fixtures\PackageComposition\Native\Component.json
+		Tests\Fixtures\PackageComposition\Native\Component.xml = Tests\Fixtures\PackageComposition\Native\Component.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Probe", "Probe", "{13340A09-AE1F-1E7A-90F2-3DA687635518}"
@@ -1634,14 +1634,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Managed", "Managed", "{68CB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NativeComponent", "NativeComponent", "{C7619ACC-1CE8-29E5-A7FC-8E63255EC666}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Packages\NativeComponent\Package.json = Tests\Fixtures\Packages\NativeComponent\Package.json
+		Tests\Fixtures\Packages\NativeComponent\Package.xml = Tests\Fixtures\Packages\NativeComponent\Package.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Delivery", "Delivery", "{404ABD99-8F52-B39F-92CA-932576E98E8C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{F398F8B4-B1C1-2D43-E5B5-82D15F6E67BC}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\Packages\NativeComponent\Delivery\NuGet\Delivery.json = Tests\Fixtures\Packages\NativeComponent\Delivery\NuGet\Delivery.json
+		Tests\Fixtures\Packages\NativeComponent\Delivery\NuGet\Delivery.xml = Tests\Fixtures\Packages\NativeComponent\Delivery\NuGet\Delivery.xml
 		Tests\Fixtures\Packages\NativeComponent\Delivery\NuGet\UniversalDevKit.NativeProbe.nuspec = Tests\Fixtures\Packages\NativeComponent\Delivery\NuGet\UniversalDevKit.NativeProbe.nuspec
 		Tests\Fixtures\Packages\NativeComponent\Delivery\NuGet\UniversalDevKit.NativeProbe.props = Tests\Fixtures\Packages\NativeComponent\Delivery\NuGet\UniversalDevKit.NativeProbe.props
 		Tests\Fixtures\Packages\NativeComponent\Delivery\NuGet\UniversalDevKit.NativeProbe.targets = Tests\Fixtures\Packages\NativeComponent\Delivery\NuGet\UniversalDevKit.NativeProbe.targets
@@ -1689,26 +1689,26 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WinRtConsumer", "WinRtConsu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RegistryContract", "RegistryContract", "{B1133F33-C872-7FCE-4F69-EA4E95E583AC}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\RegistryContract\DuplicateCompileDefinition.json = Tests\Fixtures\RegistryContract\DuplicateCompileDefinition.json
-		Tests\Fixtures\RegistryContract\InvalidArray.json = Tests\Fixtures\RegistryContract\InvalidArray.json
-		Tests\Fixtures\RegistryContract\InvalidCompileArray.json = Tests\Fixtures\RegistryContract\InvalidCompileArray.json
-		Tests\Fixtures\RegistryContract\InvalidCompileInclude.json = Tests\Fixtures\RegistryContract\InvalidCompileInclude.json
-		Tests\Fixtures\RegistryContract\InvalidCompilePch.json = Tests\Fixtures\RegistryContract\InvalidCompilePch.json
-		Tests\Fixtures\RegistryContract\InvalidKind.json = Tests\Fixtures\RegistryContract\InvalidKind.json
-		Tests\Fixtures\RegistryContract\InvalidSourceSettings.json = Tests\Fixtures\RegistryContract\InvalidSourceSettings.json
-		Tests\Fixtures\RegistryContract\LegacyThirdParty.json = Tests\Fixtures\RegistryContract\LegacyThirdParty.json
-		Tests\Fixtures\RegistryContract\PrivateHeaderDependency.json = Tests\Fixtures\RegistryContract\PrivateHeaderDependency.json
-		Tests\Fixtures\RegistryContract\UnknownCompileField.json = Tests\Fixtures\RegistryContract\UnknownCompileField.json
-		Tests\Fixtures\RegistryContract\UnknownDependencyField.json = Tests\Fixtures\RegistryContract\UnknownDependencyField.json
-		Tests\Fixtures\RegistryContract\UnknownField.json = Tests\Fixtures\RegistryContract\UnknownField.json
-		Tests\Fixtures\RegistryContract\UnknownSourceSetting.json = Tests\Fixtures\RegistryContract\UnknownSourceSetting.json
+		Tests\Fixtures\RegistryContract\DuplicateCompileDefinition.xml = Tests\Fixtures\RegistryContract\DuplicateCompileDefinition.xml
+		Tests\Fixtures\RegistryContract\InvalidArray.xml = Tests\Fixtures\RegistryContract\InvalidArray.xml
+		Tests\Fixtures\RegistryContract\InvalidCompileArray.xml = Tests\Fixtures\RegistryContract\InvalidCompileArray.xml
+		Tests\Fixtures\RegistryContract\InvalidCompileInclude.xml = Tests\Fixtures\RegistryContract\InvalidCompileInclude.xml
+		Tests\Fixtures\RegistryContract\InvalidCompilePch.xml = Tests\Fixtures\RegistryContract\InvalidCompilePch.xml
+		Tests\Fixtures\RegistryContract\InvalidKind.xml = Tests\Fixtures\RegistryContract\InvalidKind.xml
+		Tests\Fixtures\RegistryContract\InvalidSourceSettings.xml = Tests\Fixtures\RegistryContract\InvalidSourceSettings.xml
+		Tests\Fixtures\RegistryContract\LegacyThirdParty.xml = Tests\Fixtures\RegistryContract\LegacyThirdParty.xml
+		Tests\Fixtures\RegistryContract\PrivateHeaderDependency.xml = Tests\Fixtures\RegistryContract\PrivateHeaderDependency.xml
+		Tests\Fixtures\RegistryContract\UnknownCompileField.xml = Tests\Fixtures\RegistryContract\UnknownCompileField.xml
+		Tests\Fixtures\RegistryContract\UnknownDependencyField.xml = Tests\Fixtures\RegistryContract\UnknownDependencyField.xml
+		Tests\Fixtures\RegistryContract\UnknownField.xml = Tests\Fixtures\RegistryContract\UnknownField.xml
+		Tests\Fixtures\RegistryContract\UnknownSourceSetting.xml = Tests\Fixtures\RegistryContract\UnknownSourceSetting.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manifest", "Manifest", "{C0E132A0-1FA0-0076-68BC-D19D3C7C47AC}"
 	ProjectSection(SolutionItems) = preProject
-		Tests\Fixtures\RegistryContract\Manifest\StringVersion.json = Tests\Fixtures\RegistryContract\Manifest\StringVersion.json
-		Tests\Fixtures\RegistryContract\Manifest\UnknownField.json = Tests\Fixtures\RegistryContract\Manifest\UnknownField.json
-		Tests\Fixtures\RegistryContract\Manifest\UnsupportedVersion.json = Tests\Fixtures\RegistryContract\Manifest\UnsupportedVersion.json
+		Tests\Fixtures\RegistryContract\Manifest\StringVersion.xml = Tests\Fixtures\RegistryContract\Manifest\StringVersion.xml
+		Tests\Fixtures\RegistryContract\Manifest\UnknownField.xml = Tests\Fixtures\RegistryContract\Manifest\UnknownField.xml
+		Tests\Fixtures\RegistryContract\Manifest\UnsupportedVersion.xml = Tests\Fixtures\RegistryContract\Manifest\UnsupportedVersion.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RuntimeCleanup", "RuntimeCleanup", "{E973A1BF-F65A-7051-0C98-F3DA712A36E0}"
@@ -1977,8 +1977,8 @@ Global
 		{9C0C0DD8-D324-6EBE-A92E-80D071FA070E} = {752A6291-E849-433A-BF37-7102E850AAB5}
 		{AA57C568-5481-61FD-0DCD-D5660DF883C3} = {0A0141D6-9607-24C7-57B0-CE35AE9F2AA2}
 		{C27A6217-35E3-4AD1-BBC7-71438D8E1E16} = {AA57C568-5481-61FD-0DCD-D5660DF883C3}
-		{77E1CCF9-8A94-F936-8B78-9D8D40B142D3} = {0A0141D6-9607-24C7-57B0-CE35AE9F2AA2}
-		{5217622B-841E-4635-BA5D-8DE005125B16} = {77E1CCF9-8A94-F936-8B78-9D8D40B142D3}
+		{90A10E88-67A9-2FB3-20E4-596F669A5610} = {0A0141D6-9607-24C7-57B0-CE35AE9F2AA2}
+		{5217622B-841E-4635-BA5D-8DE005125B16} = {90A10E88-67A9-2FB3-20E4-596F669A5610}
 		{15C9DD02-133A-0D54-8BE8-73206CCE738F} = {0A0141D6-9607-24C7-57B0-CE35AE9F2AA2}
 		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3} = {15C9DD02-133A-0D54-8BE8-73206CCE738F}
 		{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC} = {15C9DD02-133A-0D54-8BE8-73206CCE738F}
@@ -2304,7 +2304,7 @@ Global
 		{220B0789-1F04-54D3-18E5-5DB99E91172F} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Static.vcxproj
 		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems
 		{3E00A02D-46F3-432B-91C8-5D459F70C525} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems
-		{5217622B-841E-4635-BA5D-8DE005125B16} = ProjectTools|{9A19103F-16F7-4668-BE54-9A1E7A4F7556}|Projects\MsBuild\Application\UdkCli.VSIX\UdkCli.VSIX.Net472.csproj
+		{5217622B-841E-4635-BA5D-8DE005125B16} = ProjectTools|{9A19103F-16F7-4668-BE54-9A1E7A4F7556}|Projects\MsBuild\Application\UdkCli.VisualStudio\UdkCli.VisualStudio.Net472.csproj
 		{6A761B26-8F57-927B-0812-7CCD23F050D1} = ProjectTools|{9A19103F-16F7-4668-BE54-9A1E7A4F7556}|Projects\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Net8.csproj
 		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Static.vcxproj
 		{77311056-84A3-4B57-AEF1-7A76F17C500C} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dynamic.vcxproj

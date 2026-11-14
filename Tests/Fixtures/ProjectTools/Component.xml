@@ -1,0 +1,42 @@
+<Component>
+  <Name>Probe</Name>
+  <Kind>compiled</Kind>
+  <Variants>
+    <Variant>static</Variant>
+    <Variant>dynamic</Variant>
+  </Variants>
+  <Headers>
+    <Header>Source/**/*.h</Header>
+  </Headers>
+  <Sources>
+    <Source>Source/**/*.cpp</Source>
+  </Sources>
+  <ExcludeSources>
+    <Source>Source/excluded/**</Source>
+  </ExcludeSources>
+  <Filters>
+    <Filter filter="Implementation"
+            preserveTree="true">
+      <Path>Source/**/*.cpp</Path>
+    </Filter>
+    <Filter filter="">
+      <Path>Source/Prob?.cpp</Path>
+    </Filter>
+    <Filter filter="Build">
+      <Path>Custom.props</Path>
+    </Filter>
+  </Filters>
+  <Requirements>
+    <CxxStandard>20</CxxStandard>
+  </Requirements>
+  <Compile>
+    <IncludeDirectories>
+      <IncludeDirectory>Source</IncludeDirectory>
+    </IncludeDirectories>
+    <PrecompiledHeader>notUsing</PrecompiledHeader>
+  </Compile>
+  <BuildExtensions>
+    <MSBuildProps>Custom.props</MSBuildProps>
+    <MSBuildTargets>Custom.targets</MSBuildTargets>
+  </BuildExtensions>
+</Component>

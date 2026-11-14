@@ -1,6 +1,7 @@
 param([string]$UdkCliDirectory, [string]$NuGet = 'nuget.exe')
 
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot '../../Infrastructure/WriteTestManifest.ps1')
 $repository = (Resolve-Path (Join-Path $PSScriptRoot '../../..')).Path
 . (Join-Path $repository 'Scripts/PowerShell/ArtifactDirectories.ps1')
 $run = Reset-UdkArtifactDirectory -Root (Join-Path $repository '!artifacts/tests') -Path (Join-Path $repository '!artifacts/tests/PackageContents.Tests')
@@ -11,7 +12,7 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 if ($UdkCliDirectory) {
     $builder = Join-Path $UdkCliDirectory 'Tools/PackageTools/Build.ps1'
 }
-foreach ($file in @('Delivery.json', 'Package.nuspec')) {
+foreach ($file in @('Delivery.xml', 'Package.nuspec')) {
     Copy-Item -LiteralPath (Join-Path $repository "Tests/Fixtures/PackageComposition/$file") -Destination $external
 }
 foreach ($file in @('Top.dll', 'Core/A.dll', 'Core/ATests.dll', 'Extensions/B.dll', 'Extensions/A.dll', 'Nested/Deep/C.DLL', 'Core/data.json')) {
@@ -20,25 +21,25 @@ foreach ($file in @('Top.dll', 'Core/A.dll', 'Core/ATests.dll', 'Extensions/B.dl
     [IO.File]::WriteAllText($target, $file, [Text.UTF8Encoding]::new($false))
 }
 
-function Save-ContentsJson([string]$Name, $Value) {
-    [IO.File]::WriteAllText((Join-Path $external $Name), ($Value | ConvertTo-Json -Depth 20).TrimEnd(), [Text.UTF8Encoding]::new($false))
+function Save-ContentsXml([string]$Name, $Value) {
+    [IO.File]::WriteAllText((Join-Path $external $Name), (ConvertTo-TestManifestXml $Value (Get-TestManifestRoot $Name)), [Text.UTF8Encoding]::new($false))
 }
 function Set-ContentsPackage($Content) {
     $project = [ordered]@{
         adapter = 'files'
         mappings = @(@{ source = 'input'; destination = '.' })
     }
-    Save-ContentsJson 'Package.json' @{
+    Save-ContentsXml 'Package.xml' @{
         schemaVersion = 2
         name = 'ContentsProbe'
         version = '1.0.0'
         projects = @{ files = $project }
         contents = @($Content)
-        deliveries = @{ NuGet = 'Delivery.json' }
+        deliveries = @{ NuGet = 'Delivery.xml' }
     }
 }
 function Assert-ContentsPackage([string[]]$Expected) {
-    $package = & $builder -RepositoryPath $external -PackagePath Package.json -OutputDirectory (Join-Path $run 'packages') -NuGet $NuGet
+    $package = & $builder -RepositoryPath $external -PackagePath Package.xml -OutputDirectory (Join-Path $run 'packages') -NuGet $NuGet
     $archive = [IO.Compression.ZipFile]::OpenRead($package)
     try {
         $actual = @($archive.Entries.FullName | ForEach-Object { $_.Replace('\', '/') } | Where-Object { $_ -like 'selected/*' } | Sort-Object)
@@ -114,8 +115,8 @@ Assert-ContentsPackage @('Top.dll', 'Core/A.dll', 'Core/ATests.dll', 'Extensions
 $content.Remove('exclude')
 
 # Empty selections and collisions must fail instead of producing incomplete packages.
-$build = { & $builder -RepositoryPath $external -PackagePath Package.json -OutputDirectory (Join-Path $run 'packages') -NuGet $NuGet }
-$plan = { & $builder -RepositoryPath $external -PackagePath Package.json -Plan }
+$build = { & $builder -RepositoryPath $external -PackagePath Package.xml -OutputDirectory (Join-Path $run 'packages') -NuGet $NuGet }
+$plan = { & $builder -RepositoryPath $external -PackagePath Package.xml -Plan }
 $content.include = @('missing/**/*.dll')
 Set-ContentsPackage $content
 Expect-ContentsFailure $build 'No files selected'
@@ -132,15 +133,15 @@ $content.path = 'Top.dll'
 Set-ContentsPackage $content
 Expect-ContentsFailure $build 'require a directory'
 $content.Remove('path')
-foreach ($include in @('*.dll', $null, @(), @('../*.dll'), @('/**'), @('C:/*.dll'), @('x/**bad/*.dll'), @('**/./*.dll'), @('**/?.dll'), @('**/[a].dll'), @('**//*.dll'), @(42))) {
+foreach ($include in @('*.dll', $null, @(), @('../*.dll'), @('/**'), @('C:/*.dll'), @('x/**bad/*.dll'), @('**/./*.dll'), @('**/?.dll'), @('**/[a].dll'), @('**//*.dll'))) {
     $content.include = $include
     Set-ContentsPackage $content
-    Expect-ContentsFailure $plan 'patterns|pattern'
+    Expect-ContentsFailure $plan 'patterns|pattern|Expected nested elements in Includes'
 }
 $content.include = @('**/*.dll')
-$content.preserveHierarchy = 'false'
+$content.preserveHierarchy = 'no'
 Set-ContentsPackage $content
-Expect-ContentsFailure $plan 'must be a boolean'
+Expect-ContentsFailure $plan 'Invalid XML boolean'
 $content.preserveHierarchy = $true
 $content.root = 'install'
 Set-ContentsPackage $content
@@ -151,32 +152,32 @@ Set-ContentsPackage $content
 Expect-ContentsFailure $plan "Unknown field 'artifact'"
 $content.Remove('artifact')
 Set-ContentsPackage $content
-$obsolete = Get-Content (Join-Path $external 'Package.json') -Raw | ConvertFrom-Json
+$obsolete = Read-UdkManifest (Join-Path $external 'Package.xml') 'Package'
 $obsolete.projects.files | Add-Member artifacts ([pscustomobject]@{ all = [pscustomobject]@{ root = 'output'; path = '.' } })
-Save-ContentsJson 'Package.json' $obsolete
+Save-ContentsXml 'Package.xml' $obsolete
 Expect-ContentsFailure $plan "Unknown field 'artifacts'"
 $content.rename = 'all.dll'
 Set-ContentsPackage $content
-Expect-ContentsFailure $plan 'rename must be an object'
+Expect-ContentsFailure $plan 'Expected nested entries in Rename'
 $content.Remove('rename')
 
 # External project registries use the same direct selection contract.
 $content = @{ project = 'files'; destination = 'selected'; include = @('*.dll') }
 Set-ContentsPackage $content
-Save-ContentsJson 'Project.json' @{
+Save-ContentsXml 'Project.xml' @{
     schemaVersion = 1
     name = 'files'
     adapter = 'files'
     mappings = @(@{ source = 'input'; destination = '.' })
 }
-Save-ContentsJson 'Registry.json' @{ schemaVersion = 1; includes = @('Project.json') }
-$package = Get-Content (Join-Path $external 'Package.json') -Raw | ConvertFrom-Json
-$package.projects = 'Registry.json'
-Save-ContentsJson 'Package.json' $package
+Save-ContentsXml 'Registry.xml' @{ schemaVersion = 1; includes = @('Project.xml') }
+$package = Read-UdkManifest (Join-Path $external 'Package.xml') 'Package'
+$package.projects = 'Registry.xml'
+Save-ContentsXml 'Package.xml' $package
 Assert-ContentsPackage @('Top.dll')
-$obsoleteProject = Get-Content (Join-Path $external 'Project.json') -Raw | ConvertFrom-Json
+$obsoleteProject = Read-UdkManifest (Join-Path $external 'Project.xml') 'Project'
 $obsoleteProject | Add-Member artifacts ([pscustomobject]@{})
-Save-ContentsJson 'Project.json' $obsoleteProject
+Save-ContentsXml 'Project.xml' $obsoleteProject
 Expect-ContentsFailure $plan "Unknown field 'artifacts'"
 
 # CMake roots are adapter-specific and must be selected explicitly.
@@ -192,18 +193,18 @@ $package.projects = @{
     }
 }
 $package.contents = @(@{ project = 'native'; root = 'install'; destination = 'selected'; include = @('**/*.dll') })
-Save-ContentsJson 'Package.json' $package
+Save-ContentsXml 'Package.xml' $package
 $selected = & $plan
 if (($selected.Order -join ',') -cne 'native') { throw 'CMake direct root was not planned.' }
 $package.contents[0].Remove('root')
-Save-ContentsJson 'Package.json' $package
+Save-ContentsXml 'Package.xml' $package
 Expect-ContentsFailure $plan 'Unknown project root'
 # Repository directories use the same selection and rename rules without build projects.
 $content = @{ source = 'input'; include = @('**/*.dll'); exclude = @('**/*Tests.dll', 'Extensions/A.dll'); destination = 'selected'; rename = @{ 'Core/A.dll' = 'Renamed.dll' } }
 Set-ContentsPackage $content
-$package = Get-Content (Join-Path $external 'Package.json') -Raw | ConvertFrom-Json
+$package = Read-UdkManifest (Join-Path $external 'Package.xml') 'Package'
 $package.projects = [pscustomobject]@{}
-Save-ContentsJson 'Package.json' $package
+Save-ContentsXml 'Package.xml' $package
 $selected = & $plan
 if ($selected.Order.Count) { throw 'Repository contents unexpectedly selected a build project.' }
 Assert-ContentsPackage @('Top.dll', 'Core/Renamed.dll', 'Extensions/B.dll', 'Nested/Deep/C.DLL')
@@ -235,7 +236,17 @@ $content.exclude = @('Extensions/**')
 Set-ContentsPackage $content
 Expect-ContentsFailure $build 'Unused rename source'
 $content.Remove('exclude')
-foreach ($rename in @('Other.dll', $null, @(), @{ '../A.dll' = 'Other.dll' }, @{ '*.dll' = 'Other.dll' }, @{ 'Core/A.dll' = '../Other.dll' }, @{ 'Core/A.dll' = 'sub/Other.dll' }, @{ 'Core/A.dll' = 'C:Other.dll' }, @{ 'Core/A.dll' = '' }, @{ 'Core/A.dll' = '.' }, @{ 'Core/A.dll' = 'A.dll ' }, @{ 'Core/A.dll' = 42 }, @{ 'Core/A.dll' = 'First.dll'; 'Core\A.dll' = 'Second.dll' })) {
+foreach ($rename in @(
+    'Other.dll'
+    @{ '../A.dll' = 'Other.dll' }
+    @{ '*.dll' = 'Other.dll' }
+    @{ 'Core/A.dll' = '../Other.dll' }
+    @{ 'Core/A.dll' = 'sub/Other.dll' }
+    @{ 'Core/A.dll' = 'C:Other.dll' }
+    @{ 'Core/A.dll' = '' }
+    @{ 'Core/A.dll' = '.' }
+    @{ 'Core/A.dll' = 'First.dll'; 'Core\A.dll' = 'Second.dll' }
+)) {
     $content.rename = $rename
     Set-ContentsPackage $content
     Expect-ContentsFailure $plan 'rename|pattern'

@@ -1,0 +1,10 @@
+<Component>
+  <Name>Probe</Name>
+  <Headers>
+    <Header>Native/Probe/Probe.h</Header>
+    <Header>Native/Probe/Internal/Hidden.h</Header>
+  </Headers>
+  <Sources>
+    <Source>Native/Probe/Probe.cpp</Source>
+  </Sources>
+</Component>

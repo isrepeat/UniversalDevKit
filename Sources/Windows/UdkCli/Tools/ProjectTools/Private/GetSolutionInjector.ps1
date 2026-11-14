@@ -73,7 +73,9 @@ function ExpandToolArchive([string]$Path, [string]$Destination) {
     try {
         # Count uncompressed bytes to weight extraction progress by file size.
         $total = 0L
-        foreach ($entry in $zip.Entries) { $total += $entry.Length }
+        foreach ($entry in $zip.Entries) {
+            $total += $entry.Length
+        }
         $completed = 0L
         $buffer = [byte[]]::new(131072)
         $root = [IO.Path]::GetFullPath($Destination).TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar
@@ -111,7 +113,9 @@ function ExpandToolArchive([string]$Path, [string]$Destination) {
         }
         SendToolProgress 'Extracting SolutionInjector' $completed $total $true
     }
-    finally { $zip.Dispose() }
+    finally {
+        $zip.Dispose()
+    }
 }
 
 function AssertExecutable([string]$Path) {

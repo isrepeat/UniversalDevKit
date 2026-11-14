@@ -1,0 +1,9 @@
+<ComponentRegistry>
+  <SchemaVersion>2</SchemaVersion>
+  <Includes>
+    <Include>Projects/Components/A.xml</Include>
+    <Include>Projects/Components/B.xml</Include>
+    <Include>Projects/Components/C.xml</Include>
+    <Include>Projects/Components/D.xml</Include>
+  </Includes>
+</ComponentRegistry>

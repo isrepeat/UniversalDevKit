@@ -1,0 +1,20 @@
+<ComponentRegistry>
+  <SchemaVersion>3</SchemaVersion>
+  <Includes>
+    <Include>Component.xml</Include>
+  </Includes>
+  <Generation>
+    <MSBuild>
+      <Solution>Probe.sln</Solution>
+      <ProjectDirectory>Projects/{name}</ProjectDirectory>
+      <ProjectName>{name}.{variant}</ProjectName>
+      <Configurations>
+        <Configuration>Debug</Configuration>
+        <Configuration>Release</Configuration>
+      </Configurations>
+      <Platforms>
+        <Platform>x64</Platform>
+      </Platforms>
+    </MSBuild>
+  </Generation>
+</ComponentRegistry>

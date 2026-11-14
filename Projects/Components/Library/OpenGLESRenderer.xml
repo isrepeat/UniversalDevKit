@@ -25,10 +25,17 @@
         <Source>Sources/OpenGLESRenderer/**/*.cpp</Source>
       </Sources>
       <Filters>
-        <Filter path="Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer"
-                filter="" />
-        <Filter path="Sources/OpenGLESRenderer"
-                filter="" />
+        <Filter filter="">
+          <Path>Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer</Path>
+        </Filter>
+        <Filter filter="">
+          <Path>Sources/OpenGLESRenderer</Path>
+        </Filter>
+        <Filter filter="Build">
+          <Path>Sources/OpenGLESRenderer/**/*.props</Path>
+          <Path>Sources/OpenGLESRenderer/**/*.targets</Path>
+          <Path>{projectDirectory}/*.props</Path>
+        </Filter>
       </Filters>
       <Requirements cxxStandard="20" />
       <PlatformRequirements>
@@ -38,7 +45,7 @@
       </PlatformRequirements>
       <BuildExtensions>
         <CMake>Projects/Cmake/Library/OpenGLESRenderer/Build.cmake</CMake>
-        <MSBuildTargets>Projects/MsBuild/Library/OpenGLESRenderer/UniversalDevKit.OpenGLESRenderer.targets</MSBuildTargets>
+        <MSBuildTargets>Sources/OpenGLESRenderer/UniversalDevKit.OpenGLESRenderer.targets</MSBuildTargets>
       </BuildExtensions>
     </Project> <!-- Project id="native" -->
   </Projects>

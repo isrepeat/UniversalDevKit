@@ -16,20 +16,28 @@ $root = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
 . (Join-Path $root 'Sources/Windows/UdkCli/Tools/ReadManifest.ps1')
 $registryPath = Resolve-UdkManifestPath (Join-Path $root 'Components')
 $registry = Read-UdkManifest $registryPath 'ComponentRegistry'
-$entry = $registry.components | Where-Object { $_ -match '/UdkCli(?:\.(?:json|xml))?$' } | Select-Object -First 1
-if (-not $entry) { throw 'UdkCli is missing from the component registry.' }
+$entry = $registry.components | Where-Object {
+    [IO.Path]::GetFileNameWithoutExtension($_) -eq 'UdkCli'
+} | Select-Object -First 1
+if (-not $entry) {
+    throw 'UdkCli is missing from the component registry.'
+}
 $componentPath = Resolve-UdkManifestPath (Join-Path $root $entry)
 $description = Read-UdkManifest $componentPath 'Component'
 $component = $description.projects[0]
 Resolve-UdkDescriptionVersion $root $component $componentPath 'githubVersion'
-if (-not $Version) { $Version = $component.githubVersion }
+if (-not $Version) {
+    $Version = $component.githubVersion
+}
 if ($Version -isnot [string] -or $Version.Length -gt 80 -or $Version -notmatch '\A[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?\z') {
     throw 'A valid release version is required.'
 }
 $repository = 'isrepeat/UniversalDevKit'
 $tag = "udk-cli-v$Version"
 $commit = & git -C $root rev-parse HEAD
-if ($LASTEXITCODE -ne 0) { throw 'Could not resolve the release commit.' }
+if ($LASTEXITCODE -ne 0) {
+    throw 'Could not resolve the release commit.'
+}
 
 $msbuild = (Get-Command MSBuild.exe -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1).Source
 if (-not $msbuild) {
@@ -38,7 +46,9 @@ if (-not $msbuild) {
         $msbuild = & $vswhere -latest -products '*' -requires Microsoft.Component.MSBuild Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -find 'MSBuild\Current\Bin\MSBuild.exe' | Select-Object -First 1
     }
 }
-if (-not $msbuild) { throw 'MSBuild with the Visual C++ toolset was not found.' }
+if (-not $msbuild) {
+    throw 'MSBuild with the Visual C++ toolset was not found.'
+}
 
 $dotnet = (Get-Command dotnet.exe -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
 
@@ -49,7 +59,7 @@ $objectDirectory = Join-Path $cacheDirectory 'cpp\obj'
 $setupOutput = Join-Path $cacheDirectory 'wpf\publish'
 $cachedPayload = Join-Path $cacheDirectory 'UdkPayload.zip'
 $vsixOutput = Join-Path $cacheDirectory 'vsix\bin'
-$vsixProject = Join-Path $root 'Projects\MsBuild\Application\UdkCli.VSIX\UdkCli.VSIX.Net472.csproj'
+$vsixProject = Join-Path $root 'Projects\MsBuild\Application\UdkCli.VisualStudio\UdkCli.VisualStudio.Net472.csproj'
 $vsix = Join-Path $vsixOutput 'UdkCli.VisualStudio.vsix'
 $diagnostic = Join-Path $buildDirectory 'UniversalDevKit.Diagnostic.Dynamic.dll'
 $toolsDirectory = Join-Path $root 'Sources\Windows\UdkCli\Tools'
@@ -63,11 +73,17 @@ $project = Join-Path $root 'Projects\MsBuild\Application\UdkCli\UdkCli.vcxproj'
 $buildLock = [IO.File]::Open((Join-Path $cacheDirectory 'build.lock'), 'OpenOrCreate', 'ReadWrite', 'None')
 try {
     & $msbuild $project /nologo /m /t:Build /p:Configuration=Release /p:Platform=x64 "/p:UniversalDevKitGitHubVersion=$Version" "/p:OutDir=$buildDirectory\" "/p:IntDir=$objectDirectory\"
-    if ($LASTEXITCODE -ne 0) { throw 'UdkCli build failed.' }
+    if ($LASTEXITCODE -ne 0) {
+        throw 'UdkCli build failed.'
+    }
 
     $cli = Join-Path $buildDirectory 'udk.exe'
-    if (-not (Test-Path -LiteralPath $cli -PathType Leaf)) { throw 'Build output is missing udk.exe.' }
-    if (-not (Test-Path -LiteralPath $diagnostic -PathType Leaf)) { throw 'Build output is missing the Diagnostic runtime.' }
+    if (-not (Test-Path -LiteralPath $cli -PathType Leaf)) {
+        throw 'Build output is missing udk.exe.'
+    }
+    if (-not (Test-Path -LiteralPath $diagnostic -PathType Leaf)) {
+        throw 'Build output is missing the Diagnostic runtime.'
+    }
     [void][IO.Directory]::CreateDirectory($packageDirectory)
     Copy-Item -LiteralPath $cli, $diagnostic, (Join-Path $root 'LICENSE') -Destination $packageDirectory
     Copy-Item -LiteralPath $toolsDirectory -Destination $packageDirectory -Recurse
@@ -81,7 +97,9 @@ try {
     }
 
     & $msbuild $vsixProject /nologo /m /restore /p:Configuration=Release "/p:OutDir=$vsixOutput\" "/p:ArtifactsPath=$cacheDirectory\vsix" "/p:UdkDiagnosticPayload=$diagnostic"
-    if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $vsix -PathType Leaf)) { throw 'UDK Visual Studio extension build failed.' }
+    if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $vsix -PathType Leaf)) {
+        throw 'UDK Visual Studio extension build failed.'
+    }
 
     $setupProject = Join-Path $root 'Projects\MsBuild\Application\UdkCli.Setup\UdkCli.Setup.csproj'
     $dotnetArguments = @(
@@ -92,7 +110,9 @@ try {
         "-p:Version=$Version", "-p:UdkPayload=$cachedPayload", "-p:UdkVsixPayload=$vsix", "-p:UdkDiagnosticPayload=$diagnostic"
     )
     & $dotnet @dotnetArguments
-    if ($LASTEXITCODE -ne 0) { throw 'UdkCli installer compilation failed.' }
+    if ($LASTEXITCODE -ne 0) {
+        throw 'UdkCli installer compilation failed.'
+    }
     Copy-Item -LiteralPath (Join-Path $setupOutput 'UdkCli.Setup.exe') -Destination $installer
 } finally {
     $buildLock.Dispose()
@@ -116,6 +136,10 @@ if ((Read-Host 'Publish this release? [y/N]') -notin @('y', 'yes')) {
 $gh = (Get-Command gh.exe -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
 $releaseArguments = @('release', 'create', $tag, $archive, $archiveChecksum, $installer, '--repo', $repository, '--target', $commit,
     '--title', "UDK CLI $Version", '--notes', "Windows x64 build from commit $commit.", '--latest=false')
-if ($Version.Contains('-')) { $releaseArguments += '--prerelease' }
+if ($Version.Contains('-')) {
+    $releaseArguments += '--prerelease'
+}
 & $gh @releaseArguments
-if ($LASTEXITCODE -ne 0) { throw "GitHub publication failed. The local files are available in $releaseDirectory." }
+if ($LASTEXITCODE -ne 0) {
+    throw "GitHub publication failed. The local files are available in $releaseDirectory."
+}

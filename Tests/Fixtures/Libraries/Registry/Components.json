@@ -1,7 +1,0 @@
-{
-  "schemaVersion": 2,
-  "includes": [
-    "Projects/Components/Example.json",
-    "Projects/Components/Service.json"
-  ]
-}

@@ -36,9 +36,9 @@
 
 ProjectTools выбирает приложения по `kind: application` в записях массива `projects`. Для C++-приложения он создаёт Shared `.vcxitems` с исходниками и консольный `.vcxproj`, который импортирует Shared. Оба проекта добавляются в папку компонента внутри группы `Application`. `msbuildGuid` сохраняет GUID приложения, а `msbuild.properties.TargetName` задаёт имя выходного файла.
 
-Списки `headers` и `sources` принимают шаблоны путей. Настройки MSBuild подключаются через `buildExtensions.msbuildProps` и `buildExtensions.msbuildTargets`. Пример — [UdkCli.json](../Projects/Components/Application/UdkCli.xml).
+Списки `headers` и `sources` принимают шаблоны путей. Настройки MSBuild подключаются через `buildExtensions.msbuildProps` и `buildExtensions.msbuildTargets`. Пример — [UdkCli.xml](../Projects/Components/Application/UdkCli.xml).
 
-Для WPF-приложения укажите `kind: application`, `projectType: wpf` и Windows-фреймворк в `msbuild.properties.TargetFramework`. ProjectTools генерирует SDK-style `.csproj` в `Projects\MsBuild\Application\{name}` для профиля UDK. Шаблон задаёт `UseWPF`, `OutputType` и `Nullable`. В WPF и VSIX состав исходников задаётся в `sources` и `excludeSources`, с теми же масками, что и у C++. Генератор записывает C# как `Compile`, XAML в WPF как `Page`, а `App.xaml` как `ApplicationDefinition`. Примеры — [UdkCli.Setup.json](../Projects/Components/Application/UdkCli.Setup.xml) и [UdkCli.VSIX.json](../Projects/Components/Application/UdkCli.VSIX.xml).
+Для WPF-приложения укажите `kind: application`, `projectType: wpf` и Windows-фреймворк в `msbuild.properties.TargetFramework`. ProjectTools генерирует SDK-style `.csproj` в `Projects\MsBuild\Application\{name}` для профиля UDK. Шаблон задаёт `UseWPF`, `OutputType` и `Nullable`. В WPF и VSIX состав исходников задаётся в `sources` и `excludeSources`, с теми же масками, что и у C++. Генератор записывает C# как `Compile`, XAML в WPF как `Page`, а `App.xaml` как `ApplicationDefinition`. Примеры — [UdkCli.Setup.xml](../Projects/Components/Application/UdkCli.Setup.xml) и [UdkCli.VisualStudio.xml](../Projects/Components/Application/UdkCli.VisualStudio.xml).
 
 В профиле UDK `.props` и `.targets` из `buildExtensions` относятся ко всему компоненту. ProjectTools показывает их вместе со сгенерированным `Dependencies.props` библиотеки в фильтре `Shared → Build`. Импорты MSBuild задаются отдельно от элементов дерева Visual Studio.
 
@@ -76,7 +76,7 @@ Include-каталоги должны существовать. Определе
 
 Каждый элемент содержит непустой список `files` и объект `compile` с теми же полями. Файл должен уже присутствовать в `sources` или `platformSources` компонента; повторная настройка одного файла запрещена. Include-пути и определения добавляются к общим, настройка PCH переопределяется. Отсутствующие поля наследуются. Для header-only компонентов `compile` и `sourceSettings` запрещены.
 
-В MSBuild файлы сначала объявляются с меткой компонента, затем общие настройки применяются одним `ClCompile Update` к выборке по этой метке; файловые настройки идут отдельными блоками `Update`. Эти блоки изменяют метаданные только выбранных файлов; в CMake — в PRIVATE-настройки target и свойства исходников. Они не передаются другим файлам потребителя и потребителям публичных заголовков. Пути объектных файлов определяются стандартными настройками проекта Visual Studio; генератор не задаёт `ObjectFileName`. В `buildExtensions` остаются дополнительные настройки, не выраженные общей схемой. Полный пример — `Projects/Components/Library/Diagnostic.json`.
+В MSBuild файлы сначала объявляются с меткой компонента, затем общие настройки применяются одним `ClCompile Update` к выборке по этой метке; файловые настройки идут отдельными блоками `Update`. Эти блоки изменяют метаданные только выбранных файлов; в CMake — в PRIVATE-настройки target и свойства исходников. Они не передаются другим файлам потребителя и потребителям публичных заголовков. Пути объектных файлов определяются стандартными настройками проекта Visual Studio; генератор не задаёт `ObjectFileName`. В `buildExtensions` остаются дополнительные настройки, не выраженные общей схемой. Полный пример — `Projects/Components/Library/Diagnostic.xml`.
 
 Корневой `Components.xml` схемы 6 содержит список `<Components>`. Пути отсчитываются от корневого файла. Описания библиотек находятся в `Projects/Components/Library`, а приложения — в `Projects/Components/Application`. CMake и Connect выбирают нативные библиотеки. ProjectTools обрабатывает все поддерживаемые типы проектов. Состав выпуска задаётся отдельно в `Packages/**/Package.xml`.
 
@@ -124,21 +124,30 @@ Connect перед записью проверяет актуальность с
 
 ## Виртуальные папки Visual Studio
 
-Поле `filters` задаётся массивом правил.
+Блок `Filters` содержит правила размещения файлов в дереве проекта.
 
-```json
-"filters": [
-  { "path": "Sources/Helpers/**/*.cpp", "filter": "Implementation", "preserveTree": true },
-  { "path": "Sources/Helpers/Math.cpp", "filter": "Algorithms" },
-  { "path": "Sources/Helpers/**/Main.cpp", "filter": "" }
-]
+```xml
+<Filters>
+  <Filter filter="Implementation"
+          preserveTree="true">
+    <Path>Sources/Helpers/**/*.cpp</Path>
+  </Filter>
+  <Filter filter="Algorithms">
+    <Path>Sources/Helpers/Math.cpp</Path>
+  </Filter>
+  <Filter filter="">
+    <Path>Sources/Helpers/**/Main.cpp</Path>
+  </Filter>
+</Filters>
 ```
 
-`path` задаётся от корня репозитория через `/` и поддерживает те же `*`, `?` и `**`, что `sources` и `headers`. Точный путь к каталогу равнозначен шаблону `каталог/**/*`. Правила применяются к уже выбранным файлам, включая заголовки, исходники платформ и MSBuild-расширения. Если файл совпадает с несколькими правилами, применяется последнее.
+В каждом правиле указывается один или несколько вложенных `Path`. Пути отсчитываются от корня репозитория и поддерживают маски `*`, `?` и `**`. Точный путь к каталогу равнозначен шаблону `каталог/**/*`. Правила применяются к уже выбранным файлам, включая заголовки, исходники платформ и MSBuild-расширения. Если файл совпадает с несколькими правилами, применяется последнее.
 
 По умолчанию `filter` задаёт конечную виртуальную папку. Пустая строка помещает файл в корень проекта. При `preserveTree: true` сохраняются подпапки относительно указанного каталога или части шаблона до первого сегмента с подстановочным знаком. Например, первое правило помещает `Sources/Helpers/Text/Utf8.cpp` в `Implementation/Text`.
 
-Исходники без совпавшего правила отображаются в корне проекта, а `.props` и `.targets` из `buildExtensions` — в папке `Build`. Генератор переносит правила в `.filters` для C++ и в метаданные `Link` для C#. Для XAML и связанного `.xaml.cs` используйте одну виртуальную папку. После изменения правил перегенерируйте проекты через `GenerateComponentProjects`.
+Префикс `{projectDirectory}/` в `path` задаёт отсчёт от каталога сгенерированного проекта. Для фильтров C++ Shared Items это каталог `.vcxitems`, для C# — каталог `.csproj`. Например, `<Filter path="{projectDirectory}/*.props" filter="Build" />` помещает подключённые `.props` из этого каталога в `Build`.
+
+Файлы без совпавшего правила отображаются в корне проекта. Генератор переносит правила в `.filters` для C++ и в метаданные `Link` для C#. Для XAML и связанного `.xaml.cs` используйте одну виртуальную папку. После изменения правил перегенерируйте проекты через `GenerateComponentProjects`.
 
 ## Политика состояния
 

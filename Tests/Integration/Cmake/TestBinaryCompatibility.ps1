@@ -18,12 +18,12 @@ $fixture = Join-Path $repository 'Tests/Fixtures/Libraries/Export'
 foreach ($directory in @('Includes', 'Sources', 'Projects')) {
     Copy-Item -LiteralPath (Join-Path $fixture $directory) -Destination $library -Recurse -Force
 }
-Copy-Item -LiteralPath (Join-Path $fixture 'Components.json') -Destination $library -Force
+Copy-Item -LiteralPath (Join-Path $fixture 'Components.xml') -Destination $library -Force
 $shortLibrary = Join-Path $workspace.Root 'L'
 Copy-Item -LiteralPath $library -Destination $shortLibrary -Recurse
 $library = $shortLibrary
 $buildRoot = Join-Path $library '!artifacts/tests/ABI'
-& (Join-Path $library 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $library 'Components.json')
+& (Join-Path $library 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $library 'Components.xml')
 function InvokeCMake([string[]]$Arguments) {
     & $CMake @Arguments | Out-Host
     if ($LASTEXITCODE -ne 0) { throw "CMake failed: $($Arguments -join ' ')" }

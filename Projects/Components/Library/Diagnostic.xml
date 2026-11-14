@@ -23,14 +23,22 @@
         <Source>ThirdParty/spdlog/src/*.cpp</Source>
       </Sources>
       <Filters>
-        <Filter path="Includes/Diagnostic/UniversalDevKit/Diagnostic"
-                filter="" />
-        <Filter path="Sources/Diagnostic/Native"
-                filter=""
-                preserveTree="true" />
-        <Filter path="ThirdParty/spdlog"
-                filter="ThirdParty/spdlog"
-                preserveTree="true" />
+        <Filter filter="">
+          <Path>Includes/Diagnostic/UniversalDevKit/Diagnostic</Path>
+        </Filter>
+        <Filter filter=""
+                preserveTree="true">
+          <Path>Sources/Diagnostic/Native</Path>
+        </Filter>
+        <Filter filter="ThirdParty/spdlog"
+                preserveTree="true">
+          <Path>ThirdParty/spdlog</Path>
+        </Filter>
+        <Filter filter="Build">
+          <Path>Sources/Diagnostic/**/*.props</Path>
+          <Path>Sources/Diagnostic/**/*.targets</Path>
+          <Path>{projectDirectory}/*.props</Path>
+        </Filter>
       </Filters>
       <Requirements cxxStandard="20"
                     threads="true" />
@@ -43,7 +51,7 @@
       </Compile>
       <BuildExtensions>
         <CMake>Projects/Cmake/Library/Diagnostic/Spdlog.cmake</CMake>
-        <MSBuildTargets>Projects/MsBuild/Library/Diagnostic/Spdlog.targets</MSBuildTargets>
+        <MSBuildTargets>Sources/Diagnostic/Native/Spdlog.targets</MSBuildTargets>
       </BuildExtensions>
     </Project> <!-- Project id="native" -->
 
@@ -54,12 +62,9 @@
         <Source>Sources/Diagnostic/DotNet/**/*.cs</Source>
       </Sources>
       <MSBuild>
-        <ProjectNames>
-          <ProjectName>
-            <When artifact="project" />
-            <Template>UniversalDevKit.{name}.Net8</Template>
-          </ProjectName>
-        </ProjectNames>
+        <ProjectName>
+          <When artifact="project">UniversalDevKit.{name}.Net8</When>
+        </ProjectName>
         <Properties>
           <TargetFramework>net8.0</TargetFramework>
           <AssemblyName>UniversalDevKit.Diagnostic</AssemblyName>

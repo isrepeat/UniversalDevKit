@@ -1,0 +1,8 @@
+<BuildProjectRegistry>
+  <SchemaVersion>1</SchemaVersion>
+  <Includes>
+    <Include>Managed.xml</Include>
+    <Include>Native.xml</Include>
+    <Include>CMake.xml</Include>
+  </Includes>
+</BuildProjectRegistry>

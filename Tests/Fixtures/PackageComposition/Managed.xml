@@ -1,0 +1,8 @@
+<Project>
+  <SchemaVersion>1</SchemaVersion>
+  <Name>Managed</Name>
+  <Adapter>dotnet</Adapter>
+  <Project>Managed/Probe.csproj</Project>
+  <Operation>build</Operation>
+  <Configuration>Release</Configuration>
+</Project>

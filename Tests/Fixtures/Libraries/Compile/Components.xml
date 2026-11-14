@@ -1,0 +1,6 @@
+<ComponentRegistry>
+  <SchemaVersion>2</SchemaVersion>
+  <Includes>
+    <Include>Projects/Components/CompileProbe.xml</Include>
+  </Includes>
+</ComponentRegistry>

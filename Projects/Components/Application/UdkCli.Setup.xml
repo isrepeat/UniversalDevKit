@@ -10,9 +10,14 @@
         <Source>Sources/Windows/UdkCli.Setup/**/*.xaml</Source>
       </Sources>
       <Filters>
-        <Filter path="Sources/Windows/UdkCli.Setup"
-                filter=""
-                preserveTree="true" />
+        <Filter filter=""
+                preserveTree="true">
+          <Path>Sources/Windows/UdkCli.Setup</Path>
+        </Filter>
+        <Filter filter="Build">
+          <Path>Sources/Windows/UdkCli.Setup/**/*.props</Path>
+          <Path>Sources/Windows/UdkCli.Setup/**/*.targets</Path>
+        </Filter>
       </Filters>
       <MSBuild>
         <Properties>
@@ -20,7 +25,7 @@
         </Properties>
       </MSBuild>
       <BuildExtensions>
-        <MSBuildTargets>Projects/MsBuild/Application/UdkCli.Setup/UdkCli.Setup.targets</MSBuildTargets>
+        <MSBuildTargets>Sources/Windows/UdkCli.Setup/UdkCli.Setup.targets</MSBuildTargets>
       </BuildExtensions>
     </Project> <!-- Project id="wpf" -->
   </Projects>

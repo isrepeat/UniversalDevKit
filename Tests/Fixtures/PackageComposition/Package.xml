@@ -1,0 +1,39 @@
+<Package>
+  <SchemaVersion>2</SchemaVersion>
+  <Name>CompositionProbe</Name>
+  <Version>${UDK_VERSION.version}</Version>
+  <AbiVersion>${UDK_VERSION.abiVersion}</AbiVersion>
+  <Projects>Projects.xml</Projects>
+  <Contents>
+    <Content>
+      <Project>Managed</Project>
+      <Root>output</Root>
+      <Path>Probe.dll</Path>
+      <Destination>lib/net8.0</Destination>
+    </Content>
+    <Content>
+      <Project>Native</Project>
+      <Root>output</Root>
+      <Destination>.</Destination>
+    </Content>
+    <Content>
+      <Project>CMake</Project>
+      <Root>install</Root>
+      <Destination>native</Destination>
+    </Content>
+    <Content>
+      <Source>.</Source>
+      <Includes>
+        <Include>CMake/marker.txt</Include>
+      </Includes>
+      <Destination>.</Destination>
+      <PreserveHierarchy>false</PreserveHierarchy>
+      <Rename>
+        <File from="CMake/marker.txt">README.txt</File>
+      </Rename>
+    </Content>
+  </Contents>
+  <Deliveries>
+    <Delivery name="NuGet">Delivery.xml</Delivery>
+  </Deliveries>
+</Package>

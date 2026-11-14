@@ -7,7 +7,7 @@
     <Component>Projects/Components/Library/OpenGLESRenderer.xml</Component>
     <Component>Projects/Components/Application/UdkCli.xml</Component>
     <Component>Projects/Components/Application/UdkCli.Setup.xml</Component>
-    <Component>Projects/Components/Application/UdkCli.VSIX.xml</Component>
+    <Component>Projects/Components/Application/UdkCli.VisualStudio.xml</Component>
     <Component>Projects/Components/Application/XamlCompiler.xml</Component>
   </Components>
   <Generation>
@@ -21,42 +21,21 @@
     <MSBuild>
       <Solution>UniversalDevKit.sln</Solution>
       <SolutionFolder>
-        <Rule>
-          <Template>Projects/MsBuild/{kind:title}/{name}</Template>
-        </Rule>
+        <Default>Projects/MsBuild/{kind:title}/{name}</Default>
       </SolutionFolder>
       <ProjectDirectory>
-        <Rule>
-          <Template>Projects/MsBuild/{kind:title}/{name}</Template>
-        </Rule>
+        <Default>Projects/MsBuild/{kind:title}/{name}</Default>
       </ProjectDirectory>
-      <ProjectNames>
-        <ProjectName>
-          <When artifact="sharedItems" />
-          <Template>UniversalDevKit.{name}.Shared</Template>
-        </ProjectName>
-        <ProjectName>
-          <When artifact="dependencies" />
-          <Template>UniversalDevKit.{name}.Dependencies</Template>
-        </ProjectName>
-        <ProjectName>
-          <When artifact="headerCheck" />
-          <Template>UniversalDevKit.{name}.HeaderCheck</Template>
-        </ProjectName>
-        <ProjectName>
-          <When artifact="project"
-                variant="static;dynamic" />
-          <Template>UniversalDevKit.{name}.{variant:title}</Template>
-        </ProjectName>
-        <ProjectName>
-          <When artifact="project"
-                projectType="classLibrary" />
-          <Template>{name}.{framework}</Template>
-        </ProjectName>
-        <ProjectName>
-          <Template>{name}</Template>
-        </ProjectName>
-      </ProjectNames>
+      <ProjectName>
+        <When artifact="sharedItems">UniversalDevKit.{name}.Shared</When>
+        <When artifact="dependencies">UniversalDevKit.{name}.Dependencies</When>
+        <When artifact="headerCheck">UniversalDevKit.{name}.HeaderCheck</When>
+        <When artifact="project"
+              variant="static;dynamic">UniversalDevKit.{name}.{variant:title}</When>
+        <When artifact="project"
+              projectType="classLibrary">{name}.{framework}</When>
+        <Default>{name}</Default>
+      </ProjectName>
       <Configurations>Debug;Release</Configurations>
       <Platforms>x64</Platforms>
       <NativeProps>

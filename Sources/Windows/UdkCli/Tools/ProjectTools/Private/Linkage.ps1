@@ -17,7 +17,9 @@ function Resolve-UdkLinkageGraph {
             throw "Component $Name has process state and requires Dynamic linkage."
         }
         if ($ComponentRegistry[$Name].Kind -eq 'headerOnly') {
-            if (-not $Stack.Count -and $Mode -ne 'Shared') { throw "Header-only component $Name supports Shared only." }
+            if (-not $Stack.Count -and $Mode -ne 'Shared') {
+                throw "Header-only component $Name supports Shared only."
+            }
             $Mode = 'Shared'
         }
         if ($resolvedModes.ContainsKey($Name)) {
@@ -41,7 +43,9 @@ function Resolve-UdkLinkageGraph {
             VisitComponent $dependency.Component $dependencyMode @($Stack + $Name)
         }
     }
-    foreach ($name in $Components) { VisitComponent $name $Modes[$name] @() }
+    foreach ($name in $Components) {
+        VisitComponent $name $Modes[$name] @()
+    }
 
     # Resolve static dependencies and public DLL requirements for the final linker.
     $link = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
@@ -55,7 +59,9 @@ function Resolve-UdkLinkageGraph {
             }
         }
     }
-    foreach ($name in $Components) { VisitLink $name }
+    foreach ($name in $Components) {
+        VisitLink $name
+    }
 
     # Import macros are required for roots and public dependencies only.
     $definitions = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
@@ -69,14 +75,22 @@ function Resolve-UdkLinkageGraph {
             }
         }
     }
-    foreach ($name in $Components) { VisitPublic $name }
+    foreach ($name in $Components) {
+        VisitPublic $name
+    }
     return [pscustomobject]@{
         ResolvedModes = $resolvedModes
         ResolvedComponents = @($resolvedModes.Keys | Sort-Object)
         LinkComponents = @($link | Sort-Object)
-        DefinitionComponents = @($definitions | Where-Object { $resolvedModes[$_] -eq 'Dynamic' } | Sort-Object)
+        DefinitionComponents = @($definitions | Where-Object {
+            $resolvedModes[$_] -eq 'Dynamic'
+        } | Sort-Object)
         RequirementComponents = @($definitions | Sort-Object)
-        SystemLibraryComponents = @($resolvedModes.Keys | Where-Object { $resolvedModes[$_] -eq 'Shared' -or ($resolvedModes[$_] -eq 'Static' -and $link.Contains($_)) } | Sort-Object)
-        RuntimeComponents = @($resolvedModes.Keys | Where-Object { $resolvedModes[$_] -eq 'Dynamic' } | Sort-Object)
+        SystemLibraryComponents = @($resolvedModes.Keys | Where-Object {
+            $resolvedModes[$_] -eq 'Shared' -or ($resolvedModes[$_] -eq 'Static' -and $link.Contains($_))
+        } | Sort-Object)
+        RuntimeComponents = @($resolvedModes.Keys | Where-Object {
+            $resolvedModes[$_] -eq 'Dynamic'
+        } | Sort-Object)
     }
 }

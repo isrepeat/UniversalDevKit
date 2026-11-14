@@ -21,17 +21,24 @@
         <Source>Sources/XamlRuntime/**/*.cpp</Source>
       </Sources>
       <Filters>
-        <Filter path="Includes/XamlRuntime/UniversalDevKit/XamlRuntime"
-                filter=""
-                preserveTree="true" />
-        <Filter path="Sources/XamlRuntime"
-                filter=""
-                preserveTree="true" />
+        <Filter filter=""
+                preserveTree="true">
+          <Path>Includes/XamlRuntime/UniversalDevKit/XamlRuntime</Path>
+        </Filter>
+        <Filter filter=""
+                preserveTree="true">
+          <Path>Sources/XamlRuntime</Path>
+        </Filter>
+        <Filter filter="Build">
+          <Path>Sources/XamlRuntime/**/*.props</Path>
+          <Path>Sources/XamlRuntime/**/*.targets</Path>
+          <Path>{projectDirectory}/*.props</Path>
+        </Filter>
       </Filters>
       <Requirements cxxStandard="20" />
       <BuildExtensions>
         <CMake>Projects/Cmake/Library/XamlRuntime/Build.cmake</CMake>
-        <MSBuildTargets>Projects/MsBuild/Library/XamlRuntime/UniversalDevKit.XamlRuntime.targets</MSBuildTargets>
+        <MSBuildTargets>Sources/XamlRuntime/UniversalDevKit.XamlRuntime.targets</MSBuildTargets>
       </BuildExtensions>
     </Project> <!-- Project id="native" -->
   </Projects>

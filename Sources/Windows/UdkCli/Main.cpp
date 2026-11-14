@@ -114,7 +114,7 @@ namespace universaldevkit::cli::details {
 			"  udk package build <package-path>\n"
 			"  udk package plan <package-path>\n"
 			"  udk uninstall\n\n"
-			"The default project manifest is Components.json or Components.xml in the current directory.\n"
+			"The default project manifest is Components.xml in the current directory.\n"
 			"Run package commands from the repository root.\n";
 		return invalidArguments ? 2 : 0;
 	}

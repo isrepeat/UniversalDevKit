@@ -274,7 +274,9 @@ foreach(componentName IN LISTS registeredComponentNames)
                 string(JSON extensionValueType TYPE "${componentDefinitionJson_${componentName}}" buildExtensions ${extensionKey})
                 string(JSON extensionPath GET "${componentDefinitionJson_${componentName}}" buildExtensions ${extensionKey})
                 if(NOT extensionValueType STREQUAL "STRING" OR NOT extensionKey MATCHES "^(cmake|msbuildProps|msbuildTargets)$" OR
-                   NOT extensionPath MATCHES "^Projects/" OR extensionPath MATCHES "[\\\\:$@%*?;]" OR
+                   NOT extensionPath MATCHES "^(Projects|Sources)/" OR
+                   (extensionKey STREQUAL "cmake" AND NOT extensionPath MATCHES "^Projects/") OR
+                   extensionPath MATCHES "[\\\\:$@%*?;]" OR
                    extensionPath MATCHES "(^|/)(\\.\\.?|)(/|$)" OR NOT EXISTS "${PROJECT_SOURCE_DIR}/${extensionPath}")
                     message(FATAL_ERROR "Invalid build extension for ${componentName}: ${extensionKey}")
                 endif()

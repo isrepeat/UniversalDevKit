@@ -11,6 +11,7 @@ $env:VSLANG = '1033'
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
 $OutputEncoding = [Text.UTF8Encoding]::new($false)
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot '../../Infrastructure/WriteTestManifest.ps1')
 if ($PackageReference -and 'NuGet' -notin $Delivery) { throw 'PackageReference requires NuGet in Delivery.' }
 $repository = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
 $NuGet = & (Join-Path $repository 'Scripts/PowerShell/GetNuGet.ps1') -LocalPath $NuGet
@@ -79,22 +80,22 @@ try {
         foreach ($directory in @('Includes', 'Sources', 'Projects')) {
             Copy-Item -LiteralPath (Join-Path $fixture $directory) -Destination $library -Recurse -Force
         }
-        foreach ($file in @('Components.json', 'UniversalDevKit.sln')) { Copy-Item -LiteralPath (Join-Path $fixture $file) -Destination $library -Force }
+        foreach ($file in @('Components.xml', 'UniversalDevKit.sln')) { Copy-Item -LiteralPath (Join-Path $fixture $file) -Destination $library -Force }
         if ($caseName -in @('PrivateStatic', 'PublicStaticDynamic')) {
-            foreach ($component in @('A', 'C')) { Copy-Item (Join-Path $fixture "PrivateStatic/$component.json") (Join-Path $library "Projects/Components/$component.json") -Force }
+            foreach ($component in @('A', 'C')) { Copy-Item (Join-Path $fixture "PrivateStatic/$component.xml") (Join-Path $library "Projects/Components/$component.xml") -Force }
             if ($caseName -eq 'PublicStaticDynamic') {
-                $registryPath = Join-Path $library 'Projects/Components/A.json'
-                $registry = [IO.File]::ReadAllText($registryPath) | ConvertFrom-Json
+                $registryPath = Join-Path $library 'Projects/Components/A.xml'
+                $registry = Read-UdkManifest $registryPath 'Component'
                 $registry.dependencies[0].visibility = 'public'
-                [IO.File]::WriteAllText($registryPath, ($registry | ConvertTo-Json -Depth 20), [Text.UTF8Encoding]::new($false))
+                [IO.File]::WriteAllText($registryPath, (ConvertTo-TestManifestXml $registry 'Component'), [Text.UTF8Encoding]::new($false))
             }
         }
         elseif ($caseName -in @('PrivateAllStatic', 'PrivateDynamic')) {
-            $registryPath = Join-Path $library 'Projects/Components/A.json'
+            $registryPath = Join-Path $library 'Projects/Components/A.xml'
             $registryText = [IO.File]::ReadAllText($registryPath).Replace('"public"', '"private"')
             [IO.File]::WriteAllText($registryPath, $registryText, [Text.UTF8Encoding]::new($false))
         }
-        & (Join-Path $library 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $library 'Components.json') | Out-Host
+        & (Join-Path $library 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $library 'Components.xml') | Out-Host
         $version = (Get-Content (Join-Path $library 'Version.json') -Raw | ConvertFrom-Json).version
         $mode = if ($caseName -in @('Static', 'PrivateAllStatic')) { 'Static' } else { 'Dynamic' }
         $private = if ($caseName -like 'Private*') { 'ON' } else { 'OFF' }
@@ -150,15 +151,15 @@ try {
             }
             $feed = Join-Path $library '!artifacts/packages/nuget'
             foreach ($component in @('A','B','C','D')) {
-                $definitionPath = Join-Path $library "Packages/CrossPlatform/$component/Package.json"
-                $definition = Get-Content -LiteralPath $definitionPath -Raw | ConvertFrom-Json
-                $componentDefinition = Get-Content -LiteralPath (Join-Path $library "Projects/Components/$component.json") -Raw | ConvertFrom-Json
+                $definitionPath = Join-Path $library "Packages/CrossPlatform/$component/Package.xml"
+                $definition = Read-UdkManifest $definitionPath 'Package'
+                $componentDefinition = Read-UdkManifest (Join-Path $library "Projects/Components/$component.xml") 'Component'
                 $definition.contents[1].include[1] = 'Packages/Build/NuGet/README.md'
-                $dependencies = @($componentDefinition.dependencies | ForEach-Object { [pscustomobject]@{ package=('../' + $_.component + '/Package.json'); delivery='NuGet'; when=@('NuGet') } })
+                $dependencies = @($componentDefinition.dependencies | ForEach-Object { [pscustomobject]@{ package=('../' + $_.component + '/Package.xml'); delivery='NuGet'; when=@('NuGet') } })
                 $definition | Add-Member -NotePropertyName releaseDependencies -NotePropertyValue $dependencies -Force
-                [IO.File]::WriteAllText($definitionPath, ($definition | ConvertTo-Json -Depth 30).TrimEnd(), [Text.UTF8Encoding]::new($false))
+                [IO.File]::WriteAllText($definitionPath, (ConvertTo-TestManifestXml $definition 'Package'), [Text.UTF8Encoding]::new($false))
             }
-            $artifacts = & (Join-Path $repository 'Packages/Build/Build.ps1') -RepositoryPath $library -PackagePath Packages/CrossPlatform/A/Package.json -OutputDirectory $feed -CMake $CMake -NuGet $NuGet
+            $artifacts = & (Join-Path $repository 'Packages/Build/Build.ps1') -RepositoryPath $library -PackagePath Packages/CrossPlatform/A/Package.xml -OutputDirectory $feed -CMake $CMake -NuGet $NuGet
             foreach ($artifact in $artifacts) { Copy-Item -LiteralPath $artifact -Destination $feed -Force }
             foreach ($runtime in @('Dynamic','Static')) {
                 foreach ($app in @('App1','App2')) {

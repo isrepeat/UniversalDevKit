@@ -1,20 +1,19 @@
 function Resolve-UdkManifestPath([string]$Path) {
     $extension = [IO.Path]::GetExtension($Path)
-    $candidates = if ($extension -in @('.json', '.xml')) { $Path } else { "$Path.json"; "$Path.xml" }
-    foreach ($candidate in $candidates) {
-        if (Test-Path -LiteralPath $candidate -PathType Leaf) {
-            return (Resolve-Path -LiteralPath $candidate).Path
-        }
+    if ($extension -eq '.json') {
+        throw "JSON manifests are unsupported. Use XML: $Path"
+    }
+    if ($extension -ne '.xml') {
+        $Path += '.xml'
+    }
+    if (Test-Path -LiteralPath $Path -PathType Leaf) {
+        return (Resolve-Path -LiteralPath $Path).Path
     }
     throw "Missing manifest: $Path"
 }
 
 function Get-UdkPackageManifests([string]$Root) {
-    Get-ChildItem -LiteralPath $Root -Recurse -File -Filter 'Package.*' |
-        Where-Object Extension -in @('.json', '.xml') |
-        Group-Object DirectoryName |
-        Sort-Object Name |
-        ForEach-Object { Get-Item -LiteralPath (Resolve-UdkManifestPath (Join-Path $_.Name 'Package')) }
+    Get-ChildItem -LiteralPath $Root -Recurse -File -Filter 'Package.xml' | Sort-Object FullName
 }
 
 function ConvertFrom-UdkManifestXml([System.Xml.XmlElement]$Root) {
@@ -23,23 +22,29 @@ function ConvertFrom-UdkManifestXml([System.Xml.XmlElement]$Root) {
         Filters = 'Filter'; Dependencies = 'Dependency'; RuntimeDependencies = 'Dependency'
         SupportedPlatforms = 'Platform'; IncludeDirectories = 'IncludeDirectory'
         PreprocessorDefinitions = 'PreprocessorDefinition'; LinkLibraries = 'Library'
-        ProjectNames = 'ProjectName'; Contents = 'Content'; ReleaseDependencies = 'ReleaseDependency'
+        ProjectNames = 'ProjectNameRule'; Contents = 'Content'; ReleaseDependencies = 'ReleaseDependency'
         Mappings = 'Mapping'; Include = 'Path'; Exclude = 'Path'; When = 'Delivery'
         Abis = 'Abi'; Tasks = 'Task'; Configurations = 'Configuration'; NoWarn = 'Warning'
         SupportedRuntimes = 'Runtime'; Components = 'Component'; Includes = 'Include'; Excludes = 'Exclude'
-        Platforms = 'Platform'; NativeProps = 'Prop'; ProjectDirectory = 'Rule'; SolutionFolder = 'Rule'
+        Platforms = 'Platform'; NativeProps = 'Prop'
+        ProjectDirectory = 'ProjectDirectoryRule'; SolutionFolder = 'SolutionFolderRule'
         Variant = 'Variant'; Variants = 'Variant'; MSBuildApplications = 'Application'
         SourceSettings = 'SourceSetting'; Files = 'File'; PublicHeaders = 'Header'
-        Props = 'Prop'; Targets = 'Target'
+        Props = 'Prop'; Targets = 'Target'; DynamicDefinitions = 'Definition'
+    }
+    $legacyRuleNames = @{
+        ProjectNames = 'ProjectName'; ProjectDirectory = 'Rule'; SolutionFolder = 'Rule'
     }
     $compactLists = @(
-        'Abis', 'Configurations', 'Deliveries', 'LinkLibraries', 'NoWarn', 'Platforms',
+        'Abis', 'Configurations', 'Deliveries', 'DynamicDefinitions', 'LinkLibraries', 'NoWarn', 'Platforms',
         'PreprocessorDefinitions', 'SupportedPlatforms', 'SupportedRuntimes', 'Tasks', 'Variants', 'When'
     )
     function SplitList([string]$Value, [string]$Field, [char]$Separator = ';') {
         foreach ($valueItem in $Value.Split($Separator)) {
             $item = $valueItem.Trim()
-            if (-not $item) { throw "Empty item in $Field." }
+            if (-not $item) {
+                throw "Empty item in $Field."
+            }
             $item
         }
     }
@@ -47,9 +52,13 @@ function ConvertFrom-UdkManifestXml([System.Xml.XmlElement]$Root) {
         if ($Name -cin @('schemaVersion', 'cxxStandard', 'apiLevel', 'parallel', 'abiVersion') -and $Value -cmatch '^[0-9]+$') {
             return [long]$Value
         }
-        if ($Name -cin @('preserveTree', 'threads', 'AllowUnsafeBlocks', 'preserveHierarchy', 'refreshDependencies', 'noDefaultExcludes')) {
-            if ($Value -ceq 'true') { return $true }
-            if ($Value -ceq 'false') { return $false }
+        if ($Name -cin @('preserveTree', 'threads', 'AllowUnsafeBlocks', 'preserveHierarchy', 'refreshDependencies', 'noDefaultExcludes', 'selfContained')) {
+            if ($Value -ceq 'true') {
+                return $true
+            }
+            if ($Value -ceq 'false') {
+                return $false
+            }
             throw "Invalid XML boolean for ${Name}: $Value"
         }
         return $Value
@@ -61,16 +70,23 @@ function ConvertFrom-UdkManifestXml([System.Xml.XmlElement]$Root) {
             throw "Unexpected namespace or mixed XML content in $($Element.LocalName)"
         }
         $itemName = $listItems[$Element.LocalName]
+        if ($Element.LocalName -ceq 'ProjectName' -and $Field -ceq 'projectNames') {
+            $itemName = 'ProjectNameRule'
+        }
         if (($Element.LocalName -ceq 'Include' -and $Element.ParentNode.LocalName -ceq 'Includes') -or
             ($Element.LocalName -ceq 'Exclude' -and $Element.ParentNode.LocalName -ceq 'Excludes')) {
             $itemName = $null
         }
         if ($Element.LocalName -ceq 'Projects') {
             if ($Root.LocalName -ceq 'Package' -and $Element.ParentNode -eq $Root) {
-                if ($value -and -not $children.Count) { return $value }
+                if ($value -and -not $children.Count) {
+                    return $value
+                }
                 return ,(ReadMap $Element 'Project' 'id')
             }
-            if ($Root.LocalName -ceq 'Component') { $itemName = 'Project' }
+            if ($Root.LocalName -ceq 'Component') {
+                $itemName = 'Project'
+            }
         }
         if ($Element.LocalName -ceq 'Deliveries') {
             if ($Element.ParentNode -eq $Root -and $Root.LocalName -ceq 'Package') {
@@ -78,14 +94,57 @@ function ConvertFrom-UdkManifestXml([System.Xml.XmlElement]$Root) {
             }
             $itemName = 'Delivery'
         }
-        if ($Element.LocalName -ceq 'Rename') { return ,(ReadMap $Element 'File' 'from') }
-        if ($Element.LocalName -ceq 'When' -and $Element.ParentNode.LocalName -cne 'ReleaseDependency') { $itemName = $null }
-        if ($Element.LocalName -cin @('ProjectDirectory', 'SolutionFolder', 'Variant') -and -not $children.Count -and $value) { $itemName = $null }
-        if ($Element.LocalName -cin @('Props', 'Targets') -and -not $children.Count -and $value) { $itemName = $null }
-        if ($Element.ParentNode.LocalName -ceq 'PlatformSources') { $itemName = 'Source' }
-        if ($Element.LocalName -ceq 'Properties' -and $Element.ParentNode.LocalName -ceq 'Preparation') { $itemName = 'Property' }
+        if ($Element.LocalName -ceq 'Rename') {
+            return ,(ReadMap $Element 'File' 'from')
+        }
+        if ($Element.LocalName -ceq 'When' -and $Element.ParentNode.LocalName -cne 'ReleaseDependency') {
+            $itemName = $null
+        }
+        if ($Element.LocalName -cin @('ProjectDirectory', 'SolutionFolder', 'Variant') -and -not $children.Count -and $value) {
+            $itemName = $null
+        }
+        if ($Element.LocalName -cin @('Props', 'Targets') -and -not $children.Count -and $value) {
+            $itemName = $null
+        }
+        if ($Element.ParentNode.LocalName -ceq 'PlatformSources') {
+            $itemName = 'Source'
+        }
+        if ($Element.LocalName -ceq 'Properties' -and $Element.ParentNode.LocalName -ceq 'Preparation') {
+            $itemName = 'Property'
+        }
         if ($itemName) {
-            if ($Element.Attributes.Count) { throw "Unexpected attributes in XML list $($Element.LocalName)" }
+            if ($Element.Attributes.Count) {
+                throw "Unexpected attributes in XML list $($Element.LocalName)"
+            }
+            if ($Element.ParentNode.LocalName -ceq 'MSBuild' -and
+                $Element.LocalName -cin @('ProjectName', 'ProjectDirectory', 'SolutionFolder') -and
+                $Element.SelectSingleNode('When | Default')) {
+                return ,@(for ($index = 0; $index -lt $children.Count; $index++) {
+                    $branch = $children[$index]
+                    $template = $branch.InnerText.Trim()
+                    if ($branch.NamespaceURI -or $branch.SelectSingleNode('*') -or -not $template) {
+                        throw "Expected a text template in $($Element.LocalName)/$($branch.LocalName)."
+                    }
+                    if ($branch.LocalName -ceq 'Default') {
+                        if ($branch.Attributes.Count -or $index -ne $children.Count - 1) {
+                            throw "Default must be last and have no attributes in $($Element.LocalName)."
+                        }
+                        [pscustomobject]@{ template = $template }
+                        continue
+                    }
+                    if ($branch.LocalName -cne 'When' -or -not $branch.Attributes.Count) {
+                        throw "Expected When with condition attributes in $($Element.LocalName)."
+                    }
+                    $conditions = [ordered]@{}
+                    foreach ($attribute in $branch.Attributes) {
+                        if ($attribute.NamespaceURI) {
+                            throw "Unexpected XML attribute: $($attribute.Name)"
+                        }
+                        $conditions[$attribute.Name] = @(SplitList $attribute.Value "$($Element.LocalName)/When.$($attribute.Name)")
+                    }
+                    [pscustomobject]@{ when = [pscustomobject]$conditions; template = $template }
+                })
+            }
             if ($value) {
                 if ($Element.LocalName -cnotin $compactLists) {
                     throw "Expected nested elements in $($Element.LocalName)"
@@ -93,7 +152,26 @@ function ConvertFrom-UdkManifestXml([System.Xml.XmlElement]$Root) {
                 return ,@(SplitList $value $Element.LocalName)
             }
             return ,@(foreach ($child in $children) {
-                if ($child.LocalName -cne $itemName) { throw "Expected $itemName in $($Element.LocalName)." }
+                if ($child.LocalName -cne $itemName -and $child.LocalName -cne $legacyRuleNames[$Element.LocalName]) {
+                    throw "Expected $itemName in $($Element.LocalName)."
+                }
+                if ($Element.LocalName -ceq 'Filters' -and $child.SelectSingleNode('Path') -and
+                    ($child.HasAttribute('filter') -or $child.SelectNodes('Path').Count -gt 1)) {
+                    if ($child.HasAttribute('path') -or $child.SelectSingleNode('text()[normalize-space()]')) {
+                        throw 'Use either the path attribute or nested Path elements in Filter.'
+                    }
+                    $rule = $child.CloneNode($false)
+                    foreach ($path in $child.SelectNodes('*')) {
+                        $pattern = $path.InnerText.Trim()
+                        if ($path.Name -cne 'Path' -or $path.NamespaceURI -or $path.Attributes.Count -or
+                            $path.SelectSingleNode('*') -or -not $pattern) {
+                            throw 'Expected a nonempty Path element in Filter.'
+                        }
+                        $rule.SetAttribute('path', $pattern)
+                        ReadElement $rule $Field
+                    }
+                    continue
+                }
                 ReadElement $child $Field
             })
         }
@@ -103,9 +181,15 @@ function ConvertFrom-UdkManifestXml([System.Xml.XmlElement]$Root) {
         }
         $fields = [ordered]@{}
         foreach ($attribute in $Element.Attributes) {
-            if ($attribute.NamespaceURI) { throw "Unexpected XML attribute: $($attribute.Name)" }
+            if ($attribute.NamespaceURI) {
+                throw "Unexpected XML attribute: $($attribute.Name)"
+            }
             if ($Element.LocalName -ceq 'When' -and $attribute.Name -ceq 'variant' -and $attribute.Value -match '[;,]') {
-                $separator = if ($attribute.Value.Contains(';')) { ';' } else { ',' }
+                $separator = if ($attribute.Value.Contains(';')) {
+                    ';'
+                } else {
+                    ','
+                }
                 $fields['variant'] = @(SplitList $attribute.Value 'When.variant' $separator)
             } else {
                 $fields[$attribute.Name] = ConvertValue $attribute.Name $attribute.Value
@@ -113,20 +197,39 @@ function ConvertFrom-UdkManifestXml([System.Xml.XmlElement]$Root) {
         }
         foreach ($child in $children) {
             $name = $child.LocalName
+            if ($Element.LocalName -ceq 'MSBuild' -and $name -ceq 'ProjectName' -and $child.SelectSingleNode('*')) {
+                $name = 'ProjectNames'
+            }
             if ($Root.LocalName -ceq 'Package' -and $Element.LocalName -ceq 'Content') {
-                if ($name -ceq 'Includes') { $name = 'Include' }
-                if ($name -ceq 'Excludes') { $name = 'Exclude' }
+                if ($name -ceq 'Includes') {
+                    $name = 'Include'
+                }
+                if ($name -ceq 'Excludes') {
+                    $name = 'Exclude'
+                }
             }
             if ($Element.LocalName -cnotin @('Properties', 'PlatformRequirements', 'PlatformSources', 'Variables', 'Parameters')) {
                 $name = switch -CaseSensitive ($name) {
-                    'MSBuild' { 'msbuild' }
-                    'MSBuildProps' { 'msbuildProps' }
-                    'MSBuildTargets' { 'msbuildTargets' }
-                    'CMake' { 'cmake' }
-                    default { $name.Substring(0, 1).ToLowerInvariant() + $name.Substring(1) }
+                    'MSBuild' {
+                        'msbuild'
+                    }
+                    'MSBuildProps' {
+                        'msbuildProps'
+                    }
+                    'MSBuildTargets' {
+                        'msbuildTargets'
+                    }
+                    'CMake' {
+                        'cmake'
+                    }
+                    default {
+                        $name.Substring(0, 1).ToLowerInvariant() + $name.Substring(1)
+                    }
                 }
             }
-            if ($fields.Contains($name)) { throw "Duplicate XML field '$name' in $($Element.LocalName)" }
+            if ($fields.Contains($name)) {
+                throw "Duplicate XML field '$name' in $($Element.LocalName)"
+            }
             $fields[$name] = ReadElement $child $name
         }
         return [pscustomobject]$fields
@@ -152,18 +255,18 @@ function ConvertFrom-UdkManifestXml([System.Xml.XmlElement]$Root) {
 
 function Read-UdkManifest([string]$Path, [string]$XmlRoot) {
     $file = Resolve-UdkManifestPath $Path
-    switch ([IO.Path]::GetExtension($file)) {
-        '.json' { return (Get-Content -LiteralPath $file -Raw -Encoding UTF8 -ErrorAction Stop | ConvertFrom-Json) }
-        '.xml' {
-            $settings = [System.Xml.XmlReaderSettings]::new()
-            $settings.DtdProcessing = [System.Xml.DtdProcessing]::Prohibit
-            $settings.XmlResolver = $null
-            $reader = [System.Xml.XmlReader]::Create($file, $settings)
-            $document = [System.Xml.XmlDocument]::new()
-            try { $document.Load($reader) } finally { $reader.Dispose() }
-            if ($document.DocumentElement.LocalName -cne $XmlRoot) { throw "Expected <$XmlRoot> in $file" }
-            return (ConvertFrom-UdkManifestXml $document.DocumentElement)
-        }
-        default { throw "Unsupported manifest format: $file" }
+    $settings = [System.Xml.XmlReaderSettings]::new()
+    $settings.DtdProcessing = [System.Xml.DtdProcessing]::Prohibit
+    $settings.XmlResolver = $null
+    $reader = [System.Xml.XmlReader]::Create($file, $settings)
+    $document = [System.Xml.XmlDocument]::new()
+    try {
+        $document.Load($reader)
+    } finally {
+        $reader.Dispose()
     }
+    if ($document.DocumentElement.LocalName -cne $XmlRoot) {
+        throw "Expected <$XmlRoot> in $file"
+    }
+    ConvertFrom-UdkManifestXml $document.DocumentElement
 }

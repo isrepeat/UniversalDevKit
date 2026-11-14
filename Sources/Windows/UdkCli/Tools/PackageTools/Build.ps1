@@ -169,7 +169,9 @@ try {
                 'udk-dotnet' {
                     Invoke-UdkComponentDotNetProject $project $context
                 }
-                { $_ -in @('component-sources', 'udk-component-sources') } {
+                {
+                    $_ -in @('component-sources', 'udk-component-sources')
+                } {
                     Invoke-UdkComponentSourcesProject $project $context
                 }
                 {
@@ -232,10 +234,14 @@ try {
             } else {
                 @('**/*')
             }
-            $includePatterns = @($includes | ForEach-Object { ConvertTo-UdkContentPattern $_ })
+            $includePatterns = @($includes | ForEach-Object {
+                ConvertTo-UdkContentPattern $_
+            })
             $files = if ($isFile) {
                 @(Get-Item -LiteralPath $source -Force)
-            } elseif (-not @($includes | Where-Object { $_.Contains('*') }).Count) {
+            } elseif (-not @($includes | Where-Object {
+                $_.Contains('*')
+            }).Count) {
                 # Exact paths avoid scanning the entire repository for LICENSE and README.
                 $candidates = @{}
                 foreach ($include in $includes) {
@@ -249,7 +255,9 @@ try {
                 @(Get-ChildItem -LiteralPath $source -Recurse -File -Force)
             }
             $excludePatterns = if ('exclude' -in $fields) {
-                @($entry.exclude | ForEach-Object { ConvertTo-UdkContentPattern $_ })
+                @($entry.exclude | ForEach-Object {
+                    ConvertTo-UdkContentPattern $_
+                })
             } else {
                 @()
             }
@@ -263,8 +271,12 @@ try {
                 } else {
                     $file.FullName.Substring($source.TrimEnd('\', '/').Length + 1).Replace('\', '/')
                 }
-                $included = @($includePatterns | Where-Object { $relative -imatch $_ }).Count -gt 0
-                $excluded = @($excludePatterns | Where-Object { $relative -imatch $_ }).Count -gt 0
+                $included = @($includePatterns | Where-Object {
+                    $relative -imatch $_
+                }).Count -gt 0
+                $excluded = @($excludePatterns | Where-Object {
+                    $relative -imatch $_
+                }).Count -gt 0
                 if (-not $included -or $excluded) {
                     continue
                 }
