@@ -1,0 +1,11 @@
+<Component>
+  <Name>ExportProbe</Name>
+  <MsbuildGuid>{501F4BCD-EC51-4D98-9993-7E3B987A54E8}</MsbuildGuid>
+  <Dependencies />
+  <Headers>
+    <Header>Includes/ExportProbe/UniversalDevKit/ExportProbe/Probe.h</Header>
+  </Headers>
+  <Sources>
+    <Source>Sources/ExportProbe/Probe.cpp</Source>
+  </Sources>
+</Component>

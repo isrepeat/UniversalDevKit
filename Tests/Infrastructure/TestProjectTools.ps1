@@ -2,13 +2,14 @@
 param()
 
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'WriteTestManifest.ps1')
 $repository = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $tool = Join-Path $repository 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1'
 $fixture = Join-Path $repository 'Tests/Fixtures/ProjectTools'
 $temporary = Join-Path ([IO.Path]::GetTempPath()) ('ProjectTools.Tests.' + [Guid]::NewGuid().ToString('N'))
 try {
     Copy-Item -LiteralPath $fixture -Destination $temporary -Recurse
-    $manifest = Join-Path $temporary 'Components.json'
+    $manifest = Join-Path $temporary 'Components.xml'
     $versionPath = Join-Path $temporary '.udk-version'
     [IO.File]::WriteAllText($versionPath, '0.2.0')
     & $tool -ManifestPath $manifest
@@ -19,7 +20,9 @@ try {
     $filters = [IO.File]::ReadAllText($filtersPath)
     if ($filters -notmatch '<ClCompile Include="[^"]*Probe\.cpp" />' -or $filters.Contains('Excluded.cpp')) { throw 'Invalid filter override or source exclusion.' }
     if ($filters -notmatch '<None Include="[^"]*Custom\.props"><Filter>Build</Filter></None>' -or
-        $filters -notmatch '<None Include="[^"]*Custom\.targets"><Filter>Build</Filter></None>') { throw 'Missing Build filters.' }
+        $filters -notmatch '<None Include="[^"]*Custom\.targets" />') {
+        throw 'Expected the explicit Build filter for Custom.props and the project root for Custom.targets.'
+    }
     $binary = [IO.File]::ReadAllText((Join-Path $temporary 'Projects/Probe/Probe.Static.vcxproj'))
     if (-not $binary.Contains('Custom.targets')) { throw 'Missing target extension.' }
     $solution = Join-Path $temporary 'Probe.sln'
@@ -39,16 +42,16 @@ try {
     if ([IO.File]::ReadAllText($filtersPath) -notmatch '<ClCompile Include="[^"]*NewFile\.cpp"><Filter>Implementation\\Nested</Filter></ClCompile>') { throw 'Source hierarchy was not preserved.' }
     & $tool -ManifestPath $manifest -Check
     # Removing a variant changes only the managed solution entries; files remain available.
-    $componentPath = Join-Path $temporary 'Component.json'
-    $component = Get-Content -LiteralPath $componentPath -Raw | ConvertFrom-Json
+    $componentPath = Join-Path $temporary 'Component.xml'
+    $component = Read-UdkManifest $componentPath 'Component'
     $component.variants = @('static')
-    [IO.File]::WriteAllText($componentPath, ($component | ConvertTo-Json -Depth 10).TrimEnd([char[]]"`r`n"), [Text.UTF8Encoding]::new($false))
+    [IO.File]::WriteAllText($componentPath, (ConvertTo-TestManifestXml $component 'Component'), [Text.UTF8Encoding]::new($false))
     & $tool -ManifestPath $manifest
     $solutionText = [IO.File]::ReadAllText($solution)
     if ($solutionText.Contains('Probe.Dynamic')) { throw 'Removed variant survived in the solution.' }
     if (-not (Test-Path -LiteralPath (Join-Path $temporary 'Projects/Probe/Probe.Dynamic.vcxproj'))) { throw 'Sync deleted a project file.' }
     $component.variants = @('static', 'dynamic')
-    [IO.File]::WriteAllText($componentPath, ($component | ConvertTo-Json -Depth 10).TrimEnd([char[]]"`r`n"), [Text.UTF8Encoding]::new($false))
+    [IO.File]::WriteAllText($componentPath, (ConvertTo-TestManifestXml $component 'Component'), [Text.UTF8Encoding]::new($false))
     & $tool -ManifestPath $manifest
     if (-not [IO.File]::ReadAllText($solution).Contains('Probe.Dynamic')) { throw 'Restored variant was not added.' }
     & $tool -ManifestPath $manifest -Check
@@ -68,7 +71,7 @@ try {
     & $tool -ManifestPath $manifest -Clean
     if ([IO.File]::ReadAllText($solution) -cne $cleaned) { throw 'Repeated cleanup rewrote the solution.' }
 
-    $settings = (Get-Content -LiteralPath $manifest -Raw | ConvertFrom-Json).generation
+    $settings = (Read-UdkManifest $manifest 'ComponentRegistry').generation
     $settings.msbuild.PSObject.Properties.Remove('projectName')
     $settings.msbuild | Add-Member projectNames @(
         @{ when = @{ platform = 'android' }; template = 'Android.{name}' }
@@ -77,9 +80,9 @@ try {
         @{ when = @{ projectType = 'classLibrary' }; template = 'Root.{name}' }
         @{ template = '{name}' }
     )
-    $registry = @{ schemaVersion = 5; components = @('Component.json'); generation = $settings }
+    $registry = @{ schemaVersion = 5; components = @('Component.xml'); generation = $settings }
     $utf8 = [Text.UTF8Encoding]::new($false)
-    [IO.File]::WriteAllText($manifest, ($registry | ConvertTo-Json -Depth 10), $utf8)
+    [IO.File]::WriteAllText($manifest, (ConvertTo-TestManifestXml $registry 'ComponentRegistry'), $utf8)
     $component.PSObject.Properties.Remove('name')
     $component.kind = 'library'
     $component | Add-Member projectType 'native'
@@ -94,7 +97,7 @@ try {
         runtimeDependencies = @($runtime)
     }
     $description = @{ name = 'Probe'; projects = @($managed, $component) }
-    [IO.File]::WriteAllText($componentPath, ($description | ConvertTo-Json -Depth 10), $utf8)
+    [IO.File]::WriteAllText($componentPath, (ConvertTo-TestManifestXml $description 'Component'), $utf8)
     & $tool -ManifestPath $manifest
     $managedPath = Join-Path $temporary 'Projects/Probe/Probe.net8.0.csproj'
     [xml]$managedProject = Get-Content -LiteralPath $managedPath -Raw
@@ -109,7 +112,7 @@ try {
     & $tool -ManifestPath $manifest -Check
     $runtime.Remove('projectId')
     $runtime.project = 'native'
-    [IO.File]::WriteAllText($componentPath, ($description | ConvertTo-Json -Depth 10), $utf8)
+    [IO.File]::WriteAllText($componentPath, (ConvertTo-TestManifestXml $description 'Component'), $utf8)
     $rejected = $false
     try { & $tool -ManifestPath $manifest -Check } catch { $rejected = $_.Exception.Message -match 'Expected projectId' }
     if (-not $rejected) { throw 'A runtime dependency using project instead of projectId was accepted.' }

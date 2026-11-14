@@ -272,7 +272,9 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
             'udk-dotnet' {
                 @('component', 'projectId', 'operation', 'configuration', 'runtime', 'selfContained')
             }
-            { $_ -in @('component-sources', 'udk-component-sources') } {
+            {
+                $_ -in @('component-sources', 'udk-component-sources')
+            } {
                 @('component', 'sourceRoot', 'includeRoot', 'publicHeaders', 'headerDestination', 'sourceDestination', 'manifestDestination')
             }
             {
@@ -343,7 +345,9 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
                     throw 'selfContained requires publish with a runtime.'
                 }
             }
-            { $_ -in @('component-sources', 'udk-component-sources') } {
+            {
+                $_ -in @('component-sources', 'udk-component-sources')
+            } {
                 Assert-UdkFields $project ($common + $specific) $specific $projectPath
                 foreach ($field in @('sourceRoot', 'includeRoot')) {
                     [void](Resolve-UdkBuildPath $root $root $project.$field -Existing)

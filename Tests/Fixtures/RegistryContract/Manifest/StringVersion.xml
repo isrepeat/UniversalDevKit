@@ -1,0 +1,6 @@
+<ComponentRegistry>
+  <SchemaVersion>two</SchemaVersion>
+  <Includes>
+    <Include>Projects/Components/HeaderProbe.xml</Include>
+  </Includes>
+</ComponentRegistry>

@@ -1,8 +1,0 @@
-{
-  "schemaVersion": 1,
-  "adapter": "nuget",
-  "id": "UniversalDevKit.CompositionProbe",
-  "supportedPlatforms": ["Windows"],
-  "nuspec": "Package.nuspec",
-  "noWarn": ["NU5100", "NU5128"]
-}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <__UniversalDevKitCliTools>$(MSBuildThisFileDirectory)Tools\</__UniversalDevKitCliTools>
+  </PropertyGroup>
+  <Target Name="__UniversalDevKitStageCliTools" AfterTargets="Build">
+    <ItemGroup>
+      <__UniversalDevKitCliTool Include="$(__UniversalDevKitCliTools)**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(__UniversalDevKitCliTool)"
+          DestinationFiles="@(__UniversalDevKitCliTool->'$(OutDir)Tools\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+  </Target>
+  <Target Name="__UniversalDevKitStageCliDiagnostic" AfterTargets="Build">
+    <MSBuild Projects="$(MSBuildThisFileDirectory)..\..\..\Projects\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj"
+             Targets="GetTargetPath" Properties="UniversalDevKitRuntime=Static"
+             RemoveProperties="OutDir;IntDir">
+      <Output TaskParameter="TargetOutputs" ItemName="__UniversalDevKitCliDiagnostic" />
+    </MSBuild>
+    <Copy SourceFiles="@(__UniversalDevKitCliDiagnostic)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

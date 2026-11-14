@@ -171,9 +171,9 @@
     </__UniversalDevKitCompileRequirement>
   </ItemGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\..\UniversalDevKit.Requirements.targets" Condition="'$(__IsUniversalDevKitRequirementsImported)' != 'true'" />
-  <Import Project="$(MSBuildThisFileDirectory)..\..\..\..\Projects\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\..\..\Sources\XamlRuntime\UniversalDevKit.XamlRuntime.targets" />
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.XamlRuntime.targets">
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\XamlRuntime\UniversalDevKit.XamlRuntime.targets">
       <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.XamlRuntime.Dependencies.props">

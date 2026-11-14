@@ -11,8 +11,9 @@
         <Source>Sources/Windows/XamlCompiler/**/*.cpp</Source>
       </Sources>
       <Filters>
-        <Filter path="Sources/Windows/XamlCompiler"
-                filter="Sources" />
+        <Filter filter="Sources">
+          <Path>Sources/Windows/XamlCompiler</Path>
+        </Filter>
       </Filters>
       <Requirements cxxStandard="20" />
     </Project> <!-- Project id="native" -->

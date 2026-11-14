@@ -121,7 +121,7 @@ Shutdown атомарно закрывает приём записей во вс
 git submodule update --init ThirdParty/spdlog
 ```
 
-Сборка не скачивает исходники автоматически. CMake и MSBuild компилируют одинаковые upstream .cpp внутри Diagnostic DLL с SPDLOG_COMPILED_LIB. Сторонние заголовки и определения приватны компоненту; отдельные spdlog.dll и fmt.dll не нужны. Bundled fmt остаётся внутренней зависимостью. Сборочные hooks находятся в Projects/Cmake/Library/Diagnostic/Spdlog.cmake и Projects/MsBuild/Library/Diagnostic/Spdlog.targets. Общие генераторы и схема реестра не менялись.
+Сборка не скачивает исходники автоматически. CMake и MSBuild компилируют одинаковые upstream .cpp внутри Diagnostic DLL с SPDLOG_COMPILED_LIB. Сторонние заголовки и определения приватны компоненту; отдельные spdlog.dll и fmt.dll не нужны. Bundled fmt остаётся внутренней зависимостью. Сборочные hooks находятся в Projects/Cmake/Library/Diagnostic/Spdlog.cmake и Sources/Diagnostic/Native/Spdlog.targets.
 
 ## Debugger, консоль и контекст
 

@@ -1,0 +1,12 @@
+<Component>
+  <Name>Service</Name>
+  <StateScope>process</StateScope>
+  <MsbuildGuid>{9C51FF34-91AE-4F32-98AE-ABBAFE4219E1}</MsbuildGuid>
+  <Dependencies />
+  <Headers>
+    <Header>Includes/Service/UniversalDevKit/Service/Service.h</Header>
+  </Headers>
+  <Sources>
+    <Source>Sources/Service/Service.cpp</Source>
+  </Sources>
+</Component>

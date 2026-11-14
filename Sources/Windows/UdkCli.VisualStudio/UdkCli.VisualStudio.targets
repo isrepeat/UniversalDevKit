@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Import Project="..\UdkCli.Diagnostic.targets" />
+  <PropertyGroup>
+    <TargetVsixContainerName>UdkCli.VisualStudio.vsix</TargetVsixContainerName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Design" />
+    <VSCTCompile Include="$(MSBuildThisFileDirectory)UdkCli.VisualStudio.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+    <SourceVsixManifest Include="$(MSBuildThisFileDirectory)source.extension.vsixmanifest" />
+    <None Include="$(MSBuildThisFileDirectory)source.extension.vsixmanifest" Link="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <Target Name="GetVsixVersion" Outputs="$(UniversalDevKitVsixVersion)">
+    <Error Condition="'$(UniversalDevKitVsixVersion)' == ''" Text="Set version in UdkCli.VisualStudio.xml and regenerate projects." />
+  </Target>
+</Project>

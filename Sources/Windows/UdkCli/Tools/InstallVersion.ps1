@@ -20,7 +20,9 @@ $archive = Join-Path $temporary $archiveName
 $payload = Join-Path $temporary 'payload'
 $executable = Join-Path $Destination 'udk.exe'
 
-if (Test-Path -LiteralPath $executable -PathType Leaf) { return }
+if (Test-Path -LiteralPath $executable -PathType Leaf) {
+    return
+}
 [void][IO.Directory]::CreateDirectory($temporary)
 try {
     Write-Host "Downloading UDK CLI $Version..."
@@ -44,7 +46,9 @@ try {
     try {
         [IO.Directory]::Move($payload, $Destination)
     } catch [IO.IOException] {
-        if (-not (Test-Path -LiteralPath $executable -PathType Leaf)) { throw }
+        if (-not (Test-Path -LiteralPath $executable -PathType Leaf)) {
+            throw
+        }
     }
 } finally {
     [IO.Directory]::Delete($temporary, $true)

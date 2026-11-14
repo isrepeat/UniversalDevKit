@@ -17,7 +17,7 @@ udk package build Packages/MyLibrary/Package.xml
 
 ## Контракт проектов
 
-Поле projects в Package.xml допускает два варианта. Основной — объект локальных определений: ключ задаёт имя проекта, значение содержит adapter и параметры адаптера. name и schemaVersion внутри локального проекта не указываются. Необязательные dependencies ссылаются на другие ключи того же объекта. Для общих проектов сохранён прежний вариант: строка с путём реестра Projects/Build.json версии 1, который перечисляет отдельные файлы через includes; внешние проекты сохраняют явные schemaVersion=1 и name. Сборщик выполняет выбранные проекты и их зависимости в топологическом порядке; циклы и неизвестные зависимости отвергаются.
+Поле projects в Package.xml допускает два варианта. Основной — объект локальных определений: ключ задаёт имя проекта, значение содержит adapter и параметры адаптера. name и schemaVersion внутри локального проекта не указываются. Необязательные dependencies ссылаются на другие ключи того же объекта. Для общих проектов сохранён прежний вариант: строка с путём реестра Projects/Build.xml версии 1, который перечисляет отдельные файлы через includes; внешние проекты сохраняют явные schemaVersion=1 и name. Сборщик выполняет выбранные проекты и их зависимости в топологическом порядке; циклы и неизвестные зависимости отвергаются.
 
 Пути внутри проекта относительны к корню собираемого репозитория. Адаптер предоставляет именованные корни результатов, например output, build или install. Состав пакета выбирает файл или каталог непосредственно через root/path в contents. Поля projects.<имя>.artifacts и contents.artifact удалены из контракта и отклоняются как неизвестные поля, включая проекты внешнего реестра.
 
@@ -25,7 +25,7 @@ udk package build Packages/MyLibrary/Package.xml
 |---|---|
 | dotnet | project (.csproj), operation (build/publish), configuration (Debug/Release), необязательные runtime и selfContained. Корень output. selfContained требует publish с runtime. |
 | cmake-install | sourceDirectory, generator, architecture, configurations, parallel, variables. Корень install; CMAKE_INSTALL_PREFIX задаёт адаптер. |
-| component-sources | component (JSON со списками headers/sources), sourceRoot, includeRoot, publicHeaders, headerDestination, sourceDestination, manifestDestination. Корень output. |
+| component-sources | component (XML со списками headers/sources), sourceRoot, includeRoot, publicHeaders, headerDestination, sourceDestination, manifestDestination. Корень output. |
 | files | mappings с source и destination. Директория переносится содержимым; у файла destination задаёт полный путь. Корень output. |
 | nuget-restore | id, точная version, необязательный массив sources. Корень package содержит восстановленный пакет. Глобальный PackageSources имеет приоритет над sources. |
 
@@ -39,25 +39,22 @@ cmake-install допускает preparation для нестандартной �
 
 Package.xml версии 2 содержит name, projects, непустой contents и deliveries с именованными способами доставки. Поле `version` обязательно. Оно принимает номер версии или ссылку из корневого `JsonReferences.json`. Пути deliveries относительны к каталогу пакета. contents.source относителен корню репозитория. Для пакета только из готовых файлов projects может быть пустым объектом. Если projects — строка, путь внешнего реестра относителен каталогу пакета; пути внутри любых определений проектов по-прежнему относительны корню репозитория.
 
-```json
-{
-  "schemaVersion": 2,
-  "name": "MyLibrary",
-  "version": "1.0.0",
-  "projects": {
-    "managed": {
-      "adapter": "dotnet",
-      "project": "MyLibrary/MyLibrary.csproj",
-      "operation": "build",
-      "configuration": "Release"
-    }
-  },
-  "contents": [
-    { "project": "managed", "root": "output", "path": "MyLibrary.dll", "destination": "lib/net8.0" },
-    { "source": ".", "include": ["LICENSE"], "rename": { "LICENSE": "LICENSE.txt" }, "destination": "." }
-  ],
-  "deliveries": { "NuGet": "Delivery/NuGet/Delivery.json" }
-}
+```xml
+<Package schemaVersion="2" name="MyLibrary" version="1.0.0">
+  <Projects>
+    <Project id="managed" adapter="dotnet" project="MyLibrary/MyLibrary.csproj" operation="build" configuration="Release" />
+  </Projects>
+  <Contents>
+    <Content project="managed" root="output" path="MyLibrary.dll" destination="lib/net8.0" />
+    <Content source="." destination=".">
+      <Includes><Include>LICENSE</Include></Includes>
+      <Rename><File from="LICENSE">LICENSE.txt</File></Rename>
+    </Content>
+  </Contents>
+  <Deliveries>
+    <Delivery name="NuGet">Delivery/NuGet/Delivery.xml</Delivery>
+  </Deliveries>
+</Package>
 ```
 
 destination всегда задаёт каталог внутри payload, точка означает его корень. Каталог копируется содержимым с сохранением относительной иерархии по умолчанию; файловый результат проекта сохраняет имя. rename позволяет изменить имена файлов. Выход путей за границы корня, конфликты имён, отсутствующие результаты и пустой отбор приводят к ошибке.
@@ -72,30 +69,21 @@ Delivery.xml версии 1 выбирает adapter=nuget, id, supportedPlatfor
 
 В PackageTools 0.4.0 отбор выполняется только напрямую в contents: root по умолчанию равен output, path — точке. Для CMake укажите root=build или root=install, для nuget-restore — root=package. Корень проверяется при построении плана; его существование и файлы — после выполнения проекта. Маски include/exclude появились в версии 0.3.0 и сохраняют прежние правила.
 
-```json
-{
-  "schemaVersion": 2,
-  "name": "MyLibrary",
-  "version": "1.0.0",
-  "projects": {
-    "managed": {
-      "adapter": "dotnet",
-      "project": "Sources/MyLibrary/MyLibrary.csproj",
-      "operation": "build",
-      "configuration": "Release"
-    }
-  },
-  "contents": [
-    {
-      "project": "managed",
-      "include": ["**/*.dll"],
-      "exclude": ["**/*Tests.dll"],
-      "destination": "lib/net8.0",
-      "preserveHierarchy": true
-    }
-  ],
-  "deliveries": { "NuGet": "Delivery/NuGet/Delivery.json" }
-}
+```xml
+<Package schemaVersion="2" name="MyLibrary" version="1.0.0">
+  <Projects>
+    <Project id="managed" adapter="dotnet" project="Sources/MyLibrary/MyLibrary.csproj" operation="build" configuration="Release" />
+  </Projects>
+  <Contents>
+    <Content project="managed" destination="lib/net8.0" preserveHierarchy="true">
+      <Includes><Include>**/*.dll</Include></Includes>
+      <Excludes><Exclude>**/*Tests.dll</Exclude></Excludes>
+    </Content>
+  </Contents>
+  <Deliveries>
+    <Delivery name="NuGet">Delivery/NuGet/Delivery.xml</Delivery>
+  </Deliveries>
+</Package>
 ```
 
 В этом примере выбираются DLL из output и его подпапок. Для дерева output/Core/A.dll и output/Extensions/B.dll результатом будут lib/net8.0/Core/A.dll и lib/net8.0/Extensions/B.dll. При preserveHierarchy=false в lib/net8.0 окажутся A.dll и B.dll без подпапок.
@@ -117,15 +105,21 @@ Delivery.xml версии 1 выбирает adapter=nuget, id, supportedPlatfor
 
 Для готовых файлов укажите source. Например, одна запись заменяет отдельные записи LICENSE и README у Diagnostic:
 
-```json
-{
-  "source": ".",
-  "include": ["LICENSE", "Packages/Build/NuGet/README.md"],
-  "destination": ".",
-  "preserveHierarchy": false,
-  "rename": { "LICENSE": "LICENSE.txt" },
-  "deliveries": ["NuGet"]
-}
+```xml
+<Package schemaVersion="2" name="MyLibrary" version="1.0.0">
+  <Projects>
+    <Project id="managed" adapter="dotnet" project="Sources/MyLibrary/MyLibrary.csproj" operation="build" configuration="Release" />
+  </Projects>
+  <Contents>
+    <Content project="managed" destination="lib/net8.0" preserveHierarchy="true">
+      <Includes><Include>**/*.dll</Include></Includes>
+      <Excludes><Exclude>**/*Tests.dll</Exclude></Excludes>
+    </Content>
+  </Contents>
+  <Deliveries>
+    <Delivery name="NuGet">Delivery/NuGet/Delivery.xml</Delivery>
+  </Deliveries>
+</Package>
 ```
 
 В пакет попадут LICENSE.txt и README.md. Отбор, исключения, сохранение дерева и обнаружение конфликтов для source работают так же, как для результатов проекта. source нельзя сочетать с project, root или path. source всегда задаёт каталог; для единственного готового файла используйте include с его относительным путём. Для точных включений сборщик проверяет указанные файлы напрямую, без рекурсивного обхода всего репозитория. Только выбранные проекты запускаются: пакет с projects={} и записями source не требует сборки проектов.
@@ -144,7 +138,7 @@ Delivery.xml версии 1 выбирает adapter=nuget, id, supportedPlatfor
 
 Продуктовые Package.xml UDK выбирают результаты напрямую в contents, без промежуточных artifacts: root=output для подготовленного дерева и root=build, path=Release, include=["XamlCompiler.exe"] для компилятора. Там, где нужен весь результат, include/exclude опускаются: сохраняется полное дерево. Параметры доставки и зависимости пакетов от этого упрощения не меняются.
 
-У Previewer независимы Version.json продукта, PackageReference инструмента в Packages/Build.csproj и версии трёх UDK-зависимостей в Delivery.json PluginSDK. Тег и коммит репозитория Previewer определяют его выпуск. Native-библиотеки остаются в собственных NuGet-пакетах.
+У Previewer независимы Version.json продукта, PackageReference инструмента в Packages/Build.csproj и версии трёх UDK-зависимостей в Delivery.xml PluginSDK. Тег и коммит репозитория Previewer определяют его выпуск. Native-библиотеки остаются в собственных NuGet-пакетах.
 
 ## Артефакты и проверки
 
@@ -167,6 +161,6 @@ contents может содержать deliveries: ["NuGet"] или ["Android"].
 | udk-prefab | component, toolchain, configuration, abis, apiLevel; корень output с вариантами Prefab |
 | gradle-publish | projectDirectory, toolchain, tasks, refreshDependencies; корень output с Maven-публикацией |
 
-Специализированные udk-native и udk-prefab требуют реестр компонентов и инфраструктуру исходного UDK; обычный сторонний репозиторий использует dotnet, cmake-install, cmake-build, files и nuget-restore. gradle-publish получает путь к resolver toolchain явно из JSON. Delivery adapter=maven-prefab формирует native AAR/POM, maven-repository переносит штатную Gradle-публикацию вместе с метаданными и контрольными суммами. NuGet dependencySource=udk-component вычисляет точные зависимости из компонентного реестра; обычные пакеты задают dependencies явно.
+Специализированные udk-native и udk-prefab требуют реестр компонентов и инфраструктуру исходного UDK; обычный сторонний репозиторий использует dotnet, cmake-install, cmake-build, files и nuget-restore. gradle-publish получает путь к resolver toolchain явно из XML. Delivery adapter=maven-prefab формирует native AAR/POM, maven-repository переносит штатную Gradle-публикацию вместе с метаданными и контрольными суммами. NuGet dependencySource=udk-component вычисляет точные зависимости из компонентного реестра; обычные пакеты задают dependencies явно.
 
 В UDK основной точкой запуска служит ./Packages/Build/Build.ps1. Параметр -All автоматически выбирает все Package.xml и их доставки, -Delivery ограничивает способ доставки, а -PackagePath выбирает конкретный пакет. Оболочка использует исходный PackageTools. Проверка -All -Plan не запускает сборку. PackageTools.Migration.Tests.ps1 сверяет все планы, а с BaselineDirectory сравнивает состав файлов и NuGet-зависимости с контрольными пакетами; CheckMaven проверяет Android-публикации.

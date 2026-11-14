@@ -1,0 +1,18 @@
+<Delivery>
+  <SchemaVersion>1</SchemaVersion>
+  <Adapter>nuget</Adapter>
+  <Id>UniversalDevKit.HeaderLeaf</Id>
+  <SupportedPlatforms>
+    <Platform>Windows</Platform>
+  </SupportedPlatforms>
+  <Nuspec>UniversalDevKit.HeaderLeaf.nuspec</Nuspec>
+  <Integration>
+    <Props>UniversalDevKit.HeaderLeaf.props</Props>
+    <Targets>UniversalDevKit.HeaderLeaf.targets</Targets>
+  </Integration>
+  <DependencySource>udk-component</DependencySource>
+  <NoWarn>
+    <Warning>NU5100</Warning>
+    <Warning>NU5128</Warning>
+  </NoWarn>
+</Delivery>

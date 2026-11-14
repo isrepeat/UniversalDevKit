@@ -4,7 +4,7 @@
     <Project id="native"
              kind="application"
              projectType="native"
-             githubVersion="0.2.5"
+             githubVersion="0.3.0"
              msbuildGuid="{9C7AAB80-FA41-4925-95FA-06409E32E4E1}">
       <Headers>
         <Header>Sources/Windows/UdkCli/**/*.h</Header>
@@ -13,8 +13,13 @@
         <Source>Sources/Windows/UdkCli/**/*.cpp</Source>
       </Sources>
       <Filters>
-        <Filter path="Sources/Windows/UdkCli"
-                filter="" />
+        <Filter filter="">
+          <Path>Sources/Windows/UdkCli</Path>
+        </Filter>
+        <Filter filter="Build">
+          <Path>Sources/Windows/UdkCli/**/*.props</Path>
+          <Path>Sources/Windows/UdkCli/**/*.targets</Path>
+        </Filter>
       </Filters>
       <Requirements cxxStandard="20" />
       <Compile>
@@ -29,8 +34,8 @@
         </Properties>
       </MSBuild>
       <BuildExtensions>
-        <MSBuildProps>Projects/MsBuild/Application/UdkCli/UdkCli.props</MSBuildProps>
-        <MSBuildTargets>Projects/MsBuild/Application/UdkCli/UdkCli.targets</MSBuildTargets>
+        <MSBuildProps>Sources/Windows/UdkCli/UdkCli.props</MSBuildProps>
+        <MSBuildTargets>Sources/Windows/UdkCli/UdkCli.targets</MSBuildTargets>
       </BuildExtensions>
     </Project> <!-- Project id="native" -->
   </Projects>

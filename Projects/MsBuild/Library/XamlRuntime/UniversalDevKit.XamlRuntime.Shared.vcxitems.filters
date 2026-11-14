@@ -80,10 +80,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\VisualState.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\XamlAttribute.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\XamlLayout.h" />
-    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.XamlRuntime.Dependencies.props">
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\XamlRuntime\UniversalDevKit.XamlRuntime.targets">
       <Filter>Build</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.XamlRuntime.targets">
+    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.XamlRuntime.Dependencies.props">
       <Filter>Build</Filter>
     </None>
   </ItemGroup>

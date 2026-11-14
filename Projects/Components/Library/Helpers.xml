@@ -14,9 +14,10 @@
       </ExcludeHeaders>
       <Sources />
       <Filters>
-        <Filter path="Includes/Helpers/UniversalDevKit/Helpers"
-                filter=""
-                preserveTree="true" />
+        <Filter filter=""
+                preserveTree="true">
+          <Path>Includes/Helpers/UniversalDevKit/Helpers</Path>
+        </Filter>
       </Filters>
     </Project> <!-- Project id="native" -->
   </Projects>

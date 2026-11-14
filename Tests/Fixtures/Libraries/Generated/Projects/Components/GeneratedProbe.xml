@@ -1,0 +1,13 @@
+<Component>
+  <Name>GeneratedProbe</Name>
+  <MsbuildGuid>{D3BAA8F7-5D3C-43D3-993F-54414F7559F8}</MsbuildGuid>
+  <Dependencies />
+  <Headers />
+  <Sources>
+    <Source>Sources/GeneratedProbe/Anchor.cpp</Source>
+  </Sources>
+  <BuildExtensions>
+    <CMake>Projects/Generation/Probe.cmake</CMake>
+    <MSBuildTargets>Projects/Generation/Probe.targets</MSBuildTargets>
+  </BuildExtensions>
+</Component>

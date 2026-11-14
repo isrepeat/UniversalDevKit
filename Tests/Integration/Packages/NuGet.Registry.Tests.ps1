@@ -17,14 +17,14 @@ $NuGet = & (Join-Path $repository 'Scripts/PowerShell/GetNuGet.ps1') -LocalPath 
 $workspace = New-TestWorkspace $repository WorkingTree HEAD
 $fixture = Join-Path $repository 'Tests/Fixtures/Libraries/HeaderOnly'
 Get-ChildItem -LiteralPath $fixture -Force | Copy-Item -Destination $workspace.Library -Recurse -Force
-& (Join-Path $workspace.Library 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $workspace.Library 'Components.json')
+& (Join-Path $workspace.Library 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $workspace.Library 'Components.xml')
 # Keep the path short to avoid MAX_PATH in the MSBuild compiler probe.
 $shortLibrary = Join-Path $workspace.Root 'L'
 Copy-Item -LiteralPath $workspace.Library -Destination $shortLibrary -Recurse
 $workspace.Library = $shortLibrary
 $feed = Join-Path $workspace.Library '!artifacts/packages/nuget'
 # A different registry and a header-only chain expose assumptions about the active components.
-& (Join-Path $repository 'Packages/Build/Build.ps1') -RepositoryPath $workspace.Library -PackagePath Packages/CrossPlatform/HeaderProbe/Package.json -CMake $CMake -NuGet $NuGet -OutputDirectory $feed
+& (Join-Path $repository 'Packages/Build/Build.ps1') -RepositoryPath $workspace.Library -PackagePath Packages/CrossPlatform/HeaderProbe/Package.xml -CMake $CMake -NuGet $NuGet -OutputDirectory $feed
 $feed = Join-Path $feed 'HeaderProbe'
 $version = (Get-Content (Join-Path $workspace.Library 'Version.json') -Raw | ConvertFrom-Json).version
 foreach ($name in @('HeaderProbe', 'HeaderLeaf')) {

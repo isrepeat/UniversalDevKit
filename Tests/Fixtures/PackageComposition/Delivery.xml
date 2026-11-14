@@ -1,0 +1,13 @@
+<Delivery>
+  <SchemaVersion>1</SchemaVersion>
+  <Adapter>nuget</Adapter>
+  <Id>UniversalDevKit.CompositionProbe</Id>
+  <SupportedPlatforms>
+    <Platform>Windows</Platform>
+  </SupportedPlatforms>
+  <Nuspec>Package.nuspec</Nuspec>
+  <NoWarn>
+    <Warning>NU5100</Warning>
+    <Warning>NU5128</Warning>
+  </NoWarn>
+</Delivery>

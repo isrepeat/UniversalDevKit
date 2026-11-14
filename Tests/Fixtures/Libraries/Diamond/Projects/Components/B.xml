@@ -1,0 +1,17 @@
+<Component>
+  <Name>B</Name>
+  <Dependencies>
+    <Dependency>
+      <Component>D</Component>
+      <Visibility>private</Visibility>
+      <Linkage>same</Linkage>
+    </Dependency>
+  </Dependencies>
+  <MsbuildGuid>{DA000000-0000-4000-8000-000000000002}</MsbuildGuid>
+  <Headers>
+    <Header>Includes/B/UniversalDevKit/B/Value.h</Header>
+  </Headers>
+  <Sources>
+    <Source>Sources/B/Value.cpp</Source>
+  </Sources>
+</Component>

@@ -1,0 +1,40 @@
+<Package>
+  <SchemaVersion>2</SchemaVersion>
+  <Name>HeaderLeaf</Name>
+  <Version>0.1.0</Version>
+  <Projects>
+    <Project id="windows">
+      <Adapter>udk-native</Adapter>
+      <Component>HeaderLeaf</Component>
+      <CmakeGeneratorWindows>Visual Studio 18 2026</CmakeGeneratorWindows>
+    </Project>
+  </Projects>
+  <Contents>
+    <Content>
+      <Project>windows</Project>
+      <Root>output</Root>
+      <Destination>.</Destination>
+      <Deliveries>
+        <Delivery>NuGet</Delivery>
+      </Deliveries>
+    </Content>
+    <Content>
+      <Source>.</Source>
+      <Includes>
+        <Include>LICENSE</Include>
+        <Include>Packages/Build/NuGet/README.md</Include>
+      </Includes>
+      <Destination>.</Destination>
+      <PreserveHierarchy>false</PreserveHierarchy>
+      <Rename>
+        <File from="LICENSE">LICENSE.txt</File>
+      </Rename>
+      <Deliveries>
+        <Delivery>NuGet</Delivery>
+      </Deliveries>
+    </Content>
+  </Contents>
+  <Deliveries>
+    <Delivery name="NuGet">Delivery/NuGet/Delivery.xml</Delivery>
+  </Deliveries>
+</Package>

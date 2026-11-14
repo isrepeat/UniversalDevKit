@@ -15,9 +15,13 @@ function Update-ProjectToolsVersionItem([string]$Content, [string]$Path, [switch
     $section = "`tProjectSection(SolutionItems) = preProject"
     if (-not $folder.Success) {
         $block = @($folderHeader, $section, $item, "`tEndProjectSection", 'EndProject') -join "`n"
-        return [regex]::new('(?m)^Global\r?$').Replace($Content, { param($match) $block + "`n" + $match.Value }, 1)
+        return [regex]::new('(?m)^Global\r?$').Replace($Content, {
+            param($match) $block + "`n" + $match.Value
+        }, 1)
     }
-    if ($folder.Value -match $itemPattern) { return $Content }
+    if ($folder.Value -match $itemPattern) {
+        return $Content
+    }
     $sectionPattern = '(?m)^([ \t]*ProjectSection\(SolutionItems\) = preProject)\r?$'
     $updatedFolder = if ($folder.Value -match $sectionPattern) {
         $folder.Value -replace $sectionPattern, "`$1`n$item"
@@ -32,10 +36,14 @@ function Remove-ProjectToolsEmptyFolders([string]$Content, $FolderGuids) {
         $previous = $Content
         foreach ($guid in $FolderGuids) {
             $escaped = [regex]::Escape($guid)
-            if ($Content -match "(?m)^[ \t]*\{[^}]+\} = $escaped[ \t]*\r?$") { continue }
+            if ($Content -match "(?m)^[ \t]*\{[^}]+\} = $escaped[ \t]*\r?$") {
+                continue
+            }
             $folder = '(?m)^Project\("\{2150E333-8FDC-42A3-9474-1A3956D46DE8\}"\) = [^\r\n]+, "' + $escaped + '"\r?\n(?:[ \t]*ProjectSection\(SolutionItems\) = preProject\r?\n[ \t]*EndProjectSection\r?\n)?EndProject\r?\n'
             $updated = $Content -replace $folder, ''
-            if ($updated -cne $Content) { $Content = $updated -replace "(?m)^[ \t]*$escaped = \{[^}]+\}[ \t]*\r?\n", '' }
+            if ($updated -cne $Content) {
+                $Content = $updated -replace "(?m)^[ \t]*$escaped = \{[^}]+\}[ \t]*\r?\n", ''
+            }
         }
     } while ($Content -cne $previous)
     return $Content
@@ -43,7 +51,11 @@ function Remove-ProjectToolsEmptyFolders([string]$Content, $FolderGuids) {
 
 function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, [switch]$Clean) {
     $solution = Resolve-ProjectToolsPath $Model.Root $Model.Settings.solution
-    $original = if (Test-Path -LiteralPath $solution) { [IO.File]::ReadAllText($solution) } else { $null }
+    $original = if (Test-Path -LiteralPath $solution) {
+        [IO.File]::ReadAllText($solution)
+    } else {
+        $null
+    }
     $directory = Split-Path -Parent $solution
     $token = '.ProjectTools.' + [Guid]::NewGuid().ToString('N')
     $source = Join-Path $directory ($token + '.source.sln')
@@ -64,10 +76,16 @@ function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, 
         $previous = $null
         foreach ($match in [regex]::Matches($original, 'Project\("\{2150E333-8FDC-42A3-9474-1A3956D46DE8\}"\) = "' + [regex]::Escape($Name) + '", "[^"]+", "(\{[^}]+\})"')) {
             $candidate = $match.Groups[1].Value
-            if (-not $Parent -or $original -match ([regex]::Escape($candidate) + '\s*=\s*' + [regex]::Escape($Parent))) { return $candidate }
-            if ($PreviousParent -and $original -match ([regex]::Escape($candidate) + '\s*=\s*' + [regex]::Escape($PreviousParent))) { $previous = $candidate }
+            if (-not $Parent -or $original -match ([regex]::Escape($candidate) + '\s*=\s*' + [regex]::Escape($Parent))) {
+                return $candidate
+            }
+            if ($PreviousParent -and $original -match ([regex]::Escape($candidate) + '\s*=\s*' + [regex]::Escape($PreviousParent))) {
+                $previous = $candidate
+            }
         }
-        if ($previous) { return $previous }
+        if ($previous) {
+            return $previous
+        }
         return Get-ProjectToolsGuid $Identity
     }
     $explicitLayout = $Model.Manifest.schemaVersion -ge 6
@@ -88,26 +106,48 @@ function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, 
     }
     $writtenFolders = @{}
     if (-not $explicitLayout) {
-        $rootName = if ($Model.Settings.solutionFolder) { $Model.Settings.solutionFolder } else { 'Projects' }
+        $rootName = if ($Model.Settings.solutionFolder) {
+            $Model.Settings.solutionFolder
+        } else {
+            'Projects'
+        }
         $rootFolderGuid = FindFolderGuid $rootName '' ('ProjectTools.SolutionFolder:' + $rootName)
         $lines += @(('Project("' + $folderType + '") = "' + $rootName + '", "' + $rootName + '", "' + $rootFolderGuid + '"'), 'EndProject')
         $msbuildGuid = FindFolderGuid 'MsBuild' $rootFolderGuid 'UDK.SolutionFolder:Projects/MsBuild'
-        if ($Model.Profile -eq 'udk') { $lines += @(('Project("' + $folderType + '") = "MsBuild", "MsBuild", "' + $msbuildGuid + '"'), 'EndProject') }
-        if ($Model.Profile -eq 'udk') { $nested += "`t`t$msbuildGuid = $rootFolderGuid" }
-        $technologyGuid = if ($Model.Profile -eq 'udk') { $msbuildGuid } else { $rootFolderGuid }
+        if ($Model.Profile -eq 'udk') {
+            $lines += @(('Project("' + $folderType + '") = "MsBuild", "MsBuild", "' + $msbuildGuid + '"'), 'EndProject')
+        }
+        if ($Model.Profile -eq 'udk') {
+            $nested += "`t`t$msbuildGuid = $rootFolderGuid"
+        }
+        $technologyGuid = if ($Model.Profile -eq 'udk') {
+            $msbuildGuid
+        } else {
+            $rootFolderGuid
+        }
     }
     foreach ($project in $Projects) {
-        if ($Clean) { break }
+        if ($Clean) {
+            break
+        }
         $name = [IO.Path]::GetFileNameWithoutExtension($project.Path)
         $relative = Get-ProjectToolsRelativePath $directory (Join-Path $Model.Root $project.Path)
-        $group = if ($project.Component -in $applicationNames) { 'Application' } else { 'Library' }
+        $group = if ($project.Component -in $applicationNames) {
+            'Application'
+        } else {
+            'Library'
+        }
         if ($explicitLayout) {
             $parent = Add-TemplateFolders $project.SolutionFolder
             foreach ($folder in $templateFolders.Values) {
-                if ($writtenFolders.ContainsKey($folder.Guid)) { continue }
+                if ($writtenFolders.ContainsKey($folder.Guid)) {
+                    continue
+                }
                 $writtenFolders[$folder.Guid] = $true
                 $lines += @(('Project("' + $folderType + '") = "' + $folder.Name + '", "' + $folder.Name + '", "' + $folder.Guid + '"'), 'EndProject')
-                if ($folder.Parent) { $nested += "`t`t$($folder.Guid) = $($folder.Parent)" }
+                if ($folder.Parent) {
+                    $nested += "`t`t$($folder.Guid) = $($folder.Parent)"
+                }
             }
             $nested += "`t`t$($project.Guid) = $parent"
         } else {
@@ -143,7 +183,9 @@ function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, 
                 $configs += "`t`t$($project.Guid).$configuration|$platform.ActiveCfg = $configuration|$platform"
                 $configs += "`t`t$($project.Guid).$configuration|$platform.Build.0 = $configuration|$platform"
             } }
-            $sharedProject = @($Projects | Where-Object { $_.Component -eq $project.Component -and $_.Variant -eq 'Shared' })[0]
+            $sharedProject = @($Projects | Where-Object {
+                $_.Component -eq $project.Component -and $_.Variant -eq 'Shared'
+            })[0]
             $sharedPath = Get-ProjectToolsRelativePath $directory (Join-Path $Model.Root $sharedProject.Path)
             $shared += "`t`t$sharedPath*$($project.Guid.ToLowerInvariant())*SharedItemsImports = 4"
         } else {
@@ -151,22 +193,44 @@ function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, 
         }
     }
     $lines += @('Global', "`tGlobalSection(SolutionConfigurationPlatforms) = preSolution")
-    foreach ($configuration in $Model.Settings.configurations) { foreach ($platform in $Model.Settings.platforms) { $lines += "`t`t$configuration|$platform = $configuration|$platform" } }
+    foreach ($configuration in $Model.Settings.configurations) {
+        foreach ($platform in $Model.Settings.platforms) {
+            $lines += "`t`t$configuration|$platform = $configuration|$platform"
+        }
+    }
     $lines += @("`tEndGlobalSection", "`tGlobalSection(ProjectConfigurationPlatforms) = postSolution") + $configs + @("`tEndGlobalSection", "`tGlobalSection(NestedProjects) = preSolution") + $nested + @("`tEndGlobalSection", "`tGlobalSection(SharedMSBuildProjectFiles) = preSolution") + $shared + @("`tEndGlobalSection", 'EndGlobal')
-    $sourceContent = if ($Clean) { (@($header) + @('Global', 'EndGlobal')) -join "`n" } else { $lines -join "`n" }
-    $empty = (@($header) + @('Global', "`tGlobalSection(SolutionConfigurationPlatforms) = preSolution") + @($Model.Settings.configurations | ForEach-Object { $configuration = $_; $Model.Settings.platforms | ForEach-Object { "`t`t$configuration|$_ = $configuration|$_" } }) + @("`tEndGlobalSection", 'EndGlobal')) -join "`n"
+    $sourceContent = if ($Clean) {
+        (@($header) + @('Global', 'EndGlobal')) -join "`n"
+    } else {
+        $lines -join "`n"
+    }
+    $empty = (@($header) + @('Global', "`tGlobalSection(SolutionConfigurationPlatforms) = preSolution") + @($Model.Settings.configurations | ForEach-Object {
+        $configuration = $_; $Model.Settings.platforms | ForEach-Object {
+            "`t`t$configuration|$_ = $configuration|$_"
+        }
+    }) + @("`tEndGlobalSection", 'EndGlobal')) -join "`n"
     try {
         [IO.File]::WriteAllText($source, $sourceContent, [Text.UTF8Encoding]::new($false))
-        [IO.File]::WriteAllText($target, $(if ($null -ne $original) { $original } else { $empty }), [Text.UTF8Encoding]::new($false))
+        [IO.File]::WriteAllText($target, $(if ($null -ne $original) {
+            $original
+        } else {
+            $empty
+        }), [Text.UTF8Encoding]::new($false))
         $arguments = @('sync', $source, $target, '--owner', 'ProjectTools', '--apply', '--json')
         # The component contract explicitly selects these project identities for migration.
         if (-not $Clean) {
-            foreach ($project in $Projects) { $arguments += @('--adopt', $project.Guid) }
+            foreach ($project in $Projects) {
+                $arguments += @('--adopt', $project.Guid)
+            }
         }
         $result = & $Executable @arguments
-        if ($LASTEXITCODE -ne 0) { throw "SolutionInjector sync failed: $result" }
+        if ($LASTEXITCODE -ne 0) {
+            throw "SolutionInjector sync failed: $result"
+        }
         $report = $result | ConvertFrom-Json
-        if ($report.schemaVersion -ne 1 -or -not $report.applied -or $report.blocked) { throw 'Unsupported or blocked SolutionInjector sync report.' }
+        if ($report.schemaVersion -ne 1 -or -not $report.applied -or $report.blocked) {
+            throw 'Unsupported or blocked SolutionInjector sync report.'
+        }
         $content = [IO.File]::ReadAllText($target).TrimEnd([char[]]"`r`n")
         $syncContent = $content
         # SolutionInjector preserves the parents of existing solution folders.
@@ -183,12 +247,18 @@ function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, 
                 foreach ($project in $Projects) {
                     $null = Add-TemplateFolders $project.SolutionFolder
                 }
-                $folderGuids = @($templateFolders.Keys | ForEach-Object { Get-ProjectToolsGuid ('ProjectTools.SolutionFolder:' + $_) })
+                $folderGuids = @($templateFolders.Keys | ForEach-Object {
+                    Get-ProjectToolsGuid ('ProjectTools.SolutionFolder:' + $_)
+                })
                 $folderGuids += Get-ProjectToolsGuid 'ProjectTools.SolutionFolder:!Repository'
                 $content = Remove-ProjectToolsEmptyFolders $content $folderGuids
             } else {
                 $rootGuid = Get-ProjectToolsGuid ('ProjectTools.SolutionFolder:' + $rootName)
-                $technologyGuid = if ($Model.Profile -eq 'udk') { Get-ProjectToolsGuid 'UDK.SolutionFolder:Projects/MsBuild' } else { $rootGuid }
+                $technologyGuid = if ($Model.Profile -eq 'udk') {
+                    Get-ProjectToolsGuid 'UDK.SolutionFolder:Projects/MsBuild'
+                } else {
+                    $rootGuid
+                }
                 $folderGuids = @($rootGuid, $technologyGuid, (Get-ProjectToolsGuid 'ProjectTools.SolutionFolder:!Repository'))
                 foreach ($group in @('Application', 'Library')) {
                     $groupKey = "$technologyGuid/$group"
@@ -202,9 +272,15 @@ function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, 
         } elseif (Test-Path -LiteralPath $versionPath -PathType Leaf) {
             $content = Update-ProjectToolsVersionItem $content $relativeVersion
         }
-        if ($null -ne $original -and -not $report.changed -and $content -ceq $syncContent) { return }
-        if ($content -cne $original) { return [pscustomobject]@{ Path = $solution; RelativePath = $Model.Settings.solution; Content = $content; Original = $original } }
+        if ($null -ne $original -and -not $report.changed -and $content -ceq $syncContent) {
+            return
+        }
+        if ($content -cne $original) {
+            return [pscustomobject]@{ Path = $solution; RelativePath = $Model.Settings.solution; Content = $content; Original = $original }
+        }
     } finally {
-        foreach ($file in Get-ChildItem -LiteralPath $directory -File | Where-Object Name -like ($token + '*')) { Remove-Item -LiteralPath $file.FullName }
+        foreach ($file in Get-ChildItem -LiteralPath $directory -File | Where-Object Name -like ($token + '*')) {
+            Remove-Item -LiteralPath $file.FullName
+        }
     }
 }

@@ -1,0 +1,16 @@
+<Project>
+  <SchemaVersion>1</SchemaVersion>
+  <Name>CMake</Name>
+  <Adapter>cmake-install</Adapter>
+  <Dependencies>
+    <Dependency>Native</Dependency>
+  </Dependencies>
+  <SourceDirectory>CMake</SourceDirectory>
+  <Generator>Visual Studio 18 2026</Generator>
+  <Architecture>x64</Architecture>
+  <Configurations>
+    <Configuration>Release</Configuration>
+  </Configurations>
+  <Parallel>2</Parallel>
+  <Variables />
+</Project>

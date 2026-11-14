@@ -22,7 +22,7 @@ function InvokeChecked([string]$Tool, [string[]]$Arguments) {
 
 try {
     # 1. Header-only creates Shared and INTERFACE targets without empty archives or DLLs.
-    & $generator -ManifestPath (Join-Path $workspace.Library 'Components.json')
+    & $generator -ManifestPath (Join-Path $workspace.Library 'Components.xml')
     . (Join-Path $workspace.Library 'Scripts/PowerShell/Modules/Module.Udk.Connection/Private/ConnectionPlan.ps1')
     $registry = @{
         HeaderProbe = [pscustomobject]@{ Kind = 'headerOnly'; Dependencies = @() }
@@ -51,20 +51,20 @@ try {
     InvokeChecked (Join-Path $workspace.Library 'Consumer/bin/Shared.exe') @()
 
     # 2. Both readers must reject the same invalid descriptions.
-    foreach ($case in Get-ChildItem (Join-Path $repository 'Tests/Fixtures/RegistryContract') -Filter '*.json') {
-        Copy-Item -LiteralPath $case.FullName -Destination (Join-Path $workspace.Library 'Projects/Components/HeaderProbe.json') -Force
+    foreach ($case in Get-ChildItem (Join-Path $repository 'Tests/Fixtures/RegistryContract') -Filter '*.xml') {
+        Copy-Item -LiteralPath $case.FullName -Destination (Join-Path $workspace.Library 'Projects/Components/HeaderProbe.xml') -Force
         $rejected = $false
-        try { & $generator -ManifestPath (Join-Path $workspace.Library 'Components.json') -Check } catch { $rejected = $true }
+        try { & $generator -ManifestPath (Join-Path $workspace.Library 'Components.xml') -Check } catch { $rejected = $true }
         if (-not $rejected) { throw "MSBuild accepted $($case.Name)" }
         & $CMake '-S' $workspace.Library '-B' $build | Out-Host
         if ($LASTEXITCODE -eq 0) { throw "CMake accepted $($case.Name)" }
         Write-Host "PASS: both readers rejected $($case.Name)"
     }
-    Copy-Item -LiteralPath (Join-Path $fixture 'Projects/Components/HeaderProbe.json') -Destination (Join-Path $workspace.Library 'Projects/Components/HeaderProbe.json') -Force
-    foreach ($case in Get-ChildItem (Join-Path $repository 'Tests/Fixtures/RegistryContract/Manifest') -Filter '*.json') {
-        Copy-Item -LiteralPath $case.FullName -Destination (Join-Path $workspace.Library 'Components.json') -Force
+    Copy-Item -LiteralPath (Join-Path $fixture 'Projects/Components/HeaderProbe.xml') -Destination (Join-Path $workspace.Library 'Projects/Components/HeaderProbe.xml') -Force
+    foreach ($case in Get-ChildItem (Join-Path $repository 'Tests/Fixtures/RegistryContract/Manifest') -Filter '*.xml') {
+        Copy-Item -LiteralPath $case.FullName -Destination (Join-Path $workspace.Library 'Components.xml') -Force
         $rejected = $false
-        try { & $generator -ManifestPath (Join-Path $workspace.Library 'Components.json') -Check } catch { $rejected = $true }
+        try { & $generator -ManifestPath (Join-Path $workspace.Library 'Components.xml') -Check } catch { $rejected = $true }
         if (-not $rejected) { throw "MSBuild accepted manifest $($case.Name)" }
         & $CMake '-S' $workspace.Library '-B' $build | Out-Host
         if ($LASTEXITCODE -eq 0) { throw "CMake accepted manifest $($case.Name)" }

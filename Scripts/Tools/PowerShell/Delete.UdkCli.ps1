@@ -37,9 +37,13 @@ if ($selected.Count -eq 0) {
     return
 }
 
-$tags = @($selected | Sort-Object Version | ForEach-Object { $_.Tag })
+$tags = @($selected | Sort-Object Version | ForEach-Object {
+    $_.Tag
+})
 Write-Host "Stable UDK CLI releases to delete from $repository (Git tags are kept):"
-$tags | ForEach-Object { Write-Host "  $_" }
+$tags | ForEach-Object {
+    Write-Host "  $_"
+}
 if ((Read-Host "Delete these $($tags.Count) releases? [y/N]") -notin @('y', 'yes')) {
     Write-Host 'Deletion cancelled.'
     return

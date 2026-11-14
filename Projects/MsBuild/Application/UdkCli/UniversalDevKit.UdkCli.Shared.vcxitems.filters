@@ -8,10 +8,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Windows\UdkCli\Main.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Windows\UdkCli\PowerShellScript.cpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Windows\UdkCli\PowerShellScript.h" />
-    <None Include="$(MSBuildThisFileDirectory)UdkCli.props">
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Windows\UdkCli\UdkCli.props">
       <Filter>Build</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)UdkCli.targets">
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Windows\UdkCli\UdkCli.targets">
       <Filter>Build</Filter>
     </None>
   </ItemGroup>

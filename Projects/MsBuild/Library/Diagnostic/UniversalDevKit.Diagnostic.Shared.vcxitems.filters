@@ -49,7 +49,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\LoggingC.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\LogRecord.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\PlatformBackend.h" />
-    <None Include="$(MSBuildThisFileDirectory)Spdlog.targets">
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\Spdlog.targets">
       <Filter>Build</Filter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.Diagnostic.Dependencies.props">

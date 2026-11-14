@@ -3,7 +3,9 @@ function Find-UdkNativeIntegrationDelivery([string]$Repository, [string]$Package
     $candidates = @(foreach ($entry in $Definition.deliveries.PSObject.Properties) {
         $path = Resolve-UdkManifestPath (Resolve-UdkBuildPath $Repository $packageDirectory $entry.Value)
         $delivery = Read-UdkManifest $path 'Delivery'
-        if ($delivery.adapter -ne 'nuget' -or -not $delivery.integration) { continue }
+        if ($delivery.adapter -ne 'nuget' -or -not $delivery.integration) {
+            continue
+        }
         if (-not $delivery.integration.targets) {
             throw "Missing native integration targets: $path"
         }
@@ -12,7 +14,9 @@ function Find-UdkNativeIntegrationDelivery([string]$Repository, [string]$Package
     if ($candidates.Count -gt 1) {
         throw "Multiple native integration deliveries in ${PackagePath}: $($candidates.Name -join ', '). Declare integration on exactly one NuGet delivery."
     }
-    if ($candidates.Count -eq 1) { return $candidates[0] }
+    if ($candidates.Count -eq 1) {
+        return $candidates[0]
+    }
 }
 
 function Invoke-UdkNativeProject($Project, $Context) {
@@ -37,7 +41,11 @@ function Invoke-UdkNativeProject($Project, $Context) {
         }).Count -gt 0
         $packages = @{}
         foreach ($file in Get-UdkPackageManifests (Join-Path $repository 'Packages')) {
-            $definitionPath = if ($file.DirectoryName -eq $Context.PackageRoot) { $Context.PackagePath } else { $file.FullName }
+            $definitionPath = if ($file.DirectoryName -eq $Context.PackageRoot) {
+                $Context.PackagePath
+            } else {
+                $file.FullName
+            }
             $definition = Read-UdkManifest $definitionPath 'Package'
             if ($definition.schemaVersion -ne 2) {
                 continue
@@ -56,7 +64,9 @@ function Invoke-UdkNativeProject($Project, $Context) {
                 continue
             }
             $integrationDelivery = Find-UdkNativeIntegrationDelivery $repository $definitionPath $definition
-            if (-not $integrationDelivery) { continue }
+            if (-not $integrationDelivery) {
+                continue
+            }
             $directory = $integrationDelivery.Directory
             $delivery = $integrationDelivery.Delivery
             $integration = @{}

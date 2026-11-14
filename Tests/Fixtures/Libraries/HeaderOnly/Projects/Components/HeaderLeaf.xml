@@ -1,0 +1,9 @@
+<Component>
+  <Name>HeaderLeaf</Name>
+  <Kind>headerOnly</Kind>
+  <MsbuildGuid>{4BE9A9C7-8992-42D3-97AF-212780E6F620}</MsbuildGuid>
+  <Headers>
+    <Header>Includes/HeaderLeaf/UniversalDevKit/HeaderLeaf/Value.h</Header>
+  </Headers>
+  <Sources />
+</Component>

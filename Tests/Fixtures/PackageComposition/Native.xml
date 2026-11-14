@@ -1,0 +1,14 @@
+<Project>
+  <SchemaVersion>1</SchemaVersion>
+  <Name>Native</Name>
+  <Adapter>component-sources</Adapter>
+  <Component>Native/Component.xml</Component>
+  <SourceRoot>Native/Probe</SourceRoot>
+  <IncludeRoot>Native</IncludeRoot>
+  <PublicHeaders>
+    <Header>*.h</Header>
+  </PublicHeaders>
+  <HeaderDestination>include</HeaderDestination>
+  <SourceDestination>src</SourceDestination>
+  <ManifestDestination>cmake/Component.json</ManifestDestination>
+</Project>

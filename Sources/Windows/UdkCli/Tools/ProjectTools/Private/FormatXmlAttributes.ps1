@@ -23,7 +23,9 @@ function Format-UdkXmlAttributes {
         # Align continuation lines with the first attribute, accounting for the tag position.
         $lineStart = $Content.LastIndexOf("`n", $tag.Index) + 1
         $indent = ' ' * ($tag.Index - $lineStart + $name.Length + 1)
-        $parts = @($attributes | ForEach-Object { $_.Value })
+        $parts = @($attributes | ForEach-Object {
+            $_.Value
+        })
         $closing = if ($tag.Value -match '/\s*>$') {
             ' />'
         } else {

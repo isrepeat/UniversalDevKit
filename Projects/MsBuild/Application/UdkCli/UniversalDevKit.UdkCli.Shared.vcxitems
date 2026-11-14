@@ -19,10 +19,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)UdkCli.props">
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Windows\UdkCli\UdkCli.props">
       <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)UdkCli.targets">
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Windows\UdkCli\UdkCli.targets">
       <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
     </None>
   </ItemGroup>

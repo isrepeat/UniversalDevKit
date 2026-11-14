@@ -2,7 +2,7 @@
 
 **Навигация:** [Главная](../../../README.md) → [Пакеты](../../README.md) → Native NuGet
 
-Общий PackageTools читает Package.json или Package.xml версии 2. Поле projects описывает подготовку, contents — состав, а ссылка на Delivery.json или Delivery.xml — упаковку. Адаптер udk-native использует реестр компонентов для ABI, графа и интеграции. Адаптер nuget упаковывает готовый payload. Preview SDK выпускается в отдельном репозитории.
+PackageTools читает Package.xml версии 2. Поле projects описывает подготовку, contents — состав, а ссылка на Delivery.xml задаёт упаковку. Адаптер udk-native использует реестр компонентов для ABI, графа и интеграции. Адаптер nuget упаковывает готовый payload. Preview SDK выпускается в отдельном репозитории.
 
 ## Выпуск
 

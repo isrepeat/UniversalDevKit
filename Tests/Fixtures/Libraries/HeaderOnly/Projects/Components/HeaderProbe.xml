@@ -1,0 +1,16 @@
+<Component>
+  <Name>HeaderProbe</Name>
+  <Kind>headerOnly</Kind>
+  <MsbuildGuid>{984F66E5-780A-40B6-A641-4ECFCD8E0EAF}</MsbuildGuid>
+  <Dependencies>
+    <Dependency>
+      <Component>HeaderLeaf</Component>
+      <Visibility>public</Visibility>
+      <Linkage>same</Linkage>
+    </Dependency>
+  </Dependencies>
+  <Headers>
+    <Header>Includes/HeaderProbe/UniversalDevKit/HeaderProbe/Value.h</Header>
+  </Headers>
+  <Sources />
+</Component>

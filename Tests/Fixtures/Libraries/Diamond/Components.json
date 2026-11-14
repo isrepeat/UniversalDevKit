@@ -1,9 +1,0 @@
-{
-  "schemaVersion": 2,
-  "includes": [
-    "Projects/Components/A.json",
-    "Projects/Components/B.json",
-    "Projects/Components/C.json",
-    "Projects/Components/D.json"
-  ]
-}

@@ -1,4 +1,4 @@
-import groovy.json.JsonSlurper
+import javax.xml.parsers.DocumentBuilderFactory
 
 plugins {
     id("com.android.library")
@@ -7,8 +7,10 @@ plugins {
 
 group = providers.gradleProperty("packageGroup").get()
 version = providers.gradleProperty("packageVersion").orElse(providers.provider {
-    val manifest = rootProject.file("../../../../Packages/Android/AndroidAppKit/Package.json")
-    (JsonSlurper().parse(manifest) as Map<*, *>)["version"] as String
+    val manifest = rootProject.file("../../../../Packages/Android/AndroidAppKit/Package.xml")
+    val factory = DocumentBuilderFactory.newInstance()
+    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
+    factory.newDocumentBuilder().parse(manifest).documentElement.getAttribute("version")
 }).get()
 
 extensions.configure<com.android.build.api.dsl.LibraryExtension>("android") {

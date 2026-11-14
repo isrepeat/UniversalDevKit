@@ -21,7 +21,7 @@
     <Page Include="..\..\..\..\Sources\Windows\UdkCli.Setup\UI\UninstallWindow.xaml" Link="UI\UninstallWindow.xaml" />
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\UI\UninstallWindow.xaml.cs" Link="UI\UninstallWindow.xaml.cs" />
     <Compile Include="..\..\..\..\Sources\Windows\UdkCli.Setup\VisualStudioIntegration.cs" Link="VisualStudioIntegration.cs" />
-    <None Update="UdkCli.Setup.targets" Link="Build\UdkCli.Setup.targets" />
+    <None Include="..\..\..\..\Sources\Windows\UdkCli.Setup\UdkCli.Setup.targets" Link="Build\UdkCli.Setup.targets" />
   </ItemGroup>
-  <Import Project="$(MSBuildThisFileDirectory)UdkCli.Setup.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Windows\UdkCli.Setup\UdkCli.Setup.targets" />
 </Project>

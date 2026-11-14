@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Component name="UdkCli.VisualStudio">
+  <Projects>
+    <Project id="vsix"
+             kind="application"
+             projectType="vsix"
+             version="0.3.0"
+             msbuildGuid="{5217622B-841E-4635-BA5D-8DE005125B16}">
+      <Sources>
+        <Source>Sources/Windows/UdkCli.VisualStudio/**/*.cs</Source>
+        <Source>Sources/Diagnostic/DotNet/*.cs</Source>
+      </Sources>
+      <Filters>
+        <Filter filter=""
+                preserveTree="true">
+          <Path>Sources/Windows/UdkCli.VisualStudio</Path>
+        </Filter>
+        <Filter filter="Diagnostic">
+          <Path>Sources/Diagnostic/DotNet</Path>
+        </Filter>
+        <Filter filter="Build">
+          <Path>Sources/Windows/UdkCli.VisualStudio/**/*.props</Path>
+          <Path>Sources/Windows/UdkCli.VisualStudio/**/*.targets</Path>
+        </Filter>
+      </Filters>
+      <MSBuild>
+        <ProjectName>
+          <When artifact="project">{name}.Net472</When>
+        </ProjectName>
+        <Properties>
+          <TargetFramework>net472</TargetFramework>
+        </Properties>
+      </MSBuild>
+      <BuildExtensions>
+        <MSBuildTargets>Sources/Windows/UdkCli.VisualStudio/UdkCli.VisualStudio.targets</MSBuildTargets>
+      </BuildExtensions>
+    </Project> <!-- Project id="vsix" -->
+  </Projects>
+</Component>

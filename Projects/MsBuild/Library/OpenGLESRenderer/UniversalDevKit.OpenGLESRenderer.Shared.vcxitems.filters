@@ -11,10 +11,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\OpenGLESRenderer\UniversalDevKit\OpenGLESRenderer\Export.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\OpenGLESRenderer\UniversalDevKit\OpenGLESRenderer\OpenGlRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\OpenGLESRenderer\StandardShaders.h" />
-    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.OpenGLESRenderer.Dependencies.props">
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.targets">
       <Filter>Build</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.OpenGLESRenderer.targets">
+    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.OpenGLESRenderer.Dependencies.props">
       <Filter>Build</Filter>
     </None>
   </ItemGroup>

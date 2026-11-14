@@ -14,17 +14,17 @@ foreach ($variant in @('Shared', 'Static', 'Dynamic', 'PrivateStatic')) {
     foreach ($directory in @('Includes', 'Sources', 'Projects')) {
         Copy-Item -LiteralPath (Join-Path $fixture $directory) -Destination $case.Library -Recurse -Force
     }
-    Copy-Item -LiteralPath (Join-Path $fixture 'Components.json') -Destination $case.Library -Force
+    Copy-Item -LiteralPath (Join-Path $fixture 'Components.xml') -Destination $case.Library -Force
     Copy-Item -LiteralPath (Join-Path $fixture 'UniversalDevKit.sln') -Destination $case.Library -Force
     if ($variant -eq 'PrivateStatic') {
         foreach ($name in @('A', 'C')) {
-            Copy-Item -LiteralPath (Join-Path $fixture "PrivateStatic/$name.json") -Destination (Join-Path $case.Library "Projects/Components/$name.json") -Force
+            Copy-Item -LiteralPath (Join-Path $fixture "PrivateStatic/$name.xml") -Destination (Join-Path $case.Library "Projects/Components/$name.xml") -Force
         }
     }
     foreach ($app in @('App1', 'App2')) {
         Copy-Item -LiteralPath (Join-Path $fixture "Consumer/$app/Main.cpp") -Destination (Join-Path $case.Consumer "$app/Main.cpp") -Force
     }
-    & (Join-Path $case.Library 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $case.Library 'Components.json') | Out-Host
+    & (Join-Path $case.Library 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $case.Library 'Components.xml') | Out-Host
     $mode = if ($variant -eq 'PrivateStatic') { 'Dynamic' } else { $variant }
     $connect = Join-Path $case.Library 'Scripts/PowerShell/Connect.ps1'
     $solution = Join-Path $case.Consumer 'Consumer.sln'

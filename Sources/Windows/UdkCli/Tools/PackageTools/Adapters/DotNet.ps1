@@ -35,8 +35,16 @@ function Invoke-UdkComponentDotNetProject($Project, $Context) {
     if (-not (Test-Path -LiteralPath $absolute -PathType Leaf)) {
         throw "Generated project is missing: $path. Run ProjectTools generation for the component registry."
     }
-    $configuration = if ($Project.configuration) { $Project.configuration } else { 'Release' }
-    $operation = if ($Project.operation) { $Project.operation } else { 'build' }
+    $configuration = if ($Project.configuration) {
+        $Project.configuration
+    } else {
+        'Release'
+    }
+    $operation = if ($Project.operation) {
+        $Project.operation
+    } else {
+        'build'
+    }
     Invoke-UdkDotNetProject @{
         project = $path
         operation = $operation

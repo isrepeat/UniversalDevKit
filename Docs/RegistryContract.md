@@ -4,52 +4,61 @@
 
 ## Пример корневого реестра
 
-```json
-{
-  "schemaVersion": 6,
-  "components": [
-    "Projects/Components/Library/Helpers.json",
-    "Projects/Components/Library/Diagnostic.json",
-    "Projects/Components/Application/UdkCli.json"
-  ],
-  "generation": {
-    "integration": {
-      "sourcesTargets": "Projects/MsBuild/UniversalDevKit.Sources.targets",
-      "coreExportHeader": "Includes/Core/UniversalDevKit/Export.h",
-      "versionSource": "Version.json",
-      "versionHeader": "Includes/Core/UniversalDevKit/Version.h",
-      "versionProps": "Projects/MsBuild/UniversalDevKit.Version.props"
-    },
-    "msbuild": {
-      "solution": "UniversalDevKit.sln",
-      "projectDirectory": [
-        { "template": "Projects/MsBuild/{kind:title}/{name}" }
-      ],
-      "projectNames": [
-        { "when": { "artifact": "sharedItems" }, "template": "UniversalDevKit.{name}.Shared" },
-        { "when": { "artifact": "dependencies" }, "template": "UniversalDevKit.{name}.Dependencies" },
-        { "when": { "artifact": "headerCheck" }, "template": "UniversalDevKit.{name}.HeaderCheck" },
-        { "when": { "artifact": "project", "variant": ["static", "dynamic"] }, "template": "UniversalDevKit.{name}.{variant:title}" },
-        { "template": "{name}" }
-      ],
-      "configurations": ["Debug", "Release"],
-      "platforms": ["x64"],
-      "solutionFolder": [
-        { "template": "Projects/MsBuild/{kind:title}/{name}" }
-      ],
-      "nativeProps": ["Projects/MsBuild/BuildLayout.props"]
-    }
-  }
-}
+```xml
+<ComponentRegistry schemaVersion="6">
+  <Components>
+    <Component>Projects/Components/Library/Diagnostic.xml</Component>
+    <Component>Projects/Components/Library/Helpers.xml</Component>
+    <Component>Projects/Components/Library/XamlRuntime.xml</Component>
+    <Component>Projects/Components/Library/OpenGLESRenderer.xml</Component>
+    <Component>Projects/Components/Application/UdkCli.xml</Component>
+    <Component>Projects/Components/Application/UdkCli.Setup.xml</Component>
+    <Component>Projects/Components/Application/UdkCli.VisualStudio.xml</Component>
+    <Component>Projects/Components/Application/XamlCompiler.xml</Component>
+  </Components>
+  <Generation>
+    <Integration>
+      <CoreExportHeader>Includes/Core/UniversalDevKit/Export.h</CoreExportHeader>
+      <SourcesTargets>Projects/MsBuild/UniversalDevKit.Sources.targets</SourcesTargets>
+      <VersionSource>Version.json</VersionSource>
+      <VersionHeader>Includes/Core/UniversalDevKit/Version.h</VersionHeader>
+      <VersionProps>Projects/MsBuild/UniversalDevKit.Version.props</VersionProps>
+    </Integration>
+    <MSBuild>
+      <Solution>UniversalDevKit.sln</Solution>
+      <SolutionFolder>
+        <Default>Projects/MsBuild/{kind:title}/{name}</Default>
+      </SolutionFolder>
+      <ProjectDirectory>
+        <Default>Projects/MsBuild/{kind:title}/{name}</Default>
+      </ProjectDirectory>
+      <ProjectName>
+        <When artifact="sharedItems">UniversalDevKit.{name}.Shared</When>
+        <When artifact="dependencies">UniversalDevKit.{name}.Dependencies</When>
+        <When artifact="headerCheck">UniversalDevKit.{name}.HeaderCheck</When>
+        <When artifact="project"
+              variant="static;dynamic">UniversalDevKit.{name}.{variant:title}</When>
+        <When artifact="project"
+              projectType="classLibrary">{name}.{framework}</When>
+        <Default>{name}</Default>
+      </ProjectName>
+      <Configurations>Debug;Release</Configurations>
+      <Platforms>x64</Platforms>
+      <NativeProps>
+        <Prop>Projects/MsBuild/BuildLayout.props</Prop>
+      </NativeProps>
+    </MSBuild>
+  </Generation>
+</ComponentRegistry>
 ```
 
 **Неизвестные поля отклоняются.** Пути в `components` перечисляются явно, без wildcard.
 
-`projectNames` — упорядоченный список правил с обязательным `template` и необязательным `when`. Первое совпадение ищется в `msbuild.projectNames` проекта, затем в `generation.msbuild.projectNames`. Поля `when` объединяются через И, значения массива одного поля — через ИЛИ. Отсутствующее значение пропускает правило. Правило без `when` должно быть последним.
+`ProjectName` принимает текстовый шаблон или список веток `When` и `Default`. Шаблон записывается текстом внутри ветки. Атрибуты одного `When` объединяются через И, значения одного атрибута через точку с запятой — через ИЛИ. Генератор выбирает первую подходящую ветку, сначала в настройках проекта, затем в корневом реестре. Необязательный `Default` ставится последним и срабатывает, когда ни один `When` в этом блоке не подошёл.
 
 Доступны `name`, `kind` (`library` или `application`), `projectType`, `artifact` (`project`, `sharedItems`, `dependencies`, `headerCheck`), `variant` (`static`, `dynamic`) и `framework` (буквальный `TargetFramework`). Поля `platform` и `architecture` предусмотрены для генераторов с конкретной целью. Текущие выходы MSBuild не предоставляют этих значений. Форматеры `:title` и `:upper` преобразуют регистр независимо от локали. Расширение файла добавляет генератор.
 
-Начиная со схемы 6, `projectDirectory` и `solutionFolder` принимают строку или список правил `when` / `template` с теми же полями и форматерами. Настройка проекта в `msbuild` имеет приоритет над корневой. Пути вычисляются отдельно для каждого выхода. Сегменты разделяются через `/`. Если в выбранном шаблоне указано недоступное значение, например `{framework}` для C++-проекта, генерация завершается ошибкой. Если недоступное поле указано в `when`, генератор пропускает правило.
+Начиная со схемы 6, `ProjectDirectory` и `SolutionFolder` принимают текстовый шаблон или те же ветки `When` и `Default`. Пути вычисляются отдельно для каждого выхода. Сегменты разделяются через `/`. Если в выбранном шаблоне указано недоступное значение, например `{framework}` для C++-проекта, генерация завершается ошибкой. Если недоступное поле указано в `When`, генератор пропускает ветку.
 
 Старые строковые шаблоны и объект `projectNames` с ключами ролей поддерживаются для существующих манифестов. В пределах одного реестра формат `projectNames` должен совпадать в корне и компонентах.
 
@@ -90,31 +99,33 @@
 
 Поля `visibility` и `linkage` задаются явно: `public`/`private` и `same`/`static`/`dynamic`.
 
-```json
-"dependencies": [
-  {
-    "component": "Diagnostic",
-    "visibility": "private",
-    "linkage": "dynamic"
-  }
-]
+```xml
+<Dependencies>
+  <Dependency component="Diagnostic"
+              visibility="private"
+              linkage="dynamic" />
+</Dependencies>
 ```
 
 Подробности — [Components.md](Components.md) и [Requirements.md](Requirements.md).
 
 ## Компоненты только из заголовков
 
-```json
-{
-  "name": "HeaderProbe",
-  "kind": "headerOnly",
-  "msbuildGuid": "{984F66E5-780A-40B6-A641-4ECFCD8E0EAF}",
-  "headers": [
-    "Includes/HeaderProbe/UniversalDevKit/HeaderProbe/Value.h"
-  ],
-  "sources": [],
-  "dependencies": []
-}
+```xml
+<Component name="HeaderProbe">
+  <Projects>
+    <Project id="native"
+             kind="library"
+             projectType="native"
+             libraryType="headerOnly"
+             msbuildGuid="{984F66E5-780A-40B6-A641-4ECFCD8E0EAF}">
+      <Headers>
+        <Header>Includes/HeaderProbe/UniversalDevKit/HeaderProbe/Value.h</Header>
+      </Headers>
+      <Sources />
+    </Project>
+  </Projects>
+</Component>
 ```
 
 **`headerOnly` задаётся явно**, а не определяется по пустому `sources`: `compiled` может добавлять реализацию через `buildExtensions`.
@@ -158,6 +169,6 @@ CMake предоставляет `UniversalDevKit::<компонент>.Headers`
 powershell.exe -NoProfile -File Tests/Infrastructure/TestRegistryContract.ps1
 ```
 
-Сценарий проверяет общий набор неверных JSON fixtures, Shared MSBuild и установленный CMake-пакет с цепочкой header-only зависимостей.
+Сценарий проверяет набор некорректных XML-манифестов, Shared MSBuild и установленный CMake-пакет с цепочкой header-only зависимостей.
 
 **Полный Diamond через CMake** остаётся отдельной задачей. При добавлении поля или изменении значения по умолчанию добавляются одинаковые положительные и отрицательные fixtures для обоих readers.
