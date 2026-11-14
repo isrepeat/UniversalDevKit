@@ -10,7 +10,7 @@
 | AndroidPrefab.Tests.ps1 | APK, Prefab и SO рабочих Android-компонентов |
 | AndroidKotlin.Tests.ps1 | Kotlin AAR, Maven и транзитивные зависимости |
 | PackageDelivery.Tests.ps1 | Механизмы доставки на изолированных fixtures |
-| PackageTools.Migration.Tests.ps1 | Все Package.json версии 2, 14 доставок, отсутствие старых упаковщиков; BaselineDirectory сверяет файлы и NuGet-зависимости, CheckMaven — Android-публикации |
+| PackageTools.Migration.Tests.ps1 | Все Package.xml версии 2, 13 доставок, отсутствие старых упаковщиков; BaselineDirectory сверяет файлы и NuGet-зависимости, CheckMaven — Android-публикации |
 | PackageComposition.Tests.ps1 | JSON-граф смешанных проектов, установленный PackageTools, точные NuGet-зависимости, состав пакета и ошибки контрактов |
 | PackageContents.Tests.ps1 | Источники project/root/path и source, маски include/exclude, rename, сохранение и уплощение дерева, отклонение устаревших полей и конфликтов; UdkCliDirectory проверяет скрипты из поставки UdkCli |
 

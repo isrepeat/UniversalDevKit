@@ -20,6 +20,7 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
+. (Join-Path $root 'Sources/Windows/UdkCli/Tools/ReadManifest.ps1')
 if (-not $RepositoryPath) {
     $RepositoryPath = $root
 }
@@ -56,8 +57,8 @@ if (-not $All) {
     & (Join-Path $root 'Sources/Windows/UdkCli/Tools/PackageTools/Build.ps1') -PackagePath $PackagePath -Delivery $Delivery @arguments
     return
 }
-foreach ($file in Get-ChildItem (Join-Path $RepositoryPath 'Packages') -Filter Package.json -Recurse -File | Sort-Object FullName) {
-    $definition = Get-Content -LiteralPath $file.FullName -Raw | ConvertFrom-Json
+foreach ($file in Get-UdkPackageManifests (Join-Path $RepositoryPath 'Packages')) {
+    $definition = Read-UdkManifest $file.FullName 'Package'
     $relative = $file.FullName.Substring([IO.Path]::GetFullPath($RepositoryPath).TrimEnd('\').Length+1)
     foreach ($name in $definition.deliveries.PSObject.Properties.Name) {
         if ($Delivery -and $Delivery -ne $name) {

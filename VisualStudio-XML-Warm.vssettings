@@ -20,9 +20,8 @@
             <Item Name="XML Text" Foreground="0x00ADBCB7" />
             <Item Name="XML Delimiter" Foreground="0x007E8C9F" />
             <Item Name="XML Comment" Foreground="0x008898AB" />
-            <!-- Selection backgrounds apply to the entire text editor. -->
-            <Item Name="Selected Text" Background="0x003B4A46" />
-            <Item Name="Inactive Selected Text" Background="0x00343C39" />
+            <Item Name="Selected Text" Background="0x003C6880" />
+            <Item Name="Inactive Selected Text" Background="0x00565656" />
           </Items>
         </Category>
       </Categories>

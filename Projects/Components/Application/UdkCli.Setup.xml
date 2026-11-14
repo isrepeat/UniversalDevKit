@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Component name="UdkCli.Setup">
+  <Projects>
+    <Project id="wpf"
+             kind="application"
+             projectType="wpf"
+             msbuildGuid="{C27A6217-35E3-4AD1-BBC7-71438D8E1E16}">
+      <Sources>
+        <Source>Sources/Windows/UdkCli.Setup/**/*.cs</Source>
+        <Source>Sources/Windows/UdkCli.Setup/**/*.xaml</Source>
+      </Sources>
+      <Filters>
+        <Filter path="Sources/Windows/UdkCli.Setup"
+                filter=""
+                preserveTree="true" />
+      </Filters>
+      <MSBuild>
+        <Properties>
+          <TargetFramework>net10.0-windows</TargetFramework>
+        </Properties>
+      </MSBuild>
+      <BuildExtensions>
+        <MSBuildTargets>Projects/MsBuild/Application/UdkCli.Setup/UdkCli.Setup.targets</MSBuildTargets>
+      </BuildExtensions>
+    </Project> <!-- Project id="wpf" -->
+  </Projects>
+</Component>

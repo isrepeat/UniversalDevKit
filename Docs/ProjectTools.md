@@ -5,8 +5,8 @@ ProjectTools находится в `Sources/Windows/UdkCli/Tools/ProjectTools` �
 Генерация UDK:
 
 ```powershell
-powershell.exe -File Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1 -ManifestPath Components.json
-powershell.exe -File Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1 -ManifestPath Components.json -Check
+powershell.exe -File Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1 -ManifestPath Components.xml
+powershell.exe -File Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1 -ManifestPath Components.xml -Check
 ```
 
 CMD, проверки и Connect вызывают Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1 напрямую с параметром -ManifestPath. Обёртка Scripts/PowerShell больше не используется. Логика Connect и его контракт не изменены.
@@ -23,7 +23,7 @@ ProjectTools поставляет проверяемый архив SolutionInje
 
 Схема 5 использует список `components` и массив `projects` в каждом описании компонента. `kind` задаёт роль проекта, а `projectType` выбирает генератор. Тип `native` соответствует C++ для библиотек и приложений. Типы `classLibrary`, `wpf` и `vsix` соответствуют C#. Проекты C# используют `Any CPU` в конфигурациях решения. В профиле UDK проекты размещаются в `Projects/MsBuild/{kind}/{name}`, где `{kind}` подставляется как `Library` или `Application`. Схемы 3 и 4 остаются доступны существующим манифестам. [Формат реестра](RegistryContract.md)
 
-Пути компонентов, файлов и расширений отсчитываются от каталога `Components.json`. `generation.msbuild` содержит `solution`, `projectDirectory` с `{name}` и необязательным `{kind}`, `projectName` с `{name}/{variant}`, `configurations`, `platforms` и необязательные `solutionFolder`, `props`, `targets`.
+Пути компонентов, файлов и расширений отсчитываются от каталога `Components.xml`. `generation.msbuild` содержит `solution`, `projectDirectory` с `{name}` и необязательным `{kind}`, `projectName` с `{name}/{variant}`, `configurations`, `platforms` и необязательные `solutionFolder`, `props`, `targets`.
 
 Описания C++-компонентов используют `headers`, `sources`, `requirements`, `compile`, `dependencies` и `buildExtensions`. `headers` и `sources` допускают точные пути и маски `*`, `**`, `?`. `excludeHeaders` и `excludeSources` исключают файлы, а `variants` выбирает static/dynamic. Для C++-компонентов создаётся Shared, для `libraryType: headerOnly` достаточно Shared и проекта проверки заголовков в профиле UDK. `msbuildGuid` необязателен. Существующие GUID бинарных проектов сохраняются.
 

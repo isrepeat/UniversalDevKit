@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package schemaVersion="2"
+         name="AndroidBuildTools"
+         version="1.0.63.31"
+         defaultDelivery="NuGet">
+  <Projects>
+    <Project id="files"
+             adapter="files">
+      <Mappings>
+        <Mapping source="Sources/Android/AndroidBuildTools/PowerShell"
+                 destination="tools" />
+        <Mapping source="Sources/Android/AndroidBuildTools/Cmake"
+                 destination="cmake" />
+        <Mapping source="Sources/Android/AndroidBuildTools/Gradle"
+                 destination="gradle" />
+        <Mapping source="Projects/Gradle/Library/AndroidBuildTools"
+                 destination="gradle" />
+        <Mapping source="Sources/Android/AndroidBuildTools/ApplicationFramework"
+                 destination="build/native/Android/AndroidBuildTools/ApplicationFramework" />
+        <Mapping source="Includes/Android/AndroidBuildTools/UniversalDevKit/Android/AndroidBuildTools/ApplicationFramework"
+                 destination="build/native/include/UniversalDevKit/Android/AndroidBuildTools/ApplicationFramework" />
+        <Mapping source="Projects/Cmake/Library/AndroidBuildTools/ApplicationFramework/CMakeLists.txt"
+                 destination="build/native/Android/AndroidBuildTools/ApplicationFramework/CMakeLists.txt" />
+        <Mapping source="Scripts/Android/ResolveToolchain.ps1"
+                 destination="tools/Android/ResolveToolchain.ps1" />
+        <Mapping source="Scripts/Android/Toolchain.json"
+                 destination="tools/Android/Toolchain.json" />
+      </Mappings>
+    </Project>
+  </Projects>
+  <Contents>
+    <Content project="files"
+             root="output"
+             destination="." />
+    <Content source="."
+             destination="."
+             preserveHierarchy="false">
+      <Includes>
+        <Include>LICENSE</Include>
+        <Include>Packages/Android/AndroidBuildTools/README.md</Include>
+      </Includes>
+      <Rename>
+        <File from="LICENSE">LICENSE.txt</File>
+      </Rename>
+    </Content>
+  </Contents>
+  <Deliveries>
+    <Delivery name="NuGet">Delivery/NuGet/Delivery.xml</Delivery>
+  </Deliveries>
+</Package>

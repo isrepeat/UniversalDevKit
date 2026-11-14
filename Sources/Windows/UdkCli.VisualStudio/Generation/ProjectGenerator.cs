@@ -17,7 +17,7 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Generation {
             var local = File.Exists(script);
             var start = new ProcessStartInfo {
                 FileName = local ? Path.Combine(Environment.SystemDirectory, "WindowsPowerShell", "v1.0", "powershell.exe") : FindUdk(),
-                Arguments = local ? $"-NoProfile -ExecutionPolicy Bypass -File \"{script}\" -ManifestPath Components.json" : "project generate",
+                Arguments = local ? $"-NoProfile -ExecutionPolicy Bypass -File \"{script}\" -ManifestPath Components" : "project generate",
                 WorkingDirectory = root,
                 UseShellExecute = false,
                 CreateNoWindow = true,

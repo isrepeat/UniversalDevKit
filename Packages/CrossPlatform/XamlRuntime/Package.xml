@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package schemaVersion="2"
+         name="XamlRuntime"
+         version="${UDK_VERSION.version}"
+         defaultDelivery="NuGet">
+  <Projects>
+    <Project id="windows"
+             adapter="udk-native"
+             component="XamlRuntime"
+             cmakeGeneratorWindows="Visual Studio 18 2026" />
+    <Project id="android"
+             adapter="udk-prefab"
+             component="XamlRuntime"
+             configuration="Release"
+             apiLevel="24"
+             toolchain="Scripts/Android/ResolveToolchain.ps1">
+      <Abis>arm64-v8a;x86_64</Abis>
+    </Project>
+  </Projects>
+  <Contents>
+    <Content project="windows"
+             root="output"
+             destination=".">
+      <Deliveries>NuGet</Deliveries>
+    </Content>
+    <Content project="android"
+             root="output"
+             destination=".">
+      <Deliveries>Android</Deliveries>
+    </Content>
+    <Content source="."
+             destination="."
+             preserveHierarchy="false">
+      <Includes>
+        <Include>LICENSE</Include>
+        <Include>Packages/Build/NuGet/README.md</Include>
+      </Includes>
+      <Rename>
+        <File from="LICENSE">LICENSE.txt</File>
+      </Rename>
+      <Deliveries>NuGet</Deliveries>
+    </Content>
+  </Contents>
+  <Deliveries>
+    <Delivery name="Android">Delivery/Android/Delivery.xml</Delivery>
+    <Delivery name="NuGet">Delivery/NuGet/Delivery.xml</Delivery>
+  </Deliveries>
+  <ReleaseDependencies>
+    <ReleaseDependency package="../Helpers/Package.xml"
+                       delivery="NuGet">
+      <When>NuGet</When>
+    </ReleaseDependency>
+    <ReleaseDependency package="../Diagnostic/Package.xml"
+                       delivery="NuGet">
+      <When>NuGet</When>
+    </ReleaseDependency>
+  </ReleaseDependencies>
+</Package>

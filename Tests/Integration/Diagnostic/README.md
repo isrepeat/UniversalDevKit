@@ -26,7 +26,7 @@
 $feed = Join-Path $PWD.Path '!artifacts/tests/diagnostic-wpf-feed'
 $project = 'Tests/Fixtures/Consumers/Diagnostic.Wpf/Diagnostic.Wpf.csproj'
 $version = (Get-Content Version.json -Raw | ConvertFrom-Json).version
-./Packages/Build/Build.ps1 -PackagePath Packages/CrossPlatform/Diagnostic/Package.json -Delivery NuGet -OutputDirectory $feed
+./Packages/Build/Build.ps1 -PackagePath Packages/CrossPlatform/Diagnostic/Package.xml -Delivery NuGet -OutputDirectory $feed
 dotnet restore $project --source "$feed/Diagnostic" --packages "$feed/cache" "-p:UniversalDevKitPackageVersion=$version"
 dotnet run --project $project --no-restore "-p:UniversalDevKitPackageVersion=$version"
 ```

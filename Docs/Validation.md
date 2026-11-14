@@ -17,7 +17,7 @@
 Из корня репозитория:
 
 ```powershell
-./Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1 -ManifestPath Components.json -Check
+./Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1 -ManifestPath Components.xml -Check
 ./Scripts/PowerShell/Connect.Tests.ps1
 ./Tests/Infrastructure/TestComponentRegistry.ps1
 ```

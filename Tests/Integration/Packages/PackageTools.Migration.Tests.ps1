@@ -7,11 +7,12 @@ $env:VSLANG = '1033'
 $OutputEncoding = [Text.UTF8Encoding]::new($false)
 $root = (Resolve-Path (Join-Path $PSScriptRoot '../../..')).Path
 $builder = Join-Path $root 'Packages/Build/Build.ps1'
-$definitions = @(Get-ChildItem (Join-Path $root 'Packages') -Filter Package.json -Recurse -File)
+. (Join-Path $root 'Sources/Windows/UdkCli/Tools/ProjectTools/Private/Contract.ps1')
+$definitions = @(Get-UdkPackageManifests (Join-Path $root 'Packages'))
 $plans = @(& $builder -All -Plan)
-if ($definitions.Count -ne 10 -or $plans.Count -ne 14) { throw 'Unexpected package or delivery matrix.' }
+if ($definitions.Count -ne 9 -or $plans.Count -ne 13) { throw 'Unexpected package or delivery matrix.' }
 foreach ($file in $definitions) {
-    if ((Get-Content -LiteralPath $file.FullName -Raw | ConvertFrom-Json).schemaVersion -ne 2) { throw "Unmigrated package: $file" }
+    if ((Read-UdkManifest $file.FullName 'Package').schemaVersion -ne 2) { throw "Unmigrated package: $file" }
 }
 foreach ($old in @('Packages/Build/NuGet/Build.ps1','Packages/Build/Content/Build.ps1','Packages/Build/Android/Build.ps1','Packages/Build/Android/BuildKotlin.ps1','Packages/Windows/XamlCompiler/Build.ps1')) {
     if (Test-Path -LiteralPath (Join-Path $root $old)) { throw "Legacy packer remains: $old" }
@@ -47,13 +48,14 @@ foreach ($plan in ($plans | Where-Object DeliveryName -eq 'NuGet')) {
     }
 }
 if ($CheckMaven) {
+    $components = (Read-ProjectToolsModel (Join-Path $root 'Components')).Components.Values
     foreach ($plan in ($plans | Where-Object DeliveryName -eq 'Android')) {
         if ($plan.Delivery.adapter -eq 'maven-repository') {
             $artifact = $plan.Delivery.artifactId
             $variants = @($artifact)
         } else {
             $project = @($plan.Projects.Values | Where-Object adapter -eq 'udk-prefab')[0]
-            $registry = Get-Content (Join-Path $root "Projects/Components/$($project.component).json") -Raw | ConvertFrom-Json
+            $registry = $components | Where-Object name -CEQ $project.component
             $modes = if ($registry.kind -eq 'headerOnly') { @('shared') } elseif ($registry.stateScope -eq 'process') { @('dynamic') } else { @('static','dynamic') }
             $variants = @($modes | ForEach-Object { $plan.Delivery.artifactPrefix + '-' + $_ + '-release' })
         }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package schemaVersion="2"
+         name="AndroidTemplates"
+         version="1.0.0.34"
+         defaultDelivery="NuGet">
+  <Projects>
+    <Project id="files"
+             adapter="files">
+      <Mappings>
+        <Mapping source="Sources/Android/AndroidTemplates/PowerShell"
+                 destination="PowerShell" />
+        <Mapping source="Sources/Android/AndroidTemplates/Templates/Application"
+                 destination="template_app" />
+        <Mapping source="Sources/Android/AndroidTemplates/PowerShell/Read-AndroidSharedProps.ps1"
+                 destination="template_app/Scripts/PowerShell/Read-AndroidSharedProps.ps1" />
+        <Mapping source="Sources/Android/AndroidTemplates/PowerShell/Remove-AndroidProject.ps1"
+                 destination="template_app/Scripts/PowerShell/Remove-AndroidProject.ps1" />
+        <Mapping source="Version.json"
+                 destination="UdkVersion.json" />
+      </Mappings>
+    </Project>
+  </Projects>
+  <Contents>
+    <Content project="files"
+             root="output"
+             destination="." />
+    <Content source="."
+             destination="."
+             preserveHierarchy="false">
+      <Includes>
+        <Include>LICENSE</Include>
+        <Include>Packages/Android/AndroidTemplates/README.md</Include>
+      </Includes>
+      <Rename>
+        <File from="LICENSE">LICENSE.txt</File>
+      </Rename>
+    </Content>
+  </Contents>
+  <Deliveries>
+    <Delivery name="NuGet">Delivery/NuGet/Delivery.xml</Delivery>
+  </Deliveries>
+</Package>

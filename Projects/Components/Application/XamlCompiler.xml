@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Component name="XamlCompiler">
+  <Projects>
+    <Project id="native"
+             kind="application"
+             projectType="native">
+      <Headers>
+        <Header>Sources/Windows/XamlCompiler/**/*.h</Header>
+      </Headers>
+      <Sources>
+        <Source>Sources/Windows/XamlCompiler/**/*.cpp</Source>
+      </Sources>
+      <Filters>
+        <Filter path="Sources/Windows/XamlCompiler"
+                filter="Sources" />
+      </Filters>
+      <Requirements cxxStandard="20" />
+    </Project> <!-- Project id="native" -->
+  </Projects>
+</Component>

@@ -1,6 +1,0 @@
-{
-  "schemaVersion": 1,
-  "groupId": "org.universaldevkit",
-  "artifactPrefix": "universaldevkit-xamlruntime",
-  "adapter": "maven-prefab"
-}

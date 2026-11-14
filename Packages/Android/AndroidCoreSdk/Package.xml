@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package schemaVersion="2"
+         name="AndroidCoreSdk"
+         version="1.0.10"
+         defaultDelivery="Android">
+  <Projects>
+    <Project id="gradle"
+             adapter="gradle-publish"
+             projectDirectory="Projects/Gradle/Library/AndroidCoreSdk"
+             toolchain="Scripts/Android/ResolveToolchain.ps1"
+             refreshDependencies="false">
+      <Tasks>:androidcoresdk:publishReleasePublicationToAndroidPackagesFeedRepository</Tasks>
+    </Project>
+  </Projects>
+  <Contents>
+    <Content project="gradle"
+             root="output"
+             destination="." />
+  </Contents>
+  <Deliveries>
+    <Delivery name="Android">Delivery/Android/Delivery.xml</Delivery>
+  </Deliveries>
+</Package>

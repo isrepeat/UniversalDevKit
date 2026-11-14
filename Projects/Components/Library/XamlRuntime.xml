@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Component name="XamlRuntime">
+  <Projects>
+    <Project id="native"
+             kind="library"
+             projectType="native"
+             msbuildGuid="{3E00A02D-46F3-432B-91C8-5D459F70C525}">
+      <SupportedPlatforms>Windows;Android</SupportedPlatforms>
+      <Dependencies>
+        <Dependency component="Helpers"
+                    visibility="public"
+                    linkage="same" />
+        <Dependency component="Diagnostic"
+                    visibility="private"
+                    linkage="dynamic" />
+      </Dependencies>
+      <Headers>
+        <Header>Includes/XamlRuntime/UniversalDevKit/XamlRuntime/**/*.h</Header>
+      </Headers>
+      <Sources>
+        <Source>Sources/XamlRuntime/**/*.cpp</Source>
+      </Sources>
+      <Filters>
+        <Filter path="Includes/XamlRuntime/UniversalDevKit/XamlRuntime"
+                filter=""
+                preserveTree="true" />
+        <Filter path="Sources/XamlRuntime"
+                filter=""
+                preserveTree="true" />
+      </Filters>
+      <Requirements cxxStandard="20" />
+      <BuildExtensions>
+        <CMake>Projects/Cmake/Library/XamlRuntime/Build.cmake</CMake>
+        <MSBuildTargets>Projects/MsBuild/Library/XamlRuntime/UniversalDevKit.XamlRuntime.targets</MSBuildTargets>
+      </BuildExtensions>
+    </Project> <!-- Project id="native" -->
+  </Projects>
+</Component>

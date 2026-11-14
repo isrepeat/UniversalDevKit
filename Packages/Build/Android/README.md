@@ -11,10 +11,10 @@ NDK r27c (27.2.12479018), API 24+, arm64-v8a/x86_64, c++_shared, Release и по
 ## Выпуск
 
 ```powershell
-./Packages/Build/Build.ps1 -PackagePath Packages/CrossPlatform/Diagnostic/Package.json -Delivery Android -AndroidNdk C:/Android/Sdk/ndk/27.2.12479018 -Abi arm64-v8a -Configuration Release
+./Packages/Build/Build.ps1 -PackagePath Packages/CrossPlatform/Diagnostic/Package.xml -Delivery Android -AndroidNdk C:/Android/Sdk/ndk/27.2.12479018 -Abi arm64-v8a -Configuration Release
 ```
 
-CMake и Ninja могут быть переданы явно; по умолчанию используются инструменты Visual Studio. Все Android-поставки выбираются через -All -Delivery Android. Версия задаётся полем `version` в `Package.json`. Проекты udk-prefab готовят native payload, maven-prefab формирует AAR/POM. Проекты gradle-publish и доставка maven-repository выпускают AndroidCoreSdk и AndroidAppKit тем же механизмом; releaseDependencies AppKit предварительно выпускает CoreSdk. Шаблон native Consumer.cmake хранится в Sources/Windows/UdkCli/Tools/PackageTools/Templates.
+CMake и Ninja могут быть переданы явно; по умолчанию используются инструменты Visual Studio. Все Android-поставки выбираются через -All -Delivery Android. Версия задаётся полем `version` в `Package.xml`. Проекты udk-prefab готовят native payload, maven-prefab формирует AAR/POM. Проекты gradle-publish и доставка maven-repository выпускают AndroidCoreSdk и AndroidAppKit тем же механизмом; releaseDependencies AppKit предварительно выпускает CoreSdk. Шаблон native Consumer.cmake хранится в Sources/Windows/UdkCli/Tools/PackageTools/Templates.
 
 Maven group — org.universaldevkit. Например, Diagnostic поставляется как universaldevkit-diagnostic-dynamic-release, Helpers — universaldevkit-helpers-shared-release. AAR включает Prefab-заголовки, библиотеки и описание совместимости; Maven POM сохраняет зависимости. Потребителю не нужен исходный checkout UDK.
 

@@ -9,15 +9,15 @@ PackageTools входит в поставку [UdkCli](UdkCli.md). Для раб
 Из корня репозитория:
 
 ```powershell
-udk package plan Packages/MyLibrary/Package.json
-udk package build Packages/MyLibrary/Package.json
+udk package plan Packages/MyLibrary/Package.xml
+udk package build Packages/MyLibrary/Package.xml
 ```
 
 Первая команда проверяет план выпуска без сборки, вторая собирает пакет локально. Для дополнительных параметров можно вызвать `Tools/PackageTools/Build.ps1` из поставки напрямую. Отправку пакетов в feed выполняет отдельный шаг CI.
 
 ## Контракт проектов
 
-Поле projects в Package.json допускает два варианта. Основной — объект локальных определений: ключ задаёт имя проекта, значение содержит adapter и параметры адаптера. name и schemaVersion внутри локального проекта не указываются. Необязательные dependencies ссылаются на другие ключи того же объекта. Для общих проектов сохранён прежний вариант: строка с путём реестра Projects/Build.json версии 1, который перечисляет отдельные файлы через includes; внешние проекты сохраняют явные schemaVersion=1 и name. Сборщик выполняет выбранные проекты и их зависимости в топологическом порядке; циклы и неизвестные зависимости отвергаются.
+Поле projects в Package.xml допускает два варианта. Основной — объект локальных определений: ключ задаёт имя проекта, значение содержит adapter и параметры адаптера. name и schemaVersion внутри локального проекта не указываются. Необязательные dependencies ссылаются на другие ключи того же объекта. Для общих проектов сохранён прежний вариант: строка с путём реестра Projects/Build.json версии 1, который перечисляет отдельные файлы через includes; внешние проекты сохраняют явные schemaVersion=1 и name. Сборщик выполняет выбранные проекты и их зависимости в топологическом порядке; циклы и неизвестные зависимости отвергаются.
 
 Пути внутри проекта относительны к корню собираемого репозитория. Адаптер предоставляет именованные корни результатов, например output, build или install. Состав пакета выбирает файл или каталог непосредственно через root/path в contents. Поля projects.<имя>.artifacts и contents.artifact удалены из контракта и отклоняются как неизвестные поля, включая проекты внешнего реестра.
 
@@ -37,7 +37,7 @@ cmake-install допускает preparation для нестандартной �
 
 ## Контракт пакета
 
-Package.json версии 2 содержит name, projects, непустой contents и deliveries с именованными способами доставки. Поле `version` обязательно. Оно принимает номер версии или ссылку из корневого `JsonReferences.json`. Пути deliveries относительны к каталогу пакета. contents.source относителен корню репозитория. Для пакета только из готовых файлов projects может быть пустым объектом. Если projects — строка, путь внешнего реестра относителен каталогу пакета; пути внутри любых определений проектов по-прежнему относительны корню репозитория.
+Package.xml версии 2 содержит name, projects, непустой contents и deliveries с именованными способами доставки. Поле `version` обязательно. Оно принимает номер версии или ссылку из корневого `JsonReferences.json`. Пути deliveries относительны к каталогу пакета. contents.source относителен корню репозитория. Для пакета только из готовых файлов projects может быть пустым объектом. Если projects — строка, путь внешнего реестра относителен каталогу пакета; пути внутри любых определений проектов по-прежнему относительны корню репозитория.
 
 ```json
 {
@@ -62,9 +62,9 @@ Package.json версии 2 содержит name, projects, непустой co
 
 destination всегда задаёт каталог внутри payload, точка означает его корень. Каталог копируется содержимым с сохранением относительной иерархии по умолчанию; файловый результат проекта сохраняет имя. rename позволяет изменить имена файлов. Выход путей за границы корня, конфликты имён, отсутствующие результаты и пустой отбор приводят к ошибке.
 
-Delivery.json версии 1 выбирает adapter=nuget, id, supportedPlatforms=["Windows"], nuspec и необязательный noWarn. Необязательный dependencies содержит элементы id/version с точной версией без диапазона. Nuspec должен содержать {{DEPENDENCIES}}; адаптер заменяет его на dependency с точным диапазоном [version]. Повторы, ссылка на сам пакет и несовпадение placeholder с описанием отвергаются. Адаптер проверяет ID nuspec, подставляет {{VERSION}} и упаковывает готовый payload. Стандартная запись files в nuspec: payload\**\* → корень пакета.
+Delivery.xml версии 1 выбирает adapter=nuget, id, supportedPlatforms=["Windows"], nuspec и необязательный noWarn. Необязательный dependencies содержит элементы id/version с точной версией без диапазона. Nuspec должен содержать {{DEPENDENCIES}}; адаптер заменяет его на dependency с точным диапазоном [version]. Повторы, ссылка на сам пакет и несовпадение placeholder с описанием отвергаются. Адаптер проверяет ID nuspec, подставляет {{VERSION}} и упаковывает готовый payload. Стандартная запись files в nuspec: payload\**\* → корень пакета.
 
-Все продуктовые Package.json UDK переведены на schemaVersion: 2. Старые упаковщики удалены. Версия Delivery.json остаётся 1: это отдельный контракт доставки, а не версия Package.json. Выбор выполняется параметром -Delivery; без него выбирается NuGet либо единственная доставка.
+В Package.xml версии 2 параметр `-Delivery` выбирает доставку по имени. Без параметра используется `defaultDelivery` или единственная объявленная доставка. При нескольких доставках без `defaultDelivery` нужно явно передать `-Delivery`. Нативная интеграция ищет единственную доставку с адаптером `nuget` и настройками `integration`, включая путь к `.targets`. Версия контракта Delivery.xml — 1.
 
 ## Отбор файлов в contents
 
@@ -137,12 +137,12 @@ Delivery.json версии 1 выбирает adapter=nuget, id, supportedPlatfo
 ## Собственные выпуски UDK
 
 ```powershell
-& ./Packages/Build/Build.ps1 -PackagePath Packages/Windows/XamlCompiler/Package.json
+& ./Packages/Build/Build.ps1 -PackagePath Packages/Windows/XamlCompiler/Package.xml
 ```
 
 Продуктовые пакеты UDK выпускаются через PackageTools. Адаптер udk-native сохраняет ABI, MSBuild-интеграцию и вычисление native-зависимостей из реестра компонентов. OpenGLESRenderer включает ANGLE, публичные заголовки в include/ANGLE и лицензии. Зависимости компонентных nuspec не ограничены группой native, поэтому NuGet восстанавливает транзитивные пакеты и для смешанных net8.0 SDK.
 
-Продуктовые Package.json UDK выбирают результаты напрямую в contents, без промежуточных artifacts: root=output для подготовленного дерева и root=build, path=Release, include=["XamlCompiler.exe"] для компилятора. Там, где нужен весь результат, include/exclude опускаются: сохраняется полное дерево. Параметры доставки и зависимости пакетов от этого упрощения не меняются.
+Продуктовые Package.xml UDK выбирают результаты напрямую в contents, без промежуточных artifacts: root=output для подготовленного дерева и root=build, path=Release, include=["XamlCompiler.exe"] для компилятора. Там, где нужен весь результат, include/exclude опускаются: сохраняется полное дерево. Параметры доставки и зависимости пакетов от этого упрощения не меняются.
 
 У Previewer независимы Version.json продукта, PackageReference инструмента в Packages/Build.csproj и версии трёх UDK-зависимостей в Delivery.json PluginSDK. Тег и коммит репозитория Previewer определяют его выпуск. Native-библиотеки остаются в собственных NuGet-пакетах.
 
@@ -154,7 +154,7 @@ Tests/Integration/Packages/PackageComposition.Tests.ps1 проверяет см�
 
 ## Несколько доставок и предварительные выпуски
 
-contents может содержать deliveries: ["NuGet"] или ["Android"]. Сборщик выбирает только результаты выбранной доставки и необходимые проекты. Общие элементы без фильтра включаются всегда. releaseDependencies содержит package (путь к Package.json относительно текущего пакета), delivery и необязательный when (список доставок текущего пакета). Эти пакеты выпускаются первыми; циклы отвергаются при построении плана. Для NuGet зависимости копируются в feed корневого пакета, для Maven используется общий выходной репозиторий. Это порядок выпуска; зависимости потребителя описываются отдельно в Delivery.json либо исходном Gradle-проекте.
+contents может содержать deliveries: ["NuGet"] или ["Android"]. Сборщик выбирает только результаты выбранной доставки и необходимые проекты. Общие элементы без фильтра включаются всегда. releaseDependencies содержит package (путь к Package.xml относительно текущего пакета), delivery и необязательный when (список доставок текущего пакета). Эти пакеты выпускаются первыми; циклы отвергаются при построении плана. Для NuGet зависимости копируются в feed корневого пакета, для Maven используется общий выходной репозиторий. Это порядок выпуска; зависимости потребителя описываются отдельно в Delivery.xml либо исходном Gradle-проекте.
 
 Ссылки вида `${UDK_VERSION.version}` разрешаются по [карте JSON-ссылок](Components.md#ссылки-на-json). Значение версии не изменяется при выпуске.
 
@@ -163,10 +163,10 @@ contents может содержать deliveries: ["NuGet"] или ["Android"].
 | cmake-build | sourceDirectory, generator, configurations; корень build, без install |
 | udk-native | component, cmakeGeneratorWindows (имя генератора CMake для Windows); корень output с native NuGet payload |
 | udk-dotnet | component, необязательные projectId, operation (build по умолчанию или publish), configuration (Release по умолчанию или Debug), runtime и selfContained. Корень output. Путь к сгенерированному .csproj определяется по правилам ProjectTools. Если C#-проектов несколько, укажите projectId. |
-| udk-component-sources | Параметры component-sources, где component задаёт имя нативного компонента в Components.json. Список файлов разрешается по описанию компонента и записывается в manifestDestination. |
+| udk-component-sources | Параметры component-sources, где component задаёт имя нативного компонента в Components.xml. Список файлов разрешается по описанию компонента и записывается в manifestDestination. |
 | udk-prefab | component, toolchain, configuration, abis, apiLevel; корень output с вариантами Prefab |
 | gradle-publish | projectDirectory, toolchain, tasks, refreshDependencies; корень output с Maven-публикацией |
 
 Специализированные udk-native и udk-prefab требуют реестр компонентов и инфраструктуру исходного UDK; обычный сторонний репозиторий использует dotnet, cmake-install, cmake-build, files и nuget-restore. gradle-publish получает путь к resolver toolchain явно из JSON. Delivery adapter=maven-prefab формирует native AAR/POM, maven-repository переносит штатную Gradle-публикацию вместе с метаданными и контрольными суммами. NuGet dependencySource=udk-component вычисляет точные зависимости из компонентного реестра; обычные пакеты задают dependencies явно.
 
-В UDK основной точкой запуска служит ./Packages/Build/Build.ps1. Параметр -All автоматически выбирает все Package.json и их доставки, -Delivery ограничивает способ доставки, а -PackagePath выбирает конкретный пакет. Оболочка использует исходный PackageTools. Проверка -All -Plan не запускает сборку. PackageTools.Migration.Tests.ps1 сверяет все планы, а с BaselineDirectory сравнивает состав файлов и NuGet-зависимости с контрольными пакетами; CheckMaven проверяет Android-публикации.
+В UDK основной точкой запуска служит ./Packages/Build/Build.ps1. Параметр -All автоматически выбирает все Package.xml и их доставки, -Delivery ограничивает способ доставки, а -PackagePath выбирает конкретный пакет. Оболочка использует исходный PackageTools. Проверка -All -Plan не запускает сборку. PackageTools.Migration.Tests.ps1 сверяет все планы, а с BaselineDirectory сравнивает состав файлов и NuGet-зависимости с контрольными пакетами; CheckMaven проверяет Android-публикации.

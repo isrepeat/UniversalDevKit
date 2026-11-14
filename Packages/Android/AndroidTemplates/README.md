@@ -2,9 +2,9 @@
 
 Полный цикл создания приложения, настройки и выпуска: [гайд Android-приложений](../../../Docs/AndroidBuild.md).
 
-Шаблон Android-приложения и команды его создания/удаления перенесены из UtilityHelpersLib. NuGet ID `AndroidTemplates`, версия `1.0.0.34`. Версия задаётся полем `version` в `Package.json`.
+Шаблон Android-приложения и команды его создания/удаления перенесены из UtilityHelpersLib. NuGet ID `AndroidTemplates`, версия `1.0.0.34`. Версия задаётся полем `version` в `Package.xml`.
 
-Сборка: `Scripts/Packages/Android/Pack.AndroidTemplates.cmd`. Исходники команд и шаблона находятся в Sources/Android/AndroidTemplates/PowerShell и Sources/Android/AndroidTemplates/Templates/Application. Delivery.json собирает из них прежние PowerShell и template_app внутри NuGet. После восстановления пакета вызовите `PowerShell/New-AndroidApplication.ps1 -Name MyApp -PackageId com.example.myapp -Destination <new-directory>`.
+Сборка: `Scripts/Packages/Android/Pack.AndroidTemplates.cmd`. Исходники команд и шаблона находятся в Sources/Android/AndroidTemplates/PowerShell и Sources/Android/AndroidTemplates/Templates/Application. Delivery.xml собирает из них прежние PowerShell и template_app внутри NuGet. После восстановления пакета вызовите `PowerShell/New-AndroidApplication.ps1 -Name MyApp -PackageId com.example.myapp -Destination <new-directory>`.
 
 Генератор читает ближайший Android.SharedProps.json, закрепляет опубликованную версию AndroidBuildTools и версию UDK из поставки шаблона. Внешние signing/OAuth/Drive настройки сохраняют прежний контракт; секреты находятся вне исходников. Создание приложения может создавать локальные signing-ключи, но не публикует пакеты и не запускает OAuth-браузер автоматически.
 

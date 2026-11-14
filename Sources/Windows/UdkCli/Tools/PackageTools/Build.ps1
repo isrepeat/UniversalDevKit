@@ -140,6 +140,8 @@ try {
             $project = $buildPlan.Projects[$name]
             $context = @{
                 RepositoryPath = $buildPlan.RepositoryPath
+                PackagePath = $buildPlan.PackagePath
+                PackageRoot = $buildPlan.PackageRoot
                 WorkDirectory = Join-Path $projectDirectory $name
                 Properties = $Properties
                 CMake = $CMake

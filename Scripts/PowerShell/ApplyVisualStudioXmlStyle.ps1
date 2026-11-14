@@ -1,21 +1,28 @@
 $ErrorActionPreference = 'Stop'
 $settingsPath = Join-Path $PSScriptRoot '../../VisualStudio-XML-Warm.vssettings'
 $settings = [xml][IO.File]::ReadAllText($settingsPath)
-$palette = foreach ($entry in $settings.SelectNodes('//FontsAndColors/Categories/Category/Items/Item')) {
-    $property = switch -Regex ($entry.Name) {
-        '^XML ' { 'Foreground' }
-        '^(Inactive )?Selected Text$' { 'Background' }
-        default { throw "Unsupported editor color: $($entry.Name)" }
-    }
+$managedColors = [ordered]@{
+    'XML Name' = 'Foreground'
+    'XML Attribute' = 'Foreground'
+    'XML Attribute Value' = 'Foreground'
+    'XML Attribute Quotes' = 'Foreground'
+    'XML Text' = 'Foreground'
+    'XML Delimiter' = 'Foreground'
+    'XML Comment' = 'Foreground'
+    'Selected Text' = 'Background'
+    'Inactive Selected Text' = 'Background'
+}
+$palette = @{}
+foreach ($entry in $settings.SelectNodes('//FontsAndColors/Categories/Category/Items/Item')) {
+    $name = $entry.GetAttribute('Name')
+    $property = $managedColors[$name]
+    if (-not $property) { throw "Unsupported editor color: $name" }
+    if ($palette.ContainsKey($name)) { throw "Duplicate editor color: $name" }
     $color = $entry.GetAttribute($property)
     if ($color -cnotmatch '^0x00[0-9A-Fa-f]{6}$') {
         throw "Invalid $property color for $($entry.Name): $color"
     }
-    [pscustomobject]@{
-        Name = $entry.Name
-        Property = $property
-        Color = [Convert]::ToInt32($color.Substring(2), 16)
-    }
+    $palette[$name] = [Convert]::ToInt32($color.Substring(2), 16)
 }
 
 try {
@@ -24,11 +31,19 @@ try {
     throw 'Open Visual Studio 2026 before applying the XML style.'
 }
 $items = $visualStudio.Properties('FontsAndColors', 'TextEditor').Item('FontsAndColorsItems').Object
-foreach ($entry in $palette) {
-    $item = $items.Item($entry.Name)
-    $item.($entry.Property) = $entry.Color
-    if ($item.($entry.Property) -ne $entry.Color) {
-        throw "Visual Studio did not apply the color for $($entry.Name)."
+# Visual Studio uses this indexed color to clear the color override.
+$themeDefault = 0x02000000
+foreach ($entry in $managedColors.GetEnumerator()) {
+    $name = $entry.Key
+    $property = $entry.Value
+    $item = $items.Item($name)
+    if ($palette.ContainsKey($name)) {
+        $item.$property = $palette[$name]
+        if ($item.$property -ne $palette[$name]) {
+            throw "Visual Studio did not apply the color for $name."
+        }
+    } else {
+        $item.$property = $themeDefault
     }
 }
-Write-Output "Applied $($palette.Count) editor colors in Visual Studio."
+Write-Output "Applied $($palette.Count) editor colors and reset $($managedColors.Count - $palette.Count) to the current Visual Studio theme."

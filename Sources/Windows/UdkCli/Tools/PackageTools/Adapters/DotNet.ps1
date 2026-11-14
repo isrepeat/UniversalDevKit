@@ -18,7 +18,7 @@ function Invoke-UdkComponentDotNetProject($Project, $Context) {
     . (Join-Path $projectTools 'Contract.ps1')
     . (Join-Path $projectTools 'MsBuild.ps1')
 
-    $model = Read-ProjectToolsModel (Join-Path $Context.RepositoryPath 'Components.json')
+    $model = Read-ProjectToolsModel (Join-Path $Context.RepositoryPath 'Components')
     $matches = @(@($model.ManagedLibraries.Values) + @($model.Applications.Values) | Where-Object {
         $_.language -eq 'csharp' -and $_.name -eq $Project.component -and
         (-not $Project.projectId -or $_.projectId -eq $Project.projectId)
@@ -33,7 +33,7 @@ function Invoke-UdkComponentDotNetProject($Project, $Context) {
     $path = Get-ProjectToolsDotNetLocation $model $matches[0]
     $absolute = Resolve-UdkBuildPath $model.Root $model.Root $path
     if (-not (Test-Path -LiteralPath $absolute -PathType Leaf)) {
-        throw "Generated project is missing: $path. Run ProjectTools generation for Components.json."
+        throw "Generated project is missing: $path. Run ProjectTools generation for the component registry."
     }
     $configuration = if ($Project.configuration) { $Project.configuration } else { 'Release' }
     $operation = if ($Project.operation) { $Project.operation } else { 'build' }

@@ -1,10 +1,13 @@
-# JSON defines sources and dependencies. Component files add system settings.
+# Manifests define sources and dependencies. Component files add system settings.
+include("${CMAKE_CURRENT_LIST_DIR}/ReadManifest.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/ComponentRequirements.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/RegistryContract.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/ComponentFiles.cmake")
 
 # 1. Validate the root registry before reading component descriptions or creating targets.
-file(READ "${PROJECT_SOURCE_DIR}/Components.json" registryManifest)
+set(UniversalDevKit_COMPONENT_REGISTRY "Components" CACHE STRING "Component registry path, with optional .json or .xml extension")
+get_filename_component(registryPath "${UniversalDevKit_COMPONENT_REGISTRY}" ABSOLUTE BASE_DIR "${PROJECT_SOURCE_DIR}")
+udkReadManifest("${registryPath}" ComponentRegistry registryManifest)
 string(JSON registrySchemaVersion GET "${registryManifest}" schemaVersion)
 string(JSON registrySchemaType TYPE "${registryManifest}" schemaVersion)
 if(registrySchemaVersion MATCHES "^[456]$")
@@ -18,7 +21,7 @@ else()
 endif()
 string(JSON registryListType TYPE "${registryManifest}" "${registryListField}")
 if(NOT registrySchemaType STREQUAL "NUMBER" OR NOT registrySchemaVersion MATCHES "^(2|4|5|6)$" OR NOT registryListType STREQUAL "ARRAY")
-    message(FATAL_ERROR "Unsupported Components.json schema")
+    message(FATAL_ERROR "Unsupported component registry schema")
 endif()
 string(JSON registryEntryCount LENGTH "${registryManifest}" "${registryListField}")
 if(registryEntryCount LESS 1)
@@ -38,8 +41,7 @@ foreach(registryEntryIndex RANGE ${registryEntryLastIndex})
         message(FATAL_ERROR "Invalid or duplicate registry entry: ${componentRegistryEntryPath}")
     endif()
     list(APPEND registeredComponentPaths "${componentRegistryEntryPath}")
-    file(READ "${PROJECT_SOURCE_DIR}/${componentRegistryEntryPath}" componentDefinitionJson)
-    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/${componentRegistryEntryPath}")
+    udkReadManifest("${PROJECT_SOURCE_DIR}/${componentRegistryEntryPath}" Component componentDefinitionJson)
     if(registrySchemaVersion MATCHES "^[56]$")
         udkCheckObjectKeys("${componentDefinitionJson}" "name;projects" component)
         string(JSON componentNameType TYPE "${componentDefinitionJson}" name)
@@ -147,7 +149,7 @@ foreach(registryEntryIndex RANGE ${registryEntryLastIndex})
 
 endforeach()
 
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/Components.json")
+set_property(DIRECTORY PROPERTY UDK_PUBLIC_HEADER_COMPONENTS "${registeredComponentNames}")
 
 # Dependency variants are selected independently of the root variants.
 function(udkRequireComponentVariant componentName componentVariant dependencyTraversalChain)

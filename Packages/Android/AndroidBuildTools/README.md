@@ -2,9 +2,9 @@
 
 Пользовательские команды и настройка окружения: [гайд Android-приложений](../../../Docs/AndroidBuild.md).
 
-Перенесённые инструменты сборки приложений Android из UtilityHelpersLib. NuGet ID `AndroidBuildTools` сохранён; версия поставки — `1.0.63.31`. Версия задаётся полем `version` в `Package.json`.
+Перенесённые инструменты сборки приложений Android из UtilityHelpersLib. NuGet ID `AndroidBuildTools` сохранён; версия поставки — `1.0.63.31`. Версия задаётся полем `version` в `Package.xml`.
 
-Сборка пакета: `Scripts/Packages/Android/Pack.AndroidBuildTools.cmd`. Результат: `!artifacts/packages/nuget/AndroidBuildTools`. Реализация находится в Sources/Android/AndroidBuildTools: PowerShell, Cmake, Gradle и ApplicationFramework. Публичные C++ заголовки находятся в Includes/Android/AndroidBuildTools, проекты сборки — в Projects/Gradle/Library/AndroidBuildTools и Projects/Cmake/Library/AndroidBuildTools. Delivery/NuGet/Delivery.json задаёт отображение этих каталогов в tools, cmake, gradle и build/native внутри пакета.
+Сборка пакета: `Scripts/Packages/Android/Pack.AndroidBuildTools.cmd`. Результат: `!artifacts/packages/nuget/AndroidBuildTools`. Реализация находится в Sources/Android/AndroidBuildTools: PowerShell, Cmake, Gradle и ApplicationFramework. Публичные C++ заголовки находятся в Includes/Android/AndroidBuildTools, проекты сборки — в Projects/Gradle/Library/AndroidBuildTools и Projects/Cmake/Library/AndroidBuildTools. Delivery/NuGet/Delivery.xml задаёт отображение этих каталогов в tools, cmake, gradle и build/native внутри пакета.
 
 Проект закрепляет AndroidBuildToolsVersion в android-build.psd1. Команда `build.ps1 restore` восстанавливает инструменты; `build.ps1 build-android -Configuration Debug` генерирует XAML и запускает Gradle. Новый Native.Prefab использует AGP externalNativeBuild, AAR UDK и c++_shared вместо старого монолитного XamlRuntime NuGet и c++_static. NativeOnly запускает externalNativeBuild без упаковки APK. Для текущего профиля UDK native-зависимости и CMake используют Release, включая Debug APK.
 

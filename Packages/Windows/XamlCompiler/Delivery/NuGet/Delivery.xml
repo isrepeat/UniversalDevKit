@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Delivery schemaVersion="1"
+          adapter="nuget"
+          id="UniversalDevKit.XamlCompiler"
+          nuspec="UniversalDevKit.XamlCompiler.nuspec">
+  <SupportedPlatforms>Windows</SupportedPlatforms>
+  <NoWarn>NU5100</NoWarn>
+</Delivery>

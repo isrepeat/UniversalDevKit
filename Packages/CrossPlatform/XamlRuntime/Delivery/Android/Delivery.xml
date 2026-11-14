@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Delivery schemaVersion="1"
+          groupId="org.universaldevkit"
+          artifactPrefix="universaldevkit-xamlruntime"
+          adapter="maven-prefab" />

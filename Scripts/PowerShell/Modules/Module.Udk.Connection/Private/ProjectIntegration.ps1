@@ -178,7 +178,9 @@ function Invoke-UdkConnectionPlanCore {
             $dynamicDefinitions = @()
             $runtimeItems = $document.CreateElement('ItemGroup', $namespace)
             $runtimeItems.SetAttribute('Label', 'UniversalDevKit')
-            $manifest = Get-Content -LiteralPath (Join-Path $repositoryPath 'Components.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+            . (Join-Path $repositoryPath 'Sources/Windows/UdkCli/Tools/ReadManifest.ps1')
+            $registryPath = Resolve-UdkManifestPath (Join-Path $repositoryPath 'Components')
+            $manifest = Read-UdkManifest $registryPath 'ComponentRegistry'
             $libraryRoot = if ($manifest.schemaVersion -in @(4, 5, 6)) { 'Projects/MsBuild/Library' } else { 'Projects/MsBuild' }
             foreach ($name in $resolvedComponents) {
                 $mode = $resolvedModes[$name]
@@ -250,8 +252,8 @@ function Invoke-UdkConnectionPlanCore {
             [void]$root.InsertBefore($requirementsImport, $anchor)
             # Registry fingerprints stop stale connections before compilation.
             $componentPaths = @($requirementRegistry.Values | ForEach-Object RegistryPath | Sort-Object)
-            foreach ($componentRegistryPath in @('Components.json') + $componentPaths) {
-                $componentRegistryFile = Join-Path $repositoryPath $componentRegistryPath
+            $registryFiles = @($registryPath) + @($componentPaths | ForEach-Object { Join-Path $repositoryPath $_ })
+            foreach ($componentRegistryFile in $registryFiles) {
                 $componentRegistryItem = $document.CreateElement('__UniversalDevKitComponentRegistryFile', $namespace)
                 $componentRegistryItem.SetAttribute('Include', (GetRelativePath $projectDirectory $componentRegistryFile))
                 $expectedHash = $document.CreateElement('ExpectedHash', $namespace)

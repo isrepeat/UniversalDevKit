@@ -34,7 +34,7 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Commands {
 
                 var root = await VsShell.SolutionRepository.FindAsync(this.package);
                 if (root == null) {
-                    pane.OutputStringThreadSafe("Open a solution in a repository with Components.json.\r\n");
+                    pane.OutputStringThreadSafe("Open a solution in a repository with Components.json or Components.xml.\r\n");
                     return;
                 }
                 pane.OutputStringThreadSafe($"Regenerating UDK projects in {root}\r\n");

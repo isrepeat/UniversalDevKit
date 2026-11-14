@@ -1,3 +1,20 @@
+function Find-UdkNativeIntegrationDelivery([string]$Repository, [string]$PackagePath, $Definition) {
+    $packageDirectory = Split-Path -Parent $PackagePath
+    $candidates = @(foreach ($entry in $Definition.deliveries.PSObject.Properties) {
+        $path = Resolve-UdkManifestPath (Resolve-UdkBuildPath $Repository $packageDirectory $entry.Value)
+        $delivery = Read-UdkManifest $path 'Delivery'
+        if ($delivery.adapter -ne 'nuget' -or -not $delivery.integration) { continue }
+        if (-not $delivery.integration.targets) {
+            throw "Missing native integration targets: $path"
+        }
+        [pscustomobject]@{ Name = $entry.Name; Directory = (Split-Path -Parent $path); Delivery = $delivery }
+    })
+    if ($candidates.Count -gt 1) {
+        throw "Multiple native integration deliveries in ${PackagePath}: $($candidates.Name -join ', '). Declare integration on exactly one NuGet delivery."
+    }
+    if ($candidates.Count -eq 1) { return $candidates[0] }
+}
+
 function Invoke-UdkNativeProject($Project, $Context) {
     $repository = $Context.RepositoryPath
     $version = $Context.Version
@@ -19,9 +36,10 @@ function Invoke-UdkNativeProject($Project, $Context) {
             $registry[$_].Kind -ne 'headerOnly'
         }).Count -gt 0
         $packages = @{}
-        foreach ($file in Get-ChildItem (Join-Path $repository 'Packages') -Filter Package.json -Recurse -File) {
-            $definition = Read-UdkBuildJson $file.FullName
-            if ($definition.schemaVersion -ne 2 -or -not $definition.deliveries.NuGet) {
+        foreach ($file in Get-UdkPackageManifests (Join-Path $repository 'Packages')) {
+            $definitionPath = if ($file.DirectoryName -eq $Context.PackageRoot) { $Context.PackagePath } else { $file.FullName }
+            $definition = Read-UdkManifest $definitionPath 'Package'
+            if ($definition.schemaVersion -ne 2) {
                 continue
             }
             $native = @($definition.projects.PSObject.Properties.Value | Where-Object {
@@ -37,16 +55,15 @@ function Invoke-UdkNativeProject($Project, $Context) {
             if (-not $registry.ContainsKey($name)) {
                 continue
             }
-            $directory = Split-Path -Parent (Join-Path $file.DirectoryName $definition.deliveries.NuGet)
-            $delivery = Read-UdkBuildJson (Join-Path $file.DirectoryName $definition.deliveries.NuGet)
+            $integrationDelivery = Find-UdkNativeIntegrationDelivery $repository $definitionPath $definition
+            if (-not $integrationDelivery) { continue }
+            $directory = $integrationDelivery.Directory
+            $delivery = $integrationDelivery.Delivery
             $integration = @{}
             foreach ($kind in @('props','targets')) {
                 if ($delivery.integration.$kind) {
                     $integration[$kind] = Resolve-UdkBuildPath $file.DirectoryName $directory $delivery.integration.$kind -Existing
                 }
-            }
-            if (-not $integration.targets) {
-                throw "Missing native integration targets: $name"
             }
             $runtimes = if ($delivery.supportedRuntimes) {
                 @($delivery.supportedRuntimes)

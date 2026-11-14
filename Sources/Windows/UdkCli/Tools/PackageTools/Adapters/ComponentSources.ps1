@@ -3,15 +3,15 @@ function Invoke-UdkComponentSourcesProject($Project, $Context) {
     $root = $Context.RepositoryPath
     if ($Project.adapter -eq 'udk-component-sources') {
         . (Join-Path $PSScriptRoot '../../ProjectTools/Private/Contract.ps1')
-        $model = Read-ProjectToolsModel (Join-Path $root 'Components.json')
+        $model = Read-ProjectToolsModel (Join-Path $root 'Components')
         $components = @($model.Components.Values | Where-Object name -eq $Project.component)
         if ($components.Count -ne 1 -or $components[0].platformSources) {
             throw "Expected one native component without platformSources: $($Project.component)"
         }
         $component = $components[0]
     } else {
-        $componentPath = Resolve-UdkBuildPath $root $root $Project.component -Existing
-        $component = Read-UdkBuildJson $componentPath
+        $componentPath = Resolve-UdkBuildPath $root $root $Project.component
+        $component = Read-UdkManifest $componentPath 'Component'
     }
 
     # Stage sources and headers in the package layout.

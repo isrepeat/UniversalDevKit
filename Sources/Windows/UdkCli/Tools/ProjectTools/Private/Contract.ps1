@@ -1,4 +1,5 @@
 . (Join-Path $PSScriptRoot '../../ResolveJsonReference.ps1')
+. (Join-Path $PSScriptRoot '../../ReadManifest.ps1')
 
 function Get-ProjectToolsGuid([string]$Identity) {
     $sha = [Security.Cryptography.SHA256]::Create()
@@ -181,9 +182,9 @@ function Assert-ProjectToolsLayout($Layout, [string]$Label) {
 }
 
 function Read-ProjectToolsModel([string]$ManifestPath) {
-    $path = (Resolve-Path -LiteralPath $ManifestPath -ErrorAction Stop).Path
+    $path = Resolve-UdkManifestPath $ManifestPath
     $root = Split-Path -Parent $path
-    $manifest = Get-Content -LiteralPath $path -Raw -Encoding UTF8 | ConvertFrom-Json
+    $manifest = Read-UdkManifest $path 'ComponentRegistry'
     if (($manifest.schemaVersion -isnot [int] -and $manifest.schemaVersion -isnot [long]) -or $manifest.schemaVersion -notin @(2, 3, 4, 5, 6)) { throw 'Unsupported component schemaVersion.' }
     $unified = $manifest.schemaVersion -in @(4, 5, 6)
     $listField = if ($unified) { 'components' } else { 'includes' }
@@ -268,11 +269,11 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
     $seenIncludes = @{}
     $names = @{}
     $definitions = foreach ($include in $includes) {
-        if ($include -isnot [string] -or $include -match '[*?]' -or [IO.Path]::GetExtension($include) -cne '.json') { throw "Invalid component path: $include" }
-        $componentPath = Resolve-ProjectToolsPath $root $include
-        if ($seenIncludes.ContainsKey($include)) { throw "Duplicate include: $include" }
-        $seenIncludes[$include] = $true
-        $definition = Get-Content -LiteralPath $componentPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        if ($include -isnot [string] -or $include -match '[*?]') { throw "Invalid component path: $include" }
+        $componentPath = Resolve-UdkManifestPath (Resolve-ProjectToolsPath $root $include)
+        if ($seenIncludes.ContainsKey($componentPath)) { throw "Duplicate include: $include" }
+        $seenIncludes[$componentPath] = $true
+        $definition = Read-UdkManifest $componentPath 'Component'
         if ($definition.name -isnot [string] -or $definition.name -cnotmatch '^[A-Z][A-Za-z0-9]*(?:\.[A-Za-z0-9]+)*$' -or $names.ContainsKey($definition.name)) {
             throw "Invalid or duplicate component name: $($definition.name)"
         }

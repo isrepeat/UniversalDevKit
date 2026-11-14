@@ -2,9 +2,9 @@
 
 Нативный CLI написан на C++20. Main.cpp разбирает команды, PowerShellScript.cpp запускает инструменты из поставки. Исходники находятся в `Sources/Windows/UdkCli`.
 
-Компонент `UdkCli` описан в `Projects/Components/Application/UdkCli.json` и зарегистрирован в списке `components` корневого `Components.json`. ProjectTools добавляет приложение и Shared-проект в папку `Projects → MsBuild → Application → UdkCli`. Проект `UdkCli.vcxproj` импортирует Shared `.vcxitems` с исходниками. Правила `filters` задают папки в Visual Studio. После добавления `.cpp` или `.h` достаточно заново запустить генерацию по корневому манифесту. Параметры сборки и копирование инструментов задаются в `UdkCli.props` и `UdkCli.targets`.
+Компонент `UdkCli` описан в `Projects/Components/Application/UdkCli.xml` и зарегистрирован в списке `components` корневого `Components.xml`. ProjectTools добавляет приложение и Shared-проект в папку `Projects → MsBuild → Application → UdkCli`. Проект `UdkCli.vcxproj` импортирует Shared `.vcxitems` с исходниками. Правила `filters` задают папки в Visual Studio. После добавления `.cpp` или `.h` достаточно заново запустить генерацию по корневому манифесту. Параметры сборки и копирование инструментов задаются в `UdkCli.props` и `UdkCli.targets`.
 
-`UdkCli.Setup` описан в `Projects/Components/Application/UdkCli.Setup.json`. ProjectTools генерирует `.csproj` из WPF-шаблона и помещает проект в одноимённую папку в `Projects → MsBuild → Application`. Правила `filters` распределяют файлы проекта по виртуальным папкам. `TargetFramework` берётся из `msbuild.properties`, а `UdkCli.Setup.targets` подключает ZIP с CLI как ресурс при публикации установщика.
+`UdkCli.Setup` описан в `Projects/Components/Application/UdkCli.Setup.xml`. ProjectTools генерирует `.csproj` из WPF-шаблона и помещает проект в одноимённую папку в `Projects → MsBuild → Application`. Правила `filters` распределяют файлы проекта по виртуальным папкам. `TargetFramework` берётся из `msbuild.properties`, а `UdkCli.Setup.targets` подключает ZIP с CLI как ресурс при публикации установщика.
 
 | Команда | Существующий инструмент |
 |---|---|
@@ -16,7 +16,7 @@
 | `udk package plan <package-path>` | PackageTools/Build.ps1 с параметром -Plan |
 | `udk uninstall` | Открывает окно подтверждения удаления установленного UDK CLI |
 
-Команды запускаются из корня потребляющего репозитория. По умолчанию команды проектов используют Components.json из текущего каталога. CLI запускает Windows PowerShell 5.1 (`powershell.exe`). Код завершения скрипта передаётся вызывающей стороне.
+Команды запускаются из корня потребляющего репозитория. По умолчанию команды проектов используют Components.xml из текущего каталога. CLI запускает Windows PowerShell 5.1 (`powershell.exe`). Код завершения скрипта передаётся вызывающей стороне.
 
 ## Версия CLI в репозитории
 
@@ -44,9 +44,9 @@ msbuild Projects/MsBuild/Application/UdkCli/UdkCli.vcxproj /p:Configuration=Rele
 
 Установщик UDK включает VSIX для Visual Studio 2026 x64 и устанавливает его для текущего пользователя в совместимые экземпляры IDE. При обновлении UDK установщик передаёт новый VSIX штатному `VSIXInstaller.exe`. ID расширения остаётся постоянным. Версия расширения задаётся полем `version` в `UdkCli.VSIX.json`. После её изменения обновите проекты через ProjectTools. Установщик пропускает экземпляры IDE, в которых уже установлена эта версия расширения. Если установить расширение не удалось, UDK Setup откроет отдельное окно. Если Visual Studio открыта, закройте её и нажмите **Install extension**. Чтобы завершить установку CLI без расширения, нажмите **Skip** или закройте окно.
 
-Откройте решение и выберите **Tools → Regenerate UDK Solution**. Расширение ищет `Components.json` от каталога решения вверх до корня Git. В репозитории UDK оно вызывает локальный `ProjectTools/Generate.ps1`, в остальных случаях запускает `udk project generate`. Результат доступен в панели **Output → UDK CLI**.
+Откройте решение и выберите **Tools → Regenerate UDK Solution**. Расширение ищет `Components.xml` от каталога решения вверх до корня Git. В репозитории UDK оно вызывает локальный `ProjectTools/Generate.ps1`, в остальных случаях запускает `udk project generate`. Результат доступен в панели **Output → UDK CLI**.
 
-Для выпуска запустите `Scripts/Tools/Publish.UdkCli.cmd` с установленным .NET 10 SDK. Версия берётся из поля `githubVersion` в `Projects/Components/Application/UdkCli.json`. Для отдельного запуска версию можно задать явно через `-Version 0.1.4`. Скрипт собирает Release x64, создаёт ZIP, файл SHA-256 для ZIP и автономный WPF-установщик в `!artifacts/releases/UdkCli`. После ответа `y` скрипт публикует эти файлы через авторизованный GitHub CLI. При отказе файлы остаются на диске.
+Для выпуска запустите `Scripts/Tools/Publish.UdkCli.cmd` с установленным .NET 10 SDK. Версия берётся из поля `githubVersion` в `Projects/Components/Application/UdkCli.xml`. Для отдельного запуска версию можно задать явно через `-Version 0.1.4`. Скрипт собирает Release x64, создаёт ZIP, файл SHA-256 для ZIP и автономный WPF-установщик в `!artifacts/releases/UdkCli`. После ответа `y` скрипт публикует эти файлы через авторизованный GitHub CLI. При отказе файлы остаются на диске.
 
 Повторные выпуски переиспользуют промежуточные файлы Release x64 из `!artifacts/projects/Windows-x64/UdkCli.Release`. ZIP и установщик каждого запуска сохраняются в отдельной папке под `!artifacts/releases/UdkCli`.
 

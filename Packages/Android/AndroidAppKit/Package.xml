@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package schemaVersion="2"
+         name="AndroidAppKit"
+         version="1.0.19"
+         defaultDelivery="Android">
+  <Projects>
+    <Project id="gradle"
+             adapter="gradle-publish"
+             projectDirectory="Projects/Gradle/Library/AndroidAppKit"
+             toolchain="Scripts/Android/ResolveToolchain.ps1"
+             refreshDependencies="true">
+      <Tasks>:androidappkit:publishReleasePublicationToAndroidPackagesFeedRepository</Tasks>
+    </Project>
+  </Projects>
+  <Contents>
+    <Content project="gradle"
+             root="output"
+             destination="." />
+  </Contents>
+  <Deliveries>
+    <Delivery name="Android">Delivery/Android/Delivery.xml</Delivery>
+  </Deliveries>
+  <ReleaseDependencies>
+    <ReleaseDependency package="../AndroidCoreSdk/Package.xml"
+                       delivery="Android" />
+  </ReleaseDependencies>
+</Package>

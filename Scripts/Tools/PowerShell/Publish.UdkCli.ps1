@@ -13,8 +13,13 @@ $OutputEncoding = [Text.UTF8Encoding]::new($false)
 
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
 . (Join-Path $root 'Sources\Windows\UdkCli\Tools\ResolveJsonReference.ps1')
-$componentPath = Join-Path $root 'Projects\Components\Application\UdkCli.json'
-$description = Get-Content -LiteralPath $componentPath -Raw -Encoding UTF8 | ConvertFrom-Json
+. (Join-Path $root 'Sources/Windows/UdkCli/Tools/ReadManifest.ps1')
+$registryPath = Resolve-UdkManifestPath (Join-Path $root 'Components')
+$registry = Read-UdkManifest $registryPath 'ComponentRegistry'
+$entry = $registry.components | Where-Object { $_ -match '/UdkCli(?:\.(?:json|xml))?$' } | Select-Object -First 1
+if (-not $entry) { throw 'UdkCli is missing from the component registry.' }
+$componentPath = Resolve-UdkManifestPath (Join-Path $root $entry)
+$description = Read-UdkManifest $componentPath 'Component'
 $component = $description.projects[0]
 Resolve-UdkDescriptionVersion $root $component $componentPath 'githubVersion'
 if (-not $Version) { $Version = $component.githubVersion }

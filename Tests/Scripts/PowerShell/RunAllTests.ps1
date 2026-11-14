@@ -32,7 +32,7 @@ $cases = @(
     @{ Name = 'ScriptEncoding'; Group = 'Windows'; Path = 'Tests/Infrastructure/TestScriptEncoding.ps1'; Args = @() }
     @{ Name = 'DiagnosticContract'; Group = 'Windows'; Path = 'Tests/Integration/Diagnostic/Diagnostic.Tests.ps1'; Args = @('-CMake', $CMake) }
     @{ Name = 'DiagnosticAndroid'; Group = 'Android'; Path = 'Tests/Integration/Diagnostic/Diagnostic.Tests.ps1'; Args = @('-Platform', 'Android', '-CMake', $CMake) }
-    @{ Name = 'ComponentGeneration'; Group = 'Windows'; Path = 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1'; Args = @('-ManifestPath', (Join-Path $repository 'Components.json'), '-Check') }
+    @{ Name = 'ComponentGeneration'; Group = 'Windows'; Path = 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1'; Args = @('-ManifestPath', (Join-Path $repository 'Components.xml'), '-Check') }
     @{ Name = 'RegistryContract'; Group = 'Windows'; Path = 'Tests/Infrastructure/TestRegistryContract.ps1'; Args = @('-CMake', $CMake) }
     @{ Name = 'ComponentRegistry'; Group = 'Windows'; Path = 'Tests/Infrastructure/TestComponentRegistry.ps1'; Args = @() }
     @{ Name = 'BuildExtensions'; Group = 'Windows'; Path = 'Tests/Infrastructure/TestBuildExtensions.ps1'; Args = @('-CMake', $CMake) }

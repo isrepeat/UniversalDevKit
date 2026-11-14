@@ -18,7 +18,8 @@ namespace UniversalDevKit.UdkCli.VisualStudio.VsShell {
 
         private static string FindRepository(string directory) {
             for (var current = new DirectoryInfo(directory); current != null; current = current.Parent) {
-                if (File.Exists(Path.Combine(current.FullName, "Components.json"))) {
+                if (File.Exists(Path.Combine(current.FullName, "Components.json")) ||
+                    File.Exists(Path.Combine(current.FullName, "Components.xml"))) {
                     return current.FullName;
                 }
                 var git = Path.Combine(current.FullName, ".git");

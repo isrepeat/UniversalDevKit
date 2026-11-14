@@ -2,7 +2,7 @@ function GetAvailableComponents {
     param([string]$RepositoryPath)
     $integrationPath = Join-Path $RepositoryPath 'Projects/MsBuild/UniversalDevKit.Sources.targets'
     # The registry is generated with the dependency graph; check freshness without writing.
-    & (Join-Path $RepositoryPath 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $RepositoryPath 'Components.json') -Check | Out-Null
+    & (Join-Path $RepositoryPath 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $RepositoryPath 'Components') -Check | Out-Null
     [xml]$integration = Get-Content -LiteralPath $integrationPath -Raw -Encoding UTF8
     $componentRegistry = $integration.SelectSingleNode("/*[local-name()='Project']/*[local-name()='ItemGroup']/*[local-name()='__UniversalDevKitAvailableComponent']")
     if (-not $componentRegistry) {
@@ -14,14 +14,16 @@ function GetAvailableComponents {
 function Get-UdkComponentRegistry {
     param([string]$RepositoryPath)
     [void](GetAvailableComponents -RepositoryPath $RepositoryPath)
-    $manifest = Get-Content -LiteralPath (Join-Path $repositoryPath 'Components.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+    . (Join-Path $RepositoryPath 'Sources/Windows/UdkCli/Tools/ReadManifest.ps1')
+    $manifest = Read-UdkManifest (Join-Path $RepositoryPath 'Components') 'ComponentRegistry'
     $paths = if ($manifest.schemaVersion -in @(4, 5, 6)) { $manifest.components } elseif ($manifest.schemaVersion -eq 2) { $manifest.includes }
     if (-not $paths) {
-        throw 'Unsupported Components.json schema.'
+        throw 'Unsupported component registry schema.'
     }
     $componentRegistry = @{}
     foreach ($include in $paths) {
-        $component = Get-Content -LiteralPath (Join-Path $repositoryPath $include) -Raw -Encoding UTF8 | ConvertFrom-Json
+        $descriptionPath = Resolve-UdkManifestPath (Join-Path $RepositoryPath $include)
+        $component = Read-UdkManifest $descriptionPath 'Component'
         if ($manifest.schemaVersion -in @(5, 6)) {
             $name = $component.name
             $nativeLibraries = @($component.projects | Where-Object {
@@ -47,7 +49,7 @@ function Get-UdkComponentRegistry {
         }
         $componentRegistry[$component.name] = [pscustomobject]@{
             Name = $component.name
-            RegistryPath = $include
+            RegistryPath = $descriptionPath.Substring($RepositoryPath.TrimEnd('\', '/').Length + 1).Replace('\', '/')
             IncludeRoot = Get-UdkComponentIncludeRoot $component
             Guid = $guid
             Kind = if ($kind) { $kind } else { 'compiled' }

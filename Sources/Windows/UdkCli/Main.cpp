@@ -114,7 +114,7 @@ namespace universaldevkit::cli::details {
 			"  udk package build <package-path>\n"
 			"  udk package plan <package-path>\n"
 			"  udk uninstall\n\n"
-			"The default project manifest is Components.json in the current directory.\n"
+			"The default project manifest is Components.json or Components.xml in the current directory.\n"
 			"Run package commands from the repository root.\n";
 		return invalidArguments ? 2 : 0;
 	}
@@ -146,7 +146,7 @@ namespace universaldevkit::cli::details {
 			return details::ShowHelp(true);
 		}
 		const int manifestIndex = clean ? 4 : 3;
-		const auto manifest = project ? std::filesystem::absolute(argc > manifestIndex ? argv[manifestIndex] : L"Components.json") : std::filesystem::path{};
+		const auto manifest = project ? std::filesystem::absolute(argc > manifestIndex ? argv[manifestIndex] : L"Components") : std::filesystem::path{};
 		const auto versionPath = (project ? manifest.parent_path() : std::filesystem::current_path()) / L".udk-version";
 
 		if (clean) {

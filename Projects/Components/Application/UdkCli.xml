@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Component name="UdkCli">
+  <Projects>
+    <Project id="native"
+             kind="application"
+             projectType="native"
+             githubVersion="0.2.5"
+             msbuildGuid="{9C7AAB80-FA41-4925-95FA-06409E32E4E1}">
+      <Headers>
+        <Header>Sources/Windows/UdkCli/**/*.h</Header>
+      </Headers>
+      <Sources>
+        <Source>Sources/Windows/UdkCli/**/*.cpp</Source>
+      </Sources>
+      <Filters>
+        <Filter path="Sources/Windows/UdkCli"
+                filter="" />
+      </Filters>
+      <Requirements cxxStandard="20" />
+      <Compile>
+        <IncludeDirectories>
+          <IncludeDirectory>Includes/Diagnostic</IncludeDirectory>
+          <IncludeDirectory>Includes/Core</IncludeDirectory>
+        </IncludeDirectories>
+      </Compile>
+      <MSBuild>
+        <Properties>
+          <TargetName>udk</TargetName>
+        </Properties>
+      </MSBuild>
+      <BuildExtensions>
+        <MSBuildProps>Projects/MsBuild/Application/UdkCli/UdkCli.props</MSBuildProps>
+        <MSBuildTargets>Projects/MsBuild/Application/UdkCli/UdkCli.targets</MSBuildTargets>
+      </BuildExtensions>
+    </Project> <!-- Project id="native" -->
+  </Projects>
+</Component>

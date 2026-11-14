@@ -1,6 +1,6 @@
 # XamlRuntime
 
-XamlRuntime и OpenGLESRenderer зарегистрированы в Components.json и используют общий граф CMake/MSBuild UDK. XamlCompiler — host-инструмент, описанный в Projects/Components/Application/XamlCompiler.json. ProjectTools генерирует для него проекты Visual Studio, а Projects/Cmake/Application/XamlCompiler читает из того же описания исходники и стандарт C++. Namespace: universaldevkit::xamlruntime, universaldevkit::xamlruntime::runtimemarkup и universaldevkit::openglesrenderer. Aliases xaml, xaml::runtime и es_renderer сохранены для перехода потребителей; новые определения namespace используют полные имена UDK.
+XamlRuntime и OpenGLESRenderer зарегистрированы в Components.xml и используют общий граф CMake/MSBuild UDK. XamlCompiler — host-инструмент, описанный в Projects/Components/Application/XamlCompiler.xml. ProjectTools генерирует для него проекты Visual Studio, а Projects/Cmake/Application/XamlCompiler читает из того же описания исходники и стандарт C++. Namespace: universaldevkit::xamlruntime, universaldevkit::xamlruntime::runtimemarkup и universaldevkit::openglesrenderer. Aliases xaml, xaml::runtime и es_renderer сохранены для перехода потребителей; новые определения namespace используют полные имена UDK.
 
 ## Общие механизмы
 
@@ -36,7 +36,7 @@ Android: NDK r27c, API 24+, arm64-v8a/x86_64 и c++_shared. Host-компиля�
 
 Windows: Scripts/Packages/CrossPlatform/Pack.XamlRuntime.cmd и Pack.OpenGLESRenderer.cmd. Перед упаковкой renderer задайте UDK_ANGLE_ROOT. Native NuGet восстанавливает Helpers и Diagnostic точной версии UDK, передаёт DLL и ANGLE runtime потребителю. Поддерживается MD/MDd; MT/MTd отклоняется до компиляции. UniversalDevKit.XamlRuntimeLinkage и UniversalDevKitOpenGLESRendererLinkage выбирают Static/Dynamic, по умолчанию Static.
 
-Android: Packages/Build/Build.ps1 -PackagePath Packages/CrossPlatform/OpenGLESRenderer/Package.json -Delivery Android. Координаты org.universaldevkit:universaldevkit-xamlruntime-static-release и universaldevkit-openglesrenderer-static-release; для Dynamic замените static на dynamic. Каждый AAR содержит собственный граф native-зависимостей, включая необходимый Diagnostic SO, и используется через штатный udk_android_link. Единственный libc++_shared.so доставляет приложение.
+Android: Packages/Build/Build.ps1 -PackagePath Packages/CrossPlatform/OpenGLESRenderer/Package.xml -Delivery Android. Координаты org.universaldevkit:universaldevkit-xamlruntime-static-release и universaldevkit-openglesrenderer-static-release; для Dynamic замените static на dynamic. Каждый AAR содержит собственный граф native-зависимостей, включая необходимый Diagnostic SO, и используется через штатный udk_android_link. Единственный libc++_shared.so доставляет приложение.
 
 Host-инструмент: Scripts/Packages/Windows/Pack.XamlCompiler.cmd выпускает UniversalDevKit.XamlCompiler с tools/win-x64/XamlCompiler.exe. Версия compiler/runtime закрепляется одной версией Version.json; автоматический поиск последней несовместимой версии не требуется.
 

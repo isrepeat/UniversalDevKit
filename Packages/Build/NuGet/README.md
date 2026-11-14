@@ -2,15 +2,15 @@
 
 **Навигация:** [Главная](../../../README.md) → [Пакеты](../../README.md) → Native NuGet
 
-Общий PackageTools читает Package.json версии 2: projects описывает подготовку, contents — состав, Delivery/NuGet/Delivery.json — упаковку. Адаптер udk-native использует реестр компонентов для ABI, графа и интеграции; adapter=nuget упаковывает готовый payload. Preview SDK выпускается в отдельном репозитории.
+Общий PackageTools читает Package.json или Package.xml версии 2. Поле projects описывает подготовку, contents — состав, а ссылка на Delivery.json или Delivery.xml — упаковку. Адаптер udk-native использует реестр компонентов для ABI, графа и интеграции. Адаптер nuget упаковывает готовый payload. Preview SDK выпускается в отдельном репозитории.
 
 ## Выпуск
 
 ```powershell
-./Packages/Build/Build.ps1 -PackagePath Packages/CrossPlatform/Diagnostic/Package.json -Delivery NuGet
+./Packages/Build/Build.ps1 -PackagePath Packages/CrossPlatform/Diagnostic/Package.xml -Delivery NuGet
 ```
 
-Можно указать CMake, NuGet и OutputDirectory. Версия задаётся полем `version` в `Package.json`. Предварительный выпуск необходимых пакетов задаётся releaseDependencies. Для всех NuGet используйте -All -Delivery NuGet. Каждый корень имеет изолированный каталог в !artifacts/packages/nuget/<component>; необходимая подготовка внешних зависимостей вызывается через delivery. Для XAML и renderer используются их отдельные CMD-точки в Scripts/Packages/CrossPlatform.
+Можно указать CMake, NuGet и OutputDirectory. Версия задаётся полем `version` в `Package.xml`. Предварительный выпуск необходимых пакетов задаётся releaseDependencies. Для всех NuGet используйте -All -Delivery NuGet. Каждый корень имеет изолированный каталог в !artifacts/packages/nuget/<component>; необходимая подготовка внешних зависимостей вызывается через delivery. Для XAML и renderer используются их отдельные CMD-точки в Scripts/Packages/CrossPlatform.
 
 Helpers поставляется как header-only Shared. Diagnostic имеет process-state и поставляется только Dynamic с Dynamic CRT. XamlRuntime и OpenGLESRenderer имеют Static/Dynamic и используют Dynamic CRT; renderer также доставляет ANGLE. Нельзя выбирать варианты, отсутствующие в конкретном delivery.
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Delivery schemaVersion="1"
+          adapter="nuget"
+          id="UniversalDevKit.OpenGLESRenderer"
+          nuspec="UniversalDevKit.OpenGLESRenderer.nuspec"
+          preparationScript="PrepareAngle.ps1"
+          dependencyName="ANGLE"
+          stagingScript="StageAngle.ps1"
+          dependencySource="udk-component">
+  <SupportedPlatforms>Windows</SupportedPlatforms>
+  <SupportedRuntimes>Dynamic</SupportedRuntimes>
+  <Integration>
+    <Props>UniversalDevKit.OpenGLESRenderer.props</Props>
+    <Targets>UniversalDevKit.OpenGLESRenderer.targets</Targets>
+  </Integration>
+  <NoWarn>NU5100;NU5128</NoWarn>
+</Delivery>

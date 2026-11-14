@@ -61,11 +61,11 @@
 
 В схеме 5 описание компонента содержит `name` и непустой массив `projects`. Настройки сборки и поля из таблицы ниже относятся к записи проекта. Библиотека может содержать нативный проект `cpp/native` и управляемый проект `csharp/classLibrary`. Приложение содержит одну запись `application`. Для C# class library задайте `msbuild.properties.TargetFramework` и исходники `sources`. ProjectTools генерирует SDK-style проект под узлом компонента в solution.
 
-`id` — необязательный идентификатор проекта, уникальный в пределах компонента. Он нужен, когда на проект ссылается `runtimeDependencies`. C# class library может указать `{ "projectId": "native", "variant": "Dynamic" }` для нативной DLL того же компонента. ProjectTools добавляет зависимость сборки в Visual Studio. Состав NuGet задаётся в `Package.json`. CMake использует запись нативной библиотеки. Пример обоих проектов — [Diagnostic.json](../Projects/Components/Library/Diagnostic.json).
+`id` — необязательный идентификатор проекта, уникальный в пределах компонента. Он нужен, когда на проект ссылается `runtimeDependencies`. C# class library может указать `{ "projectId": "native", "variant": "Dynamic" }` для нативной DLL того же компонента. ProjectTools добавляет зависимость сборки в Visual Studio. Состав NuGet задаётся в `Package.xml`. CMake использует запись нативной библиотеки. Пример обоих проектов — [Diagnostic.xml](../Projects/Components/Library/Diagnostic.xml).
 
 ## Значения по умолчанию
 
-Минимальный стандарт C++ для библиотек — C++20. Версии схем Package.json и бинарных манифестов независимы от реестра компонентов.
+Минимальный стандарт C++ для библиотек — C++20. Версии схем Package.xml и бинарных манифестов независимы от реестра компонентов.
 
 | Поле | Значения | По умолчанию |
 |---|---|---|

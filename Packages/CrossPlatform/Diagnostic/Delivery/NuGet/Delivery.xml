@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Delivery schemaVersion="1"
+          adapter="nuget"
+          id="UniversalDevKit.Diagnostic"
+          nuspec="UniversalDevKit.Diagnostic.nuspec"
+          dependencySource="udk-component">
+  <SupportedPlatforms>Windows</SupportedPlatforms>
+  <SupportedRuntimes>Dynamic</SupportedRuntimes>
+  <Integration>
+    <Props>UniversalDevKit.Diagnostic.props</Props>
+    <Targets>UniversalDevKit.Diagnostic.targets</Targets>
+  </Integration>
+  <NoWarn>NU5100;NU5128</NoWarn>
+</Delivery>

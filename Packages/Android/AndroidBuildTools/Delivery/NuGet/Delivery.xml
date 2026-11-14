@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Delivery schemaVersion="1"
+          adapter="nuget"
+          id="AndroidBuildTools"
+          nuspec="AndroidBuildTools.nuspec"
+          noDefaultExcludes="true">
+  <SupportedPlatforms>Windows</SupportedPlatforms>
+  <NoWarn>NU5100;NU5111;NU5128</NoWarn>
+</Delivery>

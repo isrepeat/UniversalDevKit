@@ -1,4 +1,5 @@
 . (Join-Path $PSScriptRoot '../../ResolveJsonReference.ps1')
+. (Join-Path $PSScriptRoot '../../ReadManifest.ps1')
 
 function Assert-UdkFields($Value, [string[]]$Allowed, [string[]]$Required, [string]$Label) {
     if ($Value -isnot [pscustomobject]) {
@@ -108,10 +109,10 @@ function Get-UdkContentRenames($Entry) {
 function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [string]$DeliveryName, [hashtable]$ReleaseStack = @{}) {
     # Check all settings before running build tools.
     $root = (Resolve-Path -LiteralPath $RepositoryPath).Path
-    $packageFile = Resolve-UdkBuildPath $root $root $PackagePath -Existing
+    $packageFile = Resolve-UdkManifestPath (Resolve-UdkBuildPath $root $root $PackagePath)
     $packageRoot = Split-Path -Parent $packageFile
-    $package = Read-UdkBuildJson $packageFile
-    Assert-UdkFields $package @('schemaVersion', 'name', 'version', 'abiVersion', 'projects', 'contents', 'deliveries', 'releaseDependencies') @('schemaVersion', 'name', 'projects', 'contents', 'deliveries') $packageFile
+    $package = Read-UdkManifest $packageFile 'Package'
+    Assert-UdkFields $package @('schemaVersion', 'name', 'version', 'abiVersion', 'projects', 'contents', 'deliveries', 'defaultDelivery', 'releaseDependencies') @('schemaVersion', 'name', 'projects', 'contents', 'deliveries') $packageFile
     if (-not (Test-UdkSchemaVersion $package.schemaVersion 2)) {
         throw 'Unsupported package schemaVersion.'
     }
@@ -123,9 +124,13 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
         throw 'deliveries must be a nonempty object.'
     }
     $deliveryNames = @($package.deliveries.PSObject.Properties.Name)
+    if ($package.PSObject.Properties['defaultDelivery'] -and
+        ($package.defaultDelivery -isnot [string] -or $package.defaultDelivery -notin $deliveryNames)) {
+        throw "defaultDelivery must name a declared delivery: $packageFile"
+    }
     if (-not $DeliveryName) {
-        $DeliveryName = if ('NuGet' -in $deliveryNames) {
-            'NuGet'
+        $DeliveryName = if ($package.defaultDelivery) {
+            $package.defaultDelivery
         } elseif ($deliveryNames.Count -eq 1) {
             $deliveryNames[0]
         } else {
@@ -135,7 +140,7 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
     if ($DeliveryName -notin $deliveryNames) {
         throw "Unknown delivery: $DeliveryName"
     }
-    $releaseKey = $packageFile + '|' + $DeliveryName
+    $releaseKey = [IO.Path]::ChangeExtension($packageFile, $null) + '|' + $DeliveryName
     if ($ReleaseStack.ContainsKey($releaseKey)) {
         throw "Package release dependency cycle: $releaseKey"
     }
@@ -143,8 +148,8 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
     Resolve-UdkDescriptionVersion $root $package $packageFile
     Resolve-UdkDescriptionAbiVersion $root $package $packageFile
     $version = $package.version
-    $deliveryPath = Resolve-UdkBuildPath $root $packageRoot $package.deliveries.$DeliveryName -Existing
-    $delivery = Read-UdkBuildJson $deliveryPath
+    $deliveryPath = Resolve-UdkManifestPath (Resolve-UdkBuildPath $root $packageRoot $package.deliveries.$DeliveryName)
+    $delivery = Read-UdkManifest $deliveryPath 'Delivery'
     $nuspec = $null
     if (-not (Test-UdkSchemaVersion $delivery.schemaVersion 1)) {
         throw 'Unsupported delivery schemaVersion.'
@@ -215,17 +220,17 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
     $definitions = [Collections.Generic.List[object]]::new()
     $projectScope = $null
     if ($package.projects -is [string]) {
-        $manifestPath = Resolve-UdkBuildPath $root $packageRoot $package.projects -Existing
-        $manifest = Read-UdkBuildJson $manifestPath
+        $manifestPath = Resolve-UdkManifestPath (Resolve-UdkBuildPath $root $packageRoot $package.projects)
+        $manifest = Read-UdkManifest $manifestPath 'BuildProjectRegistry'
         Assert-UdkFields $manifest @('schemaVersion', 'includes') @('schemaVersion', 'includes') $manifestPath
         if (-not (Test-UdkSchemaVersion $manifest.schemaVersion 1) -or $manifest.includes -isnot [array] -or -not $manifest.includes.Count) {
             throw 'Invalid build project registry.'
         }
         foreach ($include in $manifest.includes) {
-            $projectPath = Resolve-UdkBuildPath $root (Split-Path -Parent $manifestPath) $include -Existing
+            $projectPath = Resolve-UdkManifestPath (Resolve-UdkBuildPath $root (Split-Path -Parent $manifestPath) $include)
             $definitions.Add([pscustomobject]@{
                 Label = $projectPath
-                Project = (Read-UdkBuildJson $projectPath)
+                Project = (Read-UdkManifest $projectPath 'Project')
             })
         }
     } elseif ($package.projects -is [pscustomobject]) {
@@ -345,10 +350,10 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
                 }
                 if ($project.adapter -eq 'udk-component-sources') {
                     Assert-UdkBuildName $project.component
-                    [void](Resolve-UdkBuildPath $root $root 'Components.json' -Existing)
+                    [void](Resolve-UdkManifestPath (Join-Path $root 'Components'))
                 } else {
-                    $componentPath = Resolve-UdkBuildPath $root $root $project.component -Existing
-                    $component = Read-UdkBuildJson $componentPath
+                    $componentPath = Resolve-UdkManifestPath (Resolve-UdkBuildPath $root $root $project.component)
+                    $component = Read-UdkManifest $componentPath 'Component'
                     if ($component.headers -isnot [array] -or $component.sources -isnot [array] -or $component.platformSources) {
                         throw 'Source distribution requires headers/sources arrays without platformSources.'
                     }
@@ -415,12 +420,12 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
             if ($null -ne $project.selfContained -and ($project.selfContained -isnot [bool] -or -not $project.runtime -or $project.operation -ne 'publish')) {
                 throw 'selfContained requires publish with a runtime.'
             }
-            [void](Resolve-UdkBuildPath $root $root 'Components.json' -Existing)
+            [void](Resolve-UdkManifestPath (Join-Path $root 'Components'))
         }
         if ($project.adapter -in @('udk-native','udk-prefab')) {
             Assert-UdkFields $project ($common + $specific) $specific $projectPath
             Assert-UdkBuildName $project.component
-            [void](Resolve-UdkBuildPath $root $root 'Components.json' -Existing)
+            [void](Resolve-UdkManifestPath (Join-Path $root 'Components'))
             if ($project.adapter -eq 'udk-prefab') {
                 [void](Resolve-UdkBuildPath $root $root $project.toolchain -Existing)
                 if ($project.configuration -notin @('Debug','Release') -or $project.abis -isnot [array] -or -not $project.abis.Count -or @($project.abis | Where-Object {
@@ -541,7 +546,7 @@ function Get-UdkPackagePlan([string]$RepositoryPath, [string]$PackagePath, [stri
                 continue
             }
         }
-        $dependencyPath = Resolve-UdkBuildPath $root $packageRoot $dependency.package -Existing
+        $dependencyPath = Resolve-UdkBuildPath $root $packageRoot $dependency.package
         $dependencyDelivery = if ($dependency.delivery) {
             $dependency.delivery
         } else {

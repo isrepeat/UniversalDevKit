@@ -37,7 +37,7 @@ try {
     if (-not $Feed) {
         $Feed = Join-Path $run 'feed'
         foreach ($component in $Components) {
-            $artifacts = & (Join-Path $repository 'Packages/Build/Build.ps1') -PackagePath "Packages/CrossPlatform/$component/Package.json" -OutputDirectory $Feed -NuGet $NuGet -CMake $CMake
+            $artifacts = & (Join-Path $repository 'Packages/Build/Build.ps1') -PackagePath "Packages/CrossPlatform/$component/Package.xml" -OutputDirectory $Feed -NuGet $NuGet -CMake $CMake
             foreach ($artifact in $artifacts) { if ($artifact -like '*.nupkg') { Copy-Item -LiteralPath $artifact -Destination $Feed -Force } }
         }
     }

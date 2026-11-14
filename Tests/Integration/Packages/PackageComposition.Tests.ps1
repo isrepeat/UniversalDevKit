@@ -46,7 +46,7 @@ $plan = & $builder -RepositoryPath $external -PackagePath Package.json -Plan
 if (($plan.Order -join ',') -cne 'Managed,Native,CMake') { throw 'Unexpected project dependency order.' }
 if ($plan.Version -cne '1.0.0' -or ($plan.AbiVersion -isnot [int] -and $plan.AbiVersion -isnot [long]) -or $plan.AbiVersion -ne 0) { throw 'JSON reference resolution failed.' }
 foreach ($package in @('XamlCompiler')) {
-    $actual = & $builder -RepositoryPath $repository -PackagePath "Packages/Windows/$package/Package.json" -Plan
+    $actual = & $builder -RepositoryPath $repository -PackagePath "Packages/Windows/$package/Package.xml" -Plan
     if (-not $actual.Order.Count) { throw "Missing real package plan: $package" }
 }
 $originalPackage = Read-TestJson 'Package.json'

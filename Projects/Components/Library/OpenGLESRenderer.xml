@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Component name="OpenGLESRenderer">
+  <Projects>
+    <Project id="native"
+             kind="library"
+             projectType="native"
+             msbuildGuid="{364E96CB-9D8A-40B0-8455-6A31A15A36B0}">
+      <SupportedPlatforms>Windows;Android</SupportedPlatforms>
+      <Dependencies>
+        <Dependency component="Helpers"
+                    visibility="public"
+                    linkage="same" />
+        <Dependency component="Diagnostic"
+                    visibility="private"
+                    linkage="dynamic" />
+        <Dependency component="XamlRuntime"
+                    visibility="public"
+                    linkage="same" />
+      </Dependencies>
+      <Headers>
+        <Header>Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/**/*.h</Header>
+        <Header>Sources/OpenGLESRenderer/**/*.h</Header>
+      </Headers>
+      <Sources>
+        <Source>Sources/OpenGLESRenderer/**/*.cpp</Source>
+      </Sources>
+      <Filters>
+        <Filter path="Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer"
+                filter="" />
+        <Filter path="Sources/OpenGLESRenderer"
+                filter="" />
+      </Filters>
+      <Requirements cxxStandard="20" />
+      <PlatformRequirements>
+        <Android>
+          <LinkLibraries>GLESv3</LinkLibraries>
+        </Android>
+      </PlatformRequirements>
+      <BuildExtensions>
+        <CMake>Projects/Cmake/Library/OpenGLESRenderer/Build.cmake</CMake>
+        <MSBuildTargets>Projects/MsBuild/Library/OpenGLESRenderer/UniversalDevKit.OpenGLESRenderer.targets</MSBuildTargets>
+      </BuildExtensions>
+    </Project> <!-- Project id="native" -->
+  </Projects>
+</Component>
