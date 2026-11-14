@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserSettings>
+  <ApplicationIdentity version="18.0" />
+  <Category name="Environment_FontsAndColors"
+            Category="{1EDA5DD4-927A-43a7-810E-7FD247D0DA1D}"
+            Package="{DA9FB551-C724-11d0-AE1F-00A0C90FFFC3}"
+            RegisteredName="Environment_FontsAndColors"
+            PackageName="CVsShellPackage">
+    <PropertyValue name="Version">2</PropertyValue>
+    <FontsAndColors Version="2.0">
+      <Theme Id="{1DED0138-47CE-435E-84EF-9EC1F439B749}" />
+      <Categories>
+        <Category GUID="{E0187991-B458-4F7E-8CA9-42C9A573B56C}" FontIsDefault="Yes">
+          <Items>
+            <!-- Colors are stored as 0x00BBGGRR. -->
+            <Item Name="XML Name" Foreground="0x00709ADE" />
+            <Item Name="XML Attribute" Foreground="0x0079ADC5" />
+            <Item Name="XML Attribute Value" Foreground="0x009AC4B7" />
+            <Item Name="XML Attribute Quotes" Foreground="0x007E8C9F" />
+            <Item Name="XML Text" Foreground="0x00ADBCB7" />
+            <Item Name="XML Delimiter" Foreground="0x007E8C9F" />
+            <Item Name="XML Comment" Foreground="0x008898AB" />
+            <!-- Selection backgrounds apply to the entire text editor. -->
+            <Item Name="Selected Text" Background="0x003B4A46" />
+            <Item Name="Inactive Selected Text" Background="0x00343C39" />
+          </Items>
+        </Category>
+      </Categories>
+    </FontsAndColors>
+  </Category>
+</UserSettings>
