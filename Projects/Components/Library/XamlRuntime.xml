@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Component name="XamlRuntime">
+  <Files>
+    <Group name="ThirdParty">
+      <File>ThirdParty/XamlRuntime/**/*</File>
+    </Group>
+  </Files>
+  <Filters>
+    <Filter filter="{Tree:Solution}/ThirdParty/XamlRuntime"
+            preserveTree="true">
+      <GroupRef>ThirdParty</GroupRef>
+    </Filter>
+  </Filters>
   <Projects>
     <Project id="native"
              kind="library"
