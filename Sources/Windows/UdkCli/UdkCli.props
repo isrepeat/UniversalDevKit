@@ -9,7 +9,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\Projects\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj">
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\..\Projects\!Generated\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj">
       <Private>true</Private>
       <AdditionalProperties>UniversalDevKitRuntime=Static</AdditionalProperties>
       <GlobalPropertiesToRemove>OutDir;IntDir</GlobalPropertiesToRemove>

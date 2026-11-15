@@ -17,18 +17,18 @@
   <Generation>
     <Integration>
       <CoreExportHeader>Projects/!Generated/Includes/UniversalDevKit/Export.g.h</CoreExportHeader>
-      <SourcesTargets>Projects/MsBuild/UniversalDevKit.Sources.g.targets</SourcesTargets>
+      <SourcesTargets>Projects/!Generated/MsBuild/UniversalDevKit.Sources.g.targets</SourcesTargets>
       <VersionSource>Version.json</VersionSource>
       <VersionHeader>Projects/!Generated/Includes/UniversalDevKit/Version.g.h</VersionHeader>
-      <VersionProps>Projects/MsBuild/UniversalDevKit.Version.g.props</VersionProps>
+      <VersionProps>Projects/!Generated/MsBuild/UniversalDevKit.Version.g.props</VersionProps>
     </Integration>
     <MSBuild>
       <Solution>UniversalDevKit.sln</Solution>
       <SolutionFolder>
-        <Default>Projects/MsBuild/{kind:title}/{name}</Default>
+        <Default>Projects/!Generated/MsBuild/{kind:title}/{name}</Default>
       </SolutionFolder>
       <ProjectDirectory>
-        <Default>Projects/MsBuild/{kind:title}/{name}</Default>
+        <Default>Projects/!Generated/MsBuild/{kind:title}/{name}</Default>
       </ProjectDirectory>
       <ProjectName>
         <When artifact="sharedItems">UniversalDevKit.{name}.Shared</When>

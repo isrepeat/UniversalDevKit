@@ -2,9 +2,9 @@
 
 Нативный CLI написан на C++20. Main.cpp разбирает команды, PowerShellScript.cpp запускает инструменты из поставки. Исходники находятся в `Sources/Windows/UdkCli`.
 
-Компонент `UdkCli` описан в `Projects/Components/Application/UdkCli.xml` и зарегистрирован в списке `components` корневого `Components.xml`. ProjectTools добавляет приложение и Shared-проект в папку `Projects → MsBuild → Application → UdkCli`. Проект `UdkCli.vcxproj` импортирует Shared `.vcxitems` с исходниками. Правила `filters` задают папки в Visual Studio. После добавления `.cpp` или `.h` достаточно заново запустить генерацию по корневому манифесту. Параметры сборки и копирование инструментов задаются в `UdkCli.props` и `UdkCli.targets`.
+Компонент `UdkCli` описан в `Projects/Components/Application/UdkCli.xml` и зарегистрирован в списке `components` корневого `Components.xml`. ProjectTools добавляет приложение и Shared-проект в папку `Projects → !Generated → MsBuild → Application → UdkCli`. Проект `UdkCli.vcxproj` импортирует Shared `.vcxitems` с исходниками. Правила `filters` задают папки в Visual Studio. После добавления `.cpp` или `.h` достаточно заново запустить генерацию по корневому манифесту. Параметры сборки и копирование инструментов задаются в `UdkCli.props` и `UdkCli.targets`.
 
-`UdkCli.Setup` описан в `Projects/Components/Application/UdkCli.Setup.xml`. ProjectTools генерирует `.csproj` из WPF-шаблона и помещает проект в одноимённую папку в `Projects → MsBuild → Application`. Правила `filters` распределяют файлы проекта по виртуальным папкам. `TargetFramework` берётся из `msbuild.properties`, а `UdkCli.Setup.targets` подключает ZIP с CLI как ресурс при публикации установщика.
+`UdkCli.Setup` описан в `Projects/Components/Application/UdkCli.Setup.xml`. ProjectTools генерирует `.csproj` из WPF-шаблона и помещает проект в одноимённую папку в `Projects → !Generated → MsBuild → Application`. Правила `filters` распределяют файлы проекта по виртуальным папкам. `TargetFramework` берётся из `msbuild.properties`, а `UdkCli.Setup.targets` подключает ZIP с CLI как ресурс при публикации установщика.
 
 | Команда | Существующий инструмент |
 |---|---|
@@ -31,7 +31,7 @@
 Проект MSBuild собирает udk.exe со статическим CRT и копирует ProjectTools и PackageTools вместе с шаблонами в каталог Tools рядом с EXE. Сборка Windows x64 из Developer PowerShell для Visual Studio:
 
 ```powershell
-msbuild Projects/MsBuild/Application/UdkCli/UdkCli.vcxproj /p:Configuration=Release /p:Platform=x64
+msbuild Projects/!Generated/MsBuild/Application/UdkCli/UdkCli.vcxproj /p:Configuration=Release /p:Platform=x64
 ```
 
 Исходники ProjectTools и PackageTools находятся в `Sources/Windows/UdkCli/Tools`. При сборке каталог `Tools` копируется рядом с `udk.exe` с сохранением структуры. Для запуска подходит Windows PowerShell 5.1. Требования к сборке конкретного пакета определяются PackageTools.

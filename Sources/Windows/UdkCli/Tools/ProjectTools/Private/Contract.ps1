@@ -171,7 +171,7 @@ function Expand-ProjectToolsFiles($Root, $Patterns, $Excludes) {
         $regex = ConvertTo-ProjectToolsGlobRegex $pattern
         foreach ($file in Get-ChildItem -LiteralPath $searchRoot -File -Recurse -ErrorAction Stop | Sort-Object FullName) {
             $relative = $file.FullName.Substring($Root.Length + 1).Replace('\', '/')
-            if ($relative -match '/(?:\.git|!artifacts|!tools|bin|obj)/') {
+            if ($relative -match '/(?:\.git|\.gradle|\.kotlin|!artifacts|!tools|bin|obj)/') {
                 continue
             }
             if ($relative -cmatch $regex) {
@@ -277,7 +277,7 @@ function Assert-ProjectToolsLayout($Layout, [string]$Label) {
         return
     }
     if ($Layout -isnot [string] -or
-        ($Layout -creplace '\{(?:name|kind|projectType|artifact|variant|framework|platform|architecture)(?::(?:title|upper))?\}', 'X') -cnotmatch '^[A-Za-z0-9_. -]+(?:/[A-Za-z0-9_. -]+)*/?$' -or
+        ($Layout -creplace '\{(?:name|kind|projectType|artifact|variant|framework|platform|architecture)(?::(?:title|upper))?\}', 'X') -cnotmatch '^[A-Za-z0-9_.! -]+(?:/[A-Za-z0-9_.! -]+)*/?$' -or
         @($Layout.TrimEnd('/').Split('/') | Where-Object {
             $_.Trim() -in @('', '.', '..')
         }).Count) {

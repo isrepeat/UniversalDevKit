@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Component name="UdkCli">
   <Files>
+    <Group name="GeneratedIntegration">
+      <Generated>Projects/!Generated/MsBuild/UniversalDevKit.Sources.g.targets</Generated>
+      <Generated>Projects/!Generated/MsBuild/UniversalDevKit.Version.g.props</Generated>
+    </Group>
     <Group name="ToolsAndConfiguration">
       <File>Sources/Windows/UdkCli/Tools/**/*</File>
       <File>Sources/Windows/UdkCli/SolutionInjector.Connect.json</File>
@@ -10,6 +14,9 @@
     </Group>
   </Files>
   <Filters>
+    <Filter filter="{Tree:Solution}/Projects/!Generated/MsBuild">
+      <GroupRef>GeneratedIntegration</GroupRef>
+    </Filter>
     <Filter filter="{Tree:Solution}/Sources/Windows">
       <GroupRef>WindowsBuild</GroupRef>
     </Filter>
@@ -44,6 +51,7 @@
         <IncludeDirectories>
           <IncludeDirectory>Includes/Diagnostic</IncludeDirectory>
           <IncludeDirectory>Includes/Core</IncludeDirectory>
+          <IncludeDirectory>Projects/!Generated/Includes</IncludeDirectory>
         </IncludeDirectories>
       </Compile>
       <MSBuild>

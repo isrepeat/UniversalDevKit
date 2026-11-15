@@ -6,7 +6,7 @@
   <Projects>
     <Project id="compiler"
              adapter="cmake-build"
-             sourceDirectory="Projects/Cmake/Application/XamlCompiler"
+             sourceDirectory="Sources/Windows/XamlCompiler"
              generator="Visual Studio 18 2026"
              architecture="x64"
              parallel="2">

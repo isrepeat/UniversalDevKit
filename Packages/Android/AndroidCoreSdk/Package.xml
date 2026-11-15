@@ -6,7 +6,7 @@
   <Projects>
     <Project id="gradle"
              adapter="gradle-publish"
-             projectDirectory="Projects/Gradle/Library/AndroidCoreSdk"
+             projectDirectory="Sources/Android/AndroidCoreSdk"
              toolchain="Scripts/Android/ResolveToolchain.ps1"
              refreshDependencies="false">
       <Tasks>:androidcoresdk:publishReleasePublicationToAndroidPackagesFeedRepository</Tasks>

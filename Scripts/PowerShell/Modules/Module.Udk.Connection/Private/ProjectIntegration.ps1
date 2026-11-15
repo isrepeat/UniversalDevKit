@@ -81,7 +81,12 @@ function Invoke-UdkConnectionPlanCore {
         if (-not $Disconnect -and -not $Preview) {
             # Reinsertion restores pruned components without duplicating retained projects.
             & $WriteStatus 'Updating solution projects...' Title
-            & $solutionInjector $sourceSolution $targetSolution --rootName UniversalDevKit -f MsBuild | ForEach-Object { & $WriteStatus $_ Hint }
+            $solutionFolder = if ([IO.File]::ReadAllText($sourceSolution) -match '(?m)^Project\([^\r\n]+\) = "!Generated", "!Generated",') {
+                '!Generated'
+            } else {
+                'MsBuild'
+            }
+            & $solutionInjector $sourceSolution $targetSolution --rootName UniversalDevKit -f $solutionFolder | ForEach-Object { & $WriteStatus $_ Hint }
             if ($LASTEXITCODE -ne 0) {
                 throw "SolutionInjector failed with exit code $LASTEXITCODE."
             }
@@ -181,13 +186,20 @@ function Invoke-UdkConnectionPlanCore {
             . (Join-Path $repositoryPath 'Sources/Windows/UdkCli/Tools/ReadManifest.ps1')
             $registryPath = Resolve-UdkManifestPath (Join-Path $repositoryPath 'Components')
             $manifest = Read-UdkManifest $registryPath 'ComponentRegistry'
-            $libraryRoot = if ($manifest.schemaVersion -in @(4, 5, 6)) { 'Projects/MsBuild/Library' } else { 'Projects/MsBuild' }
+            $projectToolsPath = Join-Path $repositoryPath 'Sources/Windows/UdkCli/Tools/ProjectTools/Private'
+            . (Join-Path $projectToolsPath 'Contract.ps1')
+            . (Join-Path $projectToolsPath 'MsBuild.ps1')
+            $projectModel = Read-ProjectToolsModel $registryPath
+            $projectsByName = @{}
+            foreach ($component in $projectModel.Components.Values) {
+                $projectsByName[$component.name] = $component
+            }
             foreach ($name in $resolvedComponents) {
                 $mode = $resolvedModes[$name]
                 if ($mode -eq 'Shared') {
                     continue
                 }
-                $libraryPath = Join-Path $repositoryPath "$libraryRoot/$name/UniversalDevKit.$name.$mode.vcxproj"
+                $libraryPath = Join-Path $repositoryPath (Get-ProjectToolsLocation $projectModel $projectsByName[$name] $mode)
                 $reference = $document.CreateElement('ProjectReference', $namespace)
                 $reference.SetAttribute('Include', (GetRelativePath $projectDirectory $libraryPath))
                 [xml]$libraryProject = [IO.File]::ReadAllText($libraryPath)

@@ -51,6 +51,14 @@ if (-not $msbuild) {
 }
 
 $dotnet = (Get-Command dotnet.exe -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
+$toolsDirectory = Join-Path $root 'Sources\Windows\UdkCli\Tools'
+. (Join-Path $toolsDirectory 'ProjectTools/Private/Contract.ps1')
+. (Join-Path $toolsDirectory 'ProjectTools/Private/MsBuild.ps1')
+$projectModel = Read-ProjectToolsModel (Join-Path $root 'Components')
+$applicationsByName = @{}
+foreach ($application in $projectModel.Applications.Values) {
+    $applicationsByName[$application.name] = $application
+}
 
 $releaseDirectory = Join-Path $root "!artifacts\releases\UdkCli\$tag\$([Guid]::NewGuid().ToString('N'))"
 $cacheDirectory = Join-Path $root '!artifacts\projects\Windows-x64\UdkCli.Release'
@@ -59,15 +67,14 @@ $objectDirectory = Join-Path $cacheDirectory 'cpp\obj'
 $setupOutput = Join-Path $cacheDirectory 'wpf\publish'
 $cachedPayload = Join-Path $cacheDirectory 'UdkPayload.zip'
 $vsixOutput = Join-Path $cacheDirectory 'vsix\bin'
-$vsixProject = Join-Path $root 'Projects\MsBuild\Application\UdkCli.VisualStudio\UdkCli.VisualStudio.Net472.csproj'
+$vsixProject = Join-Path $root (Get-ProjectToolsLocation $projectModel $applicationsByName['UdkCli.VisualStudio'] 'DotNet' '.csproj')
 $vsix = Join-Path $vsixOutput 'UdkCli.VisualStudio.vsix'
 $diagnostic = Join-Path $buildDirectory 'UniversalDevKit.Diagnostic.Dynamic.dll'
-$toolsDirectory = Join-Path $root 'Sources\Windows\UdkCli\Tools'
 $packageDirectory = Join-Path $releaseDirectory 'package'
 $archive = Join-Path $releaseDirectory "$tag-windows-x64.zip"
 $installerName = "$tag-setup-windows-x64"
 $installer = Join-Path $releaseDirectory "$installerName.exe"
-$project = Join-Path $root 'Projects\MsBuild\Application\UdkCli\UdkCli.vcxproj'
+$project = Join-Path $root (Get-ProjectToolsLocation $projectModel $applicationsByName['UdkCli'] 'Application')
 
 [void][IO.Directory]::CreateDirectory($cacheDirectory)
 $buildLock = [IO.File]::Open((Join-Path $cacheDirectory 'build.lock'), 'OpenOrCreate', 'ReadWrite', 'None')
@@ -101,7 +108,7 @@ try {
         throw 'UDK Visual Studio extension build failed.'
     }
 
-    $setupProject = Join-Path $root 'Projects\MsBuild\Application\UdkCli.Setup\UdkCli.Setup.csproj'
+    $setupProject = Join-Path $root (Get-ProjectToolsLocation $projectModel $applicationsByName['UdkCli.Setup'] 'DotNet' '.csproj')
     $dotnetArguments = @(
         'publish', $setupProject, '-c', 'Release', '-r', 'win-x64', '--self-contained', 'true',
         '--artifacts-path', (Join-Path $cacheDirectory 'wpf'), '-o', $setupOutput,

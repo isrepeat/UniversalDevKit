@@ -19,6 +19,26 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Repository", "!Repository"
 		VisualStudio-XML-Warm.vssettings = VisualStudio-XML-Warm.vssettings
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Includes", "Includes", "{81EF4FB0-D71C-5218-403F-900FB19ABDB4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{471849DD-CFC2-1710-56DC-58140143E621}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{A01B333C-1B79-EC59-16C6-221B9EA05E5F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniversalDevKit", "UniversalDevKit", "{29C6F0AF-E964-2291-C7DB-3ABE7B9314E1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{5BD3925F-5BE2-EC4C-69B1-E70DFC729F4A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{C5C0FCB2-50E4-C95F-95B7-242FB83591C7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApplicationFramework", "ApplicationFramework", "{6BA6A97E-291E-2BAB-56D5-9C1BAF70B6E6}"
+	ProjectSection(SolutionItems) = preProject
+		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\ApplicationSessionBase.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\ApplicationSessionBase.h
+		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\AppSessionControllerBase.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\AppSessionControllerBase.h
+		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.h
+		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\PageManagerBase.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\PageManagerBase.h
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{066DAD5F-063F-43BF-8ADC-0E76A36CA54D}"
 	ProjectSection(SolutionItems) = preProject
 		Packages\README.md = Packages\README.md
@@ -197,6 +217,68 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{B398F253
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{13DA8639-4234-4E82-9423-056A19840860}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "!Generated", "!Generated", "{3EEC5DF9-747D-C036-910A-45CDF486927A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{96813775-82ED-B2F5-3C1D-E809CD2D37E3}"
+	ProjectSection(SolutionItems) = preProject
+		Projects\!Generated\MsBuild\UniversalDevKit.Sources.g.targets = Projects\!Generated\MsBuild\UniversalDevKit.Sources.g.targets
+		Projects\!Generated\MsBuild\UniversalDevKit.Version.g.props = Projects\!Generated\MsBuild\UniversalDevKit.Version.g.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{2CADED90-D69B-555C-A418-2479148AF202}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli", "UdkCli", "{FBF9FFB4-F5AE-0740-163C-F7719D605926}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UdkCli", "Projects\!Generated\MsBuild\Application\UdkCli\UdkCli.vcxproj", "{9C7AAB80-FA41-4925-95FA-06409E32E4E1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.UdkCli.Shared", "Projects\!Generated\MsBuild\Application\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems", "{9C0C0DD8-D324-6EBE-A92E-80D071FA070E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli.Setup", "UdkCli.Setup", "{882D737B-037A-6AB0-A4C4-02DF9AC2CF18}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UdkCli.Setup", "Projects\!Generated\MsBuild\Application\UdkCli.Setup\UdkCli.Setup.csproj", "{C27A6217-35E3-4AD1-BBC7-71438D8E1E16}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli.VisualStudio", "UdkCli.VisualStudio", "{C4B59854-7B53-529B-756B-A948D5196B8C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UdkCli.VisualStudio.Net472", "Projects\!Generated\MsBuild\Application\UdkCli.VisualStudio\UdkCli.VisualStudio.Net472.csproj", "{5217622B-841E-4635-BA5D-8DE005125B16}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{12429D85-9DF8-3E9F-6B6F-78862668B3CD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XamlCompiler", "Projects\!Generated\MsBuild\Application\XamlCompiler\XamlCompiler.vcxproj", "{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlCompiler.Shared", "Projects\!Generated\MsBuild\Application\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems", "{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{45A79D61-B350-ADD1-84A4-451378B578DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{1EFF50FD-1FFD-F1F7-176B-A3D945FF896A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniversalDevKit.Diagnostic.Net8", "Projects\!Generated\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Net8.csproj", "{6A761B26-8F57-927B-0812-7CCD23F050D1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Dynamic", "Projects\!Generated\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj", "{F104C833-785D-E25F-5F10-B46284462A11}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Shared", "Projects\!Generated\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems", "{AB97876A-F25A-4AAE-BACD-D32C776BB261}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{4F96567F-20F3-F0AD-9E1D-7EC42B5583DF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.HeaderCheck", "Projects\!Generated\MsBuild\Library\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj", "{E21B97A1-D847-2938-4E29-760523C97389}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Shared", "Projects\!Generated\MsBuild\Library\Helpers\UniversalDevKit.Helpers.Shared.vcxitems", "{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLESRenderer", "{809FD221-2EF9-7A5F-FD97-3A8E9EC9A76E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Dynamic", "Projects\!Generated\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dynamic.vcxproj", "{77311056-84A3-4B57-AEF1-7A76F17C500C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Static", "Projects\!Generated\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Static.vcxproj", "{220B0789-1F04-54D3-18E5-5DB99E91172F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Shared", "Projects\!Generated\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems", "{364E96CB-9D8A-40B0-8455-6A31A15A36B0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlRuntime", "XamlRuntime", "{5D5D9444-8D65-2F33-2E0D-DEAF9B3B09A6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Dynamic", "Projects\!Generated\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Dynamic.vcxproj", "{FA67D7FD-393A-E9BC-F2A4-2570B2929973}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Static", "Projects\!Generated\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Static.vcxproj", "{6CBDC266-9B42-F741-03EB-F610AB72E1B1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Shared", "Projects\!Generated\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems", "{3E00A02D-46F3-432B-91C8-5D459F70C525}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4-1E80-4386-ACBA-A8B9D984FC44}"
 	ProjectSection(SolutionItems) = preProject
 		Projects\Cmake\BinaryReleasePolicy.cmake = Projects\Cmake\BinaryReleasePolicy.cmake
@@ -212,39 +294,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{26DC63D4
 		Projects\Cmake\RegistryContract.cmake = Projects\Cmake\RegistryContract.cmake
 		Projects\Cmake\UniversalDevKitConfig.cmake.in = Projects\Cmake\UniversalDevKitConfig.cmake.in
 		Projects\Cmake\Version.cmake = Projects\Cmake\Version.cmake
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{5BDCA3C6-D8B9-42B9-A450-8032E2D7EA18}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{923F42D8-57A1-4A1B-8FB9-35B5D73A7F8A}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\Application\XamlCompiler\CMakeLists.txt = Projects\Cmake\Application\XamlCompiler\CMakeLists.txt
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{2E383B60-BE80-4FE6-8EC1-D1D23C281549}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{ADBA3BA9-F6AC-7A5C-7A27-59AE40606576}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApplicationFramework", "ApplicationFramework", "{E2BB8948-A33B-7D06-CADA-F3B535F84401}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\Library\AndroidBuildTools\ApplicationFramework\CMakeLists.txt = Projects\Cmake\Library\AndroidBuildTools\ApplicationFramework\CMakeLists.txt
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{03C0B81C-6B57-4791-B5F3-9D2D48CE2544}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\Library\Diagnostic\Spdlog.cmake = Projects\Cmake\Library\Diagnostic\Spdlog.cmake
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLESRenderer", "{A82C4E93-051E-4C0B-B705-5875F748742C}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\Library\OpenGLESRenderer\AngleConfig.cmake.in = Projects\Cmake\Library\OpenGLESRenderer\AngleConfig.cmake.in
-		Projects\Cmake\Library\OpenGLESRenderer\Build.cmake = Projects\Cmake\Library\OpenGLESRenderer\Build.cmake
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlRuntime", "XamlRuntime", "{189A1B26-8EB9-4D78-A955-CF1E45F39257}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Cmake\Library\XamlRuntime\Build.cmake = Projects\Cmake\Library\XamlRuntime\Build.cmake
-		Projects\Cmake\Library\XamlRuntime\Consumer.cmake = Projects\Cmake\Library\XamlRuntime\Consumer.cmake
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{8CB5D103-21B9-4651-A4A1-671107F28847}"
@@ -269,105 +318,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{1251
 		Projects\Components\Library\XamlRuntime.xml = Projects\Components\Library\XamlRuntime.xml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{D2E0D44F-71F1-1478-F989-466955EC6F80}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{7A9CB031-4F5B-4C90-BCC5-9E0C170937D6}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppKit", "AndroidAppKit", "{7E765BF6-D902-9F4E-CD6C-90C614044B91}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Gradle\Library\AndroidAppKit\build.gradle.kts = Projects\Gradle\Library\AndroidAppKit\build.gradle.kts
-		Projects\Gradle\Library\AndroidAppKit\gradle.properties = Projects\Gradle\Library\AndroidAppKit\gradle.properties
-		Projects\Gradle\Library\AndroidAppKit\settings.gradle.kts = Projects\Gradle\Library\AndroidAppKit\settings.gradle.kts
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidappkit", "androidappkit", "{7FA23122-0EF3-554B-F66F-7011C69C51C4}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Gradle\Library\AndroidAppKit\androidappkit\build.gradle.kts = Projects\Gradle\Library\AndroidAppKit\androidappkit\build.gradle.kts
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{6F7F63BC-5509-E8FD-57DB-35CDFDCAF744}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Gradle\Library\AndroidBuildTools\.gitignore = Projects\Gradle\Library\AndroidBuildTools\.gitignore
-		Projects\Gradle\Library\AndroidBuildTools\build.gradle = Projects\Gradle\Library\AndroidBuildTools\build.gradle
-		Projects\Gradle\Library\AndroidBuildTools\settings.gradle = Projects\Gradle\Library\AndroidBuildTools\settings.gradle
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidCoreSdk", "AndroidCoreSdk", "{0A281F7B-C6D3-D687-5485-F34DEF383257}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Gradle\Library\AndroidCoreSdk\build.gradle.kts = Projects\Gradle\Library\AndroidCoreSdk\build.gradle.kts
-		Projects\Gradle\Library\AndroidCoreSdk\gradle.properties = Projects\Gradle\Library\AndroidCoreSdk\gradle.properties
-		Projects\Gradle\Library\AndroidCoreSdk\settings.gradle.kts = Projects\Gradle\Library\AndroidCoreSdk\settings.gradle.kts
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidcoresdk", "androidcoresdk", "{832B5C4F-3EB0-0B68-2891-21F9C30AE7D2}"
-	ProjectSection(SolutionItems) = preProject
-		Projects\Gradle\Library\AndroidCoreSdk\androidcoresdk\build.gradle.kts = Projects\Gradle\Library\AndroidCoreSdk\androidcoresdk\build.gradle.kts
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}"
 	ProjectSection(SolutionItems) = preProject
 		Projects\MsBuild\BuildLayout.props = Projects\MsBuild\BuildLayout.props
-		Projects\MsBuild\Directory.Build.props = Projects\MsBuild\Directory.Build.props
+		Projects\Directory.Build.props = Projects\Directory.Build.props
 		Projects\MsBuild\UniversalDevKit.props = Projects\MsBuild\UniversalDevKit.props
 		Projects\MsBuild\UniversalDevKit.Requirements.targets = Projects\MsBuild\UniversalDevKit.Requirements.targets
 		Projects\MsBuild\UniversalDevKit.Runtime.targets = Projects\MsBuild\UniversalDevKit.Runtime.targets
-		Projects\MsBuild\UniversalDevKit.Sources.g.targets = Projects\MsBuild\UniversalDevKit.Sources.g.targets
-		Projects\MsBuild\UniversalDevKit.Version.g.props = Projects\MsBuild\UniversalDevKit.Version.g.props
 	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{0A0141D6-9607-24C7-57B0-CE35AE9F2AA2}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli", "UdkCli", "{752A6291-E849-433A-BF37-7102E850AAB5}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UdkCli", "Projects\MsBuild\Application\UdkCli\UdkCli.vcxproj", "{9C7AAB80-FA41-4925-95FA-06409E32E4E1}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.UdkCli.Shared", "Projects\MsBuild\Application\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems", "{9C0C0DD8-D324-6EBE-A92E-80D071FA070E}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli.Setup", "UdkCli.Setup", "{AA57C568-5481-61FD-0DCD-D5660DF883C3}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UdkCli.Setup", "Projects\MsBuild\Application\UdkCli.Setup\UdkCli.Setup.csproj", "{C27A6217-35E3-4AD1-BBC7-71438D8E1E16}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli.VisualStudio", "UdkCli.VisualStudio", "{90A10E88-67A9-2FB3-20E4-596F669A5610}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UdkCli.VisualStudio.Net472", "Projects\MsBuild\Application\UdkCli.VisualStudio\UdkCli.VisualStudio.Net472.csproj", "{5217622B-841E-4635-BA5D-8DE005125B16}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{15C9DD02-133A-0D54-8BE8-73206CCE738F}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XamlCompiler", "Projects\MsBuild\Application\XamlCompiler\XamlCompiler.vcxproj", "{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlCompiler.Shared", "Projects\MsBuild\Application\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems", "{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{039CECB5-AFB8-E1E1-C5CE-77165073FE9D}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniversalDevKit.Diagnostic.Net8", "Projects\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Net8.csproj", "{6A761B26-8F57-927B-0812-7CCD23F050D1}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Dynamic", "Projects\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj", "{F104C833-785D-E25F-5F10-B46284462A11}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Diagnostic.Shared", "Projects\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems", "{AB97876A-F25A-4AAE-BACD-D32C776BB261}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{50CDBD24-894E-0FD6-7C08-442980AADBB7}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.HeaderCheck", "Projects\MsBuild\Library\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj", "{E21B97A1-D847-2938-4E29-760523C97389}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.Helpers.Shared", "Projects\MsBuild\Library\Helpers\UniversalDevKit.Helpers.Shared.vcxitems", "{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLESRenderer", "{1C920419-6FCA-97AA-DE2F-11C8037C1EF6}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Dynamic", "Projects\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dynamic.vcxproj", "{77311056-84A3-4B57-AEF1-7A76F17C500C}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Static", "Projects\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Static.vcxproj", "{220B0789-1F04-54D3-18E5-5DB99E91172F}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.OpenGLESRenderer.Shared", "Projects\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems", "{364E96CB-9D8A-40B0-8455-6A31A15A36B0}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlRuntime", "XamlRuntime", "{A62B830A-BE58-54F9-6766-E95D2B04A2A8}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Dynamic", "Projects\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Dynamic.vcxproj", "{FA67D7FD-393A-E9BC-F2A4-2570B2929973}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Static", "Projects\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Static.vcxproj", "{6CBDC266-9B42-F741-03EB-F610AB72E1B1}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UniversalDevKit.XamlRuntime.Shared", "Projects\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems", "{3E00A02D-46F3-432B-91C8-5D459F70C525}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}"
 	ProjectSection(SolutionItems) = preProject
@@ -490,6 +448,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidAppKit", "AndroidAppKit", "{013ECED9-C7DA-B731-B1FD-FF8491CCBD45}"
 	ProjectSection(SolutionItems) = preProject
 		Sources\Android\AndroidAppKit\README.md = Sources\Android\AndroidAppKit\README.md
+		Sources\Android\AndroidAppKit\build.gradle.kts = Sources\Android\AndroidAppKit\build.gradle.kts
+		Sources\Android\AndroidAppKit\gradle.properties = Sources\Android\AndroidAppKit\gradle.properties
+		Sources\Android\AndroidAppKit\settings.gradle.kts = Sources\Android\AndroidAppKit\settings.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidappkit", "androidappkit", "{AB8B18B3-95B8-0FF6-6075-F34874945847}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidAppKit\androidappkit\build.gradle.kts = Sources\Android\AndroidAppKit\androidappkit\build.gradle.kts
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A717A89D-D490-FC0E-D988-0817033BF109}"
@@ -544,6 +510,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApplicationFramework", "ApplicationFramework", "{31558A1C-1F48-7D8D-4644-5C718812A4DE}"
 	ProjectSection(SolutionItems) = preProject
 		Sources\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.cpp = Sources\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.cpp
+		Sources\Android\AndroidBuildTools\ApplicationFramework\CMakeLists.txt = Sources\Android\AndroidBuildTools\ApplicationFramework\CMakeLists.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{6CE64FFA-D87F-0998-3CBC-28F0F94B6A22}"
@@ -556,6 +523,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cmake", "Cmake", "{6CE64FFA
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{E2E7E6F9-6E5E-D86E-CA10-896EF249380B}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidBuildTools\Gradle\.gitignore = Sources\Android\AndroidBuildTools\Gradle\.gitignore
+		Sources\Android\AndroidBuildTools\Gradle\build.gradle = Sources\Android\AndroidBuildTools\Gradle\build.gradle
+		Sources\Android\AndroidBuildTools\Gradle\settings.gradle = Sources\Android\AndroidBuildTools\Gradle\settings.gradle
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B2C40BFA-A8C5-352E-8C04-3198889D0E19}"
 EndProject
@@ -597,29 +569,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Module.AndroidBuildTools", 
 		Sources\Android\AndroidBuildTools\PowerShell\Modules\Module.AndroidBuildTools\Module.AndroidBuildTools.psm1 = Sources\Android\AndroidBuildTools\PowerShell\Modules\Module.AndroidBuildTools\Module.AndroidBuildTools.psm1
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Includes", "Includes", "{81EF4FB0-D71C-5218-403F-900FB19ABDB4}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{471849DD-CFC2-1710-56DC-58140143E621}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{A01B333C-1B79-EC59-16C6-221B9EA05E5F}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UniversalDevKit", "UniversalDevKit", "{29C6F0AF-E964-2291-C7DB-3ABE7B9314E1}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Android", "Android", "{5BD3925F-5BE2-EC4C-69B1-E70DFC729F4A}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidBuildTools", "AndroidBuildTools", "{C5C0FCB2-50E4-C95F-95B7-242FB83591C7}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApplicationFramework", "ApplicationFramework", "{6BA6A97E-291E-2BAB-56D5-9C1BAF70B6E6}"
-	ProjectSection(SolutionItems) = preProject
-		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\ApplicationSessionBase.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\ApplicationSessionBase.h
-		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\AppSessionControllerBase.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\AppSessionControllerBase.h
-		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.h
-		Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\PageManagerBase.h = Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\PageManagerBase.h
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AndroidCoreSdk", "AndroidCoreSdk", "{43AE82AF-AA67-1373-E294-3E187A0E0362}"
 	ProjectSection(SolutionItems) = preProject
 		Sources\Android\AndroidCoreSdk\README.md = Sources\Android\AndroidCoreSdk\README.md
+		Sources\Android\AndroidCoreSdk\build.gradle.kts = Sources\Android\AndroidCoreSdk\build.gradle.kts
+		Sources\Android\AndroidCoreSdk\gradle.properties = Sources\Android\AndroidCoreSdk\gradle.properties
+		Sources\Android\AndroidCoreSdk\settings.gradle.kts = Sources\Android\AndroidCoreSdk\settings.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "androidcoresdk", "androidcoresdk", "{45722EB1-99A3-8371-5276-E56938CC77E0}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidCoreSdk\androidcoresdk\build.gradle.kts = Sources\Android\AndroidCoreSdk\androidcoresdk\build.gradle.kts
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5913FBC2-9A70-DB31-E285-C917B781343F}"
@@ -696,6 +656,43 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application"
 		Sources\Android\AndroidTemplates\Templates\Application\version.properties = Sources\Android\AndroidTemplates\Templates\Application\version.properties
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cmake", "cmake", "{EE8973D8-2FA1-B84A-247C-24C51C84C767}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\cmake\AndroidToolchain.cmake = Sources\Android\AndroidTemplates\Templates\Application\cmake\AndroidToolchain.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{C6218429-C30C-1915-8804-606442EE5D98}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.debug.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.debug.bat
+		Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.release.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.release.bat
+		Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-debug.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-debug.bat
+		Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-release.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-release.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{38BBF89B-3A90-9542-B241-62C0997F0D93}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\Scripts\PowerShell\ensure-apk-updater.ps1 = Sources\Android\AndroidTemplates\Templates\Application\Scripts\PowerShell\ensure-apk-updater.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{8075C702-DE27-B30C-F602-6B7D1F67A119}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{9575F4FF-8180-CCD1-C1B7-A49BB3CC6437}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\build.gradle.kts = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\build.gradle.kts
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle.properties = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle.properties
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew.bat = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew.bat
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\settings.gradle.kts = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\settings.gradle.kts
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gradle", "gradle", "{CC9F5256-450D-33B1-75C4-2D6A5EBB8BDF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wrapper", "wrapper", "{EA605835-BE19-788C-2E65-1A66CA990F7E}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.jar = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.jar
+		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.properties = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.properties
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "{{Application}}.Android", "{{Application}}.Android", "{9CA28EE5-A360-17AE-B88E-82FCBE9D866D}"
 	ProjectSection(SolutionItems) = preProject
 		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\build.gradle.kts = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\build.gradle.kts
@@ -725,14 +722,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "drawable", "drawable", "{0A
 		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\drawable\splash_screen.xml = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\drawable\splash_screen.xml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "values-v31", "values-v31", "{52D4CCCE-52FF-35AD-383E-6D49ED86AB8D}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values-v31\themes.xml = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values-v31\themes.xml
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "values", "values", "{54D340B4-D477-69AA-F0AE-4B4D53005616}"
 	ProjectSection(SolutionItems) = preProject
 		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values\themes.xml = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values\themes.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "values-v31", "values-v31", "{52D4CCCE-52FF-35AD-383E-6D49ED86AB8D}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values-v31\themes.xml = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values-v31\themes.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "xml", "xml", "{DD60CAF2-31F7-517A-48F6-1181ABB9CBDC}"
@@ -833,41 +830,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Control", "Control", "{27CE
 		Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.UI\Control\.gitkeep = Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.UI\Control\.gitkeep
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cmake", "cmake", "{EE8973D8-2FA1-B84A-247C-24C51C84C767}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diagnostic", "Diagnostic", "{9936E380-E066-517D-D16E-E3DFE8F3D17A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Native", "Native", "{F2A74EFD-F037-0D85-6A36-DC815125C115}"
 	ProjectSection(SolutionItems) = preProject
-		Sources\Android\AndroidTemplates\Templates\Application\cmake\AndroidToolchain.cmake = Sources\Android\AndroidTemplates\Templates\Application\cmake\AndroidToolchain.cmake
+		Sources\Diagnostic\Native\Spdlog.cmake = Sources\Diagnostic\Native\Spdlog.cmake
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{C6218429-C30C-1915-8804-606442EE5D98}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGLESRenderer", "OpenGLESRenderer", "{D756FB21-3D2C-53AA-9B2A-8224098E6F56}"
 	ProjectSection(SolutionItems) = preProject
-		Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.debug.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.debug.bat
-		Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.release.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.release.bat
-		Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-debug.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-debug.bat
-		Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-release.bat = Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-release.bat
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShell", "PowerShell", "{38BBF89B-3A90-9542-B241-62C0997F0D93}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Android\AndroidTemplates\Templates\Application\Scripts\PowerShell\ensure-apk-updater.ps1 = Sources\Android\AndroidTemplates\Templates\Application\Scripts\PowerShell\ensure-apk-updater.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{8075C702-DE27-B30C-F602-6B7D1F67A119}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gradle", "Gradle", "{9575F4FF-8180-CCD1-C1B7-A49BB3CC6437}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\build.gradle.kts = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\build.gradle.kts
-		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle.properties = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle.properties
-		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew
-		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew.bat = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew.bat
-		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\settings.gradle.kts = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\settings.gradle.kts
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gradle", "gradle", "{CC9F5256-450D-33B1-75C4-2D6A5EBB8BDF}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "wrapper", "wrapper", "{EA605835-BE19-788C-2E65-1A66CA990F7E}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.jar = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.jar
-		Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.properties = Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.properties
+		Sources\OpenGLESRenderer\AngleConfig.cmake.in = Sources\OpenGLESRenderer\AngleConfig.cmake.in
+		Sources\OpenGLESRenderer\Build.cmake = Sources\OpenGLESRenderer\Build.cmake
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{1E2FDD5B-DC67-7E41-C027-4F8D53A6977C}"
@@ -956,6 +929,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{9B5AFC51
 	ProjectSection(SolutionItems) = preProject
 		Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip = Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip
 		Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json = Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{7FF5BA4D-D365-FDBD-A03B-E3BF3540BB17}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\XamlCompiler\CMakeLists.txt = Sources\Windows\XamlCompiler\CMakeLists.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlRuntime", "XamlRuntime", "{678B0872-A25D-93EA-1C19-146CA6157FAF}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\XamlRuntime\Build.cmake = Sources\XamlRuntime\Build.cmake
+		Sources\XamlRuntime\Consumer.cmake = Sources\XamlRuntime\Consumer.cmake
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", "{8FF335B3-6BA4-BDFE-A262-F8D2F70D99C8}"
@@ -1062,6 +1046,12 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{471849DD-CFC2-1710-56DC-58140143E621} = {81EF4FB0-D71C-5218-403F-900FB19ABDB4}
+		{A01B333C-1B79-EC59-16C6-221B9EA05E5F} = {471849DD-CFC2-1710-56DC-58140143E621}
+		{29C6F0AF-E964-2291-C7DB-3ABE7B9314E1} = {A01B333C-1B79-EC59-16C6-221B9EA05E5F}
+		{5BD3925F-5BE2-EC4C-69B1-E70DFC729F4A} = {29C6F0AF-E964-2291-C7DB-3ABE7B9314E1}
+		{C5C0FCB2-50E4-C95F-95B7-242FB83591C7} = {5BD3925F-5BE2-EC4C-69B1-E70DFC729F4A}
+		{6BA6A97E-291E-2BAB-56D5-9C1BAF70B6E6} = {C5C0FCB2-50E4-C95F-95B7-242FB83591C7}
 		{D299E483-C236-42DA-9F90-8447C3B007D1} = {066DAD5F-063F-43BF-8ADC-0E76A36CA54D}
 		{C45C681B-A5F9-4F56-8DBE-70193C735CAB} = {D299E483-C236-42DA-9F90-8447C3B007D1}
 		{DE87C8F7-02CD-48E0-8FB9-916978A13394} = {C45C681B-A5F9-4F56-8DBE-70193C735CAB}
@@ -1099,53 +1089,40 @@ Global
 		{C25B8C43-91C7-4F23-B186-05E37C145720} = {45569702-BF11-421C-A43A-03D1364E3C95}
 		{6332D45B-9105-4EA4-BB61-65D494AF4CE0} = {C25B8C43-91C7-4F23-B186-05E37C145720}
 		{B398F253-412C-49AA-B2EF-D5F164B8ACF2} = {6332D45B-9105-4EA4-BB61-65D494AF4CE0}
+		{3EEC5DF9-747D-C036-910A-45CDF486927A} = {13DA8639-4234-4E82-9423-056A19840860}
+		{96813775-82ED-B2F5-3C1D-E809CD2D37E3} = {3EEC5DF9-747D-C036-910A-45CDF486927A}
+		{2CADED90-D69B-555C-A418-2479148AF202} = {96813775-82ED-B2F5-3C1D-E809CD2D37E3}
+		{FBF9FFB4-F5AE-0740-163C-F7719D605926} = {2CADED90-D69B-555C-A418-2479148AF202}
+		{9C7AAB80-FA41-4925-95FA-06409E32E4E1} = {FBF9FFB4-F5AE-0740-163C-F7719D605926}
+		{9C0C0DD8-D324-6EBE-A92E-80D071FA070E} = {FBF9FFB4-F5AE-0740-163C-F7719D605926}
+		{882D737B-037A-6AB0-A4C4-02DF9AC2CF18} = {2CADED90-D69B-555C-A418-2479148AF202}
+		{C27A6217-35E3-4AD1-BBC7-71438D8E1E16} = {882D737B-037A-6AB0-A4C4-02DF9AC2CF18}
+		{C4B59854-7B53-529B-756B-A948D5196B8C} = {2CADED90-D69B-555C-A418-2479148AF202}
+		{5217622B-841E-4635-BA5D-8DE005125B16} = {C4B59854-7B53-529B-756B-A948D5196B8C}
+		{12429D85-9DF8-3E9F-6B6F-78862668B3CD} = {2CADED90-D69B-555C-A418-2479148AF202}
+		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3} = {12429D85-9DF8-3E9F-6B6F-78862668B3CD}
+		{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC} = {12429D85-9DF8-3E9F-6B6F-78862668B3CD}
+		{45A79D61-B350-ADD1-84A4-451378B578DD} = {96813775-82ED-B2F5-3C1D-E809CD2D37E3}
+		{1EFF50FD-1FFD-F1F7-176B-A3D945FF896A} = {45A79D61-B350-ADD1-84A4-451378B578DD}
+		{6A761B26-8F57-927B-0812-7CCD23F050D1} = {1EFF50FD-1FFD-F1F7-176B-A3D945FF896A}
+		{F104C833-785D-E25F-5F10-B46284462A11} = {1EFF50FD-1FFD-F1F7-176B-A3D945FF896A}
+		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = {1EFF50FD-1FFD-F1F7-176B-A3D945FF896A}
+		{4F96567F-20F3-F0AD-9E1D-7EC42B5583DF} = {45A79D61-B350-ADD1-84A4-451378B578DD}
+		{E21B97A1-D847-2938-4E29-760523C97389} = {4F96567F-20F3-F0AD-9E1D-7EC42B5583DF}
+		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = {4F96567F-20F3-F0AD-9E1D-7EC42B5583DF}
+		{809FD221-2EF9-7A5F-FD97-3A8E9EC9A76E} = {45A79D61-B350-ADD1-84A4-451378B578DD}
+		{77311056-84A3-4B57-AEF1-7A76F17C500C} = {809FD221-2EF9-7A5F-FD97-3A8E9EC9A76E}
+		{220B0789-1F04-54D3-18E5-5DB99E91172F} = {809FD221-2EF9-7A5F-FD97-3A8E9EC9A76E}
+		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = {809FD221-2EF9-7A5F-FD97-3A8E9EC9A76E}
+		{5D5D9444-8D65-2F33-2E0D-DEAF9B3B09A6} = {45A79D61-B350-ADD1-84A4-451378B578DD}
+		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = {5D5D9444-8D65-2F33-2E0D-DEAF9B3B09A6}
+		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = {5D5D9444-8D65-2F33-2E0D-DEAF9B3B09A6}
+		{3E00A02D-46F3-432B-91C8-5D459F70C525} = {5D5D9444-8D65-2F33-2E0D-DEAF9B3B09A6}
 		{26DC63D4-1E80-4386-ACBA-A8B9D984FC44} = {13DA8639-4234-4E82-9423-056A19840860}
-		{5BDCA3C6-D8B9-42B9-A450-8032E2D7EA18} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
-		{923F42D8-57A1-4A1B-8FB9-35B5D73A7F8A} = {5BDCA3C6-D8B9-42B9-A450-8032E2D7EA18}
-		{2E383B60-BE80-4FE6-8EC1-D1D23C281549} = {26DC63D4-1E80-4386-ACBA-A8B9D984FC44}
-		{ADBA3BA9-F6AC-7A5C-7A27-59AE40606576} = {2E383B60-BE80-4FE6-8EC1-D1D23C281549}
-		{E2BB8948-A33B-7D06-CADA-F3B535F84401} = {ADBA3BA9-F6AC-7A5C-7A27-59AE40606576}
-		{03C0B81C-6B57-4791-B5F3-9D2D48CE2544} = {2E383B60-BE80-4FE6-8EC1-D1D23C281549}
-		{A82C4E93-051E-4C0B-B705-5875F748742C} = {2E383B60-BE80-4FE6-8EC1-D1D23C281549}
-		{189A1B26-8EB9-4D78-A955-CF1E45F39257} = {2E383B60-BE80-4FE6-8EC1-D1D23C281549}
 		{8CB5D103-21B9-4651-A4A1-671107F28847} = {13DA8639-4234-4E82-9423-056A19840860}
 		{9DE65AD6-7269-4A1C-9443-DFD2F2F0BC63} = {8CB5D103-21B9-4651-A4A1-671107F28847}
 		{12517CCF-8D81-4473-BEB1-AE0B9BD5B003} = {8CB5D103-21B9-4651-A4A1-671107F28847}
-		{D2E0D44F-71F1-1478-F989-466955EC6F80} = {13DA8639-4234-4E82-9423-056A19840860}
-		{7A9CB031-4F5B-4C90-BCC5-9E0C170937D6} = {D2E0D44F-71F1-1478-F989-466955EC6F80}
-		{7E765BF6-D902-9F4E-CD6C-90C614044B91} = {7A9CB031-4F5B-4C90-BCC5-9E0C170937D6}
-		{7FA23122-0EF3-554B-F66F-7011C69C51C4} = {7E765BF6-D902-9F4E-CD6C-90C614044B91}
-		{6F7F63BC-5509-E8FD-57DB-35CDFDCAF744} = {7A9CB031-4F5B-4C90-BCC5-9E0C170937D6}
-		{0A281F7B-C6D3-D687-5485-F34DEF383257} = {7A9CB031-4F5B-4C90-BCC5-9E0C170937D6}
-		{832B5C4F-3EB0-0B68-2891-21F9C30AE7D2} = {0A281F7B-C6D3-D687-5485-F34DEF383257}
 		{08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83} = {13DA8639-4234-4E82-9423-056A19840860}
-		{0A0141D6-9607-24C7-57B0-CE35AE9F2AA2} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
-		{752A6291-E849-433A-BF37-7102E850AAB5} = {0A0141D6-9607-24C7-57B0-CE35AE9F2AA2}
-		{9C7AAB80-FA41-4925-95FA-06409E32E4E1} = {752A6291-E849-433A-BF37-7102E850AAB5}
-		{9C0C0DD8-D324-6EBE-A92E-80D071FA070E} = {752A6291-E849-433A-BF37-7102E850AAB5}
-		{AA57C568-5481-61FD-0DCD-D5660DF883C3} = {0A0141D6-9607-24C7-57B0-CE35AE9F2AA2}
-		{C27A6217-35E3-4AD1-BBC7-71438D8E1E16} = {AA57C568-5481-61FD-0DCD-D5660DF883C3}
-		{90A10E88-67A9-2FB3-20E4-596F669A5610} = {0A0141D6-9607-24C7-57B0-CE35AE9F2AA2}
-		{5217622B-841E-4635-BA5D-8DE005125B16} = {90A10E88-67A9-2FB3-20E4-596F669A5610}
-		{15C9DD02-133A-0D54-8BE8-73206CCE738F} = {0A0141D6-9607-24C7-57B0-CE35AE9F2AA2}
-		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3} = {15C9DD02-133A-0D54-8BE8-73206CCE738F}
-		{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC} = {15C9DD02-133A-0D54-8BE8-73206CCE738F}
-		{039CECB5-AFB8-E1E1-C5CE-77165073FE9D} = {08C8E2C8-A0AA-45C3-8A74-95F9EBF9AD83}
-		{DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C} = {039CECB5-AFB8-E1E1-C5CE-77165073FE9D}
-		{6A761B26-8F57-927B-0812-7CCD23F050D1} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
-		{F104C833-785D-E25F-5F10-B46284462A11} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
-		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = {DAEE4A46-BA7B-6AE0-F49A-40D17D33B42C}
-		{50CDBD24-894E-0FD6-7C08-442980AADBB7} = {039CECB5-AFB8-E1E1-C5CE-77165073FE9D}
-		{E21B97A1-D847-2938-4E29-760523C97389} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
-		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = {50CDBD24-894E-0FD6-7C08-442980AADBB7}
-		{1C920419-6FCA-97AA-DE2F-11C8037C1EF6} = {039CECB5-AFB8-E1E1-C5CE-77165073FE9D}
-		{77311056-84A3-4B57-AEF1-7A76F17C500C} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
-		{220B0789-1F04-54D3-18E5-5DB99E91172F} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
-		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = {1C920419-6FCA-97AA-DE2F-11C8037C1EF6}
-		{A62B830A-BE58-54F9-6766-E95D2B04A2A8} = {039CECB5-AFB8-E1E1-C5CE-77165073FE9D}
-		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
-		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
-		{3E00A02D-46F3-432B-91C8-5D459F70C525} = {A62B830A-BE58-54F9-6766-E95D2B04A2A8}
 		{A63D24B8-5B7A-45B8-9C11-000000000300} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
 		{A63D24B8-5B7A-45B8-9C11-000000000301} = {A63D24B8-5B7A-45B8-9C11-000000000300}
 		{DC091494-5AC6-46E6-BA6D-61441682BB62} = {B1F5E3AB-29B4-4810-908B-B3ED0D7D93B4}
@@ -1164,6 +1141,7 @@ Global
 		{1C4B2EE2-2255-4CA5-83A0-11A4B0320881} = {CB7EEAB5-39FB-49B2-95A1-72774A80F5B8}
 		{0058EABD-78DA-4871-8A2F-296183E2AAB5} = {DD63AF60-7281-8EB9-0738-AF5A6E25AE7A}
 		{013ECED9-C7DA-B731-B1FD-FF8491CCBD45} = {0058EABD-78DA-4871-8A2F-296183E2AAB5}
+		{AB8B18B3-95B8-0FF6-6075-F34874945847} = {013ECED9-C7DA-B731-B1FD-FF8491CCBD45}
 		{A717A89D-D490-FC0E-D988-0817033BF109} = {013ECED9-C7DA-B731-B1FD-FF8491CCBD45}
 		{855D48A5-D4B7-C5B4-C56E-AAF40965C99A} = {A717A89D-D490-FC0E-D988-0817033BF109}
 		{79F49C30-48E8-B892-C449-9A5BC197FB26} = {855D48A5-D4B7-C5B4-C56E-AAF40965C99A}
@@ -1187,13 +1165,8 @@ Global
 		{6C77E845-67CC-03A9-E745-F1BFED778BDB} = {40065089-ABD2-33ED-998D-A8CAC6D0646B}
 		{F84D64AA-3BEE-9D9A-80F9-2AA4CEB72317} = {6C77E845-67CC-03A9-E745-F1BFED778BDB}
 		{2A5AB41A-B871-5C6C-DFE7-23AEB9A14DD5} = {F84D64AA-3BEE-9D9A-80F9-2AA4CEB72317}
-		{471849DD-CFC2-1710-56DC-58140143E621} = {81EF4FB0-D71C-5218-403F-900FB19ABDB4}
-		{A01B333C-1B79-EC59-16C6-221B9EA05E5F} = {471849DD-CFC2-1710-56DC-58140143E621}
-		{29C6F0AF-E964-2291-C7DB-3ABE7B9314E1} = {A01B333C-1B79-EC59-16C6-221B9EA05E5F}
-		{5BD3925F-5BE2-EC4C-69B1-E70DFC729F4A} = {29C6F0AF-E964-2291-C7DB-3ABE7B9314E1}
-		{C5C0FCB2-50E4-C95F-95B7-242FB83591C7} = {5BD3925F-5BE2-EC4C-69B1-E70DFC729F4A}
-		{6BA6A97E-291E-2BAB-56D5-9C1BAF70B6E6} = {C5C0FCB2-50E4-C95F-95B7-242FB83591C7}
 		{43AE82AF-AA67-1373-E294-3E187A0E0362} = {0058EABD-78DA-4871-8A2F-296183E2AAB5}
+		{45722EB1-99A3-8371-5276-E56938CC77E0} = {43AE82AF-AA67-1373-E294-3E187A0E0362}
 		{5913FBC2-9A70-DB31-E285-C917B781343F} = {43AE82AF-AA67-1373-E294-3E187A0E0362}
 		{79198DA2-2B17-30AD-C13F-0E6B3B79CAA6} = {5913FBC2-9A70-DB31-E285-C917B781343F}
 		{8748F732-8364-EEC7-8CC6-D4C6EED8C1F0} = {79198DA2-2B17-30AD-C13F-0E6B3B79CAA6}
@@ -1209,6 +1182,13 @@ Global
 		{465A2AF3-F306-50E5-4B8D-804FAAA0A4F4} = {F4C0F902-1745-3EC6-1E24-B178F8202E5C}
 		{161EC80E-7077-F4EC-35DA-DC8E1E280003} = {F4C0F902-1745-3EC6-1E24-B178F8202E5C}
 		{9DFD8898-C1BA-935F-B23E-B62E441B5D5A} = {161EC80E-7077-F4EC-35DA-DC8E1E280003}
+		{EE8973D8-2FA1-B84A-247C-24C51C84C767} = {9DFD8898-C1BA-935F-B23E-B62E441B5D5A}
+		{C6218429-C30C-1915-8804-606442EE5D98} = {9DFD8898-C1BA-935F-B23E-B62E441B5D5A}
+		{38BBF89B-3A90-9542-B241-62C0997F0D93} = {C6218429-C30C-1915-8804-606442EE5D98}
+		{8075C702-DE27-B30C-F602-6B7D1F67A119} = {9DFD8898-C1BA-935F-B23E-B62E441B5D5A}
+		{9575F4FF-8180-CCD1-C1B7-A49BB3CC6437} = {8075C702-DE27-B30C-F602-6B7D1F67A119}
+		{CC9F5256-450D-33B1-75C4-2D6A5EBB8BDF} = {9575F4FF-8180-CCD1-C1B7-A49BB3CC6437}
+		{EA605835-BE19-788C-2E65-1A66CA990F7E} = {CC9F5256-450D-33B1-75C4-2D6A5EBB8BDF}
 		{9CA28EE5-A360-17AE-B88E-82FCBE9D866D} = {9DFD8898-C1BA-935F-B23E-B62E441B5D5A}
 		{7D19D172-F51D-9EB0-2EBE-EC8CEB675C0C} = {9CA28EE5-A360-17AE-B88E-82FCBE9D866D}
 		{450D5376-C94E-26E4-6794-36B74AB31BB0} = {7D19D172-F51D-9EB0-2EBE-EC8CEB675C0C}
@@ -1216,8 +1196,8 @@ Global
 		{4213ACF5-A0E8-2290-8409-9B3270DBA5E6} = {D92A85DB-B047-D010-6AE6-A51189A0296F}
 		{7524369C-66F6-88E8-2A66-9E42C8A10D7A} = {450D5376-C94E-26E4-6794-36B74AB31BB0}
 		{0A8C2009-A921-8D5C-C5B3-57D43778BAC9} = {7524369C-66F6-88E8-2A66-9E42C8A10D7A}
-		{52D4CCCE-52FF-35AD-383E-6D49ED86AB8D} = {7524369C-66F6-88E8-2A66-9E42C8A10D7A}
 		{54D340B4-D477-69AA-F0AE-4B4D53005616} = {7524369C-66F6-88E8-2A66-9E42C8A10D7A}
+		{52D4CCCE-52FF-35AD-383E-6D49ED86AB8D} = {7524369C-66F6-88E8-2A66-9E42C8A10D7A}
 		{DD60CAF2-31F7-517A-48F6-1181ABB9CBDC} = {7524369C-66F6-88E8-2A66-9E42C8A10D7A}
 		{30614CF1-E161-0519-9B37-E4F55CCF930A} = {9DFD8898-C1BA-935F-B23E-B62E441B5D5A}
 		{EFBDD282-FDD9-95DE-D516-1F4C873C6772} = {30614CF1-E161-0519-9B37-E4F55CCF930A}
@@ -1232,13 +1212,9 @@ Global
 		{BDF1364C-63DD-233D-B71A-D170CBD4A322} = {7C9C2F7B-1565-E406-AD87-61CB348A676B}
 		{CA22BBD1-01E9-B949-8561-10A7D9C7BAE4} = {9DFD8898-C1BA-935F-B23E-B62E441B5D5A}
 		{27CE9E71-BBE8-B1AB-F65C-92C8BC2FDBAF} = {CA22BBD1-01E9-B949-8561-10A7D9C7BAE4}
-		{EE8973D8-2FA1-B84A-247C-24C51C84C767} = {9DFD8898-C1BA-935F-B23E-B62E441B5D5A}
-		{C6218429-C30C-1915-8804-606442EE5D98} = {9DFD8898-C1BA-935F-B23E-B62E441B5D5A}
-		{38BBF89B-3A90-9542-B241-62C0997F0D93} = {C6218429-C30C-1915-8804-606442EE5D98}
-		{8075C702-DE27-B30C-F602-6B7D1F67A119} = {9DFD8898-C1BA-935F-B23E-B62E441B5D5A}
-		{9575F4FF-8180-CCD1-C1B7-A49BB3CC6437} = {8075C702-DE27-B30C-F602-6B7D1F67A119}
-		{CC9F5256-450D-33B1-75C4-2D6A5EBB8BDF} = {9575F4FF-8180-CCD1-C1B7-A49BB3CC6437}
-		{EA605835-BE19-788C-2E65-1A66CA990F7E} = {CC9F5256-450D-33B1-75C4-2D6A5EBB8BDF}
+		{9936E380-E066-517D-D16E-E3DFE8F3D17A} = {DD63AF60-7281-8EB9-0738-AF5A6E25AE7A}
+		{F2A74EFD-F037-0D85-6A36-DC815125C115} = {9936E380-E066-517D-D16E-E3DFE8F3D17A}
+		{D756FB21-3D2C-53AA-9B2A-8224098E6F56} = {DD63AF60-7281-8EB9-0738-AF5A6E25AE7A}
 		{1E2FDD5B-DC67-7E41-C027-4F8D53A6977C} = {DD63AF60-7281-8EB9-0738-AF5A6E25AE7A}
 		{83E644BE-13DF-E2BD-54D1-CDD3376D5977} = {1E2FDD5B-DC67-7E41-C027-4F8D53A6977C}
 		{4D6F6747-71BE-F4EA-014C-3D4535A6807C} = {83E644BE-13DF-E2BD-54D1-CDD3376D5977}
@@ -1250,6 +1226,8 @@ Global
 		{620696B5-0CA9-3C9A-A2CD-49A8C603164B} = {739FF1E5-DAEC-0A2D-A3E2-EC61EBBB3B2C}
 		{D21AA393-9F64-7F3E-CC7A-20CB31CBD13C} = {739FF1E5-DAEC-0A2D-A3E2-EC61EBBB3B2C}
 		{9B5AFC51-C463-EDF8-0CFC-D63CF43D1D9A} = {739FF1E5-DAEC-0A2D-A3E2-EC61EBBB3B2C}
+		{7FF5BA4D-D365-FDBD-A03B-E3BF3540BB17} = {1E2FDD5B-DC67-7E41-C027-4F8D53A6977C}
+		{678B0872-A25D-93EA-1C19-146CA6157FAF} = {DD63AF60-7281-8EB9-0738-AF5A6E25AE7A}
 		{2A379002-FDAE-626B-EB7C-4D664F6BD5C6} = {8FF335B3-6BA4-BDFE-A262-F8D2F70D99C8}
 		{62A7E562-7130-9FEE-6475-CA01136C2FE1} = {2A379002-FDAE-626B-EB7C-4D664F6BD5C6}
 		{2305F092-EEF8-5B3D-DE3C-F6741792769C} = {62A7E562-7130-9FEE-6475-CA01136C2FE1}
@@ -1261,45 +1239,47 @@ Global
 		SolutionGuid = {D7A3009E-A79E-4542-AC95-DD9B9C113922}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Projects\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{220b0789-1f04-54d3-18e5-5db99e91172f}*SharedItemsImports = 4
-		Projects\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{364e96cb-9d8a-40b0-8455-6a31a15a36b0}*SharedItemsImports = 9
-		Projects\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{3e00a02d-46f3-432b-91c8-5d459f70c525}*SharedItemsImports = 9
-		Projects\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{6cbdc266-9b42-f741-03eb-f610ab72e1b1}*SharedItemsImports = 4
-		Projects\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{77311056-84a3-4b57-aef1-7a76f17c500c}*SharedItemsImports = 4
-		Projects\MsBuild\Application\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems*{9c0c0dd8-d324-6ebe-a92e-80d071fa070e}*SharedItemsImports = 9
-		Projects\MsBuild\Application\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems*{9c7aab80-fa41-4925-95fa-06409e32e4e1}*SharedItemsImports = 4
-		Projects\MsBuild\Application\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems*{a8b26cd9-d2ee-7f56-8caa-d8ea5008edac}*SharedItemsImports = 9
-		Projects\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{ab97876a-f25a-4aae-bacd-d32c776bb261}*SharedItemsImports = 9
-		Projects\MsBuild\Application\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems*{b4c64df3-8ee8-154a-4e88-d72af9ca9bc3}*SharedItemsImports = 4
-		Projects\MsBuild\Library\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{c1e8c40d-b9b5-4c0d-9f7e-1b793d3c13ae}*SharedItemsImports = 9
-		Projects\MsBuild\Library\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{e21b97a1-d847-2938-4e29-760523c97389}*SharedItemsImports = 4
-		Projects\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{f104c833-785d-e25f-5f10-b46284462a11}*SharedItemsImports = 4
-		Projects\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{fa67d7fd-393a-e9bc-f2a4-2570b2929973}*SharedItemsImports = 4
+		Projects\!Generated\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{220b0789-1f04-54d3-18e5-5db99e91172f}*SharedItemsImports = 4
+		Projects\!Generated\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{364e96cb-9d8a-40b0-8455-6a31a15a36b0}*SharedItemsImports = 9
+		Projects\!Generated\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{3e00a02d-46f3-432b-91c8-5d459f70c525}*SharedItemsImports = 9
+		Projects\!Generated\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{6cbdc266-9b42-f741-03eb-f610ab72e1b1}*SharedItemsImports = 4
+		Projects\!Generated\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems*{77311056-84a3-4b57-aef1-7a76f17c500c}*SharedItemsImports = 4
+		Projects\!Generated\MsBuild\Application\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems*{9c0c0dd8-d324-6ebe-a92e-80d071fa070e}*SharedItemsImports = 9
+		Projects\!Generated\MsBuild\Application\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems*{9c7aab80-fa41-4925-95fa-06409e32e4e1}*SharedItemsImports = 4
+		Projects\!Generated\MsBuild\Application\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems*{a8b26cd9-d2ee-7f56-8caa-d8ea5008edac}*SharedItemsImports = 9
+		Projects\!Generated\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{ab97876a-f25a-4aae-bacd-d32c776bb261}*SharedItemsImports = 9
+		Projects\!Generated\MsBuild\Application\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems*{b4c64df3-8ee8-154a-4e88-d72af9ca9bc3}*SharedItemsImports = 4
+		Projects\!Generated\MsBuild\Library\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{c1e8c40d-b9b5-4c0d-9f7e-1b793d3c13ae}*SharedItemsImports = 9
+		Projects\!Generated\MsBuild\Library\Helpers\UniversalDevKit.Helpers.Shared.vcxitems*{e21b97a1-d847-2938-4e29-760523c97389}*SharedItemsImports = 4
+		Projects\!Generated\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems*{f104c833-785d-e25f-5f10-b46284462a11}*SharedItemsImports = 4
+		Projects\!Generated\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems*{fa67d7fd-393a-e9bc-f2a4-2570b2929973}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionInjectorProjectOwnership) = preSolution
-		{220B0789-1F04-54D3-18E5-5DB99E91172F} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Static.vcxproj
-		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems
-		{3E00A02D-46F3-432B-91C8-5D459F70C525} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems
-		{5217622B-841E-4635-BA5D-8DE005125B16} = ProjectTools|{9A19103F-16F7-4668-BE54-9A1E7A4F7556}|Projects\MsBuild\Application\UdkCli.VisualStudio\UdkCli.VisualStudio.Net472.csproj
-		{6A761B26-8F57-927B-0812-7CCD23F050D1} = ProjectTools|{9A19103F-16F7-4668-BE54-9A1E7A4F7556}|Projects\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Net8.csproj
-		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Static.vcxproj
-		{77311056-84A3-4B57-AEF1-7A76F17C500C} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dynamic.vcxproj
-		{9C0C0DD8-D324-6EBE-A92E-80D071FA070E} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Application\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems
-		{9C7AAB80-FA41-4925-95FA-06409E32E4E1} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Application\UdkCli\UdkCli.vcxproj
-		{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Application\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems
-		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems
-		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Application\XamlCompiler\XamlCompiler.vcxproj
-		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\Helpers\UniversalDevKit.Helpers.Shared.vcxitems
-		{C27A6217-35E3-4AD1-BBC7-71438D8E1E16} = ProjectTools|{9A19103F-16F7-4668-BE54-9A1E7A4F7556}|Projects\MsBuild\Application\UdkCli.Setup\UdkCli.Setup.csproj
-		{E21B97A1-D847-2938-4E29-760523C97389} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj
-		{F104C833-785D-E25F-5F10-B46284462A11} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj
-		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Dynamic.vcxproj
+		{220B0789-1F04-54D3-18E5-5DB99E91172F} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\!Generated\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Static.vcxproj
+		{364E96CB-9D8A-40B0-8455-6A31A15A36B0} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\!Generated\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Shared.vcxitems
+		{3E00A02D-46F3-432B-91C8-5D459F70C525} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\!Generated\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Shared.vcxitems
+		{5217622B-841E-4635-BA5D-8DE005125B16} = ProjectTools|{9A19103F-16F7-4668-BE54-9A1E7A4F7556}|Projects\!Generated\MsBuild\Application\UdkCli.VisualStudio\UdkCli.VisualStudio.Net472.csproj
+		{6A761B26-8F57-927B-0812-7CCD23F050D1} = ProjectTools|{9A19103F-16F7-4668-BE54-9A1E7A4F7556}|Projects\!Generated\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Net8.csproj
+		{6CBDC266-9B42-F741-03EB-F610AB72E1B1} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\!Generated\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Static.vcxproj
+		{77311056-84A3-4B57-AEF1-7A76F17C500C} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\!Generated\MsBuild\Library\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.Dynamic.vcxproj
+		{9C0C0DD8-D324-6EBE-A92E-80D071FA070E} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\!Generated\MsBuild\Application\UdkCli\UniversalDevKit.UdkCli.Shared.vcxitems
+		{9C7AAB80-FA41-4925-95FA-06409E32E4E1} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\!Generated\MsBuild\Application\UdkCli\UdkCli.vcxproj
+		{A8B26CD9-D2EE-7F56-8CAA-D8EA5008EDAC} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\!Generated\MsBuild\Application\XamlCompiler\UniversalDevKit.XamlCompiler.Shared.vcxitems
+		{AB97876A-F25A-4AAE-BACD-D32C776BB261} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\!Generated\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Shared.vcxitems
+		{B4C64DF3-8EE8-154A-4E88-D72AF9CA9BC3} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\!Generated\MsBuild\Application\XamlCompiler\XamlCompiler.vcxproj
+		{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\!Generated\MsBuild\Library\Helpers\UniversalDevKit.Helpers.Shared.vcxitems
+		{C27A6217-35E3-4AD1-BBC7-71438D8E1E16} = ProjectTools|{9A19103F-16F7-4668-BE54-9A1E7A4F7556}|Projects\!Generated\MsBuild\Application\UdkCli.Setup\UdkCli.Setup.csproj
+		{E21B97A1-D847-2938-4E29-760523C97389} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\!Generated\MsBuild\Library\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj
+		{F104C833-785D-E25F-5F10-B46284462A11} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\!Generated\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj
+		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\!Generated\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Dynamic.vcxproj
 	EndGlobalSection
 	GlobalSection(ProjectToolsSolutionItems) = preSolution
 		{0045DC77-4E7A-CAA5-C39B-017888C0F85D} = {D92ADECE-4BB5-5892-9B8B-E3EFB9CD960C}|Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\coroutines\CancellableContinuationCompletion.kt
 		{0058EABD-78DA-4871-8A2F-296183E2AAB5} = folder
 		{013ECED9-C7DA-B731-B1FD-FF8491CCBD45} = folder
+		{01D1BB8D-FF7D-9F7D-E36C-4621CC67A4BF} = {43AE82AF-AA67-1373-E294-3E187A0E0362}|Sources\Android\AndroidCoreSdk\settings.gradle.kts
 		{02CFB75D-969E-57BE-52DF-FB79BA2ACD90} = {3C05F2CA-9799-16D6-6D4C-7975A1C6263E}|Sources\Android\AndroidBuildTools\Gradle\src\main\groovy\com\isrepeat\build\VerifyReleaseSigning.groovy
+		{03CC9874-B389-0782-C963-B271E1C99A88} = {F2A74EFD-F037-0D85-6A36-DC815125C115}|Sources\Diagnostic\Native\Spdlog.cmake
 		{05047177-AE19-0754-4681-B0FC0B7057CC} = {DF733DED-4F5E-1163-6FF7-27E2C698A2F2}|Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeMessageDispatcher.kt
 		{05C05AA9-4CBB-342C-782A-F5F1FA20C6D0} = {F9961101-C581-697B-D7DB-C44F3D9A1D27}|Sources\Windows\UdkCli\Tools\ProjectTools\Private\Requirements.ps1
 		{06481AD1-BA8D-3E52-11D7-7E3ACC1F3295} = {77C9EBEA-67FA-083D-9932-64D60FBBBA48}|Sources\Windows\UdkCli\Tools\PackageTools\Private\GetNuGet.ps1
@@ -1311,6 +1291,7 @@ Global
 		{0E46E1F1-1F51-4945-2969-698671C3DAC0} = {D07AAEE2-404C-C903-F1BC-DFFD8CA67741}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Model\ApplicationRepository.h
 		{0E87528A-E441-CBE9-A952-1772DD2CA5AA} = {2A379002-FDAE-626B-EB7C-4D664F6BD5C6}|ThirdParty\XamlRuntime\nanosvg.h
 		{0F240B3B-1418-8BDD-F828-91D240F73062} = {BC32E7BD-621D-537D-573D-D65B7B6C332C}|Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\diagnostics\SdkLogger.kt
+		{0FE39DA1-135D-86C6-9235-A1038F4BB857} = {013ECED9-C7DA-B731-B1FD-FF8491CCBD45}|Sources\Android\AndroidAppKit\gradle.properties
 		{1149FB45-CA50-F08F-4794-AE5B81311535} = {B071081B-DCF4-CD6F-1188-F6254EEBBC7C}|ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\portfile.cmake
 		{11D3A223-4256-E85F-FE79-22A74453F0ED} = {19C8FF3B-B53F-D16E-CFB1-E612D34F873C}|Sources\Windows\UdkCli\Tools\PackageTools\Templates\PrefabConsumer.cmake
 		{138E226A-8C0E-3008-9326-BEA4AF0926E8} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\DotNet.ps1
@@ -1341,11 +1322,13 @@ Global
 		{2B862E79-EC6C-01C4-6BC0-C3B1AFD3296E} = {6C77E845-67CC-03A9-E745-F1BFED778BDB}|Sources\Android\AndroidBuildTools\PowerShell\upload-apk-to-drive.ps1
 		{2BA30C34-64E0-4B4C-9977-392284A44800} = {6BA6A97E-291E-2BAB-56D5-9C1BAF70B6E6}|Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\PageManagerBase.h
 		{2BB3DE20-47E8-641B-739A-290819230C63} = {77C9EBEA-67FA-083D-9932-64D60FBBBA48}|Sources\Windows\UdkCli\Tools\PackageTools\Private\Tools.ps1
+		{2BBCE72F-2ACC-47AD-8567-E3DA4532EB33} = {013ECED9-C7DA-B731-B1FD-FF8491CCBD45}|Sources\Android\AndroidAppKit\settings.gradle.kts
 		{2CB83BF8-C931-9A0C-F095-C78670A09780} = {9575F4FF-8180-CCD1-C1B7-A49BB3CC6437}|Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\settings.gradle.kts
 		{2D12D02F-C68E-E557-C7EE-D6FDD63EFAB0} = {F9961101-C581-697B-D7DB-C44F3D9A1D27}|Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1
 		{2E5BC97C-0789-B4DD-9096-02DF826FE253} = folder
 		{2E749E72-11C0-1856-7644-0A6DC7E7975E} = {6C77E845-67CC-03A9-E745-F1BFED778BDB}|Sources\Android\AndroidBuildTools\PowerShell\Invoke-Build.ps1
 		{2F06F41E-4181-8A8B-E267-B7E8B91DC6A3} = {465A2AF3-F306-50E5-4B8D-804FAAA0A4F4}|Sources\Android\AndroidTemplates\PowerShell\Read-AndroidSharedProps.ps1
+		{2F71FC41-3F8B-F7F6-EB57-0D0B1EB6E94A} = {D756FB21-3D2C-53AA-9B2A-8224098E6F56}|Sources\OpenGLESRenderer\AngleConfig.cmake.in
 		{2FA7FC09-9EA5-F9D2-7DB9-0AA1B6723480} = {2A5AB41A-B871-5C6C-DFE7-23AEB9A14DD5}|Sources\Android\AndroidBuildTools\PowerShell\Modules\Module.AndroidBuildTools\Module.AndroidBuildTools.psm1
 		{302944E8-F079-8F63-B4FD-BE09013CE1E3} = {F9961101-C581-697B-D7DB-C44F3D9A1D27}|Sources\Windows\UdkCli\Tools\ProjectTools\Private\Contract.ps1
 		{30614CF1-E161-0519-9B37-E4F55CCF930A} = folder
@@ -1377,6 +1360,7 @@ Global
 		{43AE82AF-AA67-1373-E294-3E187A0E0362} = folder
 		{44680AB9-7E5B-0F03-D29D-0447277FF12A} = {2E5BC97C-0789-B4DD-9096-02DF826FE253}|ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\cmake\DetectSSE2.cmake
 		{450D5376-C94E-26E4-6794-36B74AB31BB0} = folder
+		{45722EB1-99A3-8371-5276-E56938CC77E0} = folder
 		{465A2AF3-F306-50E5-4B8D-804FAAA0A4F4} = folder
 		{471849DD-CFC2-1710-56DC-58140143E621} = folder
 		{4767E811-89DC-CFD9-59F3-9628E4E5A5CA} = {6CE64FFA-D87F-0998-3CBC-28F0F94B6A22}|Sources\Android\AndroidBuildTools\Cmake\AndroidApplicationFramework.cmake
@@ -1390,6 +1374,7 @@ Global
 		{4D6F6747-71BE-F4EA-014C-3D4535A6807C} = folder
 		{4DC461F7-C720-A2B3-7A1A-CBB07F5822FD} = {B6AE5E9A-B345-C0E0-DBE5-F170FF9796C5}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\ApplicationSession.h
 		{4DDBF11C-1EED-5714-B955-013D9C46E07F} = {BDF1364C-63DD-233D-B71A-D170CBD4A322}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.PreviewPlugin\Session\PreviewSession.cpp
+		{51F6F8D1-2CE9-B4D6-3BB1-B1EB25C70985} = {96813775-82ED-B2F5-3C1D-E809CD2D37E3}|Projects\!Generated\MsBuild\UniversalDevKit.Version.g.props
 		{52D4CCCE-52FF-35AD-383E-6D49ED86AB8D} = folder
 		{533CECEF-EB97-2E82-82AC-7C287FD2C293} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkPrefab.ps1
 		{53421503-2CA0-49BA-5E28-40CA60CFE91C} = {F9961101-C581-697B-D7DB-C44F3D9A1D27}|Sources\Windows\UdkCli\Tools\ProjectTools\Private\GetSolutionInjector.ps1
@@ -1418,6 +1403,7 @@ Global
 		{62B80C5B-22A3-81FC-9C21-53644BAF61F4} = {6C77E845-67CC-03A9-E745-F1BFED778BDB}|Sources\Android\AndroidBuildTools\PowerShell\test-apk-signing.ps1
 		{63A30518-25CE-F72C-4885-7E3838ED7F5F} = {6CE64FFA-D87F-0998-3CBC-28F0F94B6A22}|Sources\Android\AndroidBuildTools\Cmake\InstallAndroidAppPreviewerPluginSdk.cmake
 		{670FA724-AA41-077B-D41A-D14FD9BADCF6} = {9B5AFC51-C463-EDF8-0CFC-D63CF43D1D9A}|Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json
+		{678B0872-A25D-93EA-1C19-146CA6157FAF} = folder
 		{67978CE8-5024-B70A-8C9D-509F7DB030F0} = {9DFD8898-C1BA-935F-B23E-B62E441B5D5A}|Sources\Android\AndroidTemplates\Templates\Application\.gitignore
 		{69D11643-1EB3-65DD-144C-671D23692A58} = folder
 		{6BA6A97E-291E-2BAB-56D5-9C1BAF70B6E6} = folder
@@ -1447,6 +1433,7 @@ Global
 		{7CDFB0A7-C8BF-D086-1372-3DCBAC394AF6} = {174E644B-5906-8155-E8E5-A6119B6250BC}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\drive\GoogleDriveUploader.kt
 		{7D10CBED-44DF-C30B-7814-B537CA43764D} = {D357158F-8B97-6E3A-C7F0-14802FD3F91B}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppKitLogger.kt
 		{7D19D172-F51D-9EB0-2EBE-EC8CEB675C0C} = folder
+		{7FF5BA4D-D365-FDBD-A03B-E3BF3540BB17} = folder
 		{8045487A-D40D-8B1B-00E2-1B1347B65B57} = {6C77E845-67CC-03A9-E745-F1BFED778BDB}|Sources\Android\AndroidBuildTools\PowerShell\get-configuration-value.ps1
 		{8075C702-DE27-B30C-F602-6B7D1F67A119} = folder
 		{808EA4C0-28BF-0A78-49BB-F26BEB9E7F47} = {B071081B-DCF4-CD6F-1188-F6254EEBBC7C}|ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\002-fix-builder-error.patch
@@ -1462,6 +1449,7 @@ Global
 		{86BA09FF-14F3-A40E-8701-AE4B66FC3DE6} = {BC32E7BD-621D-537D-573D-D65B7B6C332C}|Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\diagnostics\MediaStoreSessionLog.kt
 		{86F9FC66-B168-B1DD-A507-0135A3E445E2} = {9575F4FF-8180-CCD1-C1B7-A49BB3CC6437}|Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew.bat
 		{8748F732-8364-EEC7-8CC6-D4C6EED8C1F0} = folder
+		{87E044DB-8B9D-E13C-E818-22DAFC940108} = {43AE82AF-AA67-1373-E294-3E187A0E0362}|Sources\Android\AndroidCoreSdk\gradle.properties
 		{8837E07F-46B4-2745-7C74-5DCBA07D9CDC} = {0A8C2009-A921-8D5C-C5B3-57D43778BAC9}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\drawable\app_icon.xml
 		{88C055AE-FFA0-096D-09C4-51D4CB9A25E4} = {5B178A57-748F-9A15-EA32-46DC26A7915E}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\SettingsPage.xaml
 		{8D95ECAB-40D9-FD4F-F853-03D9EAF58F21} = {19C8FF3B-B53F-D16E-CFB1-E612D34F873C}|Sources\Windows\UdkCli\Tools\PackageTools\Templates\NativePackageTransitive.xml
@@ -1470,11 +1458,13 @@ Global
 		{9135523E-3869-88AA-CB16-0EC390ACC947} = folder
 		{916D9B2A-697C-C7C3-372D-1C73E43EE37B} = {C6218429-C30C-1915-8804-606442EE5D98}|Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-debug.bat
 		{917C5748-5CBA-18FE-C863-0736C0FF543B} = {B6AE5E9A-B345-C0E0-DBE5-F170FF9796C5}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\AppSessionController.cpp
+		{91A715F9-BC1C-886B-AAAC-0B2AFB80A694} = {AB8B18B3-95B8-0FF6-6075-F34874945847}|Sources\Android\AndroidAppKit\androidappkit\build.gradle.kts
 		{9498EA83-8D46-2E29-B230-9DD05F43BE39} = {B6AE5E9A-B345-C0E0-DBE5-F170FF9796C5}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\ApplicationStateStore.h
 		{9575F4FF-8180-CCD1-C1B7-A49BB3CC6437} = folder
 		{95A58306-1588-698E-5CCF-D616CFC12337} = {30614CF1-E161-0519-9B37-E4F55CCF930A}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\CMakeLists.txt
 		{96D1BE1B-83A5-0D4F-682C-03184E44E761} = {B6AE5E9A-B345-C0E0-DBE5-F170FF9796C5}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\PageRegistry.h
 		{98771A02-3FF6-514B-EBEF-019D12736A97} = {B6AE5E9A-B345-C0E0-DBE5-F170FF9796C5}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\NavigationStates.cpp
+		{9936E380-E066-517D-D16E-E3DFE8F3D17A} = folder
 		{99AC22DD-22FD-C6A4-91E6-C717A9A48C91} = folder
 		{99CFB6A8-F62B-86A3-9E78-3DC167B86221} = folder
 		{99EADE83-0937-5D53-A254-B17451086B47} = {6C77E845-67CC-03A9-E745-F1BFED778BDB}|Sources\Android\AndroidBuildTools\PowerShell\Read-AndroidSharedProps.ps1
@@ -1484,10 +1474,13 @@ Global
 		{9B5AFC51-C463-EDF8-0CFC-D63CF43D1D9A} = folder
 		{9BF6DFB4-5D6E-01FA-2BAE-D5BB376C5952} = {77C9EBEA-67FA-083D-9932-64D60FBBBA48}|Sources\Windows\UdkCli\Tools\PackageTools\Private\NuGet.json
 		{9CA28EE5-A360-17AE-B88E-82FCBE9D866D} = folder
+		{9D27BA25-E007-93F2-28C9-F8349EDBAD2D} = {E2E7E6F9-6E5E-D86E-CA10-896EF249380B}|Sources\Android\AndroidBuildTools\Gradle\settings.gradle
+		{9D382B74-C7F3-84E5-9FF6-1672C253FA6C} = {E2E7E6F9-6E5E-D86E-CA10-896EF249380B}|Sources\Android\AndroidBuildTools\Gradle\.gitignore
 		{9DFD8898-C1BA-935F-B23E-B62E441B5D5A} = folder
 		{A01B333C-1B79-EC59-16C6-221B9EA05E5F} = folder
 		{A0586550-284D-030D-D967-BA76CF157272} = {B071081B-DCF4-CD6F-1188-F6254EEBBC7C}|ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\001-fix-uwp.patch
 		{A0A9FE8A-FD4F-494E-ED2A-8F951D1E9B5C} = {4D6F6747-71BE-F4EA-014C-3D4535A6807C}|Sources\Windows\UdkCli\Tools\PackageTools\Build.ps1
+		{A3B46987-1D79-F62F-466F-6E507DEFD914} = {678B0872-A25D-93EA-1C19-146CA6157FAF}|Sources\XamlRuntime\Consumer.cmake
 		{A47590C2-0807-F205-4B40-379D37A99526} = {855D48A5-D4B7-C5B4-C56E-AAF40965C99A}|Sources\Android\AndroidAppKit\src\main\AndroidManifest.xml
 		{A5878628-5BB8-2F98-E58C-57D3EE167A66} = {52D4CCCE-52FF-35AD-383E-6D49ED86AB8D}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values-v31\themes.xml
 		{A6B244BE-F94D-EE06-D628-A047C3E1265E} = {6C77E845-67CC-03A9-E745-F1BFED778BDB}|Sources\Android\AndroidBuildTools\PowerShell\generate-xaml.ps1
@@ -1501,6 +1494,8 @@ Global
 		{AB367C7B-A905-588C-4981-08FB3D8FACF4} = {6BA6A97E-291E-2BAB-56D5-9C1BAF70B6E6}|Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.h
 		{AB3F3CF7-7D67-F801-4635-46D1E4B44AD6} = {2E5BC97C-0789-B4DD-9096-02DF826FE253}|ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\cmake\WebKitCompilerFlags-minimal.cmake
 		{AB6F8ED5-23E6-6618-A797-1CB3898FD585} = {54D340B4-D477-69AA-F0AE-4B4D53005616}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values\themes.xml
+		{AB8B18B3-95B8-0FF6-6075-F34874945847} = folder
+		{AC603621-CC70-87FE-5CEB-5440D9DA39CB} = {43AE82AF-AA67-1373-E294-3E187A0E0362}|Sources\Android\AndroidCoreSdk\build.gradle.kts
 		{AD7EF3C0-0806-0D0B-4DB2-9C4DBF6C2582} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkNative.ps1
 		{AE1FFA68-3272-148B-6684-C83FF649F338} = {41C63637-6D54-8B8F-5D3A-B65D03D0DE80}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Interface\IPage.h
 		{AF161D26-17A6-4672-FF3B-16958119FE89} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Files.ps1
@@ -1519,11 +1514,13 @@ Global
 		{BDB0ABB2-3EDC-D03A-9CD9-2F34E27896D5} = {9DFD8898-C1BA-935F-B23E-B62E441B5D5A}|Sources\Android\AndroidTemplates\Templates\Application\version.properties
 		{BDF1364C-63DD-233D-B71A-D170CBD4A322} = folder
 		{C0EB5D5E-5F8E-1C03-0095-BF32002A8AC2} = {9575F4FF-8180-CCD1-C1B7-A49BB3CC6437}|Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle.properties
+		{C1C8E760-F885-B600-1CB2-001482E79B57} = {45722EB1-99A3-8371-5276-E56938CC77E0}|Sources\Android\AndroidCoreSdk\androidcoresdk\build.gradle.kts
 		{C21018BD-4FFE-784D-5E16-A270619D811B} = folder
 		{C2B3EE34-1EE8-DE32-1609-128A47376530} = {4213ACF5-A0E8-2290-8409-9B3270DBA5E6}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\java\{{PackagePath}}\MainPage.kt
 		{C333B174-08C9-282F-1487-F579218203BA} = {F9961101-C581-697B-D7DB-C44F3D9A1D27}|Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1
 		{C36A4DFC-AA60-2786-2CD9-144A40A6EC84} = {43AE82AF-AA67-1373-E294-3E187A0E0362}|Sources\Android\AndroidCoreSdk\README.md
 		{C417A000-6A2C-A0B4-A70F-2D648ED246E6} = {9575F4FF-8180-CCD1-C1B7-A49BB3CC6437}|Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\build.gradle.kts
+		{C4327018-94D2-5970-F473-9BE3339AF9C4} = {31558A1C-1F48-7D8D-4644-5C718812A4DE}|Sources\Android\AndroidBuildTools\ApplicationFramework\CMakeLists.txt
 		{C4735BD1-06A7-A675-2184-5ABF2C1F06F1} = {3DFB4D7C-3204-56C8-106B-B5D16517B1CD}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\AppKit.kt
 		{C5C0FCB2-50E4-C95F-95B7-242FB83591C7} = folder
 		{C6218429-C30C-1915-8804-606442EE5D98} = folder
@@ -1540,15 +1537,18 @@ Global
 		{CC9F5256-450D-33B1-75C4-2D6A5EBB8BDF} = folder
 		{CD44E76A-3FF9-1947-47C0-D9435C8E4C0F} = folder
 		{CF7B2604-ADA9-9E9B-3534-A9FF7E3FB78E} = folder
+		{D072CCDF-7AC6-F012-8870-8D2AC3387397} = {013ECED9-C7DA-B731-B1FD-FF8491CCBD45}|Sources\Android\AndroidAppKit\build.gradle.kts
 		{D07AAEE2-404C-C903-F1BC-DFFD8CA67741} = folder
 		{D1275AF7-5DE1-74FB-E623-5810FB80816B} = {3C05F2CA-9799-16D6-6D4C-7975A1C6263E}|Sources\Android\AndroidBuildTools\Gradle\src\main\groovy\com\isrepeat\build\AndroidSettingsPlugin.groovy
 		{D15DCF63-AA56-A77F-821F-9A2DC7865321} = {B6AE5E9A-B345-C0E0-DBE5-F170FF9796C5}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\NavigationStates.h
 		{D21AA393-9F64-7F3E-CC7A-20CB31CBD13C} = folder
 		{D23E4828-ED14-CAB7-2119-D1BDEE6A5C5A} = {5B178A57-748F-9A15-EA32-46DC26A7915E}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\SettingsPageViewModel.h
 		{D357158F-8B97-6E3A-C7F0-14802FD3F91B} = folder
+		{D384B926-4D98-2496-5985-7932C847BC0B} = {678B0872-A25D-93EA-1C19-146CA6157FAF}|Sources\XamlRuntime\Build.cmake
 		{D666DBEE-D62D-4BC0-443D-40682C19F358} = {D357158F-8B97-6E3A-C7F0-14802FD3F91B}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppDiagnostics.kt
 		{D6A53133-16BC-5D5D-F816-6C6E90823E74} = {C6218429-C30C-1915-8804-606442EE5D98}|Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.release.bat
 		{D6BE03A0-7AAB-07DA-E85A-5972EFE8F902} = {9DFD8898-C1BA-935F-B23E-B62E441B5D5A}|Sources\Android\AndroidTemplates\Templates\Application\build.ps1
+		{D756FB21-3D2C-53AA-9B2A-8224098E6F56} = folder
 		{D75CDC5E-5633-FECA-C031-002E96D870ED} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\GradlePublish.ps1
 		{D92A85DB-B047-D010-6AE6-A51189A0296F} = folder
 		{D92ADECE-4BB5-5892-9B8B-E3EFB9CD960C} = folder
@@ -1558,13 +1558,16 @@ Global
 		{DD60CAF2-31F7-517A-48F6-1181ABB9CBDC} = folder
 		{DD63AF60-7281-8EB9-0738-AF5A6E25AE7A} = folder
 		{DDE61363-10B9-5ED7-AC34-30CF5846890D} = {BB16142C-29B7-6A1F-13DE-96A7FD3FCC19}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\update\GoogleDriveUpdateController.kt
+		{DE81A9FD-C650-4D72-3F26-A08C5F983EFB} = {D756FB21-3D2C-53AA-9B2A-8224098E6F56}|Sources\OpenGLESRenderer\Build.cmake
 		{DF733DED-4F5E-1163-6FF7-27E2C698A2F2} = folder
 		{E1D1165B-82F8-6CD2-A973-648E05530D04} = {5B178A57-748F-9A15-EA32-46DC26A7915E}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\MainPageViewModel.cpp
+		{E2834EFB-9B57-5FDB-B058-642865B27D83} = {E2E7E6F9-6E5E-D86E-CA10-896EF249380B}|Sources\Android\AndroidBuildTools\Gradle\build.gradle
 		{E2AD7F42-267C-2477-94FE-5599D3E28320} = {DD60CAF2-31F7-517A-48F6-1181ABB9CBDC}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\xml\file_paths.xml
 		{E2E7E6F9-6E5E-D86E-CA10-896EF249380B} = folder
 		{E45639AF-E1D6-A8FA-0F9E-D119A0694830} = folder
 		{E4FA1B8A-4A2D-0F5F-BA28-D138131CBE31} = {B6AE5E9A-B345-C0E0-DBE5-F170FF9796C5}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\PageManager.h
 		{E66122BE-EA12-AF17-5770-638659D63F63} = {5B178A57-748F-9A15-EA32-46DC26A7915E}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\SettingsPageViewModel.cpp
+		{E77CCD0E-4525-1414-951A-BB33C55BB0B3} = {7FF5BA4D-D365-FDBD-A03B-E3BF3540BB17}|Sources\Windows\XamlCompiler\CMakeLists.txt
 		{EA605835-BE19-788C-2E65-1A66CA990F7E} = folder
 		{EA9EEB82-CC09-D56F-F9C2-31BC13F0207C} = {B071081B-DCF4-CD6F-1188-F6254EEBBC7C}|ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\ANGLEShaderProgramVersion.h.in
 		{EABDE454-20DC-EC58-812D-43B4F9A4E39E} = {3DFB4D7C-3204-56C8-106B-B5D16517B1CD}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\androidappkit.kt
@@ -1576,7 +1579,9 @@ Global
 		{EFD7A092-3A45-5683-BB21-0D29D17AEBD5} = {CD44E76A-3FF9-1947-47C0-D9435C8E4C0F}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Base\AppRepositoryBase.h
 		{F10F501B-D381-1ABF-2F21-66901E4FD0F0} = {83E644BE-13DF-E2BD-54D1-CDD3376D5977}|Sources\Windows\UdkCli\Tools\InstallVersion.ps1
 		{F1B69968-55CB-A9C8-8A42-F659CA5AE543} = {465A2AF3-F306-50E5-4B8D-804FAAA0A4F4}|Sources\Android\AndroidTemplates\PowerShell\Remove-AndroidProject.ps1
+		{F1C232E3-1E92-28FF-B847-AF0861443E8D} = {96813775-82ED-B2F5-3C1D-E809CD2D37E3}|Projects\!Generated\MsBuild\UniversalDevKit.Sources.g.targets
 		{F256366F-7508-2206-AEA6-84B15D041896} = {07540A58-9A57-364B-34C9-D9472E22CF5D}|ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\PlatformMac.cmake
+		{F2A74EFD-F037-0D85-6A36-DC815125C115} = folder
 		{F3EAA687-B446-EFA2-9E44-F36CAB63A62B} = {450D5376-C94E-26E4-6794-36B74AB31BB0}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\AndroidManifest.xml
 		{F3FCCC01-5DC7-ACAA-40AE-E6BBBF1C2F6E} = {C6218429-C30C-1915-8804-606442EE5D98}|Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.debug.bat
 		{F480593A-1C9F-FD95-9E52-0253580AEAAC} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Maven.ps1

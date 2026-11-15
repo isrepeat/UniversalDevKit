@@ -4,7 +4,8 @@
 
 - Includes — только публичные C++ заголовки и публичная шаблонная реализация.
 - Sources — реализация и внутренние заголовки, Kotlin-код, ресурсы, поставляемые потребителю скрипты и шаблоны.
-- Projects/<система>/<компонент> — проекты сборки Cmake, MsBuild и Gradle. Каталоги проекта создаваемого приложения остаются частью шаблона.
+- Ручные файлы сборки компонента находятся в его каталоге в Sources. Каталоги проекта создаваемого приложения остаются частью шаблона.
+- Projects/Components — манифесты компонентов. Projects/<система> — общая инфраструктура сборки. Projects/!Generated — выходы генераторов, включая MSBuild-проекты и заголовки.
 - Packages — описание выпуска, версии, delivery-манифесты, nuspec и интеграция доставки.
 - Scripts — обслуживание репозитория: подготовка инструментов, точки входа сборки и проверки.
 
@@ -18,9 +19,9 @@
 
 ## Инструменты и шаблоны
 
-Kotlin-код AndroidCoreSdk и AndroidAppKit находится в Sources/Android/<имя>/src/main. Projects/Gradle/Library/<имя> подключает его через sourceSets. Kotlin packages com.isrepeat и Maven-координаты сохраняются.
+Kotlin-код AndroidCoreSdk и AndroidAppKit находится в Sources/Android/<имя>/src/main. Файлы сборки Gradle лежат в Sources/Android/<имя> и подключают код через sourceSets. Kotlin packages com.isrepeat и Maven-координаты сохраняются.
 
-Потребительские команды находятся в Sources/Android/AndroidBuildTools/PowerShell, CMake-модули — в Cmake, исходники Gradle-плагинов — в Gradle. ApplicationFramework использует публичные заголовки из Includes/Android/AndroidBuildTools и проект Projects/Cmake/Library/AndroidBuildTools/ApplicationFramework.
+Потребительские команды находятся в Sources/Android/AndroidBuildTools/PowerShell, CMake-модули — в Cmake, исходники Gradle-плагинов — в Gradle. ApplicationFramework использует публичные заголовки из Includes/Android/AndroidBuildTools и проект Sources/Android/AndroidBuildTools/ApplicationFramework.
 
 Команды создания приложения находятся в Sources/Android/AndroidTemplates/PowerShell, заготовки — в Sources/Android/AndroidTemplates/Templates/Application. Это исходное содержимое компонента, а не служебные скрипты репозитория.
 

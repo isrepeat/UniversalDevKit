@@ -6,7 +6,7 @@
   <Projects>
     <Project id="gradle"
              adapter="gradle-publish"
-             projectDirectory="Projects/Gradle/Library/AndroidAppKit"
+             projectDirectory="Sources/Android/AndroidAppKit"
              toolchain="Scripts/Android/ResolveToolchain.ps1"
              refreshDependencies="true">
       <Tasks>:androidappkit:publishReleasePublicationToAndroidPackagesFeedRepository</Tasks>

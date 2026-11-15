@@ -4,11 +4,17 @@
     <Group name="ThirdParty">
       <File>ThirdParty/XamlRuntime/**/*</File>
     </Group>
+    <Group name="CMakeRules">
+      <File>Sources/XamlRuntime/*.cmake</File>
+    </Group>
   </Files>
   <Filters>
     <Filter filter="{Tree:Solution}/ThirdParty/XamlRuntime"
             preserveTree="true">
       <GroupRef>ThirdParty</GroupRef>
+    </Filter>
+    <Filter filter="{Tree:Solution}/Sources/XamlRuntime">
+      <GroupRef>CMakeRules</GroupRef>
     </Filter>
   </Filters>
   <Projects>
@@ -38,7 +44,7 @@
         <Group name="NativeBuild">
           <MSBuildTargets>Sources/XamlRuntime/UniversalDevKit.XamlRuntime.targets</MSBuildTargets>
         </Group>
-        <CMake>Projects/Cmake/Library/XamlRuntime/Build.cmake</CMake>
+        <CMake>Sources/XamlRuntime/Build.cmake</CMake>
       </Files>
       <Filters>
         <Filter filter="{Tree:Project}"

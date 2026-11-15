@@ -2,7 +2,7 @@
 <Project>
   <Target Name="__UniversalDevKitStageDiagnostic" BeforeTargets="AssignTargetPaths" Condition="'$(DesignTimeBuild)' != 'true'">
     <MSBuild Condition="'$(UdkDiagnosticPayload)' == '' And '$(MSBuildRuntimeType)' == 'Full'"
-             Projects="$(MSBuildThisFileDirectory)..\..\Projects\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj"
+             Projects="$(MSBuildThisFileDirectory)..\..\Projects\!Generated\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj"
              Targets="Build;GetTargetPath"
              Properties="Configuration=Release;Platform=x64;UniversalDevKitRuntime=Static"
              RemoveProperties="OutDir;IntDir;RuntimeIdentifier;TargetFramework;SelfContained;SolutionDir;BuildProjectReferences;BuildingSolutionFile">

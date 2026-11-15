@@ -1,0 +1,59 @@
+import javax.xml.parsers.DocumentBuilderFactory
+
+plugins {
+    id("com.android.library")
+    id("maven-publish")
+}
+
+group = providers.gradleProperty("packageGroup").get()
+version = providers.gradleProperty("packageVersion").orElse(providers.provider {
+    val manifest = rootProject.file("../../../Packages/Android/AndroidAppKit/Package.xml")
+    val factory = DocumentBuilderFactory.newInstance()
+    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
+    factory.newDocumentBuilder().parse(manifest).documentElement.getAttribute("version")
+}).get()
+
+extensions.configure<com.android.build.api.dsl.LibraryExtension>("android") {
+    sourceSets.getByName("main") {
+        manifest.srcFile("../src/main/AndroidManifest.xml")
+        java.setSrcDirs(listOf("../src/main/java"))
+        kotlin.setSrcDirs(listOf("../src/main/kotlin"))
+    }
+    namespace = "com.isrepeat.androidappkit"
+    compileSdk = providers.gradleProperty("androidCompileSdk").get().toInt()
+
+    defaultConfig {
+        minSdk = providers.gradleProperty("androidMinSdk").get().toInt()
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
+}
+
+dependencies {
+    api("com.isrepeat:androidcoresdk:${providers.gradleProperty("androidCoreSdkVersion").get()}")
+}
+
+publishing {
+    publications {
+        register<MavenPublication>("release") {
+            groupId = project.group.toString()
+            artifactId = "androidappkit"
+            version = project.version.toString()
+
+            afterEvaluate {
+                from(components["release"])
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "AndroidPackagesFeed"
+            url = uri(providers.gradleProperty("udkPublicationFeedPath").orElse(providers.gradleProperty("androidPackagesFeedPath")).get())
+        }
+    }
+}

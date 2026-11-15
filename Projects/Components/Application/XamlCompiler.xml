@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Component name="XamlCompiler">
+  <Files>
+    <Group name="CMakeRules">
+      <File>Sources/Windows/XamlCompiler/CMakeLists.txt</File>
+    </Group>
+  </Files>
+  <Filters>
+    <Filter filter="{Tree:Solution}/Sources/Windows/XamlCompiler">
+      <GroupRef>CMakeRules</GroupRef>
+    </Filter>
+  </Filters>
   <Projects>
     <Project id="native"
              kind="application"

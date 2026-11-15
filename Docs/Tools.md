@@ -39,7 +39,7 @@ Setup необязателен: Connect вызывает существующи�
 
 По умолчанию Connect работает с решением: при запуске CMD без аргументов спрашивает путь к `.sln`, выбирает consumer из проектов этого решения, затем действие и компоненты. Единственный consumer выбирается автоматически. Проекты самой UniversalDevKit исключены из выбора. Параметр ProjectPath позволяет явно выбрать consumer, который должен входить в указанное SolutionPath. CMD также передаёт аргументы PowerShell-скрипту.
 
-SolutionPath вставляет всю папку MsBuild из UniversalDevKit.sln, сохраняя её иерархию: Shared, Static, Dynamic и общие настройки. Затем Connect заменяет импорт Sources.targets на прямые Shared References выбранных компонентов и их зависимостей. В `.vcxproj` появляются `Import` с `Label="Shared"`, а в `.sln` — записи `SharedMSBuildProjectFiles`, связывающие Shared-проекты с consumer. Исходники не копируются и компилируются как часть consumer.
+SolutionPath вставляет папку Projects → !Generated из UniversalDevKit.sln, сохраняя её иерархию: Shared, Static, Dynamic и генерируемые импорты. Затем Connect заменяет импорт Sources.targets на прямые Shared References выбранных компонентов и их зависимостей. В `.vcxproj` появляются `Import` с `Label="Shared"`, а в `.sln` — записи `SharedMSBuildProjectFiles`, связывающие Shared-проекты с consumer. Исходники не копируются и компилируются как часть consumer.
 
 Специальный режим без изменения solution включается только флагом ProjectOnly:
 

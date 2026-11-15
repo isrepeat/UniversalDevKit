@@ -264,7 +264,7 @@ foreach ($includePath in $Model.Components.Keys) {
             if ($extension.Name -cnotin @('cmake', 'msbuildProps', 'msbuildTargets') -or $extension.Value -isnot [string]) {
                 throw "Invalid build extension: ${name}.$($extension.Name)"
             }
-            $extensionRoot = if ($extension.Name -ne 'cmake' -and $extension.Value.StartsWith('Sources/', [StringComparison]::Ordinal)) {
+            $extensionRoot = if ($extension.Value.StartsWith('Sources/', [StringComparison]::Ordinal)) {
                 'Sources/'
             } else {
                 'Projects/'
@@ -321,6 +321,10 @@ foreach ($includePath in $Model.Components.Keys) {
     $lines.Add('    <ItemsProjectGuid>{' + $guid.ToString().ToUpperInvariant() + '}</ItemsProjectGuid>')
     $lines.Add('  </PropertyGroup>')
     $lines.Add('  <Import Project="$(MSBuildThisFileDirectory)' + $libraryMsbuildRelative + 'UniversalDevKit.props" Condition="''$(__IsUniversalDevKitPublicPropsImported)'' != ''true''" />')
+    if ($Model.Profile -eq 'udk' -and (Test-Path -LiteralPath (Join-Path $repositoryPath $versionSource) -PathType Leaf)) {
+        $relativeVersionProps = Get-UdkProjectRelativePath $relativePath $versionProps
+        $lines.Add('  <Import Project="$(MSBuildThisFileDirectory)' + (EscapeXml $relativeVersionProps) + '" />')
+    }
     if ($component.buildExtensions.msbuildProps) {
         $lines.Add('  <Import Project="' + (EscapeXml ($libraryRepositoryPrefix + $component.buildExtensions.msbuildProps.Replace('/', '\'))) + '" />')
     }
