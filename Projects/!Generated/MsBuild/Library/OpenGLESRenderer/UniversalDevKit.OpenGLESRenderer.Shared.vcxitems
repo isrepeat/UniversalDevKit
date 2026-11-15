@@ -51,5 +51,8 @@
     <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.OpenGLESRenderer.Dependencies.g.props">
       <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\OpenGLESRenderer\AngleConfig.cmake.in">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
   </ItemGroup>
 </Project>

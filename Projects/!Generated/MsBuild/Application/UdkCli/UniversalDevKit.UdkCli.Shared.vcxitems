@@ -25,5 +25,137 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\UdkCli.targets">
       <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ConvertManifestToJson.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\InstallVersion.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Adapters\CMakeInstall.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Adapters\ComponentSources.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Adapters\DotNet.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Files.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Adapters\GradlePublish.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Maven.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Adapters\NuGet.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Adapters\NuGetRestore.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkNative.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkPrefab.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Build.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Private\ArtifactDirectories.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Private\Contract.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Private\GetNuGet.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Private\NuGet.json">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Private\Tools.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Templates\NativePackageTransitive.xml">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\PackageTools\Templates\PrefabConsumer.cmake">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Generate.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Private\Contract.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Private\FormatXmlAttributes.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Private\GetSolutionInjector.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Private\Linkage.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Private\MsBuild.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Private\Requirements.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Vsix.csproj.in">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Wpf.csproj.in">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Component.vcxproj.in">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\ComponentExport.h.in">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Export.h.in">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\HeaderCheck.cpp.in">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Library.CSharp.csproj.in">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ReadManifest.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ResolveJsonReference.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\SolutionInjector.Connect.json">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli.Diagnostic.targets">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
   </ItemGroup>
 </Project>

@@ -80,6 +80,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\XamlAttribute.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\XamlLayout.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Projects\!Generated\Includes\UniversalDevKit\XamlRuntime\Export.g.h" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\XamlRuntime\Consumer.cmake" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\XamlRuntime\UniversalDevKit.XamlRuntime.targets">
       <Filter>Build</Filter>
     </None>

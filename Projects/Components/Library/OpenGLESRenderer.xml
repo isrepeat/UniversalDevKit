@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Component name="OpenGLESRenderer">
-  <Files>
-    <Group name="CMakeRules">
-      <File>Sources/OpenGLESRenderer/*.cmake*</File>
-    </Group>
-  </Files>
-  <Filters>
-    <Filter filter="{Tree:Solution}/Sources/OpenGLESRenderer">
-      <GroupRef>CMakeRules</GroupRef>
-    </Filter>
-  </Filters>
   <Projects>
     <Project id="native"
              kind="library"
@@ -41,9 +31,15 @@
         <Group name="NativeBuild">
           <MSBuildTargets>Sources/OpenGLESRenderer/UniversalDevKit.OpenGLESRenderer.targets</MSBuildTargets>
         </Group>
-        <CMake>Sources/OpenGLESRenderer/Build.cmake</CMake>
+        <Group name="CMakeRules">
+          <CMake>Sources/OpenGLESRenderer/Build.cmake</CMake>
+          <File>Sources/OpenGLESRenderer/AngleConfig.cmake.in</File>
+        </Group>
       </Files>
       <Filters>
+        <Filter filter="{Tree:Solution}/Sources/OpenGLESRenderer">
+          <GroupRef>CMakeRules</GroupRef>
+        </Filter>
         <Filter filter="{Tree:Project}">
           <GroupRef>PublicHeaders</GroupRef>
         </Filter>

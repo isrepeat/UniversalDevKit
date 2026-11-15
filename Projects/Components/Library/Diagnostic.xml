@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Component name="Diagnostic">
-  <Files>
-    <Group name="CMakeRules">
-      <File>Sources/Diagnostic/Native/Spdlog.cmake</File>
-    </Group>
-  </Files>
-  <Filters>
-    <Filter filter="{Tree:Solution}/Sources/Diagnostic/Native">
-      <GroupRef>CMakeRules</GroupRef>
-    </Filter>
-  </Filters>
   <Projects>
     <Project id="native"
              kind="library"
@@ -36,9 +26,14 @@
         <Group name="NativeBuild">
           <MSBuildTargets>Sources/Diagnostic/Native/Spdlog.targets</MSBuildTargets>
         </Group>
-        <CMake>Sources/Diagnostic/Native/Spdlog.cmake</CMake>
+        <Group name="CMakeRules">
+          <CMake>Sources/Diagnostic/Native/Spdlog.cmake</CMake>
+        </Group>
       </Files>
       <Filters>
+        <Filter filter="{Tree:Solution}/Sources/Diagnostic/Native">
+          <GroupRef>CMakeRules</GroupRef>
+        </Filter>
         <Filter filter="{Tree:Project}"
                 preserveTree="true">
           <GroupRef>NativeSources</GroupRef>

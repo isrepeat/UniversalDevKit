@@ -11,6 +11,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Includes\OpenGLESRenderer\UniversalDevKit\OpenGLESRenderer\OpenGlRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Projects\!Generated\Includes\UniversalDevKit\OpenGLESRenderer\Export.g.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\OpenGLESRenderer\StandardShaders.h" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\OpenGLESRenderer\AngleConfig.cmake.in" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.targets">
       <Filter>Build</Filter>
     </None>
