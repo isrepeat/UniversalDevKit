@@ -2,10 +2,8 @@
   <Name>D</Name>
   <Dependencies />
   <MsbuildGuid>{DA000000-0000-4000-8000-000000000004}</MsbuildGuid>
-  <Headers>
+  <Files>
     <Header>Includes/D/UniversalDevKit/D/Value.h</Header>
-  </Headers>
-  <Sources>
     <Source>Sources/D/Value.cpp</Source>
-  </Sources>
+  </Files>
 </Component>

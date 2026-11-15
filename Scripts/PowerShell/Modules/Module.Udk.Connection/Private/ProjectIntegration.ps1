@@ -37,7 +37,7 @@ function Invoke-UdkConnectionPlanCore {
     $Disconnect = [bool]$Request.Disconnect
     $SolutionInjectorPath = $Request.SolutionInjectorPath
     $repositoryPath = $Plan.RepositoryPath
-    $integrationPath = Join-Path $repositoryPath 'Projects/MsBuild/UniversalDevKit.Sources.targets'
+    $integrationPath = Get-UdkSourcesTargetsPath $repositoryPath
     $sharedReferencesCondition = '''$(__IsUniversalDevKitSharedReferences)'' == ''true'''
     $targetSolution = $SolutionPath
     $Components = $Plan.Components
@@ -131,7 +131,7 @@ function Invoke-UdkConnectionPlanCore {
     if (-not $Disconnect) {
         $relativePath = GetRelativePath $projectDirectory $integrationPath
         $existing = @($root.SelectNodes('*[local-name()="Import"]') | Where-Object {
-            $_.GetAttribute('Project') -match 'UniversalDevKit\.Sources\.targets$'
+            $_.GetAttribute('Project') -match 'UniversalDevKit\.Sources(?:\.g)?\.targets$'
         })
         if ($existing.Count -and $SolutionPath) {
             throw 'Unmanaged UniversalDevKit Sources.targets import found; remove it before using Shared References.'

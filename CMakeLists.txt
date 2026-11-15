@@ -71,6 +71,7 @@ add_library(UniversalDevKit::Headers ALIAS universaldevkit_headers)
 # Use repository headers before installation and package headers afterward.
 target_include_directories(universaldevkit_headers INTERFACE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Includes/Core>"
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Projects/!Generated/Includes>"
     "$<INSTALL_INTERFACE:include>"
 )
 target_compile_features(universaldevkit_headers INTERFACE cxx_std_20)
@@ -104,7 +105,15 @@ install(TARGETS universaldevkit_headers ${exportedComponentTargets} EXPORT Unive
     RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
 install(DIRECTORY "Includes/Core/" DESTINATION "include")
+install(FILES
+    "Projects/!Generated/Includes/UniversalDevKit/Export.g.h"
+    "Projects/!Generated/Includes/UniversalDevKit/Version.g.h"
+    DESTINATION "include/UniversalDevKit"
+    OPTIONAL
+)
 foreach(componentName IN LISTS availablePackageComponents)
+    install(FILES "Projects/!Generated/Includes/UniversalDevKit/${componentName}/Export.g.h"
+        DESTINATION "include/UniversalDevKit/${componentName}" OPTIONAL)
     if(componentIncludeRoot_${componentName} MATCHES "^ThirdParty/")
         install(DIRECTORY "${componentIncludeRoot_${componentName}}/${componentName}" DESTINATION "include"
             FILES_MATCHING PATTERN "*.h" PATTERN "Internal" EXCLUDE PATTERN "Managed" EXCLUDE)

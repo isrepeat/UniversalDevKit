@@ -69,7 +69,7 @@ $udkPlan = if ($model.Integration -or $model.Profile -eq 'udk') {
 }
 $plan = New-ProjectToolsMsBuildPlan $model $udkPlan
 $executable = & (Join-Path $PSScriptRoot 'Private/GetSolutionInjector.ps1') -LocalPath $SolutionInjectorPath
-$solutionUpdate = Get-ProjectToolsSolutionUpdate $model $plan.Projects $executable
+$solutionUpdate = Get-ProjectToolsSolutionUpdate $model $plan.Projects $executable -Files $plan.Files
 if ($solutionUpdate) {
     $plan.Files.Add($solutionUpdate)
 }

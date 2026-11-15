@@ -14,32 +14,36 @@
                     visibility="private"
                     linkage="dynamic" />
       </Dependencies>
-      <Headers>
-        <Header>Includes/XamlRuntime/UniversalDevKit/XamlRuntime/**/*.h</Header>
-      </Headers>
-      <Sources>
-        <Source>Sources/XamlRuntime/**/*.cpp</Source>
-      </Sources>
+      <Files>
+        <Group name="PublicHeaders">
+          <Header>Includes/XamlRuntime/UniversalDevKit/XamlRuntime/**/*.h</Header>
+        </Group>
+        <Group name="NativeSources">
+          <Source>Sources/XamlRuntime/**/*.cpp</Source>
+        </Group>
+        <Group name="Dependencies">
+          <Generated>{projectDirectory}/*.Dependencies.g.props</Generated>
+        </Group>
+        <Group name="NativeBuild">
+          <MSBuildTargets>Sources/XamlRuntime/UniversalDevKit.XamlRuntime.targets</MSBuildTargets>
+        </Group>
+        <CMake>Projects/Cmake/Library/XamlRuntime/Build.cmake</CMake>
+      </Files>
       <Filters>
-        <Filter filter=""
+        <Filter filter="{Tree:Project}"
                 preserveTree="true">
-          <Path>Includes/XamlRuntime/UniversalDevKit/XamlRuntime</Path>
+          <GroupRef>PublicHeaders</GroupRef>
         </Filter>
-        <Filter filter=""
+        <Filter filter="{Tree:Project}"
                 preserveTree="true">
-          <Path>Sources/XamlRuntime</Path>
+          <GroupRef>NativeSources</GroupRef>
         </Filter>
-        <Filter filter="Build">
-          <Path>Sources/XamlRuntime/**/*.props</Path>
-          <Path>Sources/XamlRuntime/**/*.targets</Path>
-          <Path>{projectDirectory}/*.props</Path>
+        <Filter filter="{Tree:Project}/Build">
+          <GroupRef>NativeBuild</GroupRef>
+          <GroupRef>Dependencies</GroupRef>
         </Filter>
       </Filters>
       <Requirements cxxStandard="20" />
-      <BuildExtensions>
-        <CMake>Projects/Cmake/Library/XamlRuntime/Build.cmake</CMake>
-        <MSBuildTargets>Sources/XamlRuntime/UniversalDevKit.XamlRuntime.targets</MSBuildTargets>
-      </BuildExtensions>
     </Project> <!-- Project id="native" -->
   </Projects>
 </Component>

@@ -1,24 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Component name="UdkCli">
+  <Files>
+    <Group name="ToolsAndConfiguration">
+      <File>Sources/Windows/UdkCli/Tools/**/*</File>
+      <File>Sources/Windows/UdkCli/SolutionInjector.Connect.json</File>
+    </Group>
+    <Group name="WindowsBuild">
+      <File>Sources/Windows/UdkCli.Diagnostic.targets</File>
+    </Group>
+  </Files>
+  <Filters>
+    <Filter filter="{Tree:Solution}/Sources/Windows">
+      <GroupRef>WindowsBuild</GroupRef>
+    </Filter>
+    <Filter filter="{Tree:Solution}/Sources/Windows/UdkCli"
+            preserveTree="true">
+      <GroupRef>ToolsAndConfiguration</GroupRef>
+    </Filter>
+  </Filters>
   <Projects>
     <Project id="native"
              kind="application"
              projectType="native"
              githubVersion="0.3.0"
              msbuildGuid="{9C7AAB80-FA41-4925-95FA-06409E32E4E1}">
-      <Headers>
+      <Files>
         <Header>Sources/Windows/UdkCli/**/*.h</Header>
-      </Headers>
-      <Sources>
         <Source>Sources/Windows/UdkCli/**/*.cpp</Source>
-      </Sources>
+        <MSBuildProps>Sources/Windows/UdkCli/UdkCli.props</MSBuildProps>
+        <MSBuildTargets>Sources/Windows/UdkCli/UdkCli.targets</MSBuildTargets>
+      </Files>
       <Filters>
-        <Filter filter="">
-          <Path>Sources/Windows/UdkCli</Path>
+        <Filter filter="{Tree:Project}">
+          <Match>Sources/Windows/UdkCli/**/*</Match>
         </Filter>
-        <Filter filter="Build">
-          <Path>Sources/Windows/UdkCli/**/*.props</Path>
-          <Path>Sources/Windows/UdkCli/**/*.targets</Path>
+        <Filter filter="{Tree:Project}/Build">
+          <Match>Sources/Windows/UdkCli/**/*.props</Match>
+          <Match>Sources/Windows/UdkCli/**/*.targets</Match>
         </Filter>
       </Filters>
       <Requirements cxxStandard="20" />
@@ -33,10 +51,6 @@
           <TargetName>udk</TargetName>
         </Properties>
       </MSBuild>
-      <BuildExtensions>
-        <MSBuildProps>Sources/Windows/UdkCli/UdkCli.props</MSBuildProps>
-        <MSBuildTargets>Sources/Windows/UdkCli/UdkCli.targets</MSBuildTargets>
-      </BuildExtensions>
     </Project> <!-- Project id="native" -->
   </Projects>
 </Component>

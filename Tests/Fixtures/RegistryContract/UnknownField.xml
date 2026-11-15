@@ -3,7 +3,7 @@
   <Kind>headerOnly</Kind>
   <MsbuildGuid>{984F66E5-780A-40B6-A641-4ECFCD8E0EAF}</MsbuildGuid>
   <Dependencies />
-  <Headers />
-  <Sources />
+  <Files>
+  </Files>
   <Typo>true</Typo>
 </Component>

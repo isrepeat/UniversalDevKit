@@ -1,6 +1,6 @@
 #pragma once
 #include "../Config.h"
-#include "../Export.h"
+#include <UniversalDevKit/XamlRuntime/Export.g.h>
 
 #include "RuntimeBindingRegistry.h"
 #include "XamlAst.h"

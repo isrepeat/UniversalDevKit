@@ -4,15 +4,13 @@
     <Project id="native"
              kind="application"
              projectType="native">
-      <Headers>
+      <Files>
         <Header>Sources/Windows/XamlCompiler/**/*.h</Header>
-      </Headers>
-      <Sources>
         <Source>Sources/Windows/XamlCompiler/**/*.cpp</Source>
-      </Sources>
+      </Files>
       <Filters>
-        <Filter filter="Sources">
-          <Path>Sources/Windows/XamlCompiler</Path>
+        <Filter filter="{Tree:Project}/Sources">
+          <Match>Sources/Windows/XamlCompiler/**/*</Match>
         </Filter>
       </Filters>
       <Requirements cxxStandard="20" />

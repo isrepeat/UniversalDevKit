@@ -18,11 +18,11 @@
   </Components>
   <Generation>
     <Integration>
-      <CoreExportHeader>Includes/Core/UniversalDevKit/Export.h</CoreExportHeader>
-      <SourcesTargets>Projects/MsBuild/UniversalDevKit.Sources.targets</SourcesTargets>
+      <CoreExportHeader>Projects/!Generated/Includes/UniversalDevKit/Export.g.h</CoreExportHeader>
+      <SourcesTargets>Projects/MsBuild/UniversalDevKit.Sources.g.targets</SourcesTargets>
       <VersionSource>Version.json</VersionSource>
-      <VersionHeader>Includes/Core/UniversalDevKit/Version.h</VersionHeader>
-      <VersionProps>Projects/MsBuild/UniversalDevKit.Version.props</VersionProps>
+      <VersionHeader>Projects/!Generated/Includes/UniversalDevKit/Version.g.h</VersionHeader>
+      <VersionProps>Projects/MsBuild/UniversalDevKit.Version.g.props</VersionProps>
     </Integration>
     <MSBuild>
       <Solution>UniversalDevKit.sln</Solution>
@@ -67,6 +67,14 @@
 Необязательный блок `generation.integration` включает генерацию интеграции по графу компонентов, экспортных заголовков и метаданных версии. В нём задаются входной файл версии и пути выходных файлов. Профиль `udk` поддерживается для совместимости со старыми манифестами.
 
 В схеме 6 `generation.msbuild.solutionFolder` задаёт полный путь в дереве решения через `/`. Подстановки `{kind}` и `{name}` дают категорию (`Application` или `Library`) и имя компонента. `Projects/` помещает проекты непосредственно в папку `Projects`. Путь на диске задаёт `projectDirectory`. Схемы 2–5 сохраняют прежнюю группировку в дереве решения.
+
+`<Files>` объявляет входные и выходные файлы. `Header` и `Source` описывают элементы сборки, `CMake`, `MSBuildProps` и `MSBuildTargets` задают расширения сборки, `File` добавляет файл для просмотра. `MSBuildTargets` принимает один точный путь к `.targets`. `Generated` ссылается на выходной файл генератора. Пути задаются относительно корня реестра. Для проекта доступен префикс `{projectDirectory}/`. Необязательный `<Group name="…">` объединяет объявления для повторного использования.
+
+В манифестах UDK сначала идут `Header`, `Source` и `Generated`, затем `File`, `MSBuildProps` и `MSBuildTargets`. `CMake` идёт последним. Место группы определяется типом её первого объявления. Фильтры решения идут перед фильтрами проекта. В каждом дереве фильтры упорядочены по возрастанию длины значения `filter`.
+
+Блок `<Filters>` размещается после `<Files>`. В `filter` явно указывается дерево: `{Tree:Project}/Build` или `{Tree:Solution}/Sources/Diagnostic`. `<GroupRef>` размещает выбранную группу целиком, `<Match>` проверяет пути из `<Files>` по маске. `preserveTree="true"` сохраняет вложенность относительно фиксированной части маски `Match` или объявления файла при `GroupRef`. Последнее совпадение для файла в данном дереве определяет папку.
+
+В проекте фильтры назначают папки существующим элементам. В решении совпавшие объявления добавляются как `SolutionItems`, в том числе выходные файлы из текущего плана ProjectTools до записи на диск. Генератор запоминает управляемые записи в секции `ProjectToolsSolutionItems` решения. Компонент без проекта может объявить `Files` и фильтры для дерева решения.
 
 В схеме 5 описание компонента содержит `name` и непустой массив `projects`. Настройки сборки и поля из таблицы ниже относятся к записи проекта. Библиотека может содержать нативный проект `cpp/native` и управляемый проект `csharp/classLibrary`. Приложение содержит одну запись `application`. Для C# class library задайте `msbuild.properties.TargetFramework` и исходники `sources`. ProjectTools генерирует SDK-style проект под узлом компонента в solution.
 
@@ -119,10 +127,9 @@
              projectType="native"
              libraryType="headerOnly"
              msbuildGuid="{984F66E5-780A-40B6-A641-4ECFCD8E0EAF}">
-      <Headers>
+      <Files>
         <Header>Includes/HeaderProbe/UniversalDevKit/HeaderProbe/Value.h</Header>
-      </Headers>
-      <Sources />
+      </Files>
     </Project>
   </Projects>
 </Component>

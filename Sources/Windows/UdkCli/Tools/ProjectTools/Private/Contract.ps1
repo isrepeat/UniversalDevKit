@@ -51,7 +51,7 @@ function ConvertTo-ProjectToolsFilterRules([string]$Root, $Rules) {
             throw 'Expected path and filter strings in each filters rule.'
         }
         foreach ($field in $rule.PSObject.Properties.Name) {
-            if ($field -cnotin @('path', 'filter', 'preserveTree')) {
+            if ($field -cnotin @('path', 'filter', 'preserveTree', 'match', 'planned')) {
                 throw "Unknown filters rule field: $field"
             }
         }
@@ -70,7 +70,7 @@ function ConvertTo-ProjectToolsFilterRules([string]$Root, $Rules) {
             $pattern = $pattern.Substring('{projectDirectory}/'.Length)
         }
         $absolute = Resolve-ProjectToolsPath $Root ($pattern.Replace('*', '_').Replace('?', '_'))
-        if (-not $projectRelative -and $pattern -notmatch '[*?]') {
+        if (-not $projectRelative -and -not $rule.planned -and $pattern -notmatch '[*?]') {
             if (Test-Path -LiteralPath $absolute -PathType Container) {
                 $pattern += '/**/*'
             } elseif (-not (Test-Path -LiteralPath $absolute -PathType Leaf)) {
@@ -83,12 +83,21 @@ function ConvertTo-ProjectToolsFilterRules([string]$Root, $Rules) {
         } else {
             $pattern.Substring(0, $wildcard)
         }
+        $matchPattern = $rule.match
+        $matchProjectRelative = $matchPattern -and $matchPattern.StartsWith('{projectDirectory}/', [StringComparison]::Ordinal)
+        if ($matchProjectRelative) { $matchPattern = $matchPattern.Substring('{projectDirectory}/'.Length) }
+        if ($matchPattern) {
+            $null = Resolve-ProjectToolsPath $Root ($matchPattern.Replace('*', '_').Replace('?', '_'))
+            $prefix = ($matchPattern -split '[*?]', 2)[0]
+        }
         [pscustomobject]@{
             Regex = [regex](ConvertTo-ProjectToolsGlobRegex $pattern)
             ProjectRelative = $projectRelative
             BaseLength = $prefix.LastIndexOf('/') + 1
             Folder = $rule.filter
             PreserveTree = [bool]$rule.preserveTree
+            MatchRegex = if ($matchPattern) { [regex](ConvertTo-ProjectToolsGlobRegex $matchPattern) }
+            MatchProjectRelative = $matchProjectRelative
         }
     }
 }
@@ -108,6 +117,14 @@ function Get-ProjectToolsFilter([string]$Path, $Rules, [string]$ProjectPath) {
         }
         if (-not $rule.Regex.IsMatch($matchPath)) {
             continue
+        }
+        if ($rule.MatchRegex) {
+            $matchPath = $normalizedPath
+            if ($rule.MatchProjectRelative) {
+                if (-not $matchPath.StartsWith($projectPrefix, [StringComparison]::OrdinalIgnoreCase)) { continue }
+                $matchPath = $matchPath.Substring($projectPrefix.Length)
+            }
+            if (-not $rule.MatchRegex.IsMatch($matchPath)) { continue }
         }
         $folder = $rule.Folder
         if ($rule.PreserveTree) {
@@ -407,6 +424,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
     }
     $seenIncludes = @{}
     $names = @{}
+    $solutionFilters = [Collections.Generic.List[object]]::new()
     $definitions = foreach ($include in $includes) {
         if ($include -isnot [string] -or $include -match '[*?]') {
             throw "Invalid component path: $include"
@@ -426,10 +444,17 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
             continue
         }
         if (@($definition.PSObject.Properties.Name | Where-Object {
-            $_ -cnotin @('name', 'projects')
+            $_ -cnotin @('name', 'projects', 'filters')
         }).Count -or
-            $definition.projects -isnot [Array] -or -not $definition.projects.Count) {
-            throw "Expected name and a nonempty projects array: $include"
+            ($null -ne $definition.projects -and $definition.projects -isnot [Array]) -or
+            (-not $definition.projects.Count -and -not $definition.filters.Count)) {
+            throw "Expected projects or solution filters: $include"
+        }
+        foreach ($rule in $definition.filters) {
+            if ($rule.scope -cne 'solution') {
+                throw "Component filters require scope=solution: $include"
+            }
+            $solutionFilters.Add([pscustomobject]@{ Rule = $rule; Component = $null })
         }
         $projectIds = @{}
         $projectTypes = @{}
@@ -555,7 +580,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
                 }
             }
             foreach ($field in $component.PSObject.Properties.Name) {
-                if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'version', 'abiVersion', 'msbuildGuid', 'msbuild', 'buildExtensions', 'filters', 'sources', 'excludeSources')) {
+                if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'version', 'abiVersion', 'msbuildGuid', 'msbuild', 'buildExtensions', 'filters', 'browseFiles', 'sources', 'excludeSources')) {
                     throw "Unsupported C# application field: $field"
                 }
             }
@@ -592,7 +617,7 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
             }
         } else {
             foreach ($field in $component.PSObject.Properties.Name) {
-                if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild')) {
+                if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'browseFiles', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild')) {
                     throw "Unknown component field: $field"
                 }
             }
@@ -601,7 +626,7 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
             }
             if ($isApplication) {
                 foreach ($field in $component.PSObject.Properties.Name) {
-                    if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'excludeHeaders', 'excludeSources', 'filters', 'requirements', 'compile', 'buildExtensions', 'msbuild')) {
+                    if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'excludeHeaders', 'excludeSources', 'filters', 'browseFiles', 'requirements', 'compile', 'buildExtensions', 'msbuild')) {
                         throw "Unsupported application field: $field"
                     }
                 }
@@ -659,8 +684,16 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
                 $entry.Value = @(Expand-ProjectToolsFiles $root $entry.Value @())
             }
         }
+        if ($component.PSObject.Properties['browseFiles']) {
+            $component.browseFiles = @(Expand-ProjectToolsFiles $root $component.browseFiles @() | Where-Object {
+                $_ -notin $component.sources -and $_ -notin $component.headers
+            })
+        }
         if ($component.PSObject.Properties['filters']) {
-            $component.filters = @(ConvertTo-ProjectToolsFilterRules $root $component.filters)
+            foreach ($rule in $component.filters | Where-Object scope -CEQ 'solution') {
+                $solutionFilters.Add([pscustomobject]@{ Rule = $rule; Component = $component })
+            }
+            $component.filters = @(ConvertTo-ProjectToolsFilterRules $root @($component.filters | Where-Object scope -CNE 'solution'))
         }
         foreach ($extensionEntry in $component.buildExtensions.PSObject.Properties) {
             if ($extensionEntry.Name -notin @('cmake', 'msbuildProps', 'msbuildTargets')) {
@@ -731,5 +764,5 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
             $components[$include] = $component
         }
     }
-    return [pscustomobject]@{ Root = $root; Manifest = $manifest; Components = $components; Applications = $applications; ManagedLibraries = $managedLibraries; Settings = $settings; Profile = $profile; Integration = $integration }
+    return [pscustomobject]@{ Root = $root; Manifest = $manifest; Components = $components; Applications = $applications; ManagedLibraries = $managedLibraries; Settings = $settings; Profile = $profile; Integration = $integration; SolutionFilters = $solutionFilters }
 }

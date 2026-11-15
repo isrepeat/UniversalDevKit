@@ -49,7 +49,185 @@ function Remove-ProjectToolsEmptyFolders([string]$Content, $FolderGuids) {
     return $Content
 }
 
-function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, [switch]$Clean) {
+function Expand-ProjectToolsSolutionPattern($Model, $Component, [string]$Pattern) {
+    if ($Pattern.StartsWith('{projectDirectory}/', [StringComparison]::Ordinal)) {
+        if (-not $Component) { throw 'projectDirectory requires a project-level solution filter.' }
+        $variant = if ($Component.projectType -eq 'native') { 'Shared' } else { 'DotNet' }
+        $projectDirectory = Get-ProjectToolsLayout $Model $Component $variant 'projectDirectory'
+        return $projectDirectory + $Pattern.Substring('{projectDirectory}'.Length)
+    }
+    return $Pattern
+}
+
+function Get-ProjectToolsSolutionItems($Model, $Files, [string]$Directory) {
+    $items = [ordered]@{}
+    $outputs = @{}
+    foreach ($file in $Files) {
+        $outputs[$file.RelativePath.Replace('\', '/')] = $true
+    }
+    foreach ($entry in $Model.SolutionFilters) {
+        $rule = $entry.Rule
+        if (@($rule.PSObject.Properties.Name | Where-Object { $_ -cnotin @('scope', 'filter', 'path', 'generatedPath', 'preserveTree', 'match', 'selection') }).Count -or
+            [bool]$rule.path -eq [bool]$rule.generatedPath -or $rule.filter -isnot [string] -or
+            $rule.filter -match '[\\:*?"<>|=\r\n]' -or
+            @($rule.filter.Split('/') | Where-Object { $_.Trim() -in @('', '.', '..') }).Count) {
+            throw 'Expected a solution folder and exactly one Path or Generated selector.'
+        }
+        $pattern = if ($rule.generatedPath) { $rule.generatedPath } else { $rule.path }
+        $pattern = Expand-ProjectToolsSolutionPattern $Model $entry.Component $pattern
+        $placementPattern = $pattern
+        if ($rule.match) {
+            $placementPattern = Expand-ProjectToolsSolutionPattern $Model $entry.Component $rule.match
+            $null = Resolve-ProjectToolsPath $Model.Root ($placementPattern.Replace('*', '_').Replace('?', '_'))
+        }
+        $prefix = ($placementPattern -split '[*?]', 2)[0]
+        $base = $prefix.Substring(0, $prefix.LastIndexOf('/') + 1)
+        $paths = if ($rule.generatedPath) {
+            $null = Resolve-ProjectToolsPath $Model.Root ($pattern.Replace('*', '_').Replace('?', '_'))
+            $regex = ConvertTo-ProjectToolsGlobRegex $pattern
+            $selectedOutputs = @($outputs.Keys | Where-Object { $_ -cmatch $regex })
+            if (-not $selectedOutputs.Count -and $pattern -notmatch '[*?]') {
+                throw "Generated file is missing from the plan: $pattern"
+            }
+            $selectedOutputs
+        } else {
+            $excludes = switch -CaseSensitive ($rule.selection) {
+                'Header' { $entry.Component.excludeHeaders }
+                'Source' { $entry.Component.excludeSources }
+            }
+            Expand-ProjectToolsFiles $Model.Root @($pattern) @($excludes | Where-Object { $_ })
+        }
+        if ($rule.match) {
+            $regex = ConvertTo-ProjectToolsGlobRegex $placementPattern
+            $paths = @($paths | Where-Object { $_ -cmatch $regex })
+        }
+        foreach ($path in ($paths | Sort-Object -CaseSensitive)) {
+            $folder = $rule.filter
+            if ($rule.preserveTree) {
+                $relative = $path.Substring($base.Length)
+                if ($relative.Contains('/')) {
+                    $folder += '/' + $relative.Substring(0, $relative.LastIndexOf('/'))
+                }
+            }
+            $relativePath = Get-ProjectToolsRelativePath $Directory (Join-Path $Model.Root $path)
+            if ($relativePath -match '[=\r\n]') {
+                throw "Unsupported solution item path: $relativePath"
+            }
+            $items[$relativePath] = $folder
+        }
+    }
+    return $items
+}
+
+function Update-ProjectToolsSolutionItems([string]$Content, $Items) {
+    $owner = '(?m)^\tGlobalSection\(ProjectToolsSolutionItems\) = preSolution\r?\n[\s\S]*?^\tEndGlobalSection\r?\n'
+    $folderPattern = '(?m)^Project\("\{2150E333-8FDC-42A3-9474-1A3956D46DE8\}"\) = "([^"]+)", "[^"]+", "(\{[^}]+\})"\r?\n[\s\S]*?^EndProject(?=\r?$)'
+    $nestedPattern = '(?m)^\tGlobalSection\(NestedProjects\) = preSolution\r?\n[\s\S]*?^\tEndGlobalSection'
+    $itemPattern = '(?m)^\t\t([^=\r\n]+) = ([^\r\n]+)\r?\n'
+    $sectionPattern = '(?m)^\tProjectSection\(SolutionItems\) = preProject\r?\n[\s\S]*?^\tEndProjectSection\r?\n'
+    # Recover the previous ownership before reconciling individual entries.
+    $owned = @{}
+    $created = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+    foreach ($line in ([regex]::Match($Content, $owner).Value -split '\r?\n')) {
+        if ($line -match '^\t\t(\{[^}]+\}) = folder$') {
+            [void]$created.Add($Matches[1])
+        } elseif ($line -match '^\t\t(\{[^}]+\}) = (\{[^}]+\}\|.+)$') {
+            $owned[$Matches[1]] = $Matches[2]
+        }
+    }
+    $parents = @{}
+    $nested = [regex]::Match($Content, $nestedPattern)
+    foreach ($match in [regex]::Matches($nested.Value, '(?m)^\t\t(\{[^}]+\}) = (\{[^}]+\})')) {
+        $parents[$match.Groups[1].Value] = $match.Groups[2].Value
+    }
+    $folderIds = @{}
+    foreach ($match in [regex]::Matches($Content, $folderPattern)) {
+        $guid = $match.Groups[2].Value
+        $folderIds[([string]$parents[$guid] + '/' + $match.Groups[1].Value)] = $guid
+    }
+    # Reuse existing folder identities and create missing branches.
+    $wanted = @{}
+    $newFolders = [Collections.Generic.List[string]]::new()
+    $newParents = [Collections.Generic.List[string]]::new()
+    $ownership = [Collections.Generic.List[string]]::new()
+    foreach ($path in $Items.Keys) {
+        $parent = ''
+        $folderPath = ''
+        foreach ($segment in $Items[$path].Split('/')) {
+            if ($segment -match '["\r\n]') { throw "Invalid solution folder: $segment" }
+            $folderPath = ($folderPath + '/' + $segment).TrimStart('/')
+            $key = "$parent/$segment"
+            $guid = $folderIds[$key]
+            if (-not $guid) {
+                $guid = Get-ProjectToolsGuid "ProjectTools.SolutionFolder:$folderPath"
+                $folderIds[$key] = $guid
+                [void]$created.Add($guid)
+                $newFolders.Add(('Project("{{2150E333-8FDC-42A3-9474-1A3956D46DE8}}") = "{0}", "{0}", "{1}"' -f $segment, $guid))
+                $newFolders.Add('EndProject')
+                if ($parent) { $newParents.Add("`t`t$guid = $parent") }
+            }
+            $parent = $guid
+        }
+        if (-not $wanted.ContainsKey($parent)) { $wanted[$parent] = [ordered]@{} }
+        $wanted[$parent][$path] = $true
+        $id = Get-ProjectToolsGuid "ProjectTools.SolutionItem:$parent/$path"
+        $ownership.Add("`t`t$id = $parent|$path")
+    }
+    if ($newFolders.Count) {
+        $Content = [regex]::Replace($Content, '(?m)^Global(?=\r?$)', { param($match) ($newFolders -join "`n") + "`n" + $match.Value })
+    }
+    if ($newParents.Count) {
+        $parentLines = $newParents -join "`n"
+        if ($nested.Success) {
+            $Content = [regex]::Replace($Content, $nestedPattern, { param($match) $match.Value.Insert($match.Value.LastIndexOf("`tEndGlobalSection"), "$parentLines`n") })
+        } else {
+            $Content = $Content -replace '(?m)^EndGlobal(?=\r?$)', "`tGlobalSection(NestedProjects) = preSolution`n$parentLines`n`tEndGlobalSection`nEndGlobal"
+        }
+    }
+    # Adopt matching entries and remove stale entries owned by ProjectTools.
+    $Content = [regex]::Replace($Content, $folderPattern, {
+        param($match)
+        $guid = $match.Groups[2].Value
+        $remaining = $wanted[$guid]
+        $section = [regex]::Match($match.Value, $sectionPattern)
+        $body = [regex]::Replace($section.Value, $itemPattern, {
+            param($item)
+            $path = $item.Groups[2].Value
+            if ($remaining -and $remaining.Contains($path)) {
+                $remaining.Remove($path)
+                return $item.Value
+            }
+            $id = Get-ProjectToolsGuid "ProjectTools.SolutionItem:$guid/$path"
+            if ($owned[$id] -ceq "$guid|$path") { return '' }
+            return $item.Value
+        })
+        if ($remaining -and $remaining.Count) {
+            $lines = @($remaining.Keys | ForEach-Object { "`t`t$_ = $_" }) -join "`n"
+            $body = if ($section.Success) {
+                $body.Insert($body.LastIndexOf("`tEndProjectSection"), "$lines`n")
+            } else {
+                "`tProjectSection(SolutionItems) = preProject`n$lines`n`tEndProjectSection`n"
+            }
+        }
+        if ($body -match '^\s*ProjectSection\(SolutionItems\) = preProject\s+EndProjectSection\s*$') { $body = '' }
+        if ($section.Success) { return $match.Value.Remove($section.Index, $section.Length).Insert($section.Index, $body) }
+        return $match.Value.Insert($match.Value.Length - 'EndProject'.Length, $body)
+    })
+    $Content = Remove-ProjectToolsEmptyFolders $Content $created
+    $Content = [regex]::Replace($Content, $owner, '')
+    foreach ($guid in $created | Sort-Object) {
+        if ($Content -match ('(?m)^Project\([^\r\n]+, "' + [regex]::Escape($guid) + '"\r?$')) {
+            $ownership.Add("`t`t$guid = folder")
+        }
+    }
+    if ($ownership.Count) {
+        $section = (@("`tGlobalSection(ProjectToolsSolutionItems) = preSolution") + @($ownership | Sort-Object) + @("`tEndGlobalSection", 'EndGlobal')) -join "`n"
+        $Content = [regex]::Replace($Content, '(?m)^EndGlobal(?=\r?$)', { param($match) $section })
+    }
+    return $Content
+}
+
+function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, [switch]$Clean, $Files) {
     $solution = Resolve-ProjectToolsPath $Model.Root $Model.Settings.solution
     $original = if (Test-Path -LiteralPath $solution) {
         [IO.File]::ReadAllText($solution)
@@ -271,6 +449,10 @@ function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, 
             }
         } elseif (Test-Path -LiteralPath $versionPath -PathType Leaf) {
             $content = Update-ProjectToolsVersionItem $content $relativeVersion
+        }
+        if ($Model.SolutionFilters.Count -or $content.Contains('GlobalSection(ProjectToolsSolutionItems)')) {
+            $items = if ($Clean) { [ordered]@{} } else { Get-ProjectToolsSolutionItems $Model $Files $directory }
+            $content = Update-ProjectToolsSolutionItems $content $items
         }
         if ($null -ne $original -and -not $report.changed -and $content -ceq $syncContent) {
             return

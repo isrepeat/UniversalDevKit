@@ -6,7 +6,7 @@
 #include "Storyboard.h"
 #include "Animation.h"
 #include "Config.h"
-#include "Export.h"
+#include <UniversalDevKit/XamlRuntime/Export.g.h>
 
 #include <initializer_list>
 #include <functional>

@@ -1,5 +1,5 @@
 #pragma once
-#include "Export.h"
+#include <UniversalDevKit/Diagnostic/Export.g.h>
 
 #include <source_location>
 #include <system_error>

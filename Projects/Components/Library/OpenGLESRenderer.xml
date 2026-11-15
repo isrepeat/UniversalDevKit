@@ -17,24 +17,32 @@
                     visibility="public"
                     linkage="same" />
       </Dependencies>
-      <Headers>
-        <Header>Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/**/*.h</Header>
-        <Header>Sources/OpenGLESRenderer/**/*.h</Header>
-      </Headers>
-      <Sources>
-        <Source>Sources/OpenGLESRenderer/**/*.cpp</Source>
-      </Sources>
+      <Files>
+        <Group name="PublicHeaders">
+          <Header>Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/**/*.h</Header>
+        </Group>
+        <Group name="NativeSources">
+          <Header>Sources/OpenGLESRenderer/**/*.h</Header>
+          <Source>Sources/OpenGLESRenderer/**/*.cpp</Source>
+        </Group>
+        <Group name="Dependencies">
+          <Generated>{projectDirectory}/*.Dependencies.g.props</Generated>
+        </Group>
+        <Group name="NativeBuild">
+          <MSBuildTargets>Sources/OpenGLESRenderer/UniversalDevKit.OpenGLESRenderer.targets</MSBuildTargets>
+        </Group>
+        <CMake>Projects/Cmake/Library/OpenGLESRenderer/Build.cmake</CMake>
+      </Files>
       <Filters>
-        <Filter filter="">
-          <Path>Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer</Path>
+        <Filter filter="{Tree:Project}">
+          <GroupRef>PublicHeaders</GroupRef>
         </Filter>
-        <Filter filter="">
-          <Path>Sources/OpenGLESRenderer</Path>
+        <Filter filter="{Tree:Project}">
+          <GroupRef>NativeSources</GroupRef>
         </Filter>
-        <Filter filter="Build">
-          <Path>Sources/OpenGLESRenderer/**/*.props</Path>
-          <Path>Sources/OpenGLESRenderer/**/*.targets</Path>
-          <Path>{projectDirectory}/*.props</Path>
+        <Filter filter="{Tree:Project}/Build">
+          <GroupRef>NativeBuild</GroupRef>
+          <GroupRef>Dependencies</GroupRef>
         </Filter>
       </Filters>
       <Requirements cxxStandard="20" />
@@ -43,10 +51,6 @@
           <LinkLibraries>GLESv3</LinkLibraries>
         </Android>
       </PlatformRequirements>
-      <BuildExtensions>
-        <CMake>Projects/Cmake/Library/OpenGLESRenderer/Build.cmake</CMake>
-        <MSBuildTargets>Sources/OpenGLESRenderer/UniversalDevKit.OpenGLESRenderer.targets</MSBuildTargets>
-      </BuildExtensions>
     </Project> <!-- Project id="native" -->
   </Projects>
 </Component>

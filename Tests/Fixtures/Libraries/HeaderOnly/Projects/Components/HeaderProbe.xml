@@ -9,8 +9,7 @@
       <Linkage>same</Linkage>
     </Dependency>
   </Dependencies>
-  <Headers>
+  <Files>
     <Header>Includes/HeaderProbe/UniversalDevKit/HeaderProbe/Value.h</Header>
-  </Headers>
-  <Sources />
+  </Files>
 </Component>

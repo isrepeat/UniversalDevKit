@@ -41,7 +41,7 @@ Connect добавляет импорты выбранных Shared.vcxitems и 
 
 ## Как собирается Static
 
-Connect добавляет ProjectReference на библиотечные проекты. MSBuild строит зависимости и передаёт требуемые .lib финальному линкеру. Сгенерированные Dependencies.props описывают межкомпонентные связи.
+Connect добавляет ProjectReference на библиотечные проекты. MSBuild строит зависимости и передаёт требуемые .lib финальному линкеру. Сгенерированные Dependencies.g.props описывают межкомпонентные связи.
 
 Статические архивы UDK не объединяются автоматически в один архив. Например, AndroidAppPreviewerPluginSdk.Static содержит свою реализацию, а финальный линкер должен получить также статические XamlRuntime и OpenGLESRenderer. Connect рассчитывает этот набор; у библиотечных ссылок различается LinkLibraryDependencies в зависимости от роли проекта.
 
@@ -57,7 +57,7 @@ Consumer линкуется с импортной .lib, а реализация 
 ./Scripts/PowerShell/Connect.ps1 -ProjectOnly -ProjectPath C:/Projects/App/App.vcxproj -Components Helpers
 ```
 
-Этот режим изменяет только .vcxproj и поддерживает Shared. Sources.targets раскрывает зависимости во время вычисления проекта. Static/Dynamic через ProjectOnly сейчас не поддерживаются.
+Этот режим изменяет только .vcxproj и поддерживает Shared. Sources.g.targets раскрывает зависимости во время вычисления проекта. Static/Dynamic через ProjectOnly сейчас не поддерживаются.
 
 ## Использовать только заголовки
 

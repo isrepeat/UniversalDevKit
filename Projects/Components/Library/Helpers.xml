@@ -6,17 +6,15 @@
              projectType="native"
              libraryType="headerOnly"
              msbuildGuid="{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}">
-      <Headers>
-        <Header>Includes/Helpers/UniversalDevKit/Helpers/**/*.h</Header>
-      </Headers>
-      <ExcludeHeaders>
-        <Header>Includes/Helpers/UniversalDevKit/Helpers/Export.h</Header>
-      </ExcludeHeaders>
-      <Sources />
+      <Files>
+        <Group name="PublicHeaders">
+          <Header>Includes/Helpers/UniversalDevKit/Helpers/**/*.h</Header>
+        </Group>
+      </Files>
       <Filters>
-        <Filter filter=""
+        <Filter filter="{Tree:Project}"
                 preserveTree="true">
-          <Path>Includes/Helpers/UniversalDevKit/Helpers</Path>
+          <GroupRef>PublicHeaders</GroupRef>
         </Filter>
       </Filters>
     </Project> <!-- Project id="native" -->

@@ -8,10 +8,8 @@
     </Dependency>
   </Dependencies>
   <MsbuildGuid>{DA000000-0000-4000-8000-000000000003}</MsbuildGuid>
-  <Headers>
+  <Files>
     <Header>Includes/C/UniversalDevKit/C/Value.h</Header>
-  </Headers>
-  <Sources>
     <Source>Sources/C/Value.cpp</Source>
-  </Sources>
+  </Files>
 </Component>

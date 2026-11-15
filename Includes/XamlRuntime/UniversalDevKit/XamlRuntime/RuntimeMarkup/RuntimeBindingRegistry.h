@@ -1,7 +1,7 @@
 #pragma once
 #include "../Binding.h"
 #include "../Config.h"
-#include "../Export.h"
+#include <UniversalDevKit/XamlRuntime/Export.g.h>
 
 #include <memory>
 #include <map>

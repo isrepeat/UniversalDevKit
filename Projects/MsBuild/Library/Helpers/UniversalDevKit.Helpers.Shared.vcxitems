@@ -144,7 +144,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Text\Utf8.h">
       <__UniversalDevKitFilter>Text</__UniversalDevKitFilter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Export.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Projects\!Generated\Includes\UniversalDevKit\Helpers\Export.g.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
   </ItemGroup>

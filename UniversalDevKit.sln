@@ -327,8 +327,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MsBuild", "MsBuild", "{08C8
 		Projects\MsBuild\UniversalDevKit.props = Projects\MsBuild\UniversalDevKit.props
 		Projects\MsBuild\UniversalDevKit.Requirements.targets = Projects\MsBuild\UniversalDevKit.Requirements.targets
 		Projects\MsBuild\UniversalDevKit.Runtime.targets = Projects\MsBuild\UniversalDevKit.Runtime.targets
-		Projects\MsBuild\UniversalDevKit.Sources.targets = Projects\MsBuild\UniversalDevKit.Sources.targets
-		Projects\MsBuild\UniversalDevKit.Version.props = Projects\MsBuild\UniversalDevKit.Version.props
+		Projects\MsBuild\UniversalDevKit.Sources.g.targets = Projects\MsBuild\UniversalDevKit.Sources.g.targets
+		Projects\MsBuild\UniversalDevKit.Version.g.props = Projects\MsBuild\UniversalDevKit.Version.g.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{0A0141D6-9607-24C7-57B0-CE35AE9F2AA2}"
@@ -867,87 +867,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Control", "Control", "{3424
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{91C1626E-08D0-D15F-E92C-49D0A474AFDC}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\UdkCli.Diagnostic.targets = Sources\Windows\UdkCli.Diagnostic.targets
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli", "UdkCli", "{A00B13E7-A763-472E-8EC3-9E04CB803294}"
 	ProjectSection(SolutionItems) = preProject
 		Sources\Windows\UdkCli\SolutionInjector.Connect.json = Sources\Windows\UdkCli\SolutionInjector.Connect.json
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{A7499D06-7157-4EE6-836C-A32AB920B114}"
-	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\UdkCli\Tools\ConvertManifestToJson.ps1 = Sources\Windows\UdkCli\Tools\ConvertManifestToJson.ps1
+		Sources\Windows\UdkCli\Tools\InstallVersion.ps1 = Sources\Windows\UdkCli\Tools\InstallVersion.ps1
+		Sources\Windows\UdkCli\Tools\ReadManifest.ps1 = Sources\Windows\UdkCli\Tools\ReadManifest.ps1
 		Sources\Windows\UdkCli\Tools\ResolveJsonReference.ps1 = Sources\Windows\UdkCli\Tools\ResolveJsonReference.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PackageTools", "PackageTools", "{D7274C99-03B8-37D0-1088-3C5B52ABF346}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\UdkCli\Tools\PackageTools\Build.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Build.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "Adapters", "{07C10469-FD4A-A594-ABEF-29C813652D1B}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\CMakeInstall.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\CMakeInstall.ps1
-		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\ComponentSources.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\ComponentSources.ps1
-		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\DotNet.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\DotNet.ps1
-		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Files.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Files.ps1
-		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\GradlePublish.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\GradlePublish.ps1
-		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Maven.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Maven.ps1
-		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\NuGet.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\NuGet.ps1
-		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\NuGetRestore.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\NuGetRestore.ps1
-		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkNative.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkNative.ps1
-		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkPrefab.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkPrefab.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{CF4766B5-C3CE-1EBF-CD69-67BABDC0EBEF}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\UdkCli\Tools\PackageTools\Private\ArtifactDirectories.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Private\ArtifactDirectories.ps1
-		Sources\Windows\UdkCli\Tools\PackageTools\Private\Contract.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Private\Contract.ps1
-		Sources\Windows\UdkCli\Tools\PackageTools\Private\GetNuGet.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Private\GetNuGet.ps1
-		Sources\Windows\UdkCli\Tools\PackageTools\Private\NuGet.json = Sources\Windows\UdkCli\Tools\PackageTools\Private\NuGet.json
-		Sources\Windows\UdkCli\Tools\PackageTools\Private\Tools.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Private\Tools.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{A33D8A01-8AFF-75D4-37A1-7659C13C021C}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\UdkCli\Tools\PackageTools\Templates\PrefabConsumer.cmake = Sources\Windows\UdkCli\Tools\PackageTools\Templates\PrefabConsumer.cmake
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectTools", "ProjectTools", "{12E19D66-1CB5-4679-A956-40DDBF49C078}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\UdkCli\Tools\ProjectTools\Generate.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Generate.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{5D2BF654-F1C0-4A82-9F1B-2CECA93E55D0}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Contract.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Contract.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Private\FormatXmlAttributes.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\FormatXmlAttributes.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Private\GetSolutionInjector.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\GetSolutionInjector.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Linkage.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Linkage.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Private\MsBuild.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\MsBuild.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Requirements.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Requirements.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1
-		Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Profiles", "Profiles", "{3F6B159C-F6E0-4BCA-A342-E8E291A05DA9}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{8837A940-083B-4DD0-92E6-4A8BC02A3B70}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in
-		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Vsix.csproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Vsix.csproj.in
-		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Wpf.csproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Wpf.csproj.in
-		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Component.vcxproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Component.vcxproj.in
-		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\ComponentExport.h.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\ComponentExport.h.in
-		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Export.h.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Export.h.in
-		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\HeaderCheck.cpp.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\HeaderCheck.cpp.in
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{44467B7C-2BE2-498F-A7F0-3E4A7F180FFC}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip = Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip
-		Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json = Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", "{52C38F89-1531-8E49-B6F5-BE55820D8419}"
@@ -997,6 +927,80 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cmake", "cmake", "{6EC553D8
 		ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\cmake\WebKitCommon-minimal.cmake = ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\cmake\WebKitCommon-minimal.cmake
 		ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\cmake\WebKitCompilerFlags-minimal.cmake = ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\cmake\WebKitCompilerFlags-minimal.cmake
 		ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\cmake\WebKitMacros-minimal.cmake = ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\cmake-buildsystem\cmake\WebKitMacros-minimal.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PackageTools", "PackageTools", "{4D6F6747-71BE-F4EA-014C-3D4535A6807C}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\UdkCli\Tools\PackageTools\Build.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Build.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "Adapters", "{1A302616-F1A8-361A-CCB6-ADCA9FAA681E}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\CMakeInstall.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\CMakeInstall.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\ComponentSources.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\ComponentSources.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\DotNet.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\DotNet.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Files.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Files.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\GradlePublish.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\GradlePublish.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Maven.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Maven.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\NuGet.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\NuGet.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\NuGetRestore.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\NuGetRestore.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkNative.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkNative.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkPrefab.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkPrefab.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{77C9EBEA-67FA-083D-9932-64D60FBBBA48}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\UdkCli\Tools\PackageTools\Private\ArtifactDirectories.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Private\ArtifactDirectories.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Private\Contract.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Private\Contract.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Private\GetNuGet.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Private\GetNuGet.ps1
+		Sources\Windows\UdkCli\Tools\PackageTools\Private\NuGet.json = Sources\Windows\UdkCli\Tools\PackageTools\Private\NuGet.json
+		Sources\Windows\UdkCli\Tools\PackageTools\Private\Tools.ps1 = Sources\Windows\UdkCli\Tools\PackageTools\Private\Tools.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{19C8FF3B-B53F-D16E-CFB1-E612D34F873C}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\UdkCli\Tools\PackageTools\Templates\NativePackageTransitive.xml = Sources\Windows\UdkCli\Tools\PackageTools\Templates\NativePackageTransitive.xml
+		Sources\Windows\UdkCli\Tools\PackageTools\Templates\PrefabConsumer.cmake = Sources\Windows\UdkCli\Tools\PackageTools\Templates\PrefabConsumer.cmake
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectTools", "ProjectTools", "{739FF1E5-DAEC-0A2D-A3E2-EC61EBBB3B2C}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\UdkCli\Tools\ProjectTools\Generate.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Generate.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Private", "Private", "{F9961101-C581-697B-D7DB-C44F3D9A1D27}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Contract.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Contract.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\FormatXmlAttributes.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\FormatXmlAttributes.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\GetSolutionInjector.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\GetSolutionInjector.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Linkage.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Linkage.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\MsBuild.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\MsBuild.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Requirements.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Requirements.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1
+		Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Profiles", "Profiles", "{620696B5-0CA9-3C9A-A2CD-49A8C603164B}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1 = Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{D21AA393-9F64-7F3E-CC7A-20CB31CBD13C}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Vsix.csproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Vsix.csproj.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Wpf.csproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Wpf.csproj.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Component.vcxproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Component.vcxproj.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\ComponentExport.h.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\ComponentExport.h.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Export.h.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Export.h.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\HeaderCheck.cpp.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\HeaderCheck.cpp.in
+		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Library.CSharp.csproj.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Library.CSharp.csproj.in
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{9B5AFC51-C463-EDF8-0CFC-D63CF43D1D9A}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip = Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip
+		Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json = Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json
 	EndProjectSection
 EndProject
 Global
@@ -1233,22 +1237,21 @@ Global
 		{34242C6D-6418-92C1-647F-5E73461A6CFE} = {29D7CAB4-B2E3-541B-0D13-40F66C92226D}
 		{91C1626E-08D0-D15F-E92C-49D0A474AFDC} = {A9963E0C-F9B5-4635-505D-54E094B1F113}
 		{A00B13E7-A763-472E-8EC3-9E04CB803294} = {91C1626E-08D0-D15F-E92C-49D0A474AFDC}
-		{A7499D06-7157-4EE6-836C-A32AB920B114} = {A00B13E7-A763-472E-8EC3-9E04CB803294}
-		{D7274C99-03B8-37D0-1088-3C5B52ABF346} = {A7499D06-7157-4EE6-836C-A32AB920B114}
-		{07C10469-FD4A-A594-ABEF-29C813652D1B} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
-		{CF4766B5-C3CE-1EBF-CD69-67BABDC0EBEF} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
-		{A33D8A01-8AFF-75D4-37A1-7659C13C021C} = {D7274C99-03B8-37D0-1088-3C5B52ABF346}
-		{12E19D66-1CB5-4679-A956-40DDBF49C078} = {A7499D06-7157-4EE6-836C-A32AB920B114}
-		{5D2BF654-F1C0-4A82-9F1B-2CECA93E55D0} = {12E19D66-1CB5-4679-A956-40DDBF49C078}
-		{3F6B159C-F6E0-4BCA-A342-E8E291A05DA9} = {12E19D66-1CB5-4679-A956-40DDBF49C078}
-		{8837A940-083B-4DD0-92E6-4A8BC02A3B70} = {12E19D66-1CB5-4679-A956-40DDBF49C078}
-		{44467B7C-2BE2-498F-A7F0-3E4A7F180FFC} = {12E19D66-1CB5-4679-A956-40DDBF49C078}
 		{2D498054-A073-F342-7DB0-0247A638CF12} = {52C38F89-1531-8E49-B6F5-BE55820D8419}
 		{1E002921-1576-A747-1BA7-BC2E8B4B8DED} = {2D498054-A073-F342-7DB0-0247A638CF12}
 		{9F9B186F-6B21-68CD-C449-A028F4FE2236} = {1E002921-1576-A747-1BA7-BC2E8B4B8DED}
 		{0C6717B3-2C5B-E443-E75A-E707420FB1CD} = {9F9B186F-6B21-68CD-C449-A028F4FE2236}
 		{922CD124-862F-7873-048A-36536A9D3F93} = {0C6717B3-2C5B-E443-E75A-E707420FB1CD}
 		{6EC553D8-7DB7-DE87-BDA5-B8C2FE14ADC2} = {922CD124-862F-7873-048A-36536A9D3F93}
+		{4D6F6747-71BE-F4EA-014C-3D4535A6807C} = {A00B13E7-A763-472E-8EC3-9E04CB803294}
+		{1A302616-F1A8-361A-CCB6-ADCA9FAA681E} = {4D6F6747-71BE-F4EA-014C-3D4535A6807C}
+		{77C9EBEA-67FA-083D-9932-64D60FBBBA48} = {4D6F6747-71BE-F4EA-014C-3D4535A6807C}
+		{19C8FF3B-B53F-D16E-CFB1-E612D34F873C} = {4D6F6747-71BE-F4EA-014C-3D4535A6807C}
+		{739FF1E5-DAEC-0A2D-A3E2-EC61EBBB3B2C} = {A00B13E7-A763-472E-8EC3-9E04CB803294}
+		{F9961101-C581-697B-D7DB-C44F3D9A1D27} = {739FF1E5-DAEC-0A2D-A3E2-EC61EBBB3B2C}
+		{620696B5-0CA9-3C9A-A2CD-49A8C603164B} = {739FF1E5-DAEC-0A2D-A3E2-EC61EBBB3B2C}
+		{D21AA393-9F64-7F3E-CC7A-20CB31CBD13C} = {739FF1E5-DAEC-0A2D-A3E2-EC61EBBB3B2C}
+		{9B5AFC51-C463-EDF8-0CFC-D63CF43D1D9A} = {739FF1E5-DAEC-0A2D-A3E2-EC61EBBB3B2C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7A3009E-A79E-4542-AC95-DD9B9C113922}
@@ -1287,5 +1290,191 @@ Global
 		{E21B97A1-D847-2938-4E29-760523C97389} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\Helpers\UniversalDevKit.Helpers.HeaderCheck.vcxproj
 		{F104C833-785D-E25F-5F10-B46284462A11} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\Diagnostic\UniversalDevKit.Diagnostic.Dynamic.vcxproj
 		{FA67D7FD-393A-E9BC-F2A4-2570B2929973} = ProjectTools|{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}|Projects\MsBuild\Library\XamlRuntime\UniversalDevKit.XamlRuntime.Dynamic.vcxproj
+	EndGlobalSection
+	GlobalSection(ProjectToolsSolutionItems) = preSolution
+		{010BDF6A-6CB9-32BA-3CDF-F076CDDE50D1} = {0D3A7DCE-A63D-E9E2-D3E2-F164BE1908A2}|Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\diagnostics\MediaStoreSessionLog.kt
+		{02FAD154-3EBF-E057-3919-8310A09D333A} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}|Sources\Android\AndroidTemplates\Templates\Application\.gitignore
+		{03FDF2E8-65ED-DD40-A479-0AD62C6C401B} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}|Sources\Android\AndroidTemplates\Templates\Application\CMakeLists.txt
+		{04199B59-6BA0-5164-D69D-84743520F7CD} = {BA51EB65-9FFD-B105-4679-3BC400E9F983}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\CMakeLists.txt
+		{04B6F8EA-B392-FD56-B3C7-019CFE1D7F54} = {B14DAB6E-86A3-4998-20B8-E7AF79E61621}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Interface\IPage.h
+		{05C05AA9-4CBB-342C-782A-F5F1FA20C6D0} = {F9961101-C581-697B-D7DB-C44F3D9A1D27}|Sources\Windows\UdkCli\Tools\ProjectTools\Private\Requirements.ps1
+		{06072784-C2FE-6A56-0E5E-7AB2FCD73C6B} = {6DEB47AB-1056-3133-6922-0C428B9ECD52}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\drawable\splash_screen.xml
+		{06481AD1-BA8D-3E52-11D7-7E3ACC1F3295} = {77C9EBEA-67FA-083D-9932-64D60FBBBA48}|Sources\Windows\UdkCli\Tools\PackageTools\Private\GetNuGet.ps1
+		{06E0BBFE-7217-0D39-94D8-DD28774E3298} = {B14DAB6E-86A3-4998-20B8-E7AF79E61621}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Interface\IPageNavigator.h
+		{06E3DEF6-95D1-C058-27AD-96299B460F08} = {D21AA393-9F64-7F3E-CC7A-20CB31CBD13C}|Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Vsix.csproj.in
+		{093BD905-52D5-9E0E-F1BD-117FCCEFBE92} = {73D7F203-E36F-1FD4-ADB2-149FDB43BD7C}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\Jni\README.md
+		{09766C6F-9735-E367-5BA8-A2EA8854FBA2} = {A00B13E7-A763-472E-8EC3-9E04CB803294}|Sources\Windows\UdkCli\Tools\ReadManifest.ps1
+		{0E8676A1-F143-8E65-72AB-D85BFDD394FF} = {9395B0E3-017F-7F84-FB1C-A6CBED930E09}|Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\androidcoresdk.kt
+		{0EEA18F2-B102-542B-F2D4-D0ADF6054FC9} = {4BEDE627-6948-17E9-7D2A-FAC4AF0BB55F}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\MainPageViewModel.cpp
+		{0EECEBE8-78DF-9C2B-E650-51BF8D64123D} = {B7217065-2D8A-8851-0B4F-46E7CEB4D4F0}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\build.gradle.kts
+		{0FFD9AD0-BC47-84E2-FECD-8F7CCC222D52} = {3E60607C-2159-1178-7D1D-D2F895A93ECE}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values-v31\themes.xml
+		{11D3A223-4256-E85F-FE79-22A74453F0ED} = {19C8FF3B-B53F-D16E-CFB1-E612D34F873C}|Sources\Windows\UdkCli\Tools\PackageTools\Templates\PrefabConsumer.cmake
+		{138E226A-8C0E-3008-9326-BEA4AF0926E8} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\DotNet.ps1
+		{13CC5A76-0E76-FFD9-5F1B-D1A83CD09CC1} = {F9961101-C581-697B-D7DB-C44F3D9A1D27}|Sources\Windows\UdkCli\Tools\ProjectTools\Private\MsBuild.ps1
+		{15B64240-E2B7-282B-076D-8E6B60A696D9} = {4BEDE627-6948-17E9-7D2A-FAC4AF0BB55F}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\SettingsPage.xaml
+		{19B910D5-B316-E022-8FBB-4A5145408CB1} = {2D8A0564-40F7-A6CD-5212-7A085383443E}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.PreviewPlugin\Session\PreviewSession.cpp
+		{19C8FF3B-B53F-D16E-CFB1-E612D34F873C} = folder
+		{1A302616-F1A8-361A-CCB6-ADCA9FAA681E} = folder
+		{1ACE9ABA-4E0C-82B5-E0B5-52604B9C1E15} = {1069A91B-23EB-1074-9B12-F771B287424E}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Base\NavigationStateBase.h
+		{1B2B9957-5DC8-EB64-10DF-FABE844F3306} = {FD8E4341-008D-D47E-74BC-857A2385FB25}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\NativeSessionLog.kt
+		{1CE4C5C2-CF8E-E51A-ED90-6456394395B7} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\CMakeInstall.ps1
+		{1D09C5B4-1BF9-59AF-FF0C-FF55C4440DD7} = {6C51D135-2DDF-FC35-0708-A289D9BDE33A}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\update\GoogleDriveUpdateConfiguration.kt
+		{212F77AB-E32A-E44E-C228-1FF805483D7F} = {DFDA3D21-D9F6-7EC5-DC03-983844BB8450}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\java\{{PackagePath}}\MainPage.kt
+		{21BB024E-9C4A-F544-9553-63DBAE9AE195} = {F980E824-E22F-AD62-3F6C-1C68F2150D95}|Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\coroutines\CancellableContinuationCompletion.kt
+		{24303507-F06B-9D6D-1B3C-75D3E66F963D} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\ComponentSources.ps1
+		{27C4C121-BA0E-BD45-AE3C-DB423C8FEAAF} = {16EB1208-65C9-97CC-F7EE-91D4F6183B54}|Sources\Android\AndroidTemplates\Templates\Application\Scripts\PowerShell\ensure-apk-updater.ps1
+		{2AA92440-064B-097A-DCF7-6BC2771063D6} = {1780E0FF-5393-0368-9F5F-A45E94275AC7}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\drive\GoogleDriveUploader.kt
+		{2BB3DE20-47E8-641B-739A-290819230C63} = {77C9EBEA-67FA-083D-9932-64D60FBBBA48}|Sources\Windows\UdkCli\Tools\PackageTools\Private\Tools.ps1
+		{2C714195-BF75-ED45-CB25-10A0777C84E2} = {1069A91B-23EB-1074-9B12-F771B287424E}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Base\AppRepositoryBase.cpp
+		{2D12D02F-C68E-E557-C7EE-D6FDD63EFAB0} = {F9961101-C581-697B-D7DB-C44F3D9A1D27}|Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1
+		{2D154382-BDAE-2D4E-5567-6969771B2206} = {A2A1771D-A861-1285-43E2-9EBFD04BFCC1}|Sources\Android\AndroidTemplates\PowerShell\Read-AndroidSharedProps.ps1
+		{2DF2FBC2-AA9C-81C3-F4A5-E7A71D70933E} = {ABDB27EA-51AF-8FD4-C199-EED7FB927000}|Sources\Android\AndroidBuildTools\Cmake\InstallXamlRuntime.cmake
+		{2E61699D-DB5D-FD6F-647F-F83E19158576} = {8C2CF08B-7E03-796A-7D77-8F40A51B3827}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\PageManager.h
+		{302944E8-F079-8F63-B4FD-BE09013CE1E3} = {F9961101-C581-697B-D7DB-C44F3D9A1D27}|Sources\Windows\UdkCli\Tools\ProjectTools\Private\Contract.ps1
+		{323154FA-2FC4-4CB7-FAB1-B3E57287C8A6} = {6DEB47AB-1056-3133-6922-0C428B9ECD52}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\drawable\app_icon.xml
+		{338CA433-24DA-0FCF-BA66-34A640206CFD} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}|Sources\Android\AndroidTemplates\Templates\Application\launch.vs.json
+		{34FD6A6D-F04C-98DE-B144-39442FEAC7EB} = {ABDB27EA-51AF-8FD4-C199-EED7FB927000}|Sources\Android\AndroidBuildTools\Cmake\InstallAndroidAppPreviewerPluginSdk.cmake
+		{37720888-B81D-4D7D-AAD8-1664E9CE2724} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}|Sources\Android\AndroidTemplates\Templates\Application\CMakePresets.json
+		{37D202E2-1422-D5AF-C17F-3B173354CB1F} = {10D9F55F-8C24-CD83-4800-C15419867BF2}|Sources\Android\AndroidAppKit\src\main\AndroidManifest.xml
+		{392ABE8A-699F-BE72-35D1-757E60E71097} = {D21AA393-9F64-7F3E-CC7A-20CB31CBD13C}|Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Component.vcxproj.in
+		{3B69BDD8-E75F-4303-5203-FE219DDAE182} = {5134BE1A-F783-8202-D25D-A30A9D58EEC7}|Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-release.bat
+		{3B6DD7C1-7872-89B2-043D-CF2783151976} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\README.md
+		{3BAF45F2-DBE1-FFEF-23CC-57A1BCD6A56D} = {DCEE23F9-A0C0-19CB-258B-9D2A5A9171DD}|Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\PageManagerBase.h
+		{3DB93082-A537-BE35-934C-6B507BDBCF6F} = {BA51EB65-9FFD-B105-4679-3BC400E9F983}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\Native.cpp
+		{3FD53A3B-95F6-B582-C343-0D863BE9D58A} = {ABDB27EA-51AF-8FD4-C199-EED7FB927000}|Sources\Android\AndroidBuildTools\Cmake\AndroidToolchain.cmake
+		{400404ED-EFB1-EE8D-DA33-C453BAC88AA7} = {0D3A7DCE-A63D-E9E2-D3E2-F164BE1908A2}|Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\diagnostics\SdkLogger.kt
+		{403A4724-86EA-CFDD-7651-12981A5B6FC7} = {B1134F64-5AC3-5777-C8DC-87B904646C91}|Sources\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.cpp
+		{414F669B-5CEA-814B-A2C8-FB5C8486F752} = {F9961101-C581-697B-D7DB-C44F3D9A1D27}|Sources\Windows\UdkCli\Tools\ProjectTools\Private\Linkage.ps1
+		{427669ED-7623-A2CC-4340-6EABFB08F962} = {4E95EF45-F0E9-25F3-42D1-46CE1983D834}|Sources\Android\AndroidBuildTools\PowerShell\build-and-distribute.ps1
+		{42BBEB6C-B174-D73A-1628-E86C2574E2D5} = {62BB4FD3-461F-9188-4888-44C68D0ED548}|Sources\Android\AndroidAppKit\README.md
+		{435BF10B-6CA3-2F6F-D8C1-234C50569C17} = {739FF1E5-DAEC-0A2D-A3E2-EC61EBBB3B2C}|Sources\Windows\UdkCli\Tools\ProjectTools\Generate.ps1
+		{44074C61-8342-DD1E-6A6D-5C0FB7874BD1} = {B0918D5C-3B09-C8F7-F0ED-764BD3B50846}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\NativeOpenGlActivity.kt
+		{4763B0AB-8862-CEAF-8BFE-5FE571F2847A} = {4E95EF45-F0E9-25F3-42D1-46CE1983D834}|Sources\Android\AndroidBuildTools\PowerShell\bump-version.ps1
+		{47F7FDA9-BB05-11AE-1285-457F54A67882} = {620696B5-0CA9-3C9A-A2CD-49A8C603164B}|Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1
+		{48499527-43E5-DCF9-DBA9-BAC69E714978} = {B569FD6A-798F-1FA3-BA02-38D11F7B1747}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\CMakeLists.txt
+		{48B93220-7B2F-5BA3-4FAA-6152560EBD8A} = {B14DAB6E-86A3-4998-20B8-E7AF79E61621}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Interface\INavigationPage.h
+		{49C82AA4-3B74-49DE-736C-716B5C13CF3C} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}|Sources\Android\AndroidTemplates\Templates\Application\build.ps1
+		{4D08B521-3689-DDE0-BE9E-86C63F9C5B62} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\NuGetRestore.ps1
+		{4D6F6747-71BE-F4EA-014C-3D4535A6807C} = folder
+		{4E699D38-8EC1-B329-2828-A33094255423} = {8C2CF08B-7E03-796A-7D77-8F40A51B3827}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\ApplicationSession.h
+		{53150EC0-E1C7-142A-1AD0-6802F8EF1794} = {8C2CF08B-7E03-796A-7D77-8F40A51B3827}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\NavigationStates.cpp
+		{533CECEF-EB97-2E82-82AC-7C287FD2C293} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkPrefab.ps1
+		{53421503-2CA0-49BA-5E28-40CA60CFE91C} = {F9961101-C581-697B-D7DB-C44F3D9A1D27}|Sources\Windows\UdkCli\Tools\ProjectTools\Private\GetSolutionInjector.ps1
+		{55EA0418-8BB1-534E-4E90-3E7DEBB3446F} = {D693EE1E-DC42-D1C1-7685-7768CDA90754}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\XamlCompilerIgnore.json
+		{5B9A93F7-93B5-4C6E-47F0-D6D6F6FD2C72} = {77C9EBEA-67FA-083D-9932-64D60FBBBA48}|Sources\Windows\UdkCli\Tools\PackageTools\Private\Contract.ps1
+		{5BD56381-35F7-D08A-BB04-B40479DCC1B9} = {4E95EF45-F0E9-25F3-42D1-46CE1983D834}|Sources\Android\AndroidBuildTools\PowerShell\Read-AndroidSharedProps.ps1
+		{61A4099D-1183-903B-CC81-A26F64C731CA} = {D21AA393-9F64-7F3E-CC7A-20CB31CBD13C}|Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Export.h.in
+		{620696B5-0CA9-3C9A-A2CD-49A8C603164B} = folder
+		{621B5453-E15B-1C93-1E0D-C3FFEDEF301B} = {4E95EF45-F0E9-25F3-42D1-46CE1983D834}|Sources\Android\AndroidBuildTools\PowerShell\run-android-app-previewer.ps1
+		{670FA724-AA41-077B-D41A-D14FD9BADCF6} = {9B5AFC51-C463-EDF8-0CFC-D63CF43D1D9A}|Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json
+		{67FF01F3-4BB4-A14C-72F7-7CF3A6DD14A4} = {6C51D135-2DDF-FC35-0708-A289D9BDE33A}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\update\ApkUpdaterProtocol.kt
+		{6BB1B60F-AD6F-C578-3D9D-FA249663BF72} = {4BEDE627-6948-17E9-7D2A-FAC4AF0BB55F}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\SettingsPageViewModel.cpp
+		{6C7C14FE-1BA1-8444-7BB1-91D17E2CF2D4} = {5A3097F9-84D7-8CA6-4986-8CDA0E26D227}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Model\ApplicationStateDocument.h
+		{6D129E63-3D58-2655-D02E-F3A3E235F8CD} = {E742837F-6B59-8FB2-A0A2-A595262A3096}|Sources\Android\AndroidCoreSdk\README.md
+		{6E3F5126-36C2-301F-3AAB-9107066DBCD8} = {FD5EB6FB-8E3E-612D-6EA7-6A98EFF87A76}|Sources\Android\AndroidBuildTools\PowerShell\Modules\Module.AndroidBuildTools\Module.AndroidBuildTools.psm1
+		{701AC864-753C-6DB2-4E56-FFD042713F5D} = {4E95EF45-F0E9-25F3-42D1-46CE1983D834}|Sources\Android\AndroidBuildTools\PowerShell\build-android.ps1
+		{70439548-CB76-BB01-DDDE-2880B5B59AAF} = {A00B13E7-A763-472E-8EC3-9E04CB803294}|Sources\Windows\UdkCli\Tools\InstallVersion.ps1
+		{72293454-0029-6372-BFEB-0FE9C91225B2} = {2D8A0564-40F7-A6CD-5212-7A085383443E}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.PreviewPlugin\Session\PreviewSession.h
+		{7360C038-B3ED-9A0F-65B7-FF68CE90F7B9} = {A9D15F6F-E8E6-215E-B4A8-4EEF838A4827}|Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\build.gradle.kts
+		{7376B189-7CAC-12CC-8C17-28D4BE97AED7} = {A9D15F6F-E8E6-215E-B4A8-4EEF838A4827}|Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\settings.gradle.kts
+		{739FF1E5-DAEC-0A2D-A3E2-EC61EBBB3B2C} = folder
+		{73D998AE-9700-6FB8-ED1B-A1F20ADDD2AC} = {B14DAB6E-86A3-4998-20B8-E7AF79E61621}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Interface\IHostCommandDispatcher.h
+		{741B1522-5466-0030-AE64-09A13B2D1B81} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}|Sources\Android\AndroidTemplates\Templates\Application\android-build.psd1
+		{7566348E-966D-01A6-BED2-674ABAC16463} = {9B5AFC51-C463-EDF8-0CFC-D63CF43D1D9A}|Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip
+		{77C9EBEA-67FA-083D-9932-64D60FBBBA48} = folder
+		{79B391CD-3848-01A8-2872-688B70E68848} = {D21AA393-9F64-7F3E-CC7A-20CB31CBD13C}|Sources\Windows\UdkCli\Tools\ProjectTools\Templates\ComponentExport.h.in
+		{7B4A0AB2-6D06-28C2-7083-998C838AA02D} = {8C2CF08B-7E03-796A-7D77-8F40A51B3827}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\PageRegistry.h
+		{7BEED948-B23B-7356-A912-9AEBFB753A51} = {8C2CF08B-7E03-796A-7D77-8F40A51B3827}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\NavigationStates.h
+		{7EB7EAB7-4A79-2936-20D5-C9BDC56F313C} = {FD8E4341-008D-D47E-74BC-857A2385FB25}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppKitLogger.kt
+		{7EF8B456-F689-69CC-BAB1-BDB967925435} = {F980E824-E22F-AD62-3F6C-1C68F2150D95}|Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\coroutines\LifecycleCoroutineRunner.kt
+		{7FA68675-D9DF-569A-61B2-5AB22175E131} = {219E05B7-6343-C810-FB04-31E430BD5184}|Sources\Android\AndroidTemplates\README.md
+		{7FCA5F31-3BBE-A1A3-862F-98C693D75E67} = {A9D15F6F-E8E6-215E-B4A8-4EEF838A4827}|Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew.bat
+		{8059DBCB-FE3F-BC1E-3AB5-5C4E50A71F73} = {D0232E88-555A-715D-6447-52CCBAD305FC}|Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\media\ScreenshotCapture.kt
+		{820AA193-E029-F58A-30F2-2BBC1F5D72DC} = {5134BE1A-F783-8202-D25D-A30A9D58EEC7}|Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.release.bat
+		{827FD8B4-9B10-FF92-3845-1CD7BA7D897F} = {5F8285EB-50A6-72A5-EC22-272252A78342}|Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.properties
+		{8344989A-5F94-92DB-2AE3-C8D2493A4E3F} = {D21AA393-9F64-7F3E-CC7A-20CB31CBD13C}|Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Library.CSharp.csproj.in
+		{84519B77-BF48-383D-ACF2-F47B940AAB0B} = {8C2CF08B-7E03-796A-7D77-8F40A51B3827}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\ApplicationStateStore.h
+		{8CD1F46F-1B50-9F7D-D3AD-C51688BC0275} = {5134BE1A-F783-8202-D25D-A30A9D58EEC7}|Sources\Android\AndroidTemplates\Templates\Application\Scripts\run-android-app-previewer-debug.bat
+		{8D0D692F-546C-E723-E322-4732C4445897} = {A2A1771D-A861-1285-43E2-9EBFD04BFCC1}|Sources\Android\AndroidTemplates\PowerShell\Remove-AndroidProject.ps1
+		{8D95ECAB-40D9-FD4F-F853-03D9EAF58F21} = {19C8FF3B-B53F-D16E-CFB1-E612D34F873C}|Sources\Windows\UdkCli\Tools\PackageTools\Templates\NativePackageTransitive.xml
+		{8F889007-EA72-9FBA-CFD6-308B08E05B3D} = {8C2CF08B-7E03-796A-7D77-8F40A51B3827}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\ApplicationSession.cpp
+		{9237B394-5E62-21F7-F56E-4C75A1F84711} = {73D7F203-E36F-1FD4-ADB2-149FDB43BD7C}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\Jni\Jni.h
+		{958FBC54-1F3D-D716-AEFA-473FC9C803FD} = {4BEDE627-6948-17E9-7D2A-FAC4AF0BB55F}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\MainPageViewModel.h
+		{983338DE-65ED-25AA-CE15-DA912026B9F1} = {B0918D5C-3B09-C8F7-F0ED-764BD3B50846}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\androidappkit.kt
+		{992F58CD-887B-460D-7B9E-64500D214319} = {57653CA8-8A75-118F-DC80-3EBC71559550}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\media\SurfaceScreenshotCapture.kt
+		{9B5AFC51-C463-EDF8-0CFC-D63CF43D1D9A} = folder
+		{9BF6DFB4-5D6E-01FA-2BAE-D5BB376C5952} = {77C9EBEA-67FA-083D-9932-64D60FBBBA48}|Sources\Windows\UdkCli\Tools\PackageTools\Private\NuGet.json
+		{9C77A091-714A-0EB8-260E-2E263F99540A} = {42F1061C-608C-B995-DA40-CCDC28562784}|Sources\Android\AndroidBuildTools\Gradle\src\main\groovy\com\isrepeat\build\AndroidSettingsPlugin.groovy
+		{A0A9FE8A-FD4F-494E-ED2A-8F951D1E9B5C} = {4D6F6747-71BE-F4EA-014C-3D4535A6807C}|Sources\Windows\UdkCli\Tools\PackageTools\Build.ps1
+		{A11858AD-5B09-1469-9860-074A53F1C7A7} = {34242C6D-6418-92C1-647F-5E73461A6CFE}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.UI\Control\.gitkeep
+		{A1A2CEDF-5D76-5779-535A-C20F0E17F57A} = {A9D15F6F-E8E6-215E-B4A8-4EEF838A4827}|Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradlew
+		{A1C3F0A4-9ACB-2676-3F36-CD550B785BEC} = {8C2CF08B-7E03-796A-7D77-8F40A51B3827}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\ApplicationStateStore.cpp
+		{A2681CBD-2CF5-33C5-2E16-E7AB045169A3} = {B0918D5C-3B09-C8F7-F0ED-764BD3B50846}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\AppKit.kt
+		{A39FBC32-FEA7-18E7-35E4-87FF0CCA3480} = {4E95EF45-F0E9-25F3-42D1-46CE1983D834}|Sources\Android\AndroidBuildTools\PowerShell\generate-xaml.ps1
+		{A5139887-08B3-319B-CBE0-9767D4F6D677} = {013748EA-6701-12BC-3730-1FFD5A485470}|Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeRenderSurfaceView.kt
+		{A5DD75BB-FDAA-D480-8897-7A2B21469CBA} = {ABDB27EA-51AF-8FD4-C199-EED7FB927000}|Sources\Android\AndroidBuildTools\Cmake\AndroidBuildConfiguration.cmake
+		{A6481AD3-3101-9DB0-9AD6-01DFD87AFBCF} = {A9D15F6F-E8E6-215E-B4A8-4EEF838A4827}|Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle.properties
+		{A889CE9B-7BC2-71E7-8519-DFCE02FAF3B4} = {1F362129-FF56-E9DA-4626-9846358035F0}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values\themes.xml
+		{A9171119-2134-4626-7CE4-353BF80C7FE3} = {5A3097F9-84D7-8CA6-4986-8CDA0E26D227}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Model\ApplicationRepository.cpp
+		{AA464E6F-2137-5347-7E55-BAB2DAEAF80F} = {5134BE1A-F783-8202-D25D-A30A9D58EEC7}|Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.debug.bat
+		{AB997410-DCFA-AF3A-1142-D83D700FBFC3} = {DCEE23F9-A0C0-19CB-258B-9D2A5A9171DD}|Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\AppSessionControllerBase.h
+		{ABC27E91-B0C8-E99D-F72D-DCD8C13C523C} = {91C1626E-08D0-D15F-E92C-49D0A474AFDC}|Sources\Windows\UdkCli.Diagnostic.targets
+		{AD7EF3C0-0806-0D0B-4DB2-9C4DBF6C2582} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\UdkNative.ps1
+		{AF161D26-17A6-4672-FF3B-16958119FE89} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Files.ps1
+		{AFA33287-D060-AEA6-3F37-42239C7ADB7B} = {013748EA-6701-12BC-3730-1FFD5A485470}|Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeMessageDispatcher.kt
+		{B26A9781-50E0-092A-36F4-19AD8C313E08} = {53D85186-4F21-7AF4-966E-0BFE3529E387}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\AndroidManifest.xml
+		{B459955B-C9BD-1BE4-7F67-DE30E3AE3B6A} = {D21AA393-9F64-7F3E-CC7A-20CB31CBD13C}|Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Wpf.csproj.in
+		{B4F42887-CF12-D69E-C493-14E54243D42A} = {4BEDE627-6948-17E9-7D2A-FAC4AF0BB55F}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\SettingsPageViewModel.h
+		{B6C8010D-2EE6-AC7E-1A80-C6FDCAFF9418} = {77C9EBEA-67FA-083D-9932-64D60FBBBA48}|Sources\Windows\UdkCli\Tools\PackageTools\Private\ArtifactDirectories.ps1
+		{B849BAE9-ECA1-818F-4492-AB98AC7F43CD} = {4E95EF45-F0E9-25F3-42D1-46CE1983D834}|Sources\Android\AndroidBuildTools\PowerShell\upload-apk-to-drive.ps1
+		{B94D3DCC-226D-769C-226B-261002C0468F} = {A00B13E7-A763-472E-8EC3-9E04CB803294}|Sources\Windows\UdkCli\Tools\ResolveJsonReference.ps1
+		{BAAC199E-F926-B1FE-FA88-5C610EC9D597} = {4BEDE627-6948-17E9-7D2A-FAC4AF0BB55F}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\MainPage.xaml
+		{BB64F839-4D09-D498-0C68-A5BF36398E47} = {ABDB27EA-51AF-8FD4-C199-EED7FB927000}|Sources\Android\AndroidBuildTools\Cmake\AndroidApplicationFramework.cmake
+		{BB898678-C83D-DC68-D6B6-34EE9D129EAF} = {8C2CF08B-7E03-796A-7D77-8F40A51B3827}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\PageManager.cpp
+		{BC09005C-8235-38E1-CF3C-B43A96C253CB} = {D21AA393-9F64-7F3E-CC7A-20CB31CBD13C}|Sources\Windows\UdkCli\Tools\ProjectTools\Templates\HeaderCheck.cpp.in
+		{BCA9379F-727A-DB3E-9D84-FF742A7E0696} = {96EB236F-1DA2-3CE9-BB64-D02FAE2393A9}|Sources\Android\AndroidBuildTools\README.md
+		{BDB63548-331D-87C4-5D4F-B406F875EAB7} = {0B0BF4AA-D150-0D6A-5F07-8FBEA5294145}|Sources\Android\AndroidTemplates\Templates\Application\cmake\AndroidToolchain.cmake
+		{BF3833B0-F9DA-7DB4-BFF2-3B8C1FAF3087} = {4E95EF45-F0E9-25F3-42D1-46CE1983D834}|Sources\Android\AndroidBuildTools\PowerShell\Resolve-AndroidAppPreviewer.ps1
+		{C0DBFF0F-BA8B-E24F-7ADB-F50A6B7BFA23} = {4E95EF45-F0E9-25F3-42D1-46CE1983D834}|Sources\Android\AndroidBuildTools\PowerShell\test-apk-signing.ps1
+		{C333B174-08C9-282F-1487-F579218203BA} = {F9961101-C581-697B-D7DB-C44F3D9A1D27}|Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1
+		{C573C7E9-BD9C-347F-C52E-C1A184CC1802} = {BA51EB65-9FFD-B105-4679-3BC400E9F983}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\AndroidCommandDispatcher.h
+		{C5D3C929-1CC7-E6A7-23AB-6B9CCAFBAD39} = {42F1061C-608C-B995-DA40-CCDC28562784}|Sources\Android\AndroidBuildTools\Gradle\src\main\groovy\com\isrepeat\build\AndroidApplicationPlugin.groovy
+		{C7AE64FF-1EFD-9DD8-79FD-157383CA3FAB} = {F9961101-C581-697B-D7DB-C44F3D9A1D27}|Sources\Windows\UdkCli\Tools\ProjectTools\Private\FormatXmlAttributes.ps1
+		{C9186652-C54B-0DD5-348D-3C97B6CDAF73} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\NuGet.ps1
+		{CA3D9CF6-89C2-AAD9-DB43-6E9759B5821C} = {FD8E4341-008D-D47E-74BC-857A2385FB25}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppDiagnostics.kt
+		{CADA9276-54AC-AA0F-94CF-9A8FFE836C22} = {B241A093-3EF2-C381-34F0-E038AA6C2CBE}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.PreviewPlugin\CMakeLists.txt
+		{CC7E6922-9BF3-B3E1-A43D-C1E8BA1FFCA4} = {013748EA-6701-12BC-3730-1FFD5A485470}|Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\nativeui\NativeRenderHost.kt
+		{CC81A898-4AFF-2D08-02A2-BDE6445F5CF1} = {42F1061C-608C-B995-DA40-CCDC28562784}|Sources\Android\AndroidBuildTools\Gradle\src\main\groovy\com\isrepeat\build\VerifyReleaseSigning.groovy
+		{CD4E3AE9-BD30-CE5B-4387-324A2CD1BC99} = {A00B13E7-A763-472E-8EC3-9E04CB803294}|Sources\Windows\UdkCli\SolutionInjector.Connect.json
+		{D21AA393-9F64-7F3E-CC7A-20CB31CBD13C} = folder
+		{D5F6668F-5B19-341A-D45B-A75E904994DB} = {DFDA3D21-D9F6-7EC5-DC03-983844BB8450}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\java\{{PackagePath}}\NativeCommandDispatcher.kt
+		{D63F2B13-5F1D-CEF9-E1EA-D86EC60FE938} = {4E95EF45-F0E9-25F3-42D1-46CE1983D834}|Sources\Android\AndroidBuildTools\PowerShell\Invoke-Build.ps1
+		{D74610FF-038A-10F0-DD8C-2A0714C0298B} = {A00B13E7-A763-472E-8EC3-9E04CB803294}|Sources\Windows\UdkCli\Tools\ConvertManifestToJson.ps1
+		{D75CDC5E-5633-FECA-C031-002E96D870ED} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\GradlePublish.ps1
+		{D986F500-048A-1C48-39BC-86471D3D04EB} = {A2A1771D-A861-1285-43E2-9EBFD04BFCC1}|Sources\Android\AndroidTemplates\PowerShell\New-AndroidApplication.ps1
+		{DB1AE47F-12A5-8108-556D-5A52B237E5FA} = {4E95EF45-F0E9-25F3-42D1-46CE1983D834}|Sources\Android\AndroidBuildTools\PowerShell\get-configuration-value.ps1
+		{DBE114F5-72D2-81A0-6BC5-0E0EA5878589} = {5A3097F9-84D7-8CA6-4986-8CDA0E26D227}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Model\ApplicationRepository.h
+		{DD554827-584E-86CB-E90A-751C750089BA} = {DCEE23F9-A0C0-19CB-258B-9D2A5A9171DD}|Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\ApplicationSessionBase.h
+		{DE9A4ABD-A20A-67AD-D445-B7703B67934D} = {8C2CF08B-7E03-796A-7D77-8F40A51B3827}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\AppSessionController.cpp
+		{E4501772-815F-174A-89EC-1A1932802F54} = {4A70DDFC-457B-5612-55F0-FD1DD01C84A1}|Sources\Android\AndroidCoreSdk\src\main\kotlin\com\isrepeat\androidcoresdk\drive\GoogleDriveClient.kt
+		{E61C304E-8F08-2836-7CB6-E63977477587} = {B241A093-3EF2-C381-34F0-E038AA6C2CBE}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.PreviewPlugin\PluginDefinition.cpp
+		{E67CF981-B259-7F01-58B3-B76E88A5B990} = {5F8285EB-50A6-72A5-EC22-272252A78342}|Sources\Android\AndroidTemplates\Templates\Application\Tools\Gradle\gradle\wrapper\gradle-wrapper.jar
+		{E848762B-637D-06CE-78E2-EE49937CB457} = {DFDA3D21-D9F6-7EC5-DC03-983844BB8450}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\java\{{PackagePath}}\NativeDiagnostics.kt
+		{EA6F3B17-9DDA-2D78-EC26-BFBB56AB55CC} = {DCEE23F9-A0C0-19CB-258B-9D2A5A9171DD}|Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\InputDispatcher.h
+		{EA7E6975-5022-E21E-674E-248CCBCC9772} = {6C51D135-2DDF-FC35-0708-A289D9BDE33A}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\update\GoogleDriveUpdateController.kt
+		{EB39ED56-C7E1-B026-5DD8-6AFE14C09966} = {3A28BDCD-290B-8EAE-5201-F926C15FA315}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\xml\file_paths.xml
+		{F480593A-1C9F-FD95-9E52-0253580AEAAC} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\Maven.ps1
+		{F6E732CD-F71A-44C1-13A6-A65C494FD113} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}|Sources\Android\AndroidTemplates\Templates\Application\README.md
+		{F9170D58-CB0F-704E-6CF2-FE97CEA106FF} = {8C2CF08B-7E03-796A-7D77-8F40A51B3827}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\AppSessionController.h
+		{F9179C51-CB9B-E5E1-C3FE-730707D6F71C} = {8C2CF08B-7E03-796A-7D77-8F40A51B3827}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\Navigation.h
+		{F93A8204-F2C2-2319-0038-1485F3AECD01} = {BA51EB65-9FFD-B105-4679-3BC400E9F983}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\AndroidCommandDispatcher.cpp
+		{F9961101-C581-697B-D7DB-C44F3D9A1D27} = folder
+		{FACE75E0-76AA-50C9-7A82-C4561A2EC284} = {53CCF09D-3A31-CC46-3125-C7A20C83157C}|Sources\Android\AndroidTemplates\Templates\Application\version.properties
+		{FB724A2E-23AC-3EEA-E48B-4ADEC3EE188B} = {9A43C79B-ED5A-7282-DF3B-F27B77DD2EA1}|Sources\Android\AndroidCoreSdk\src\main\AndroidManifest.xml
+		{FCCB73D6-C1DE-0423-6CE1-2BD5202533E0} = {73D7F203-E36F-1FD4-ADB2-149FDB43BD7C}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.AndroidHost\Jni\Jni.cpp
+		{FE048DFF-4553-FDC6-4BC3-ACA8EB80C73C} = {D21AA393-9F64-7F3E-CC7A-20CB31CBD13C}|Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in
+		{FE916D79-0001-D3E1-3CBC-362AA59AD691} = {1069A91B-23EB-1074-9B12-F771B287424E}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Base\AppRepositoryBase.h
+		{FF1FC51F-BC88-944F-B4D9-453054FDCA4A} = {4E95EF45-F0E9-25F3-42D1-46CE1983D834}|Sources\Android\AndroidBuildTools\PowerShell\get-configuration-path.ps1
+		{FFD7A710-9C02-09FE-E3C9-7DF00A629145} = {A2A1771D-A861-1285-43E2-9EBFD04BFCC1}|Sources\Android\AndroidTemplates\PowerShell\Open-AndroidOAuthClientSetup.ps1
 	EndGlobalSection
 EndGlobal

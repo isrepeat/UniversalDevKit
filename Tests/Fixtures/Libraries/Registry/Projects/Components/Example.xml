@@ -8,13 +8,11 @@
       <Linkage>dynamic</Linkage>
     </Dependency>
   </Dependencies>
-  <Headers>
+  <Files>
     <Header>Includes/Example/UniversalDevKit/Example/Example.h</Header>
     <Header>Sources/Example/Internal.h</Header>
-  </Headers>
-  <Sources>
     <Source>Sources/Example/Common.cpp</Source>
-  </Sources>
+  </Files>
   <StateScope>module</StateScope>
   <Requirements>
     <CxxStandard>20</CxxStandard>

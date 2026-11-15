@@ -39,7 +39,7 @@
             Label="Shared" />
   </ImportGroup>
   <ItemGroup>
-    <ClCompile Include="HeaderCheck.cpp">
+    <ClCompile Include="HeaderCheck.g.cpp">
       <__UniversalDevKitFilter />
     </ClCompile>
   </ItemGroup>

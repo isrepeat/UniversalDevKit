@@ -2,7 +2,7 @@
 #include <UniversalDevKit/XamlRuntime/RenderEngine.h>
 
 #include "Config.h"
-#include "Export.h"
+#include <UniversalDevKit/OpenGLESRenderer/Export.g.h>
 
 #include <unordered_map>
 #include <functional>

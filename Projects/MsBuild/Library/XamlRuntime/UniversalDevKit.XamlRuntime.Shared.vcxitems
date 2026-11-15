@@ -22,9 +22,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\ElementBuilder.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\Export.h">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\GestureRecognizer.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
@@ -86,6 +83,9 @@
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\XamlLayout.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Projects\!Generated\Includes\UniversalDevKit\XamlRuntime\Export.g.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\XamlRuntime\Animation.cpp">
@@ -176,7 +176,7 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\XamlRuntime\UniversalDevKit.XamlRuntime.targets">
       <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.XamlRuntime.Dependencies.props">
+    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.XamlRuntime.Dependencies.g.props">
       <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
     </None>
   </ItemGroup>

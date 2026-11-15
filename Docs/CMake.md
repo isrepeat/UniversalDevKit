@@ -65,7 +65,7 @@ endif()
 cmake --preset windows-x64 -DUniversalDevKit_COMPONENTS=XamlRuntime -DUniversalDevKit_BUILD_STATIC=OFF
 ```
 
-Helpers.Headers и Diagnostic.Dynamic добавляются как зависимости XamlRuntime.Dynamic. BUILD_STATIC=OFF запрещает статические варианты корней, но не обязательных зависимостей: например, native Preview SDK требует статические XamlRuntime и renderer. Для шаблонного кода используйте UniversalDevKit::Helpers.Headers или другой компонентный Headers-target: он предоставляет свой include-корень и публичные зависимости. UniversalDevKit::Headers предоставляет только общие Export.h и Version.h. При установке копируются заголовки выбранных бинарных компонентов и их зависимостей; компонентные Headers-targets экспортируются вместе с ними.
+Helpers.Headers и Diagnostic.Dynamic добавляются как зависимости XamlRuntime.Dynamic. BUILD_STATIC=OFF запрещает статические варианты корней, но не обязательных зависимостей: например, native Preview SDK требует статические XamlRuntime и renderer. Для шаблонного кода используйте UniversalDevKit::Helpers.Headers или другой компонентный Headers-target: он предоставляет свой include-корень и публичные зависимости. UniversalDevKit::Headers предоставляет корни общих и генерируемых заголовков. При установке копируются заголовки выбранных бинарных компонентов и их зависимостей; компонентные Headers-targets экспортируются вместе с ними.
 
 При add_subdirectory настройки можно задать заранее как обычные переменные при стандартной политике CMake родительского проекта. Выбор в меню Connect этих настроек не меняет.
 

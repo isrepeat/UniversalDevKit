@@ -10,13 +10,13 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\OpenGLESRenderer\UniversalDevKit\OpenGLESRenderer\Config.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\OpenGLESRenderer\UniversalDevKit\OpenGLESRenderer\Export.h">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\OpenGLESRenderer\UniversalDevKit\OpenGLESRenderer\OpenGlRenderer.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\OpenGLESRenderer\StandardShaders.h">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Projects\!Generated\Includes\UniversalDevKit\OpenGLESRenderer\Export.g.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\OpenGLESRenderer\OpenGlRenderer.cpp">
@@ -48,7 +48,7 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\OpenGLESRenderer\UniversalDevKit.OpenGLESRenderer.targets">
       <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.OpenGLESRenderer.Dependencies.props">
+    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.OpenGLESRenderer.Dependencies.g.props">
       <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
     </None>
   </ItemGroup>

@@ -16,7 +16,120 @@ function Get-UdkPackageManifests([string]$Root) {
     Get-ChildItem -LiteralPath $Root -Recurse -File -Filter 'Package.xml' | Sort-Object FullName
 }
 
+function Convert-UdkComponentFiles([System.Xml.XmlElement]$Owner) {
+    $files = $Owner.SelectSingleNode('Files')
+    if (-not $files) {
+        return
+    }
+    if ($Owner.SelectSingleNode('Headers|Sources|BuildExtensions') -or $files.Attributes.Count -or
+        $files.SelectSingleNode('text()[normalize-space()]')) {
+        throw 'Files must contain declarations and replaces Headers, Sources and BuildExtensions.'
+    }
+    $document = $Owner.OwnerDocument
+    $filters = $Owner.SelectSingleNode('Filters')
+    $groups = [Collections.Generic.Dictionary[string,object]]::new([StringComparer]::Ordinal)
+    $selections = [Collections.Generic.List[object]]::new()
+    function ReadFileDeclarations($Parent) {
+        foreach ($file in $Parent.SelectNodes('*')) {
+            if ($file.Name -cnotin @('Header', 'Source', 'File', 'Generated', 'CMake', 'MSBuildProps', 'MSBuildTargets') -or
+                $file.Attributes.Count -or $file.SelectSingleNode('*') -or -not $file.InnerText.Trim()) {
+                throw "Invalid file declaration: $($file.Name)"
+            }
+            $file
+        }
+    }
+    foreach ($node in $files.SelectNodes('*')) {
+        if ($node.LocalName -ceq 'Group') {
+            $name = $node.GetAttribute('name')
+            if ($name -cnotmatch '^[A-Za-z][A-Za-z0-9_.-]*$' -or $node.Attributes.Count -ne 1 -or
+                $groups.ContainsKey($name) -or $node.SelectSingleNode('text()[normalize-space()]')) {
+                throw "Invalid or duplicate Files group: $name"
+            }
+            $entries = @(ReadFileDeclarations $node)
+            if (-not $entries.Count) { throw "Empty Files group: $name" }
+            $groups.Add($name, $entries)
+            $selections.AddRange($entries)
+        } else {
+            $container = $document.CreateElement('Files')
+            [void]$container.AppendChild($node.CloneNode($true))
+            $selections.Add((ReadFileDeclarations $container))
+        }
+    }
+    $buckets = @{ Header = 'Headers'; Source = 'Sources'; CMake = 'BuildExtensions'; MSBuildProps = 'BuildExtensions'; MSBuildTargets = 'BuildExtensions' }
+    $legacyProject = $Owner.LocalName -ceq 'Component' -and -not $Owner.SelectSingleNode('Projects') -and
+        $Owner.SelectSingleNode('Kind|MsbuildGuid')
+    if ($Owner.LocalName -ceq 'Project' -or $legacyProject) {
+        $buckets['File'] = 'BrowseFiles'
+    }
+    foreach ($file in $selections) {
+        $bucket = $buckets[$file.Name]
+        if ($bucket) {
+            $target = $Owner.SelectSingleNode($bucket)
+            if (-not $target) {
+                $target = $document.CreateElement($bucket)
+                [void]$Owner.InsertBefore($target, $files)
+            }
+            [void]$target.AppendChild($file.CloneNode($true))
+        }
+    }
+    if ($Owner.GetAttribute('projectType') -ceq 'native' -or $legacyProject) {
+        foreach ($bucket in 'Headers', 'Sources') {
+            if (-not $Owner.SelectSingleNode($bucket)) {
+                [void]$Owner.InsertBefore($document.CreateElement($bucket), $files)
+            }
+        }
+    }
+    [void]$Owner.RemoveChild($files)
+    if (-not $filters) { return }
+    foreach ($filter in @($filters.SelectNodes('*'))) {
+        $destination = [regex]::Match($filter.GetAttribute('filter'), '^\{Tree:(Project|Solution)\}(?:/(.+))?$')
+        if ($filter.Name -cne 'Filter' -or -not $destination.Success -or $filter.SelectSingleNode('text()[normalize-space()]') -or
+            @($filter.Attributes | Where-Object Name -CNotIn @('filter', 'preserveTree')).Count) {
+            throw 'Expected Filter with an explicit {Tree:Project} or {Tree:Solution} destination.'
+        }
+        $solution = $destination.Groups[1].Value -ceq 'Solution'
+        $folder = $destination.Groups[2].Value
+        if ($solution -and -not $folder) { throw 'A solution filter requires a virtual folder.' }
+        foreach ($selector in $filter.SelectNodes('*')) {
+            $value = $selector.InnerText.Trim()
+            if (-not $value -or $selector.Attributes.Count -or $selector.SelectSingleNode('*')) {
+                throw 'Expected a nonempty GroupRef or Match in Filter.'
+            }
+            $entries = switch -CaseSensitive ($selector.Name) {
+                'GroupRef' {
+                    if (-not $groups.ContainsKey($value)) { throw "Unknown Files group: $value" }
+                    $groups[$value]
+                }
+                'Match' { $selections }
+                default { throw "Unknown Filter selector: $($selector.Name)" }
+            }
+            foreach ($entry in $entries) {
+                $rule = $document.CreateElement('Filter')
+                $rule.SetAttribute('filter', $folder)
+                if ($filter.HasAttribute('preserveTree')) {
+                    $rule.SetAttribute('preserveTree', $filter.GetAttribute('preserveTree'))
+                }
+                if ($solution) { $rule.SetAttribute('scope', 'solution') }
+                $field = if ($solution -and $entry.Name -ceq 'Generated') { 'generatedPath' } else { 'path' }
+                $rule.SetAttribute($field, $entry.InnerText.Trim())
+                if ($solution -and $entry.Name -cin @('Header', 'Source')) { $rule.SetAttribute('selection', $entry.Name) }
+                if (-not $solution -and $entry.Name -ceq 'Generated') { $rule.SetAttribute('planned', 'true') }
+                if ($selector.Name -ceq 'Match') { $rule.SetAttribute('match', $value) }
+                [void]$filters.InsertBefore($rule, $filter)
+            }
+        }
+        [void]$filters.RemoveChild($filter)
+    }
+}
+
 function ConvertFrom-UdkManifestXml([System.Xml.XmlElement]$Root) {
+    if ($Root.LocalName -ceq 'Component') {
+        $Root = $Root.CloneNode($true)
+        Convert-UdkComponentFiles $Root
+        foreach ($project in $Root.SelectNodes('Projects/Project')) {
+            Convert-UdkComponentFiles $project
+        }
+    }
     $listItems = @{
         Headers = 'Header'; ExcludeHeaders = 'Header'; Sources = 'Source'; ExcludeSources = 'Source'
         Filters = 'Filter'; Dependencies = 'Dependency'; RuntimeDependencies = 'Dependency'
@@ -29,7 +142,7 @@ function ConvertFrom-UdkManifestXml([System.Xml.XmlElement]$Root) {
         Platforms = 'Platform'; NativeProps = 'Prop'
         ProjectDirectory = 'ProjectDirectoryRule'; SolutionFolder = 'SolutionFolderRule'
         Variant = 'Variant'; Variants = 'Variant'; MSBuildApplications = 'Application'
-        SourceSettings = 'SourceSetting'; Files = 'File'; PublicHeaders = 'Header'
+        SourceSettings = 'SourceSetting'; Files = 'File'; BrowseFiles = 'File'; PublicHeaders = 'Header'
         Props = 'Prop'; Targets = 'Target'; DynamicDefinitions = 'Definition'
     }
     $legacyRuleNames = @{
@@ -52,7 +165,7 @@ function ConvertFrom-UdkManifestXml([System.Xml.XmlElement]$Root) {
         if ($Name -cin @('schemaVersion', 'cxxStandard', 'apiLevel', 'parallel', 'abiVersion') -and $Value -cmatch '^[0-9]+$') {
             return [long]$Value
         }
-        if ($Name -cin @('preserveTree', 'threads', 'AllowUnsafeBlocks', 'preserveHierarchy', 'refreshDependencies', 'noDefaultExcludes', 'selfContained')) {
+        if ($Name -cin @('preserveTree', 'planned', 'threads', 'AllowUnsafeBlocks', 'preserveHierarchy', 'refreshDependencies', 'noDefaultExcludes', 'selfContained')) {
             if ($Value -ceq 'true') {
                 return $true
             }
@@ -154,6 +267,26 @@ function ConvertFrom-UdkManifestXml([System.Xml.XmlElement]$Root) {
             return ,@(foreach ($child in $children) {
                 if ($child.LocalName -cne $itemName -and $child.LocalName -cne $legacyRuleNames[$Element.LocalName]) {
                     throw "Expected $itemName in $($Element.LocalName)."
+                }
+                if ($Element.LocalName -ceq 'Filters' -and $child.SelectSingleNode('Generated')) {
+                    if ($child.GetAttribute('scope') -cne 'solution' -or $child.HasAttribute('path') -or
+                        $child.SelectSingleNode('text()[normalize-space()]')) {
+                        throw 'Generated selectors require a solution Filter with nested selectors.'
+                    }
+                    foreach ($selector in $child.SelectNodes('*')) {
+                        $rule = $child.CloneNode($false)
+                        if ($selector.Name -ceq 'Generated' -and -not $selector.Attributes.Count -and
+                            -not $selector.SelectSingleNode('*') -and $selector.InnerText.Trim()) {
+                            $rule.SetAttribute('generatedPath', $selector.InnerText.Trim())
+                        } elseif ($selector.Name -ceq 'Path' -and -not $selector.Attributes.Count -and
+                            -not $selector.SelectSingleNode('*') -and $selector.InnerText.Trim()) {
+                            $rule.SetAttribute('path', $selector.InnerText.Trim())
+                        } else {
+                            throw 'Expected a nonempty Path or Generated element in solution Filter.'
+                        }
+                        ReadElement $rule $Field
+                    }
+                    continue
                 }
                 if ($Element.LocalName -ceq 'Filters' -and $child.SelectSingleNode('Path') -and
                     ($child.HasAttribute('filter') -or $child.SelectNodes('Path').Count -gt 1)) {

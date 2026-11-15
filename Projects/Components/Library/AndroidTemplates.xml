@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Component name="AndroidTemplates">
+  <Files>
+    <Group name="SourceTree">
+      <File>Sources/Android/AndroidTemplates/**/*</File>
+    </Group>
+  </Files>
+  <Filters>
+    <Filter filter="{Tree:Solution}/Sources/Android/AndroidTemplates"
+            preserveTree="true">
+      <GroupRef>SourceTree</GroupRef>
+    </Filter>
+  </Filters>
+</Component>

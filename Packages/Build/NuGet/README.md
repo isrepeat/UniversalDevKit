@@ -36,9 +36,9 @@ Helpers поставляется как header-only Shared. Diagnostic имее�
 
 ## Контракт выпуска
 
-Delivery задаёт ID, supportedPlatforms, supportedRuntimes, nuspec и integration. Props/targets компонента находятся в Delivery/NuGet; упаковщик формирует Generated/Settings.props и Settings.targets. Пакет подключает их явными imports.
+Delivery задаёт ID, supportedPlatforms, supportedRuntimes, nuspec и integration. Props/targets компонента находятся в Delivery/NuGet; упаковщик формирует Generated/Settings.g.props и Settings.g.targets. Пакет подключает их явными imports.
 
-Метаданные binaries/<runtime>/<configuration>/Release.json фиксируют toolset, MSVC tools, архитектуру, CRT и конфигурацию. Принудительно подключаемый Abi.h проверяет фактический CRT, iterator debug level и компилятор. Debug нельзя неявно подменять Release. Импортная .lib нужна для линковки DLL; сама DLL должна доставляться к запускаемому приложению.
+Метаданные binaries/<runtime>/<configuration>/Release.json фиксируют toolset, MSVC tools, архитектуру, CRT и конфигурацию. Принудительно подключаемый Abi.g.h проверяет фактический CRT, iterator debug level и компилятор. Debug нельзя неявно подменять Release. Импортная .lib нужна для линковки DLL; сама DLL должна доставляться к запускаемому приложению.
 
 ## Проверки
 

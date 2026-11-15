@@ -7,7 +7,7 @@
     <__UniversalDevKitHeaderLeafPackageVersion>$(__UniversalDevKitHeaderLeafPackageVersion)</__UniversalDevKitHeaderLeafPackageVersion>
     <UniversalDevKitHeaderLeafLinkage Condition="'$(UniversalDevKitHeaderLeafLinkage)' == ''">Shared</UniversalDevKitHeaderLeafLinkage>
   </PropertyGroup>
-  <Import Project="Generated\Settings.targets" />
+  <Import Project="Generated\Settings.g.targets" />
   <ItemGroup>
     <__UniversalDevKitNuGetRoot Include="$(UniversalDevKitComponents)" />
   </ItemGroup>

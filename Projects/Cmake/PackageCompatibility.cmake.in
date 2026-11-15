@@ -42,7 +42,7 @@ foreach(component IN ITEMS @availablePackageComponents@)
     foreach(variant IN ITEMS Static Dynamic)
         if(MSVC AND TARGET UniversalDevKit::${component}.${variant})
             # The forced include checks the target's effective CRT, including overrides.
-            set_property(TARGET UniversalDevKit::${component}.${variant} APPEND PROPERTY INTERFACE_COMPILE_OPTIONS "/FI${CMAKE_CURRENT_LIST_DIR}/UniversalDevKit.Abi-$<CONFIG>.h")
+            set_property(TARGET UniversalDevKit::${component}.${variant} APPEND PROPERTY INTERFACE_COMPILE_OPTIONS "/FI${CMAKE_CURRENT_LIST_DIR}/UniversalDevKit.Abi-$<CONFIG>.g.h")
         endif()
     endforeach()
 endforeach()

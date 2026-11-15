@@ -1,13 +1,12 @@
 <Component>
   <Name>CompileProbe</Name>
   <MsbuildGuid>{1DFD5E41-F82B-4DB7-ABBE-503FE74880FA}</MsbuildGuid>
-  <Headers>
+  <Files>
     <Header>ThirdParty/CompileProbe/include/Value.h</Header>
-  </Headers>
-  <Sources>
     <Source>Sources/CompileProbe/Value.cpp</Source>
     <Source>ThirdParty/CompileProbe/External.cpp</Source>
-  </Sources>
+    <CMake>Projects/Cmake/CompileProbe.cmake</CMake>
+  </Files>
   <Compile>
     <IncludeDirectories>
       <IncludeDirectory>ThirdParty/CompileProbe/include</IncludeDirectory>
@@ -32,7 +31,4 @@
       </Compile>
     </SourceSetting>
   </SourceSettings>
-  <BuildExtensions>
-    <CMake>Projects/Cmake/CompileProbe.cmake</CMake>
-  </BuildExtensions>
 </Component>

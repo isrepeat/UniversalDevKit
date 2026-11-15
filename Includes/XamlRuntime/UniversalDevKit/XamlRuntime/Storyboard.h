@@ -3,7 +3,7 @@
 #include <UniversalDevKit/Helpers/Math/Color.h>
 
 #include "Config.h"
-#include "Export.h"
+#include <UniversalDevKit/XamlRuntime/Export.g.h>
 
 #include <unordered_map>
 #include <chrono>

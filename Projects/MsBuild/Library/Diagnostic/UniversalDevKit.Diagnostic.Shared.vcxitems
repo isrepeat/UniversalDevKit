@@ -19,7 +19,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\PlatformBackend.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\Export.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Projects\!Generated\Includes\UniversalDevKit\Diagnostic\Export.g.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </ClInclude>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\Logging.cpp">
@@ -93,7 +93,7 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\Spdlog.targets">
       <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.Diagnostic.Dependencies.props">
+    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.Diagnostic.Dependencies.g.props">
       <__UniversalDevKitFilter>Build</__UniversalDevKitFilter>
     </None>
   </ItemGroup>

@@ -1,7 +1,7 @@
 #pragma once
 #include "XamlLayout.h"
 #include "Config.h"
-#include "Export.h"
+#include <UniversalDevKit/XamlRuntime/Export.g.h>
 
 #include <initializer_list>
 #include <unordered_map>

@@ -3,8 +3,10 @@
   <!-- Explicit imports add the common Core headers and available version metadata.
        The consumer retains its include paths, sources, libraries,
        C++ standard, CRT, and build directories. -->
+  <Import Project="$(MSBuildThisFileDirectory)UniversalDevKit.Version.g.props"
+          Condition="Exists('$(MSBuildThisFileDirectory)UniversalDevKit.Version.g.props')" />
   <Import Project="$(MSBuildThisFileDirectory)UniversalDevKit.Version.props"
-          Condition="Exists('$(MSBuildThisFileDirectory)UniversalDevKit.Version.props')" />
+          Condition="!Exists('$(MSBuildThisFileDirectory)UniversalDevKit.Version.g.props') And Exists('$(MSBuildThisFileDirectory)UniversalDevKit.Version.props')" />
 
   <PropertyGroup>
     <!-- Importers use this flag to avoid loading the file twice. -->
@@ -16,7 +18,7 @@
     <ClCompile>
       <!-- Component headers are added separately according to the dependency graph.
            Inherit the project's existing include paths. -->
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\Includes\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\Includes\Core;$(MSBuildThisFileDirectory)..\!Generated\Includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
 </Project>

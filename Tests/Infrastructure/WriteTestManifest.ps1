@@ -20,7 +20,7 @@ function ConvertTo-TestManifestXml($Value, [string]$Root) {
         exclude='Exclude'; when='Delivery'; abis='Abi'; tasks='Task'; configurations='Configuration'
         noWarn='Warning'; supportedRuntimes='Runtime'; platforms='Platform'; nativeProps='Prop'
         props='Prop'; targets='Target'; variant='Variant'
-        variants='Variant'; msbuildApplications='Application'; sourceSettings='SourceSetting'; files='File'
+        variants='Variant'; msbuildApplications='Application'; sourceSettings='SourceSetting'; files='File'; browseFiles='File'
         publicHeaders='Header'; dynamicDefinitions='Definition'; deliveries='Delivery'; properties='Property'
     }
     function AddElement($Parent, [string]$Name, $Data, [string]$Field) {
@@ -31,7 +31,19 @@ function ConvertTo-TestManifestXml($Value, [string]$Root) {
             if ($null -ne $Data.preserveTree) {
                 $element.SetAttribute('preserveTree', $Data.preserveTree.ToString().ToLowerInvariant())
             }
-            AddElement $element 'Path' $Data.path ''
+            foreach ($attribute in 'scope', 'match', 'selection') {
+                if ($null -ne $Data.$attribute) {
+                    $element.SetAttribute($attribute, [string]$Data.$attribute)
+                }
+            }
+            if ($null -ne $Data.planned) {
+                $element.SetAttribute('planned', $Data.planned.ToString().ToLowerInvariant())
+            }
+            if ($Data.generatedPath) {
+                AddElement $element 'Generated' $Data.generatedPath ''
+            } else {
+                AddElement $element 'Path' $Data.path ''
+            }
             return
         }
         if ($Data -is [array]) {

@@ -11,33 +11,34 @@
                     visibility="private"
                     linkage="same" />
       </Dependencies>
-      <Headers>
+      <Files>
         <Header>Includes/Diagnostic/UniversalDevKit/Diagnostic/**/*.h</Header>
-        <Header>Sources/Diagnostic/Native/**/*.h</Header>
-      </Headers>
-      <ExcludeHeaders>
-        <Header>Includes/Diagnostic/UniversalDevKit/Diagnostic/Export.h</Header>
-      </ExcludeHeaders>
-      <Sources>
-        <Source>Sources/Diagnostic/Native/**/*.cpp</Source>
-        <Source>ThirdParty/spdlog/src/*.cpp</Source>
-      </Sources>
+        <Group name="NativeSources">
+          <Header>Sources/Diagnostic/Native/**/*.h</Header>
+          <Source>Sources/Diagnostic/Native/**/*.cpp</Source>
+        </Group>
+        <Group name="SpdlogSources">
+          <Source>ThirdParty/spdlog/src/*.cpp</Source>
+        </Group>
+        <Group name="Dependencies">
+          <Generated>{projectDirectory}/UniversalDevKit.Diagnostic.Dependencies.g.props</Generated>
+        </Group>
+        <Group name="NativeBuild">
+          <MSBuildTargets>Sources/Diagnostic/Native/Spdlog.targets</MSBuildTargets>
+        </Group>
+        <CMake>Projects/Cmake/Library/Diagnostic/Spdlog.cmake</CMake>
+      </Files>
       <Filters>
-        <Filter filter="">
-          <Path>Includes/Diagnostic/UniversalDevKit/Diagnostic</Path>
-        </Filter>
-        <Filter filter=""
+        <Filter filter="{Tree:Project}"
                 preserveTree="true">
-          <Path>Sources/Diagnostic/Native</Path>
+          <GroupRef>NativeSources</GroupRef>
         </Filter>
-        <Filter filter="ThirdParty/spdlog"
-                preserveTree="true">
-          <Path>ThirdParty/spdlog</Path>
+        <Filter filter="{Tree:Project}/Build">
+          <GroupRef>NativeBuild</GroupRef>
+          <GroupRef>Dependencies</GroupRef>
         </Filter>
-        <Filter filter="Build">
-          <Path>Sources/Diagnostic/**/*.props</Path>
-          <Path>Sources/Diagnostic/**/*.targets</Path>
-          <Path>{projectDirectory}/*.props</Path>
+        <Filter filter="{Tree:Project}/ThirdParty/spdlog/src">
+          <GroupRef>SpdlogSources</GroupRef>
         </Filter>
       </Filters>
       <Requirements cxxStandard="20"
@@ -49,18 +50,14 @@
         </IncludeDirectories>
         <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES</PreprocessorDefinitions>
       </Compile>
-      <BuildExtensions>
-        <CMake>Projects/Cmake/Library/Diagnostic/Spdlog.cmake</CMake>
-        <MSBuildTargets>Sources/Diagnostic/Native/Spdlog.targets</MSBuildTargets>
-      </BuildExtensions>
     </Project> <!-- Project id="native" -->
 
     <Project id="dotnet"
              kind="library"
              projectType="classLibrary">
-      <Sources>
+      <Files>
         <Source>Sources/Diagnostic/DotNet/**/*.cs</Source>
-      </Sources>
+      </Files>
       <MSBuild>
         <ProjectName>
           <When artifact="project">UniversalDevKit.{name}.Net8</When>

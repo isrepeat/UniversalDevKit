@@ -35,7 +35,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Event\Signal.h">
       <Filter>Event</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Export.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Math\Color.h">
       <Filter>Math</Filter>
     </ClInclude>
@@ -148,5 +147,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Text\Utf8.h">
       <Filter>Text</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Projects\!Generated\Includes\UniversalDevKit\Helpers\Export.g.h" />
   </ItemGroup>
 </Project>

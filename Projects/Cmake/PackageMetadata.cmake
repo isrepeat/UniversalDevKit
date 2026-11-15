@@ -164,13 +164,13 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKitCompatibility.cmake" D
 
 if(MSVC)
     configure_file("${CMAKE_CURRENT_LIST_DIR}/PackageAbi.h.in" "${CMAKE_CURRENT_BINARY_DIR}/PackageAbi.h.in" @ONLY)
-    file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKit.Abi-$<CONFIG>.h" INPUT "${CMAKE_CURRENT_BINARY_DIR}/PackageAbi.h.in")
-    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKit.Abi-$<CONFIG>.h" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/UniversalDevKit")
+    file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKit.Abi-$<CONFIG>.g.h" INPUT "${CMAKE_CURRENT_BINARY_DIR}/PackageAbi.h.in")
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKit.Abi-$<CONFIG>.g.h" DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/UniversalDevKit")
     # Apply the check to standalone builds too so metadata describes the actual STL ABI.
     foreach(componentTarget IN LISTS exportedComponentTargets)
         get_target_property(componentType ${componentTarget} TYPE)
         if(NOT componentType STREQUAL "INTERFACE_LIBRARY")
-            target_compile_options(${componentTarget} PRIVATE "/FI${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKit.Abi-$<CONFIG>.h")
+            target_compile_options(${componentTarget} PRIVATE "/FI${CMAKE_CURRENT_BINARY_DIR}/UniversalDevKit.Abi-$<CONFIG>.g.h")
         endif()
     endforeach()
 endif()

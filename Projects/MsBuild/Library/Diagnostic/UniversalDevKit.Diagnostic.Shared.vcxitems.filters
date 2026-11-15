@@ -44,15 +44,15 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\ThirdParty\spdlog\src\stdout_sinks.cpp">
       <Filter>ThirdParty\spdlog\src</Filter>
     </ClCompile>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\Export.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\Logging.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\LoggingC.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Projects\!Generated\Includes\UniversalDevKit\Diagnostic\Export.g.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\LogRecord.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\PlatformBackend.h" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\Sources\Diagnostic\Native\Spdlog.targets">
       <Filter>Build</Filter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.Diagnostic.Dependencies.props">
+    <None Include="$(MSBuildThisFileDirectory)UniversalDevKit.Diagnostic.Dependencies.g.props">
       <Filter>Build</Filter>
     </None>
   </ItemGroup>

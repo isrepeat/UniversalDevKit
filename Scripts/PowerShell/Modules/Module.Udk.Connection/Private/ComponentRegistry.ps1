@@ -1,6 +1,6 @@
 function GetAvailableComponents {
     param([string]$RepositoryPath)
-    $integrationPath = Join-Path $RepositoryPath 'Projects/MsBuild/UniversalDevKit.Sources.targets'
+    $integrationPath = Get-UdkSourcesTargetsPath $RepositoryPath
     # The registry is generated with the dependency graph; check freshness without writing.
     & (Join-Path $RepositoryPath 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1') -ManifestPath (Join-Path $RepositoryPath 'Components') -Check | Out-Null
     [xml]$integration = Get-Content -LiteralPath $integrationPath -Raw -Encoding UTF8
@@ -83,4 +83,13 @@ function Resolve-UdkComponents([string[]]$RequestedComponents, $ComponentRegistr
     }
     foreach ($component in $RequestedComponents) { AddComponent $component @() }
     return @($resolved | Sort-Object)
+}
+function Get-UdkSourcesTargetsPath([string]$RepositoryPath) {
+    . (Join-Path $RepositoryPath 'Sources/Windows/UdkCli/Tools/ReadManifest.ps1')
+    $manifest = Read-UdkManifest (Join-Path $RepositoryPath 'Components') 'ComponentRegistry'
+    $path = $manifest.generation.integration.sourcesTargets
+    if (-not $path) {
+        $path = 'Projects/MsBuild/UniversalDevKit.Sources.targets'
+    }
+    return Join-Path $RepositoryPath $path
 }

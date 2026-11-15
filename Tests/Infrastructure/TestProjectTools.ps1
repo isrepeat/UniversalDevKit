@@ -23,6 +23,9 @@ try {
         $filters -notmatch '<None Include="[^"]*Custom\.targets" />') {
         throw 'Expected the explicit Build filter for Custom.props and the project root for Custom.targets.'
     }
+    if ($filters -notmatch '<None Include="[^"]*NewFile\.cpp"><Filter>Examples</Filter></None>') {
+        throw 'An explicit File declaration must be displayed without compiling it.'
+    }
     $binary = [IO.File]::ReadAllText((Join-Path $temporary 'Projects/Probe/Probe.Static.vcxproj'))
     if (-not $binary.Contains('Custom.targets')) { throw 'Missing target extension.' }
     $solution = Join-Path $temporary 'Probe.sln'
@@ -108,6 +111,42 @@ try {
     if ($reference.Include -cne 'Probe.Dynamic.vcxproj' -or $reference.ReferenceOutputAssembly -cne 'false' -or
         -not [IO.File]::ReadAllText($solution).Contains('"Probe.net8.0", "Projects\Probe\Probe.net8.0.csproj"')) {
         throw 'The solution or runtime reference for the C# library was not generated.'
+    }
+    & $tool -ManifestPath $manifest -Check
+    # Exercise adoption and pruning while preserving a manual item in the same solution folder.
+    [xml]$descriptionXml = Get-Content -LiteralPath $componentPath -Raw
+    $solutionFiles = $descriptionXml.CreateElement('Files')
+    $solutionFiles.InnerXml = '<Group name="Code"><File>Source/**/*.cpp</File></Group>' +
+        '<Group name="Build"><Generated>Projects/Probe/*.Archive.vcxproj</Generated></Group>'
+    [void]$descriptionXml.DocumentElement.AppendChild($solutionFiles)
+    $solutionFilters = $descriptionXml.CreateElement('Filters')
+    $solutionFilters.InnerXml = '<Filter filter="{Tree:Solution}/Browse" preserveTree="true"><GroupRef>Code</GroupRef></Filter>' +
+        '<Filter filter="{Tree:Solution}/Selected"><Match>**/NewFile.cpp</Match></Filter>' +
+        '<Filter filter="{Tree:Solution}/Generated"><GroupRef>Build</GroupRef></Filter>'
+    [void]$descriptionXml.DocumentElement.AppendChild($solutionFilters)
+    $solutionDescription = $descriptionXml.OuterXml
+    [IO.File]::WriteAllText($componentPath, $solutionDescription, $utf8)
+    & $tool -ManifestPath $manifest
+    $generated = [IO.File]::ReadAllText($solution)
+    if (-not $generated.Contains('Projects\Probe\Probe.Archive.vcxproj = Projects\Probe\Probe.Archive.vcxproj') -or
+        $generated -match '(?m)^\s*Projects\\Probe\\Probe\.(Dynamic|Static)\.vcxproj = ') {
+        throw 'Generated solution items did not select only the requested output.'
+    }
+    if ($generated -notmatch '"Browse", "Browse"' -or
+        $generated -notmatch '(?s)"Selected", "Selected"[^\r\n]*\r?\n\s+ProjectSection\(SolutionItems\) = preProject\s+Source\\Nested\\NewFile\.cpp = Source\\Nested\\NewFile\.cpp' -or
+        $generated -match '(?m)^\s*NewFile\.cpp = NewFile\.cpp') {
+        throw 'Match must move only files declared in Files.'
+    }
+    $manualEntry = "`t`tNewFile.cpp = NewFile.cpp"
+    $generated = $generated -replace '(?m)^(\t\tSource\\Probe\.cpp = Source\\Probe\.cpp\r?)$', ('${1}' + "`n" + $manualEntry)
+    if (-not $generated.Contains($manualEntry)) { throw 'Unable to seed the manual solution item.' }
+    [IO.File]::WriteAllText($solution, $generated, $utf8)
+    [IO.File]::WriteAllText($componentPath, $solutionDescription.Replace('{Tree:Solution}/Browse', '{Tree:Solution}/Moved'), $utf8)
+    & $tool -ManifestPath $manifest
+    $moved = [IO.File]::ReadAllText($solution)
+    if ($moved -notmatch '"Moved", "Moved"' -or -not $moved.Contains($manualEntry) -or
+        [regex]::Matches($moved, '(?m)^\t\tSource\\Probe\.cpp = ').Count -ne 1) {
+        throw 'Solution reconciliation lost a manual item or retained a stale entry.'
     }
     & $tool -ManifestPath $manifest -Check
     $runtime.Remove('projectId')

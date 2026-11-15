@@ -5,18 +5,19 @@
              kind="application"
              projectType="wpf"
              msbuildGuid="{C27A6217-35E3-4AD1-BBC7-71438D8E1E16}">
-      <Sources>
+      <Files>
         <Source>Sources/Windows/UdkCli.Setup/**/*.cs</Source>
         <Source>Sources/Windows/UdkCli.Setup/**/*.xaml</Source>
-      </Sources>
+        <MSBuildTargets>Sources/Windows/UdkCli.Setup/UdkCli.Setup.targets</MSBuildTargets>
+      </Files>
       <Filters>
-        <Filter filter=""
+        <Filter filter="{Tree:Project}"
                 preserveTree="true">
-          <Path>Sources/Windows/UdkCli.Setup</Path>
+          <Match>Sources/Windows/UdkCli.Setup/**/*</Match>
         </Filter>
-        <Filter filter="Build">
-          <Path>Sources/Windows/UdkCli.Setup/**/*.props</Path>
-          <Path>Sources/Windows/UdkCli.Setup/**/*.targets</Path>
+        <Filter filter="{Tree:Project}/Build">
+          <Match>Sources/Windows/UdkCli.Setup/**/*.props</Match>
+          <Match>Sources/Windows/UdkCli.Setup/**/*.targets</Match>
         </Filter>
       </Filters>
       <MSBuild>
@@ -24,9 +25,6 @@
           <TargetFramework>net10.0-windows</TargetFramework>
         </Properties>
       </MSBuild>
-      <BuildExtensions>
-        <MSBuildTargets>Sources/Windows/UdkCli.Setup/UdkCli.Setup.targets</MSBuildTargets>
-      </BuildExtensions>
     </Project> <!-- Project id="wpf" -->
   </Projects>
 </Component>

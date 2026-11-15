@@ -149,7 +149,7 @@ foreach ($includePath in $Model.Components.Keys) {
     }
     # Reject unknown fields; dependencies and platforms require explicit generator support.
     foreach ($field in $component.PSObject.Properties.Name) {
-        if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild')) {
+        if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'browseFiles', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild')) {
             throw "Unsupported field ${name}: $field"
         }
     }
@@ -207,7 +207,9 @@ foreach ($includePath in $Model.Components.Keys) {
     $componentIncludeRoot = Get-UdkComponentIncludeRoot $component
     $binaryComponentRegistry[$name] = [pscustomobject]@{
         IncludeRoot = $componentIncludeRoot
-        ExportHeader = if ($componentIncludeRoot.StartsWith('ThirdParty/', [StringComparison]::Ordinal)) {
+        ExportHeader = if ($Model.Integration) {
+            (Split-Path -Parent $coreExportHeader).Replace('\', '/') + "/$name/Export.g.h"
+        } elseif ($componentIncludeRoot.StartsWith('ThirdParty/', [StringComparison]::Ordinal)) {
             $componentIncludeRoot + '/' + $name + '/Export.h'
         } else {
             $componentIncludeRoot + '/UniversalDevKit/' + $componentIncludeRoot.Substring($componentIncludeRoot.LastIndexOf('Includes/', [StringComparison]::Ordinal) + 9) + '/Export.h'
@@ -439,10 +441,7 @@ foreach ($includePath in $Model.Components.Keys) {
     } else {
         $null
     }
-    # CRLF/LF differences alone do not require rewriting.
-    if ($null -eq $original -or $original.Replace("`r`n", "`n") -cne $content) {
-        $updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $original })
-    }
+    $updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $original })
 }
 
 # Resolve dependency closure before writing; cycles and unknown names stop generation.
@@ -614,9 +613,7 @@ $original = if (Test-Path -LiteralPath $targetPath) {
 } else {
     $null
 }
-if ($null -eq $original -or $original.Replace("`r`n", "`n") -cne $content) {
-    $updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $original })
-}
+$updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $original })
 
 # Determine all library GUIDs first, including projects not yet created.
 $libraryGuids = @{}
@@ -762,9 +759,7 @@ foreach ($name in $componentNames) {
     } else {
         $null
     }
-    if ($null -eq $original -or $original.Replace("`r`n", "`n") -cne $content) {
-        $updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $original })
-    }
+    $updates.Add([pscustomobject]@{ Path = $targetPath; RelativePath = $relativePath; Content = $content; Original = $original })
 }
 
 # Provide MSVC and IntelliSense contexts for header-only components.
@@ -792,6 +787,7 @@ foreach ($name in $componentNames) {
         'stdcpp' + $standard
     }
     $headerCheckPath = Get-UdkProjectPath $name 'HeaderCheck'
+    $headerCheckFileName = if ($Model.Integration) { 'HeaderCheck.g.cpp' } else { 'HeaderCheck.cpp' }
     $libraryRepositoryPrefix = Get-UdkRepositoryPrefix $headerCheckPath
     $projectTemplate = Get-ProjectToolsNativeProjectTemplate $Model $componentsByName[$name] $headerCheckPath
     $content = $projectTemplate.Replace('@COMPONENT@', $name).Replace('@GUID@', $guid).Replace('@CONFIGURATION_TYPE@', 'Application').Replace('@DYNAMIC_DEFINITIONS@', '').Replace('stdcpp20', $language)
@@ -805,7 +801,7 @@ foreach ($name in $componentNames) {
     }
     $headerCheckItem = @(
         '  <ItemGroup>'
-        '    <ClCompile Include="HeaderCheck.cpp">'
+        ('    <ClCompile Include="' + $headerCheckFileName + '">')
         '      <__UniversalDevKitFilter />'
         '    </ClCompile>'
         '  </ItemGroup>'
@@ -821,7 +817,7 @@ foreach ($name in $componentNames) {
         $source += '#include <' + $header.Substring($binaryComponentRegistry[$name].IncludeRoot.Length + 1) + '>' + "`n"
     }
     $source += "`nint main() { return 0; }"
-    $headerCheckSource = ([IO.Path]::GetDirectoryName($headerCheckPath).Replace('\', '/')) + '/HeaderCheck.cpp'
+    $headerCheckSource = ([IO.Path]::GetDirectoryName($headerCheckPath).Replace('\', '/')) + '/' + $headerCheckFileName
     foreach ($item in @(@{ Path = $headerCheckPath; Content = $content.TrimEnd([char[]]"`r`n") }, @{ Path = $headerCheckSource; Content = $source })) {
         $path = Join-Path $repositoryPath $item.Path
         $original = if (Test-Path -LiteralPath $path) {
@@ -829,9 +825,7 @@ foreach ($name in $componentNames) {
         } else {
             $null
         }
-        if ($original -cne $item.Content) {
-            $updates.Add([pscustomobject]@{ Path = $path; RelativePath = $item.Path; Content = $item.Content; Original = $original })
-        }
+        $updates.Add([pscustomobject]@{ Path = $path; RelativePath = $item.Path; Content = $item.Content; Original = $original })
     }
 }
 
@@ -844,12 +838,13 @@ function AddGeneratedMetadata([string]$RelativePath, [string]$Content) {
     } else {
         $null
     }
-    if ($original -cne $content) {
-        $updates.Add([pscustomobject]@{ Path = $path; RelativePath = $RelativePath; Content = $content; Original = $original })
-    }
+    $updates.Add([pscustomobject]@{ Path = $path; RelativePath = $RelativePath; Content = $content; Original = $original })
 }
 $exportTemplate = [IO.File]::ReadAllText((Join-Path $PSScriptRoot '../Templates/Export.h.in'))
 $componentExportTemplate = [IO.File]::ReadAllText((Join-Path $PSScriptRoot '../Templates/ComponentExport.h.in'))
+if ($Model.Integration) {
+    $componentExportTemplate = $componentExportTemplate.Replace('UniversalDevKit/Export.h', 'UniversalDevKit/Export.g.h')
+}
 AddGeneratedMetadata $coreExportHeader $exportTemplate
 foreach ($name in $componentNames) {
     AddGeneratedMetadata $binaryComponentRegistry[$name].ExportHeader ($componentExportTemplate.Replace('@COMPONENT@', $name.ToUpperInvariant()))

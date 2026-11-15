@@ -6,21 +6,22 @@
              projectType="vsix"
              version="0.3.0"
              msbuildGuid="{5217622B-841E-4635-BA5D-8DE005125B16}">
-      <Sources>
+      <Files>
         <Source>Sources/Windows/UdkCli.VisualStudio/**/*.cs</Source>
         <Source>Sources/Diagnostic/DotNet/*.cs</Source>
-      </Sources>
+        <MSBuildTargets>Sources/Windows/UdkCli.VisualStudio/UdkCli.VisualStudio.targets</MSBuildTargets>
+      </Files>
       <Filters>
-        <Filter filter=""
+        <Filter filter="{Tree:Project}"
                 preserveTree="true">
-          <Path>Sources/Windows/UdkCli.VisualStudio</Path>
+          <Match>Sources/Windows/UdkCli.VisualStudio/**/*</Match>
         </Filter>
-        <Filter filter="Diagnostic">
-          <Path>Sources/Diagnostic/DotNet</Path>
+        <Filter filter="{Tree:Project}/Build">
+          <Match>Sources/Windows/UdkCli.VisualStudio/**/*.props</Match>
+          <Match>Sources/Windows/UdkCli.VisualStudio/**/*.targets</Match>
         </Filter>
-        <Filter filter="Build">
-          <Path>Sources/Windows/UdkCli.VisualStudio/**/*.props</Path>
-          <Path>Sources/Windows/UdkCli.VisualStudio/**/*.targets</Path>
+        <Filter filter="{Tree:Project}/Diagnostic">
+          <Match>Sources/Diagnostic/DotNet/**/*</Match>
         </Filter>
       </Filters>
       <MSBuild>
@@ -31,9 +32,6 @@
           <TargetFramework>net472</TargetFramework>
         </Properties>
       </MSBuild>
-      <BuildExtensions>
-        <MSBuildTargets>Sources/Windows/UdkCli.VisualStudio/UdkCli.VisualStudio.targets</MSBuildTargets>
-      </BuildExtensions>
     </Project> <!-- Project id="vsix" -->
   </Projects>
 </Component>

@@ -1,7 +1,7 @@
 #pragma once
 #include "GestureRecognizer.h"
 #include "Config.h"
-#include "Export.h"
+#include <UniversalDevKit/XamlRuntime/Export.g.h>
 
 #include <functional>
 #include <memory>

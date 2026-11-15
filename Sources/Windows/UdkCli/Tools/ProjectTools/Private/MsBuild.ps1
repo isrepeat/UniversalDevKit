@@ -121,7 +121,7 @@ function Get-ProjectToolsLocation($Model, $Component, [string]$Variant, [string]
                 '.vcxitems'
             }
             'Dependencies' {
-                '.props'
+                if ($Model.Integration) { '.g.props' } else { '.props' }
             }
             default {
                 '.vcxproj'
@@ -190,7 +190,7 @@ function Get-ProjectToolsRelativeFile($Model, [string]$From, [string]$To) {
 }
 
 function Get-ProjectToolsBuildItems($Model, $Component, [string]$SharedPath, [string]$DependenciesPath) {
-    $paths = @($Component.buildExtensions.msbuildProps, $Component.buildExtensions.msbuildTargets, $DependenciesPath) |
+    $paths = @($Component.buildExtensions.msbuildProps, $Component.buildExtensions.msbuildTargets, $DependenciesPath) + @($Component.browseFiles) |
         Where-Object {
             $_
         } | Select-Object -Unique
@@ -319,11 +319,12 @@ function New-ProjectToolsDotNetProject($Model, $Component, [string]$Path) {
             $_
         } | Select-Object -Unique
     $links = [Collections.Generic.Dictionary[string,string]]::new([StringComparer]::OrdinalIgnoreCase)
-    $filterItems = foreach ($repositoryPath in ($sourceFiles + @($buildExtensions))) {
+    $displayOnly = @(@($buildExtensions) + @($Component.browseFiles) | Where-Object { $_ } | Select-Object -Unique)
+    $filterItems = foreach ($repositoryPath in ($sourceFiles + $displayOnly)) {
         $file = Resolve-ProjectToolsPath $Model.Root $repositoryPath
         $relative = Get-ProjectToolsRelativePath $directory $file
         $outsideProject = $relative -match '^\.\.(?:\\|$)'
-        $isBuildExtension = $repositoryPath -in $buildExtensions
+        $isBuildExtension = $repositoryPath -in $displayOnly
         $folder = Get-ProjectToolsFilter $repositoryPath $Component.filters $Path
         $link = [IO.Path]::GetFileName($file)
         if ($folder) {
@@ -498,7 +499,7 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
                     $lines.Add('    <' + $group.Type + ' Include="' + (ConvertTo-ProjectToolsXml $include) + '" />')
                 }
             }
-            foreach ($file in @($component.buildExtensions.msbuildProps, $component.buildExtensions.msbuildTargets) | Where-Object {
+            foreach ($file in (@($component.buildExtensions.msbuildProps, $component.buildExtensions.msbuildTargets) + @($component.browseFiles)) | Where-Object {
                 $_
             } | Select-Object -Unique) {
                 $include = Get-ProjectToolsRelativeImport $Model $sharedPath $file

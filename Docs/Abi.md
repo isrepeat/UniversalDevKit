@@ -16,9 +16,9 @@
 
 При обновлении UDK требуется пересборка consumer. Замена DLL/SO без пересборки пока не гарантируется. Несовместимые изменения публичного API требуют повышения minor-версии. Patch-выпуск сохраняет публичный API; это не обещание совместимости произвольных toolchains и CRT.
 
-Version.json — единственный источник версии выпуска и поколения ABI. CMake читает его непосредственно, генератор создаёт Includes/Core/UniversalDevKit/Version.h для C++ и Projects/MsBuild/UniversalDevKit.Version.props для MSBuild. [Windows NuGet](../Packages/Build/NuGet/README.md) и [Android AAR/Prefab](../Packages/Build/Android/README.md) также читают его при упаковке.
+Version.json — единственный источник версии выпуска и поколения ABI. CMake читает его непосредственно, генератор создаёт Projects/!Generated/Includes/UniversalDevKit/Version.g.h для C++ и Projects/MsBuild/UniversalDevKit.Version.g.props для MSBuild. [Windows NuGet](../Packages/Build/NuGet/README.md) и [Android AAR/Prefab](../Packages/Build/Android/README.md) также читают его при упаковке.
 
-После изменения Version.json запускается GenerateComponentProjects; режим -Check обнаруживает устаревшие метаданные. CMake отслеживает изменение Version.json для повторной конфигурации. Version.h хранится в Git для использования заголовков без запуска генератора у consumer.
+После изменения Version.json запускается GenerateComponentProjects; режим -Check обнаруживает устаревшие метаданные. CMake отслеживает изменение Version.json для повторной конфигурации. Version.g.h хранится в Git для использования заголовков без запуска генератора у consumer.
 
 Поле version содержит major.minor.patch. abiVersion — отдельное поколение двоичного интерфейса: при несовместимом изменении экспортированных сигнатур или расположения публичных объектов его увеличивают. Поколение 0 не обещает стабильность ABI. VERSION SO соответствует версии выпуска, SOVERSION — abiVersion; эти свойства обозначают версии, но не доказывают совместимость. SameMinorVersion ограничивает выбор CMake-пакета.
 
@@ -34,7 +34,7 @@ CMake устанавливает `lib/cmake/UniversalDevKit/UniversalDevKit.Buil
 
 ## Публичные заголовки
 
-Генератор создаёт общий Export.h и отдельный <компонент>/Export.h. Публичные компилируемые функции и классы помечаются UNIVERSALDEVKIT_<КОМПОНЕНТ>_API. Shared/Static оставляет макрос пустым; Dynamic выбирает dllexport/dllimport на Windows и default visibility на Linux/Android. CMake скрывает остальные символы Dynamic по умолчанию. Внутренние глобальные функции помечаются UNIVERSALDEVKIT_API_LOCAL; локальные помощники можно размещать в анонимном namespace.
+Генератор создаёт общий Export.g.h и отдельный <компонент>/Export.g.h в Projects/!Generated/Includes/UniversalDevKit/. Публичные компилируемые функции и классы помечаются UNIVERSALDEVKIT_<КОМПОНЕНТ>_API. Shared/Static оставляет макрос пустым; Dynamic выбирает dllexport/dllimport на Windows и default visibility на Linux/Android. CMake скрывает остальные символы Dynamic по умолчанию. Внутренние глобальные функции помечаются UNIVERSALDEVKIT_API_LOCAL; локальные помощники можно размещать в анонимном namespace.
 
 Сложное состояние новых публичных классов следует скрывать за реализацией в Sources. PImpl уменьшает изменения расположения публичного объекта, но не отменяет требований к ABI, сигнатурам и toolchain. Для каждого API документируются владение памятью, время жизни, исключения и потоковая безопасность. Независимый C-интерфейс добавляется при появлении реального сценария плагинов или других языков.
 

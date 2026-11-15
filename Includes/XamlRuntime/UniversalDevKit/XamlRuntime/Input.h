@@ -1,7 +1,7 @@
 #pragma once
 #include "XamlLayout.h"
 #include "Config.h"
-#include "Export.h"
+#include <UniversalDevKit/XamlRuntime/Export.g.h>
 
 namespace universaldevkit::xamlruntime {
     UNIVERSALDEVKIT_XAMLRUNTIME_API bool IsInteractive(const Element& element);

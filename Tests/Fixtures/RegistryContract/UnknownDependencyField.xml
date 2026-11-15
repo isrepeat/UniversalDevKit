@@ -10,6 +10,6 @@
       <Typo>true</Typo>
     </Dependency>
   </Dependencies>
-  <Headers />
-  <Sources />
+  <Files>
+  </Files>
 </Component>

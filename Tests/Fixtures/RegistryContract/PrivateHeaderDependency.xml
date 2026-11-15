@@ -9,6 +9,6 @@
       <Linkage>same</Linkage>
     </Dependency>
   </Dependencies>
-  <Headers />
-  <Sources />
+  <Files>
+  </Files>
 </Component>

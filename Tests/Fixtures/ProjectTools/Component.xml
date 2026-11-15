@@ -5,27 +5,33 @@
     <Variant>static</Variant>
     <Variant>dynamic</Variant>
   </Variants>
-  <Headers>
+  <Files>
     <Header>Source/**/*.h</Header>
-  </Headers>
-  <Sources>
     <Source>Source/**/*.cpp</Source>
-  </Sources>
+    <Group name="Examples">
+      <File>NewFile.cpp</File>
+    </Group>
+    <MSBuildProps>Custom.props</MSBuildProps>
+    <MSBuildTargets>Custom.targets</MSBuildTargets>
+  </Files>
+  <Filters>
+    <Filter filter="{Tree:Project}">
+      <Match>Source/Prob?.cpp</Match>
+    </Filter>
+    <Filter filter="{Tree:Project}/Build">
+      <Match>Custom.props</Match>
+    </Filter>
+    <Filter filter="{Tree:Project}/Examples">
+      <GroupRef>Examples</GroupRef>
+    </Filter>
+    <Filter filter="{Tree:Project}/Implementation"
+            preserveTree="true">
+      <Match>Source/*/**/*.cpp</Match>
+    </Filter>
+  </Filters>
   <ExcludeSources>
     <Source>Source/excluded/**</Source>
   </ExcludeSources>
-  <Filters>
-    <Filter filter="Implementation"
-            preserveTree="true">
-      <Path>Source/**/*.cpp</Path>
-    </Filter>
-    <Filter filter="">
-      <Path>Source/Prob?.cpp</Path>
-    </Filter>
-    <Filter filter="Build">
-      <Path>Custom.props</Path>
-    </Filter>
-  </Filters>
   <Requirements>
     <CxxStandard>20</CxxStandard>
   </Requirements>
@@ -35,8 +41,4 @@
     </IncludeDirectories>
     <PrecompiledHeader>notUsing</PrecompiledHeader>
   </Compile>
-  <BuildExtensions>
-    <MSBuildProps>Custom.props</MSBuildProps>
-    <MSBuildTargets>Custom.targets</MSBuildTargets>
-  </BuildExtensions>
 </Component>

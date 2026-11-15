@@ -13,10 +13,8 @@
     </Dependency>
   </Dependencies>
   <MsbuildGuid>{DA000000-0000-4000-8000-000000000001}</MsbuildGuid>
-  <Headers>
+  <Files>
     <Header>Includes/A/UniversalDevKit/A/Value.h</Header>
-  </Headers>
-  <Sources>
     <Source>Sources/A/Value.cpp</Source>
-  </Sources>
+  </Files>
 </Component>

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ComponentRegistry schemaVersion="6">
   <Components>
+    <Component>Projects/Components/Library/AndroidAppKit.xml</Component>
+    <Component>Projects/Components/Library/AndroidBuildTools.xml</Component>
+    <Component>Projects/Components/Library/AndroidCoreSdk.xml</Component>
+    <Component>Projects/Components/Library/AndroidTemplates.xml</Component>
     <Component>Projects/Components/Library/Diagnostic.xml</Component>
     <Component>Projects/Components/Library/Helpers.xml</Component>
     <Component>Projects/Components/Library/XamlRuntime.xml</Component>
@@ -12,11 +16,11 @@
   </Components>
   <Generation>
     <Integration>
-      <CoreExportHeader>Includes/Core/UniversalDevKit/Export.h</CoreExportHeader>
-      <SourcesTargets>Projects/MsBuild/UniversalDevKit.Sources.targets</SourcesTargets>
+      <CoreExportHeader>Projects/!Generated/Includes/UniversalDevKit/Export.g.h</CoreExportHeader>
+      <SourcesTargets>Projects/MsBuild/UniversalDevKit.Sources.g.targets</SourcesTargets>
       <VersionSource>Version.json</VersionSource>
-      <VersionHeader>Includes/Core/UniversalDevKit/Version.h</VersionHeader>
-      <VersionProps>Projects/MsBuild/UniversalDevKit.Version.props</VersionProps>
+      <VersionHeader>Projects/!Generated/Includes/UniversalDevKit/Version.g.h</VersionHeader>
+      <VersionProps>Projects/MsBuild/UniversalDevKit.Version.g.props</VersionProps>
     </Integration>
     <MSBuild>
       <Solution>UniversalDevKit.sln</Solution>
