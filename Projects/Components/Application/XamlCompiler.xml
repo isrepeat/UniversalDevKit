@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Component name="XamlCompiler">
   <Files>
-    <Group name="CMakeRules">
+    <Group id="CMakeRules">
       <File>Sources/Windows/XamlCompiler/CMakeLists.txt</File>
     </Group>
   </Files>
   <Filters>
     <Filter filter="{Tree:Solution}/Sources/Windows/XamlCompiler">
-      <GroupRef>CMakeRules</GroupRef>
+      <Ref tag="Group" id="CMakeRules" />
     </Filter>
   </Filters>
   <Projects>
@@ -15,8 +15,8 @@
              kind="application"
              projectType="native">
       <Files>
-        <Header>Sources/Windows/XamlCompiler/**/*.h</Header>
-        <Source>Sources/Windows/XamlCompiler/**/*.cpp</Source>
+        <Input role="header">Sources/Windows/XamlCompiler/**/*.h</Input>
+        <Input role="source">Sources/Windows/XamlCompiler/**/*.cpp</Input>
       </Files>
       <Filters>
         <Filter filter="{Tree:Project}/Sources">

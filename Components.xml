@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ComponentRegistry schemaVersion="6">
+<ComponentRegistry schemaVersion="7">
   <Components>
     <Component>Projects/Components/Library/AndroidAppKit.xml</Component>
     <Component>Projects/Components/Library/AndroidBuildTools.xml</Component>
@@ -15,36 +15,41 @@
     <Component>Projects/Components/Application/XamlCompiler.xml</Component>
   </Components>
   <Generation>
-    <Integration>
-      <CoreExportHeader>Projects/!Generated/Includes/UniversalDevKit/Export.g.h</CoreExportHeader>
-      <SourcesTargets>Projects/!Generated/MsBuild/UniversalDevKit.Sources.g.targets</SourcesTargets>
-      <VersionSource>Version.json</VersionSource>
-      <VersionHeader>Projects/!Generated/Includes/UniversalDevKit/Version.g.h</VersionHeader>
-      <VersionProps>Projects/!Generated/MsBuild/UniversalDevKit.Version.g.props</VersionProps>
-    </Integration>
     <MSBuild>
-      <Solution>UniversalDevKit.sln</Solution>
+      <SolutionName>UniversalDevKit</SolutionName>
       <SolutionFolder>
         <Default>Projects/!Generated/MsBuild/{kind:title}/{name}</Default>
       </SolutionFolder>
       <ProjectDirectory>
         <Default>Projects/!Generated/MsBuild/{kind:title}/{name}</Default>
       </ProjectDirectory>
-      <ProjectName>
-        <When artifact="sharedItems">UniversalDevKit.{name}.Shared</When>
-        <When artifact="dependencies">UniversalDevKit.{name}.Dependencies</When>
-        <When artifact="headerCheck">UniversalDevKit.{name}.HeaderCheck</When>
-        <When artifact="project"
-              variant="static;dynamic">UniversalDevKit.{name}.{variant:title}</When>
-        <When artifact="project"
-              projectType="classLibrary">{name}.{framework}</When>
-        <Default>{name}</Default>
-      </ProjectName>
       <Configurations>Debug;Release</Configurations>
       <Platforms>x64</Platforms>
-      <NativeProps>
-        <Prop>Projects/MsBuild/BuildLayout.props</Prop>
-      </NativeProps>
     </MSBuild>
   </Generation>
+
+  <Files>
+    <Group id="Version">
+      <Input role="version-source">Version.json</Input>
+      <Output role="version-header">Projects/!Generated/Includes/UniversalDevKit/Version.{ext}</Output>
+      <Output role="version-props" id="VersionProps">Projects/!Generated/MsBuild/{solutionName}.Version.{ext}</Output>
+    </Group>
+
+    <Input role="msbuild-props" projectType="native">Projects/MsBuild/BuildLayout.props</Input>
+
+    <Output role="sourceIntegration-targets"
+            id="SourcesIntegration">Projects/!Generated/MsBuild/{solutionName}.Sources.{ext}</Output>
+    <Output role="dependencies-props"
+            id="Dependencies">{projectDirectory}/{solutionName}.{name}.Dependencies.{ext}</Output>
+    <Output role="component-exportHeader">Projects/!Generated/Includes/UniversalDevKit/{name}/Export.{ext}</Output>
+    <Output role="project-nativeApplication">{projectDirectory}/{name}.{ext}</Output>
+    <Output role="project-nativeLibrary">{projectDirectory}/{solutionName}.{name}.{variant:title}.{ext}</Output>
+    <Output role="project-classLibrary">{projectDirectory}/{name}.{framework}.{ext}</Output>
+    <Output role="project-headerCheck">{projectDirectory}/{solutionName}.{name}.HeaderCheck.{ext}</Output>
+    <Output role="project-vsix">{projectDirectory}/{name}.{ext}</Output>
+    <Output role="project-wpf">{projectDirectory}/{name}.{ext}</Output>
+    <Output role="shared-items">{projectDirectory}/{solutionName}.{name}.Shared.{ext}</Output>
+    <Output role="source-headerCheck">{projectDirectory}/HeaderCheck.{ext}</Output>
+    <Output role="core-exportHeader">Projects/!Generated/Includes/UniversalDevKit/Export.{ext}</Output>
+  </Files>
 </ComponentRegistry>

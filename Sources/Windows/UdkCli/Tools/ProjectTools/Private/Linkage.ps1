@@ -22,6 +22,10 @@ function Resolve-UdkLinkageGraph {
             }
             $Mode = 'Shared'
         }
+        $variants = $ComponentRegistry[$Name].Variants
+        if ($variants -and $Mode -ne 'Shared' -and $Mode -cnotin $variants) {
+            throw "Component $Name does not generate the $Mode variant."
+        }
         if ($resolvedModes.ContainsKey($Name)) {
             if ($resolvedModes[$Name] -cne $Mode) {
                 throw "Conflicting linkage for ${Name}: $($resolvedModes[$Name]) via $($origins[$Name]); $Mode via $(($Stack + $Name) -join ' -> ')."

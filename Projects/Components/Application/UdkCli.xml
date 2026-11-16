@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Component name="UdkCli">
   <Files>
-    <Group name="GeneratedIntegration">
-      <Generated>Projects/!Generated/MsBuild/UniversalDevKit.Sources.g.targets</Generated>
-      <Generated>Projects/!Generated/MsBuild/UniversalDevKit.Version.g.props</Generated>
+    <Group id="GeneratedIntegration">
+      <Ref tag="Output" id="SourcesIntegration" />
+      <Ref tag="Output" id="VersionProps" />
     </Group>
   </Files>
   <Filters>
     <Filter filter="{Tree:Solution}/Projects/!Generated/MsBuild">
-      <GroupRef>GeneratedIntegration</GroupRef>
+      <Ref tag="Group" id="GeneratedIntegration" />
     </Filter>
   </Filters>
   <Projects>
     <Project id="native"
              kind="application"
              projectType="native"
-             githubVersion="0.3.0"
+             githubVersion="0.4.0"
              msbuildGuid="{9C7AAB80-FA41-4925-95FA-06409E32E4E1}">
       <Files>
-        <Group name="ToolsAndConfiguration">
+        <Group id="ToolsAndConfiguration">
           <File>Sources/Windows/UdkCli/Tools/**/*</File>
           <File>Sources/Windows/UdkCli/SolutionInjector.Connect.json</File>
         </Group>
-        <Group name="WindowsBuild">
+        <Group id="WindowsBuild">
           <File>Sources/Windows/UdkCli.Diagnostic.targets</File>
         </Group>
-        <Header>Sources/Windows/UdkCli/**/*.h</Header>
-        <Source>Sources/Windows/UdkCli/**/*.cpp</Source>
-        <MSBuildProps>Sources/Windows/UdkCli/UdkCli.props</MSBuildProps>
-        <MSBuildTargets>Sources/Windows/UdkCli/UdkCli.targets</MSBuildTargets>
+        <Input role="header">Sources/Windows/UdkCli/**/*.h</Input>
+        <Input role="source">Sources/Windows/UdkCli/**/*.cpp</Input>
+        <Input role="msbuild-props">Sources/Windows/UdkCli/UdkCli.props</Input>
+        <Input role="msbuild-targets">Sources/Windows/UdkCli/UdkCli.targets</Input>
       </Files>
       <Filters>
         <Filter filter="{Tree:Solution}/Sources/Windows">
-          <GroupRef>WindowsBuild</GroupRef>
+          <Ref tag="Group" id="WindowsBuild" />
         </Filter>
         <Filter filter="{Tree:Solution}/Sources/Windows/UdkCli"
                 preserveTree="true">
-          <GroupRef>ToolsAndConfiguration</GroupRef>
+          <Ref tag="Group" id="ToolsAndConfiguration" />
         </Filter>
         <Filter filter="{Tree:Project}">
           <Match>Sources/Windows/UdkCli/**/*</Match>

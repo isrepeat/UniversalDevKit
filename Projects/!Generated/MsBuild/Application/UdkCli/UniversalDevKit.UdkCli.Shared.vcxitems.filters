@@ -40,9 +40,9 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1" />
-    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Vsix.csproj.in" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Wpf.csproj.in" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Component.vcxproj.in" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\ComponentExport.h.in" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Export.h.in" />

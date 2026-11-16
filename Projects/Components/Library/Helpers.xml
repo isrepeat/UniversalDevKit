@@ -7,14 +7,14 @@
              libraryType="headerOnly"
              msbuildGuid="{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}">
       <Files>
-        <Group name="PublicHeaders">
-          <Header>Includes/Helpers/UniversalDevKit/Helpers/**/*.h</Header>
+        <Group id="PublicHeaders">
+          <Input role="header">Includes/Helpers/UniversalDevKit/Helpers/**/*.h</Input>
         </Group>
       </Files>
       <Filters>
         <Filter filter="{Tree:Project}"
                 preserveTree="true">
-          <GroupRef>PublicHeaders</GroupRef>
+          <Ref tag="Group" id="PublicHeaders" />
         </Filter>
       </Filters>
     </Project> <!-- Project id="native" -->

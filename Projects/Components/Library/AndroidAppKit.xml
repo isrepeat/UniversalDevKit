@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Component name="AndroidAppKit">
   <Files>
-    <Group name="SourceTree">
+    <Group id="SourceTree">
       <File>Sources/Android/AndroidAppKit/**/*</File>
     </Group>
   </Files>
   <Filters>
     <Filter filter="{Tree:Solution}/Sources/Android/AndroidAppKit"
             preserveTree="true">
-      <GroupRef>SourceTree</GroupRef>
+      <Ref tag="Group" id="SourceTree" />
     </Filter>
   </Filters>
 </Component>

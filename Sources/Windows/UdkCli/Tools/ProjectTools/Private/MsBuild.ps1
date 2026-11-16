@@ -11,71 +11,21 @@ function Get-ProjectToolsApplicationProperties($Component, [string[]]$Reserved) 
     }
 }
 
-function Get-ProjectToolsTemplateValues($Component, [string]$Variant) {
-    $artifact = switch ($Variant) {
-        'Shared' {
-            'sharedItems'
-        }
-        'Dependencies' {
-            'dependencies'
-        }
-        'HeaderCheck' {
-            'headerCheck'
-        }
-        default {
-            'project'
-        }
-    }
-    $kind = if ($Component.kind -eq 'application') {
-        'application'
-    } else {
-        'library'
-    }
-    $values = @{
-        name = $Component.name
-        kind = $kind
-        projectType = $Component.projectType
-        artifact = $artifact
-        framework = $Component.msbuild.properties.TargetFramework
-    }
-    if ($Variant -in @('Static', 'Dynamic')) {
-        $values.variant = $Variant.ToLowerInvariant()
-    }
-    return $values
-}
-
-function Resolve-ProjectToolsRuleTemplate($Local, $Root, [hashtable]$Values, [string]$Field) {
-    foreach ($rule in @($Local) + @($Root)) {
-        if (-not $rule) {
-            continue
-        }
-        if ($rule -is [string]) {
-            return $rule
-        }
-        $mismatches = $rule.when.PSObject.Properties | Where-Object {
-            $_ -and (-not $Values[$_.Name] -or $Values[$_.Name] -cnotin @($_.Value))
-        }
-        if (-not $mismatches) {
-            return $rule.template
-        }
-    }
-    throw "No $Field rule for '$($Values.name)' ($($Values.artifact))."
-}
-
-function Get-ProjectToolsLayout($Model, $Component, [string]$Variant, [string]$Field) {
-    $values = Get-ProjectToolsTemplateValues $Component $Variant
-    $local = $Component.msbuild.$Field
-    $root = $Model.Settings.$Field
-    $template = Resolve-ProjectToolsRuleTemplate $local $root $values $Field
-    if (-not $local -and $root -is [string] -and $Model.Settings.projectNames -isnot [array]) {
-        $values.kind = $values.kind.Substring(0, 1).ToUpperInvariant() + $values.kind.Substring(1)
-    }
-    $path = (Expand-ProjectToolsTemplate $template $values).TrimEnd('/')
-    Assert-ProjectToolsLayout $path $Field
-    return $path
-}
-
 function Get-ProjectToolsLocation($Model, $Component, [string]$Variant, [string]$Extension) {
+    if ($Model.Manifest.fileScope) {
+        $role = if ($Extension -eq '.csproj') {
+            'project-' + $Component.projectType
+        } else {
+            switch ($Variant) {
+                'Shared' { 'shared-items' }
+                'Dependencies' { 'dependencies-props' }
+                'HeaderCheck' { 'project-headerCheck' }
+                'Application' { 'project-nativeApplication' }
+                default { 'project-nativeLibrary' }
+            }
+        }
+        return (Get-ProjectToolsOutputPath $Model $Component $role $Variant)
+    }
     $directory = Get-ProjectToolsLayout $Model $Component $Variant 'projectDirectory'
     $template = $Model.Settings.projectName
     if ($Model.Settings.projectNames -is [array]) {
@@ -399,7 +349,11 @@ function New-ProjectToolsDotNetProject($Model, $Component, [string]$Path) {
 function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
     $plan = [Collections.Generic.List[object]]::new()
     $projects = [Collections.Generic.List[object]]::new()
+    $outputPaths = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
     foreach ($update in $UdkPlan) {
+        if ($Model.Manifest.fileScope -and -not $outputPaths.Add($update.Path)) {
+            throw "Duplicate output path: $($update.RelativePath)"
+        }
         $plan.Add($update)
     }
     $byName = @{}
@@ -427,6 +381,9 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
     }
     function AddOutput([string]$Path, [string]$Content) {
         $absolute = Resolve-ProjectToolsPath $Model.Root $Path
+        if ($Model.Manifest.fileScope -and -not $outputPaths.Add($absolute)) {
+            throw "Duplicate output path: $Path"
+        }
         $content = $Content.TrimEnd([char[]]"`r`n")
         foreach ($existing in @($plan | Where-Object Path -eq $absolute)) {
             [void]$plan.Remove($existing)
@@ -439,17 +396,7 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
         $plan.Add([pscustomobject]@{ Path = $absolute; RelativePath = $Path; Content = $content; Original = $original })
     }
     foreach ($component in $Model.Components.Values) {
-        $variants = if ($component.kind -eq 'headerOnly') {
-            @()
-        } elseif ($component.variants) {
-            @($component.variants | ForEach-Object {
-                (Get-Culture).TextInfo.ToTitleCase($_)
-            })
-        } elseif ($component.stateScope -eq 'process') {
-            @('Dynamic')
-        } else {
-            @('Static', 'Dynamic')
-        }
+        $variants = @(Get-ProjectToolsNativeVariants $component)
         if (@($variants | Where-Object {
             $_ -notin @('Static', 'Dynamic')
         }).Count -or @($variants | Select-Object -Unique).Count -ne $variants.Count) {

@@ -108,6 +108,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Extensions\rangesEx.h">
       <Filter>StdExt\Extensions</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Extensions\rangesEx\Tools.h">
+      <Filter>StdExt\Extensions\rangesEx</Filter>
+    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Extensions\rangesEx\ranges_concat.h">
       <Filter>StdExt\Extensions\rangesEx</Filter>
     </ClInclude>
@@ -118,9 +121,6 @@
       <Filter>StdExt\Extensions\rangesEx</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Extensions\rangesEx\ranges_to.h">
-      <Filter>StdExt\Extensions\rangesEx</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\Extensions\rangesEx\Tools.h">
       <Filter>StdExt\Extensions\rangesEx</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Includes\Helpers\UniversalDevKit\Helpers\StdExt\FormatSpecializations.h">

@@ -10,8 +10,12 @@ function(udkReadManifest path xmlRoot output)
     set(converter "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../../Sources/Windows/UdkCli/Tools/ConvertManifestToJson.ps1")
     set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${converter}"
         "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../../Sources/Windows/UdkCli/Tools/ReadManifest.ps1")
+    set(registryArgument)
+    if(ARGC GREATER 3)
+        set(registryArgument -RegistryPath "${ARGV3}")
+    endif()
     execute_process(
-        COMMAND "${UDK_MANIFEST_POWERSHELL}" -NoProfile -ExecutionPolicy Bypass -File "${converter}" -Path "${path}" -XmlRoot "${xmlRoot}"
+        COMMAND "${UDK_MANIFEST_POWERSHELL}" -NoProfile -ExecutionPolicy Bypass -File "${converter}" -Path "${path}" -XmlRoot "${xmlRoot}" ${registryArgument}
         OUTPUT_VARIABLE json
         ERROR_VARIABLE error
         RESULT_VARIABLE result

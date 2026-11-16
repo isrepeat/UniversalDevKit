@@ -1,205 +1,141 @@
-# Предлагаемая схема генерации UDK
+# Схема генерации UDK
 
-Примеры идут от одного файла до реестра с несколькими проектами. Имена компонентов и пути к шаблонам учебные. Новый синтаксис `Output` пока обсуждается. Фрагменты с ним нельзя передавать текущему ProjectTools.
+Четыре примера показывают синтаксис схемы 7 для реестра и трёх зарегистрированных компонентов. Фрагменты опускают настройки сборки, которые не участвуют в примерах. В `Components.xml` репозитория приведён полный рабочий реестр.
 
-## 1. Существующий файл в решении
+В `Files` можно объявить записи напрямую или объединить их в `Group`:
 
-Компонент может описывать файлы для просмотра, даже если его собирает внешний инструмент и у него нет блока `Projects`.
+| Элемент | Назначение |
+|---|---|
+| `File` | Выбирает существующие файлы для отображения. |
+| `Input role="…"` | Выбирает существующие файлы для указанной входной роли скрипта. Эти файлы также доступны фильтрам. |
+| `Output role="…"` | Задаёт шаблон пути для запланированного выхода. Если выход объявлен в группе, его экземпляр в этой области входит в неё. |
+| `Ref tag="…" id="…"` | Подставляет указанный элемент целиком, включая его атрибуты и содержимое. |
 
-```xml
-<Component name="MobileAssets">
-  <Files>
-    <Group name="Sources">
-      <File>Sources/Android/MobileAssets/**/*</File>
-    </Group>
-  </Files>
-  <Filters>
-    <Filter filter="{Tree:Solution}/Sources/Android/MobileAssets"
-            preserveTree="true">
-      <GroupRef>Sources</GroupRef>
-    </Filter>
-  </Filters>
-</Component>
-```
-
-`File` выбирает существующие файлы. `GroupRef` выбирает всю группу. `preserveTree="true"` сохраняет подкаталоги относительно фиксированной части маски. Эта форма уже поддерживается.
-
-## 2. Один выход из шаблона
+## 1. Реестр и общие файлы
 
 ```xml
-<Files>
-  <Group name="PublicHeaders">
-    <Output format="meta:header"
-            template="Sources/Example/Config.h.in">Projects/!Generated/Includes/UniversalDevKit/{name}/Public.Config.{ext}</Output>
-  </Group>
-</Files>
-<Filters>
-  <Filter filter="{Tree:Solution}/Projects/!Generated/Includes/UniversalDevKit/{name}">
-    <GroupRef>PublicHeaders</GroupRef>
-  </Filter>
-</Filters>
-```
-
-В контексте компонента `Example` путь раскрывается в `Projects/!Generated/Includes/UniversalDevKit/Example/Public.Config.g.h`. Формат задаёт `ext = g.h`. Шаблон пути явно содержит точку, каталог, префикс и базовое имя. Шаблон содержимого `Config.h.in` получает данные текущего контекста.
-
-Тот же `Output` можно объявить в реестре, компоненте или проекте. На уровне реестра он вычисляется один раз с общими данными. На уровне компонента доступно его имя. На уровне проекта дополнительно доступны тип, категория и данные варианта, когда этот выход вычисляется для варианта. Если убрать фильтр, выход остаётся в плане генерации.
-
-## 3. Один файл в двух деревьях
-
-```xml
-<Files>
-  <Group name="BuildFiles">
-    <File>Sources/Example/Build.cmake</File>
-    <Output format="meta:props"
-            generate="dependencies">Projects/!Generated/MsBuild/Library/{name}/{name}.Dependencies.{ext}</Output>
-  </Group>
-</Files>
-<Filters>
-  <Filter filter="{Tree:Project}/Build">
-    <GroupRef>BuildFiles</GroupRef>
-  </Filter>
-  <Filter filter="{Tree:Solution}/Projects/!Generated/MsBuild/Library/{name}">
-    <Match>**/*.g.props</Match>
-  </Filter>
-</Filters>
-```
-
-Этот фрагмент находится в нативном проекте библиотеки. В его папке `Build` видны оба файла. Фильтр решения выбирает только `.g.props` по вычисленному пути. Маска `Match` проверяет объявления из `Files` в той же области. Определение `File` даёт путь для просмотра. Для подключения CMake-правил к сборке используется существующее типизированное объявление `CMake`.
-
-`generate="dependencies"` вызывает документированную операцию расчёта графа. Формат `meta:props` задаёт расширение `g.props`. Для одного выхода можно задать либо `template`, либо `generate`. У форматов проектов, например `project:shared`, есть встроенный способ формирования содержимого, поэтому оба атрибута можно опустить.
-
-## 4. Общий реестр
-
-Пример реестра для учебных компонентов из этого документа. Номер версии нового контракта определится при реализации.
-
-```xml
-<ComponentRegistry>
+<ComponentRegistry schemaVersion="7">
   <Components>
-    <Component>Projects/Components/Library/MobileAssets.xml</Component>
-    <Component>Projects/Components/Library/Headers.xml</Component>
-    <Component>Projects/Components/Library/Telemetry.xml</Component>
+    <Component>Projects/Components/Library/Diagnostic.xml</Component>
+    <Component>Projects/Components/Library/Helpers.xml</Component>
+    <Component>Projects/Components/Application/UdkCli.xml</Component>
   </Components>
 
   <Generation>
-    <Integration>
-      <VersionSource>Version.json</VersionSource>
-    </Integration>
     <MSBuild>
-      <Solution>UniversalDevKit.sln</Solution>
-      <Configurations>Debug;Release</Configurations>
-      <Platforms>x64</Platforms>
+      <SolutionName>UniversalDevKit</SolutionName>
+      <ProjectDirectory>
+        <Default>Projects/!Generated/MsBuild/{kind:title}/{name}</Default>
+      </ProjectDirectory>
     </MSBuild>
   </Generation>
 
   <Files>
-    <Group name="CommonHeaders">
-      <Output format="meta:header"
-              template="Templates/Export.h.in">Projects/!Generated/Includes/UniversalDevKit/Export.{ext}</Output>
-      <Output format="meta:header"
-              template="Templates/Version.h.in">Projects/!Generated/Includes/UniversalDevKit/Version.{ext}</Output>
+    <Group id="Version">
+      <Input role="version-source">Version.json</Input>
+      <Output role="version-header">Projects/!Generated/Includes/UniversalDevKit/Version.{ext}</Output>
+      <Output role="version-props">Projects/!Generated/MsBuild/{solutionName}.Version.{ext}</Output>
     </Group>
-    <Group name="CommonMSBuild">
-      <Output format="meta:props"
-              template="Templates/Version.props.in">Projects/!Generated/MsBuild/UniversalDevKit.Version.{ext}</Output>
-      <Output format="meta:targets"
-              generate="sourceIntegration">Projects/!Generated/MsBuild/UniversalDevKit.Sources.{ext}</Output>
-    </Group>
+
+    <Input role="msbuild-props" projectType="native">Projects/MsBuild/BuildLayout.props</Input>
+
+    <Output role="sourceIntegration-targets"
+            id="SourcesIntegration">Projects/!Generated/MsBuild/{solutionName}.Sources.{ext}</Output>
+    <Output role="dependencies-props"
+            id="Dependencies">{projectDirectory}/{solutionName}.{name}.Dependencies.{ext}</Output>
+    <Output role="component-exportHeader">Projects/!Generated/Includes/UniversalDevKit/{name}/Export.{ext}</Output>
+    <Output role="project-nativeApplication">{projectDirectory}/{name}.{ext}</Output>
+    <Output role="project-nativeLibrary">{projectDirectory}/{solutionName}.{name}.{variant:title}.{ext}</Output>
+    <Output role="project-classLibrary">{projectDirectory}/{name}.{framework}.{ext}</Output>
+    <Output role="project-headerCheck">{projectDirectory}/{solutionName}.{name}.HeaderCheck.{ext}</Output>
+    <Output role="shared-items">{projectDirectory}/{solutionName}.{name}.Shared.{ext}</Output>
+    <Output role="source-headerCheck">{projectDirectory}/HeaderCheck.{ext}</Output>
+    <Output role="core-exportHeader">Projects/!Generated/Includes/UniversalDevKit/Export.{ext}</Output>
   </Files>
 
   <Filters>
-    <Filter filter="{Tree:Solution}/Projects/!Generated/Includes/UniversalDevKit">
-      <GroupRef>CommonHeaders</GroupRef>
-    </Filter>
-    <Filter filter="{Tree:Solution}/Projects/!Generated/MsBuild">
-      <GroupRef>CommonMSBuild</GroupRef>
+    <Filter filter="{Tree:Solution}/Version">
+      <Ref tag="Group" id="Version" />
     </Filter>
   </Filters>
 </ComponentRegistry>
 ```
 
-`VersionSource` даёт общие данные обоим шаблонам версии. `sourceIntegration` читает граф реестра. Путь каждого выходного файла указан один раз. Компонентный `Export.g.h` из следующего примера вычисляет свой путь самостоятельно.
+Скрипт открывает зарегистрированные манифесты и обновляет `UniversalDevKit.sln`. Вход `version-source` выбирает ровно один JSON. Из него скрипт формирует `Version.g.h` и `UniversalDevKit.Version.g.props`. Исходный JSON и оба запланированных выхода попадают в папку решения `Version` через одну группу.
 
-## 5. Header-only библиотека и проверка заголовков
+`BuildLayout.props` уже есть в репозитории. Входная роль `msbuild-props` подключает его через импорт, а `projectType="native"` ограничивает импорт нативными проектами. `sourceIntegration-targets` создаётся один раз на реестр из графа зарегистрированных компонентов. Проектные шаблоны из реестра раскрываются в контексте соответствующих проектов.
 
-```xml
-<Component name="Headers">
-  <Projects>
-    <Project id="native" kind="library" projectType="native" libraryType="headerOnly">
-      <Files>
-        <Group name="PublicHeaders">
-          <Header>Includes/Headers/UniversalDevKit/Headers/**/*.h</Header>
-          <Output format="meta:header"
-                  template="Templates/ComponentExport.h.in">Projects/!Generated/Includes/UniversalDevKit/{name}/Export.{ext}</Output>
-        </Group>
-        <Group name="Projects">
-          <Output format="project:shared">Projects/!Generated/MsBuild/Library/{name}/UniversalDevKit.{name}.Shared.{ext}</Output>
-          <Output format="project:native"
-                  generate="headerCheck">Projects/!Generated/MsBuild/Library/{name}/UniversalDevKit.{name}.HeaderCheck.{ext}</Output>
-        </Group>
-      </Files>
-      <Filters>
-        <Filter filter="{Tree:Project}/Headers">
-          <GroupRef>PublicHeaders</GroupRef>
-        </Filter>
-        <Filter filter="{Tree:Solution}/Projects/!Generated/MsBuild/Library/{name}">
-          <GroupRef>Projects</GroupRef>
-        </Filter>
-      </Filters>
-    </Project>
-  </Projects>
-</Component>
-```
-
-Операция `headerCheck` строит проверочный проект и сопутствующий `HeaderCheck.g.cpp` из списка публичных заголовков. Путь сопутствующего файла вычисляет операция рядом с проверочным проектом. В первой версии отдельное правило для него потребуется только в том случае, если нужно независимо управлять его расположением. Обычные `.filters` аналогично создаются для соответствующего проекта из его проектных фильтров.
-
-## 6. Компонент с нативной и управляемой библиотеками
+## 2. Diagnostic и локальное имя проекта
 
 ```xml
-<Component name="Telemetry">
+<Component name="Diagnostic">
   <Projects>
-    <Project id="native" kind="library" projectType="native">
+    <Project id="native" kind="library" projectType="native" stateScope="process">
       <Files>
-        <Header>Includes/Telemetry/UniversalDevKit/Telemetry/**/*.h</Header>
-        <Source>Sources/Telemetry/Native/**/*.cpp</Source>
-        <Group name="Projects">
-          <Output format="project:shared">Projects/!Generated/MsBuild/{kind:title}/{name}/UniversalDevKit.{name}.Shared.{ext}</Output>
-          <Output format="project:native">Projects/!Generated/MsBuild/{kind:title}/{name}/UniversalDevKit.{name}.{variant:title}.{ext}</Output>
+        <Group id="Sources">
+          <Input role="header">Includes/Diagnostic/UniversalDevKit/Diagnostic/**/*.h</Input>
+          <Input role="source">Sources/Diagnostic/Native/**/*.cpp</Input>
         </Group>
-        <Group name="BuildFiles">
-          <CMake>Sources/Telemetry/Native/Build.cmake</CMake>
-          <MSBuildTargets>Sources/Telemetry/Native/Build.targets</MSBuildTargets>
-          <Output format="meta:props"
-                  generate="dependencies">Projects/!Generated/MsBuild/{kind:title}/{name}/UniversalDevKit.{name}.Dependencies.{ext}</Output>
+
+        <Group id="Build">
+          <Input role="msbuild-targets">Sources/Diagnostic/Native/Spdlog.targets</Input>
+          <Ref tag="Output" id="Dependencies" />
         </Group>
       </Files>
+
       <Filters>
-        <Filter filter="{Tree:Solution}/Projects/!Generated/MsBuild/{kind:title}/{name}">
-          <GroupRef>Projects</GroupRef>
+        <Filter filter="{Tree:Project}/Sources">
+          <Ref tag="Group" id="Sources" />
         </Filter>
         <Filter filter="{Tree:Project}/Build">
-          <GroupRef>BuildFiles</GroupRef>
+          <Ref tag="Group" id="Build" />
         </Filter>
       </Filters>
     </Project>
 
     <Project id="dotnet" kind="library" projectType="classLibrary">
+      <Files>
+        <Input role="source">Sources/Diagnostic/DotNet/**/*.cs</Input>
+        <Output role="project-classLibrary">{projectDirectory}/{solutionName}.{name}.Net8.{ext}</Output>
+      </Files>
+
       <MSBuild>
         <Properties>
           <TargetFramework>net8.0</TargetFramework>
         </Properties>
       </MSBuild>
+
       <RuntimeDependencies>
         <Dependency projectId="native" variant="Dynamic" />
       </RuntimeDependencies>
+    </Project>
+  </Projects>
+</Component>
+```
+
+Нативный проект получает только вариант `Dynamic` из-за `stateScope="process"`. Если проект поддерживает оба варианта, их можно задать как `<Variants>static;dynamic</Variants>`. Тогда общий шаблон `project-nativeLibrary` раскроется дважды, а `dependencies-props` останется одним выходом на библиотеку.
+
+Группа `Build` включает существующий `Spdlog.targets` и запланированный `UniversalDevKit.Diagnostic.Dependencies.g.props`. `Ref` подставляет объявление `Output` с `id="Dependencies"`. Его роль вычисляется для текущего нативного проекта. Импорт созданного `.props` скрипт строит по тому же пути из плана.
+
+Локальный `project-classLibrary` даёт `UniversalDevKit.Diagnostic.Net8.csproj`. Связь с нативной библиотекой сохраняется через `projectId` и `variant`, поэтому имена файлов проектов можно менять независимо.
+
+## 3. Helpers и два связанных выхода HeaderCheck
+
+```xml
+<Component name="Helpers">
+  <Projects>
+    <Project id="native" kind="library" projectType="native" libraryType="headerOnly">
       <Files>
-        <Source>Sources/Telemetry/DotNet/**/*.cs</Source>
-        <Group name="Projects">
-          <Output format="project:classLibrary">Projects/!Generated/MsBuild/{kind:title}/{name}/UniversalDevKit.{name}.{framework}.{ext}</Output>
+        <Input role="header">Includes/Helpers/UniversalDevKit/Helpers/**/*.h</Input>
+
+        <Group id="HeaderCheck">
+          <Output role="source-headerCheck">{projectDirectory}/Checks/PublicHeaders.{ext}</Output>
         </Group>
       </Files>
+
       <Filters>
-        <Filter filter="{Tree:Solution}/Projects/!Generated/MsBuild/{kind:title}/{name}">
-          <GroupRef>Projects</GroupRef>
+        <Filter filter="{Tree:Solution}/Checks">
+          <Ref tag="Group" id="HeaderCheck" />
         </Filter>
       </Filters>
     </Project>
@@ -207,50 +143,87 @@
 </Component>
 ```
 
-У обычного нативного выхода движок подставляет каждый разрешённый вариант, например `Static` и `Dynamic`. Shared-выход вычисляется один раз. У управляемого проекта `framework` берётся из его настроек. У обеих групп `Projects` локальная область видимости. Связь .NET с нативной библиотекой задаётся через `projectId` и вариант, поэтому вычисленное имя `.vcxproj` не дублируется в ссылке.
+Для `headerOnly` скрипт планирует проверочный проект и исходник, который включает публичные заголовки. Путь `UniversalDevKit.Helpers.HeaderCheck.vcxproj` берётся из реестра. Локальный шаблон меняет путь исходника на `Checks/PublicHeaders.g.cpp` относительно каталога проекта. Скрипт строит ссылку внутри `.vcxproj` по фактическому пути исходника.
 
-Тот же шаблон декларации применяется к приложениям. Например, внутри проекта с `projectType="wpf"` подстановки дают путь к `.csproj` приложения:
+Исходник уже входит в группу `HeaderCheck` через объявление `Output`. Фильтр показывает его в папке решения `Checks`. Сопутствующий файл проекта получает путь `UniversalDevKit.Helpers.HeaderCheck.vcxproj.filters`.
 
-```xml
-<Output format="project:wpf">Projects/!Generated/MsBuild/{kind:title}/{name}/{name}.{ext}</Output>
-```
-
-## 7. Условный путь и дополнительный исходник
-
-Если прямой шаблон пути становится недостаточен, внутри того же `Output` можно использовать `When / Default`. Здесь выход для варианта Dynamic получает отдельный каталог, а остальные варианты используют стандартный.
+## 4. UdkCli и ссылка на общий выход
 
 ```xml
-<Files>
-  <Group name="GeneratedSources">
-    <Output format="meta:cpp" template="Sources/Example/BuildInfo.cpp.in">
-      <When variant="dynamic">Projects/!Generated/MsBuild/{kind:title}/{name}/Dynamic/BuildInfo.{ext}</When>
-      <Default>Projects/!Generated/MsBuild/{kind:title}/{name}/BuildInfo.{ext}</Default>
-    </Output>
-  </Group>
-</Files>
-<Filters>
-  <Filter filter="{Tree:Project}/Generated">
-    <GroupRef>GeneratedSources</GroupRef>
-  </Filter>
-</Filters>
+<Component name="UdkCli">
+  <Files>
+    <Group id="Tools">
+      <File>Sources/Windows/UdkCli/Tools/**/*</File>
+    </Group>
+
+    <Group id="Integration">
+      <Ref tag="Output" id="SourcesIntegration" />
+    </Group>
+  </Files>
+
+  <Filters>
+    <Filter filter="{Tree:Solution}/UdkCli/Tools" preserveTree="true">
+      <Ref tag="Group" id="Tools" />
+    </Filter>
+    <Filter filter="{Tree:Solution}/UdkCli/Integration">
+      <Ref tag="Group" id="Integration" />
+    </Filter>
+  </Filters>
+
+  <Projects>
+    <Project id="native" kind="application" projectType="native">
+      <Files>
+        <Input role="header">Sources/Windows/UdkCli/**/*.h</Input>
+        <Input role="source">Sources/Windows/UdkCli/**/*.cpp</Input>
+        <Input role="msbuild-props">Sources/Windows/UdkCli/UdkCli.props</Input>
+      </Files>
+    </Project>
+  </Projects>
+</Component>
 ```
 
-Первое подходящее условие выбирает путь. `Default` используется, если условия не подошли. В примере выход вычисляется в контексте выбранного варианта. На диске получится `BuildInfo.g.cpp`. Пример показывает генерацию и отображение файла. Автоматическое включение произвольного `meta:cpp` в компиляцию остаётся открытым вопросом.
+Группа `Tools` показывает существующие файлы с сохранением дерева каталогов. Группа `Integration` показывает общий `UniversalDevKit.Sources.g.targets`. Ссылка находит объявление `SourcesIntegration` в реестре, а роль `sourceIntegration-targets` даёт один экземпляр на весь реестр. У входа `msbuild-props` внутри проекта область импорта уже задана родительским `Project`.
 
-## Форматы и проверка контракта
+Для приложения скрипт применяет `project-nativeApplication` и `shared-items`. Получаются `UdkCli.vcxproj` и `UniversalDevKit.UdkCli.Shared.vcxitems` со своими `.filters`.
 
-| Формат | `{ext}` | Как формируется содержимое |
-|---|---|---|
-| `project:native` | `vcxproj` | Встроенный генератор нативного проекта. Операция `headerCheck` создаёт проверочный проект |
-| `project:shared` | `vcxitems` | Встроенный генератор Shared Project |
-| `project:classLibrary`, `project:wpf`, `project:vsix` | `csproj` | Встроенный генератор соответствующего .NET-проекта |
-| `meta:header` | `g.h` | Шаблон C++-заголовка |
-| `meta:cpp` | `g.cpp` | Шаблон C++-исходника |
-| `meta:props` | `g.props` | Шаблон либо расчёт зависимостей |
-| `meta:targets` | `g.targets` | Шаблон либо расчёт интеграции исходников |
+## Как раскрывается Ref
 
-- Все пути на диске считаются от корня реестра. Шаблон выхода заканчивается на `.{ext}`. Точка задаётся схемой.
-- Движок сначала вычисляет все выходы, затем по этому же плану формирует импорты и применяет фильтры. `{Tree:Solution}` размещает проект как проект решения, а обычный файл как `SolutionItem`.
-- Неизвестный формат или операция, неподдерживаемая подстановка, отсутствующий шаблон, одновременные `template` и `generate`, выход за пределы корня и совпадение двух выходных путей дают ошибки до записи.
-- Условия `When / Default` используют тот же механизм выбора, что и текущие правила именования проектов. Синтаксис переиспользования одного общего объявления `Output` несколькими компонентами пока открыт.
-- Сгенерированный заголовок можно показать фильтром сразу. Подключение его каталога к компиляции остаётся настройкой сборки. Если понадобится создавать и компилировать произвольный `meta:cpp`, привязку к компиляции нужно отдельно выразить в контракте. У встроенного HeaderCheck эту связь уже устанавливает операция.
+Парсер ищет объявление по паре `tag` и `id` и берёт первое совпадение:
+
+| Где объявлен `Ref` | Порядок поиска |
+|---|---|
+| Внутри проекта | Текущий проект → его компонент → реестр |
+| Внутри компонента вне проекта | Текущий компонент → реестр |
+| Внутри реестра | Реестр |
+
+`Files`, `Group` и `Filters` используют область родительского проекта, компонента или реестра. Два объявления с одинаковой парой `tag` и `id` в одной области дают ошибку. Соседние проекты и компоненты вне области поиска.
+
+Внутри фильтра `Diagnostic` запись `<Ref tag="Group" id="Sources" />` раскрывается вместе с внешним тегом `Group`:
+
+```xml
+<Group id="Sources">
+  <Input role="header">Includes/Diagnostic/UniversalDevKit/Diagnostic/**/*.h</Input>
+  <Input role="source">Sources/Diagnostic/Native/**/*.cpp</Input>
+</Group>
+```
+
+Точно так же `<Ref tag="Output" id="Dependencies" />` раскрывается в элемент `Output` со всеми атрибутами и шаблоном пути:
+
+```xml
+<Output role="dependencies-props"
+        id="Dependencies">{projectDirectory}/{solutionName}.{name}.Dependencies.{ext}</Output>
+```
+
+В этом примере парсер находит `Output id="Dependencies"` в реестре. Роль `dependencies-props` относится к проекту, поэтому шаблон вычисляется в контексте нативного проекта `Diagnostic`. Подстановки `{projectDirectory}`, `{solutionName}`, `{name}` и `{ext}` дают путь `Projects/!Generated/MsBuild/Library/Diagnostic/UniversalDevKit.Diagnostic.Dependencies.g.props`. Для сравнения, роль `sourceIntegration-targets` из примера `UdkCli` вычисляется один раз в контексте реестра.
+
+Вложенный `Ref` ищется из области, где он был объявлен. Если проект ссылается на группу реестра, а внутри неё есть `<Ref tag="Output" id="Dependencies" />`, вложенная ссылка ищет объявление в реестре. Шаблон найденного проектного выхода при этом вычисляется для проекта, который использует группу.
+
+После раскрытия парсер обрабатывает элемент по правилам места, где стояла ссылка. Внутри `Filter` группа даёт файлы для отображения. Внутри `Files/Group` подставленный `Output` включает запланированный файл в выборку. Повторное использование элемента сохраняет связь с исходным объявлением, поэтому ссылки на одну группу или выход используют те же входы и выходы плана. Парсер сообщает об отсутствующей цели или цикле ссылок.
+
+## Наследование и вычисление путей
+
+- Скрипт определяет состав выходов по типу и настройкам проекта. `Output` задаёт путь для соответствующей роли. Например, объявление `source-headerCheck` в реестре используется при генерации HeaderCheck.
+- Для проектной роли локальный `Output` переопределяет шаблон реестра. Если у локального объявления нет `id`, идентификатор наследуется. Например, при локальном переименовании файла роли `dependencies-props` ссылка `<Ref tag="Output" id="Dependencies" />` получит путь из локального шаблона.
+- `id` в `Output` служит идентификатором для ссылок. Подстановка `{name}` в пути означает имя компонента. Объявление без `id` можно использовать непосредственно в группе.
+- Пути отсчитываются от корня реестра. Скрипт подставляет `{ext}` по роли, например `vcxproj`, `vcxitems`, `csproj`, `g.h`, `g.cpp`, `g.props` или `g.targets`. Путь сопутствующего `.filters` вычисляется добавлением суффикса к пути проекта.
+- Перед записью скрипт вычисляет пути, проверяет коллизии и разрешает ссылки. По тем же путям он строит импорты, ссылки между проектами и содержимое фильтров. Если запланированный выход остался без шаблона, генерация останавливается до записи файлов.

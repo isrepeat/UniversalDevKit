@@ -96,7 +96,7 @@ function ConvertTo-ProjectToolsFilterRules([string]$Root, $Rules) {
             BaseLength = $prefix.LastIndexOf('/') + 1
             Folder = $rule.filter
             PreserveTree = [bool]$rule.preserveTree
-            MatchRegex = if ($matchPattern) { [regex](ConvertTo-ProjectToolsGlobRegex $matchPattern) }
+            MatchRegex = $(if ($matchPattern) { [regex](ConvertTo-ProjectToolsGlobRegex $matchPattern) })
             MatchProjectRelative = $matchProjectRelative
         }
     }
@@ -142,7 +142,7 @@ function Get-ProjectToolsFilter([string]$Path, $Rules, [string]$ProjectPath) {
     return ''
 }
 
-function Expand-ProjectToolsFiles($Root, $Patterns, $Excludes) {
+function Expand-ProjectToolsFiles($Root, $Patterns, $Excludes, [switch]$Ordinal) {
     if ($Patterns -isnot [Array]) {
         throw 'File selection must be an array.'
     }
@@ -169,8 +169,14 @@ function Expand-ProjectToolsFiles($Root, $Patterns, $Excludes) {
             $Root
         }
         $regex = ConvertTo-ProjectToolsGlobRegex $pattern
-        foreach ($file in Get-ChildItem -LiteralPath $searchRoot -File -Recurse -ErrorAction Stop | Sort-Object FullName) {
-            $relative = $file.FullName.Substring($Root.Length + 1).Replace('\', '/')
+        [string[]]$filePaths = @(Get-ChildItem -LiteralPath $searchRoot -File -Recurse -ErrorAction Stop | ForEach-Object FullName)
+        if ($Ordinal) {
+            [Array]::Sort($filePaths, [StringComparer]::OrdinalIgnoreCase)
+        } else {
+            $filePaths = @($filePaths | Sort-Object)
+        }
+        foreach ($filePath in $filePaths) {
+            $relative = $filePath.Substring($Root.Length + 1).Replace('\', '/')
             if ($relative -match '/(?:\.git|\.gradle|\.kotlin|!artifacts|!tools|bin|obj)/') {
                 continue
             }
@@ -285,14 +291,137 @@ function Assert-ProjectToolsLayout($Layout, [string]$Label) {
     }
 }
 
+function Get-ProjectToolsTemplateValues($Component, [string]$Variant) {
+    $artifact = switch ($Variant) {
+        'Shared' {
+            'sharedItems'
+        }
+        'Dependencies' {
+            'dependencies'
+        }
+        'HeaderCheck' {
+            'headerCheck'
+        }
+        default {
+            'project'
+        }
+    }
+    $kind = if ($Component.kind -eq 'application') {
+        'application'
+    } else {
+        'library'
+    }
+    $values = @{
+        name = $Component.name
+        kind = $kind
+        projectType = $Component.projectType
+        artifact = $artifact
+        framework = $Component.msbuild.properties.TargetFramework
+    }
+    if ($Variant -in @('Static', 'Dynamic')) {
+        $values.variant = $Variant.ToLowerInvariant()
+    }
+    return $values
+}
+
+function Resolve-ProjectToolsRuleTemplate($Local, $Root, [hashtable]$Values, [string]$Field) {
+    foreach ($rule in @($Local) + @($Root)) {
+        if (-not $rule) {
+            continue
+        }
+        if ($rule -is [string]) {
+            return $rule
+        }
+        $mismatches = $rule.when.PSObject.Properties | Where-Object {
+            $_ -and (-not $Values[$_.Name] -or $Values[$_.Name] -cnotin @($_.Value))
+        }
+        if (-not $mismatches) {
+            return $rule.template
+        }
+    }
+    throw "No $Field rule for '$($Values.name)' ($($Values.artifact))."
+}
+
+function Get-ProjectToolsLayout($Model, $Component, [string]$Variant, [string]$Field) {
+    $values = Get-ProjectToolsTemplateValues $Component $Variant
+    $local = $Component.msbuild.$Field
+    $root = $Model.Settings.$Field
+    $template = Resolve-ProjectToolsRuleTemplate $local $root $values $Field
+    if (-not $local -and $root -is [string] -and $Model.Settings.projectNames -isnot [array]) {
+        $values.kind = $values.kind.Substring(0, 1).ToUpperInvariant() + $values.kind.Substring(1)
+    }
+    $path = (Expand-ProjectToolsTemplate $template $values).TrimEnd('/')
+    Assert-ProjectToolsLayout $path $Field
+    return $path
+}
+
+function Get-ProjectToolsOutputPath($Model, $Component, [string]$Role, [string]$Variant) {
+    $scope = if ($Component.outputScope) { $Component.outputScope } else { $Model.Manifest.fileScope }
+    $registryOutput = $Role -cin @('core-exportHeader', 'version-header', 'version-props', 'sourceIntegration-targets')
+    if ($registryOutput) { $scope = $Model.Manifest.fileScope }
+    while ($scope -and -not $scope.Outputs.ContainsKey($Role)) { $scope = $scope.Parent }
+    if (-not $scope) { throw "Missing output template for '$Role' ($($Component.name))." }
+    $values = @{ solutionName = $Model.Settings.solutionName; ext = Get-UdkOutputExtension $Role }
+    if (-not $registryOutput) {
+        if (-not $Component) { throw "Output '$Role' requires a project context." }
+        foreach ($entry in (Get-ProjectToolsTemplateValues $Component $Variant).GetEnumerator()) {
+            $values[$entry.Key] = $entry.Value
+        }
+        $values.projectDirectory = Get-ProjectToolsLayout $Model $Component $Variant 'projectDirectory'
+    }
+    $path = Expand-ProjectToolsTemplate $scope.Outputs[$Role] $values
+    if ($path -match '[{}*?]') { throw "Invalid output path: $path" }
+    $null = Resolve-ProjectToolsPath $Model.Root $path
+    return $path
+}
+
+function Get-ProjectToolsNativeVariants($Component) {
+    if ($Component.kind -eq 'headerOnly') { return }
+    if ($Component.variants) {
+        foreach ($variant in $Component.variants) {
+            (Get-Culture).TextInfo.ToTitleCase($variant)
+        }
+    } elseif ($Component.stateScope -eq 'process') {
+        'Dynamic'
+    } else {
+        'Static'
+        'Dynamic'
+    }
+}
+
+function Resolve-ProjectToolsOutputFilters($Model, $Component, $Rules) {
+    foreach ($rule in $Rules) {
+        $field = if ($rule.generatedPath) { 'generatedPath' } else { 'path' }
+        if ($rule.$field -cnotmatch '^@output:(.+)$') {
+            $rule
+            continue
+        }
+        $role = $Matches[1]
+        $variants = switch -CaseSensitive ($role) {
+            'project-nativeLibrary' { Get-ProjectToolsNativeVariants $Component }
+            'project-nativeApplication' { 'Application' }
+            'project-headerCheck' { 'HeaderCheck' }
+            'source-headerCheck' { 'HeaderCheck' }
+            'shared-items' { 'Shared' }
+            'dependencies-props' { 'Dependencies' }
+            default { '' }
+        }
+        foreach ($variant in $variants) {
+            $resolved = $rule.PSObject.Copy()
+            $resolved.$field = Get-ProjectToolsOutputPath $Model $Component $role $variant
+            $resolved
+        }
+    }
+}
+
 function Read-ProjectToolsModel([string]$ManifestPath) {
     $path = Resolve-UdkManifestPath $ManifestPath
     $root = Split-Path -Parent $path
     $manifest = Read-UdkManifest $path 'ComponentRegistry'
-    if (($manifest.schemaVersion -isnot [int] -and $manifest.schemaVersion -isnot [long]) -or $manifest.schemaVersion -notin @(2, 3, 4, 5, 6)) {
+    if (($manifest.schemaVersion -isnot [int] -and $manifest.schemaVersion -isnot [long]) -or $manifest.schemaVersion -notin @(2, 3, 4, 5, 6, 7)) {
         throw 'Unsupported component schemaVersion.'
     }
-    $unified = $manifest.schemaVersion -in @(4, 5, 6)
+    $unified = $manifest.schemaVersion -ge 4
     $listField = if ($unified) {
         'components'
     } else {
@@ -302,6 +431,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         throw "$listField must be a nonempty array."
     }
     $manifestFields = @('schemaVersion', 'generation', $listField)
+    if ($manifest.schemaVersion -eq 7) { $manifestFields += @('fileScope', 'filters') }
     if (-not $unified) {
         $manifestFields += 'msbuildApplications'
     }
@@ -311,6 +441,16 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         }
     }
     $settings = $manifest.generation.msbuild
+    if ($manifest.fileScope) {
+        $nativeProps = @(foreach ($inputFile in $manifest.fileScope.Inputs) {
+            if ($inputFile.GetAttribute('role') -ceq 'msbuild-props' -and $inputFile.GetAttribute('projectType') -ceq 'native') {
+                Expand-ProjectToolsFiles $root @($inputFile.InnerText.Trim()) @()
+            } elseif ($inputFile.GetAttribute('role') -cne 'version-source') {
+                throw "Unsupported registry input: $($inputFile.GetAttribute('role'))"
+            }
+        })
+        $settings | Add-Member nativeProps $nativeProps
+    }
     $profile = $manifest.generation.profile
     $integration = $manifest.generation.integration
     foreach ($field in $manifest.generation.PSObject.Properties.Name) {
@@ -359,7 +499,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         $settings = [pscustomobject]@{ solution = 'UniversalDevKit.sln'; projectDirectory = $projectDirectory; projectName = 'UniversalDevKit.{name}.{variant}'; configurations = @('Debug', 'Release'); platforms = @('x64'); solutionFolder = 'Projects' }
     }
     foreach ($field in $settings.PSObject.Properties.Name) {
-        if ($field -notin @('solution', 'projectDirectory', 'projectNames', 'projectName', 'sharedProjectName', 'configurations', 'platforms', 'solutionFolder', 'props', 'nativeProps', 'targets')) {
+        if ($field -notin @('solution', 'solutionName', 'projectDirectory', 'projectNames', 'projectName', 'sharedProjectName', 'configurations', 'platforms', 'solutionFolder', 'props', 'nativeProps', 'targets')) {
             throw "Unknown MSBuild generation setting: $field"
         }
     }
@@ -377,7 +517,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         }
     }
     foreach ($field in @('projectName', 'sharedProjectName')) {
-        if ($settings.projectNames) {
+        if ($settings.projectNames -or $manifest.fileScope) {
             break
         }
         if ($field -eq 'sharedProjectName' -and -not $settings.PSObject.Properties[$field]) {
@@ -425,6 +565,10 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
     $seenIncludes = @{}
     $names = @{}
     $solutionFilters = [Collections.Generic.List[object]]::new()
+    $layoutModel = [pscustomobject]@{ Root = $root; Settings = $settings; Manifest = $manifest; Integration = $integration }
+    foreach ($rule in $manifest.filters) {
+        $solutionFilters.Add([pscustomobject]@{ Rule = $rule; Component = $null })
+    }
     $definitions = foreach ($include in $includes) {
         if ($include -isnot [string] -or $include -match '[*?]') {
             throw "Invalid component path: $include"
@@ -434,7 +578,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
             throw "Duplicate include: $include"
         }
         $seenIncludes[$componentPath] = $true
-        $definition = Read-UdkManifest $componentPath 'Component'
+        $definition = Read-UdkManifest $componentPath 'Component' $manifest.fileScope
         if ($definition.name -isnot [string] -or $definition.name -cnotmatch '^[A-Z][A-Za-z0-9]*(?:\.[A-Za-z0-9]+)*$' -or $names.ContainsKey($definition.name)) {
             throw "Invalid or duplicate component name: $($definition.name)"
         }
@@ -580,7 +724,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
                 }
             }
             foreach ($field in $component.PSObject.Properties.Name) {
-                if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'version', 'abiVersion', 'msbuildGuid', 'msbuild', 'buildExtensions', 'filters', 'browseFiles', 'sources', 'excludeSources')) {
+                if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'version', 'abiVersion', 'msbuildGuid', 'msbuild', 'buildExtensions', 'filters', 'browseFiles', 'sources', 'excludeSources', 'outputScope')) {
                     throw "Unsupported C# application field: $field"
                 }
             }
@@ -617,7 +761,7 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
             }
         } else {
             foreach ($field in $component.PSObject.Properties.Name) {
-                if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'browseFiles', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild')) {
+                if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'browseFiles', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild', 'outputScope')) {
                     throw "Unknown component field: $field"
                 }
             }
@@ -626,7 +770,7 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
             }
             if ($isApplication) {
                 foreach ($field in $component.PSObject.Properties.Name) {
-                    if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'excludeHeaders', 'excludeSources', 'filters', 'browseFiles', 'requirements', 'compile', 'buildExtensions', 'msbuild')) {
+                    if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'excludeHeaders', 'excludeSources', 'filters', 'browseFiles', 'requirements', 'compile', 'buildExtensions', 'msbuild', 'outputScope')) {
                         throw "Unsupported application field: $field"
                     }
                 }
@@ -685,11 +829,12 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
             }
         }
         if ($component.PSObject.Properties['browseFiles']) {
-            $component.browseFiles = @(Expand-ProjectToolsFiles $root $component.browseFiles @() | Where-Object {
+            $component.browseFiles = @(Expand-ProjectToolsFiles $root $component.browseFiles @() -Ordinal | Where-Object {
                 $_ -notin $component.sources -and $_ -notin $component.headers
             })
         }
         if ($component.PSObject.Properties['filters']) {
+            $component.filters = @(Resolve-ProjectToolsOutputFilters $layoutModel $component $component.filters)
             foreach ($rule in $component.filters | Where-Object scope -CEQ 'solution') {
                 $solutionFilters.Add([pscustomobject]@{ Rule = $rule; Component = $component })
             }
@@ -762,6 +907,11 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
         }
         else {
             $components[$include] = $component
+        }
+    }
+    foreach ($entry in $solutionFilters) {
+        if (-not $entry.Component) {
+            $entry.Rule = @(Resolve-ProjectToolsOutputFilters $layoutModel $null @($entry.Rule))[0]
         }
     }
     return [pscustomobject]@{ Root = $root; Manifest = $manifest; Components = $components; Applications = $applications; ManagedLibraries = $managedLibraries; Settings = $settings; Profile = $profile; Integration = $integration; SolutionFilters = $solutionFilters }

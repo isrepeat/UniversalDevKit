@@ -93,7 +93,9 @@ foreach ($project in $projects) {
     }
     $lines.Add('  </ItemGroup>')
     $lines.Add('  <ItemGroup>')
-    foreach ($key in ($items.Keys | Sort-Object -CaseSensitive)) {
+    [string[]]$itemKeys = @($items.Keys)
+    [Array]::Sort($itemKeys, [StringComparer]::Ordinal)
+    foreach ($key in $itemKeys) {
         $item = $items[$key]
         $opening = '    <' + $item[0] + ' Include="' + (EscapeXml $item[1]) + '"'
         if ($item[2]) {

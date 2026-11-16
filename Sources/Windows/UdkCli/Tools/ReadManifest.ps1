@@ -16,6 +16,103 @@ function Get-UdkPackageManifests([string]$Root) {
     Get-ChildItem -LiteralPath $Root -Recurse -File -Filter 'Package.xml' | Sort-Object FullName
 }
 
+function Get-UdkOutputExtension([string]$Role) {
+    switch -CaseSensitive ($Role) {
+        { $_ -cin @('project-nativeLibrary', 'project-nativeApplication', 'project-headerCheck') } { 'vcxproj' }
+        { $_ -cin @('project-classLibrary', 'project-wpf', 'project-vsix') } { 'csproj' }
+        'shared-items' { 'vcxitems' }
+        { $_ -cin @('core-exportHeader', 'component-exportHeader', 'version-header') } { 'g.h' }
+        { $_ -cin @('dependencies-props', 'version-props') } { 'g.props' }
+        'source-headerCheck' { 'g.cpp' }
+        'sourceIntegration-targets' { 'g.targets' }
+        default { throw "Unknown output role: $Role" }
+    }
+}
+
+function Convert-UdkFileScope([System.Xml.XmlElement]$Owner, $ParentScope) {
+    $scope = [pscustomobject]@{
+        Parent = $ParentScope
+        Nodes = [Collections.Generic.Dictionary[string,object]]::new([StringComparer]::Ordinal)
+        Outputs = [Collections.Generic.Dictionary[string,string]]::new([StringComparer]::Ordinal)
+        Inputs = @()
+    }
+    foreach ($node in $Owner.SelectNodes('*[not(self::Projects)]/descendant-or-self::*[@id]')) {
+        if ($node.LocalName -ceq 'Ref') { continue }
+        $id = $node.GetAttribute('id')
+        $key = "$($node.LocalName):$id"
+        if ($id -cnotmatch '^[A-Za-z][A-Za-z0-9_.-]*$' -or $scope.Nodes.ContainsKey($key)) {
+            throw "Invalid or duplicate file declaration: $key"
+        }
+        $scope.Nodes.Add($key, $node.CloneNode($true))
+    }
+    foreach ($node in $Owner.SelectNodes('Files//Output')) {
+        $role = $node.GetAttribute('role')
+        $null = Get-UdkOutputExtension $role
+        $template = $node.InnerText.Trim()
+        if ($node.SelectSingleNode('*') -or @($node.Attributes | Where-Object Name -CNotIn @('role', 'id')).Count -or
+            -not $template.EndsWith('.{ext}', [StringComparison]::Ordinal) -or $scope.Outputs.ContainsKey($role)) {
+            throw "Invalid or duplicate output template: $role"
+        }
+        $scope.Outputs.Add($role, $template)
+    }
+    function ExpandRefs($Node, $DefinitionScope, [object[]]$Stack) {
+        foreach ($child in @($Node.SelectNodes('*[not(self::Projects)]'))) {
+            if ($child.LocalName -cne 'Ref') {
+                ExpandRefs $child $DefinitionScope $Stack
+                continue
+            }
+            $key = "$($child.GetAttribute('tag')):$($child.GetAttribute('id'))"
+            if ($child.Attributes.Count -ne 2 -or $child.SelectSingleNode('*') -or $child.InnerText.Trim()) {
+                throw "Invalid Ref: $key"
+            }
+            $targetScope = $DefinitionScope
+            while ($targetScope -and -not $targetScope.Nodes.ContainsKey($key)) { $targetScope = $targetScope.Parent }
+            if (-not $targetScope) { throw "Unknown Ref: $key" }
+            $target = $targetScope.Nodes[$key]
+            if ($target -in $Stack) { throw "Cyclic Ref: $key" }
+            $copy = $Node.OwnerDocument.ImportNode($target, $true)
+            ExpandRefs $copy $targetScope ($Stack + @($target))
+            [void]$Node.ReplaceChild($copy, $child)
+        }
+    }
+    ExpandRefs $Owner $scope @()
+    $scope.Inputs = @($Owner.SelectNodes('Files//Input') | ForEach-Object { $_.CloneNode($true) })
+    foreach ($node in @($Owner.SelectNodes('Files//Input|Filters//Input|Files//Output|Filters//Output'))) {
+        $role = $node.GetAttribute('role')
+        $value = $node.InnerText.Trim()
+        if ($node.Name -ceq 'Output') {
+            $tag = 'Generated'
+            $value = '@output:' + $role
+        } else {
+            if ($node.SelectSingleNode('*') -or -not $value -or
+                @($node.Attributes | Where-Object Name -CNotIn @('id', 'role', 'projectType')).Count) {
+                throw "Invalid input declaration: $role"
+            }
+            $tag = switch -CaseSensitive ($role) {
+                'header' { 'Header' }
+                'source' { 'Source' }
+                'cmake' { 'CMake' }
+                'msbuild-props' { 'MSBuildProps' }
+                'msbuild-targets' { 'MSBuildTargets' }
+                'version-source' { 'File' }
+                default { throw "Unknown input role: $role" }
+            }
+            if ($Owner.Name -ceq 'ComponentRegistry') { $tag = 'File' }
+        }
+        $replacement = $Owner.OwnerDocument.CreateElement($tag)
+        $replacement.InnerText = $value
+        [void]$node.ParentNode.ReplaceChild($replacement, $node)
+    }
+    foreach ($node in $Owner.SelectNodes('Files//File[@id]|Filters//File[@id]')) {
+        $node.RemoveAttribute('id')
+    }
+    foreach ($node in $Owner.SelectNodes('Files//Group[@id]|Filters//Group[@id]')) {
+        $node.SetAttribute('name', $node.GetAttribute('id'))
+        $node.RemoveAttribute('id')
+    }
+    return $scope
+}
+
 function Convert-UdkComponentFiles([System.Xml.XmlElement]$Owner) {
     $files = $Owner.SelectSingleNode('Files')
     if (-not $files) {
@@ -31,6 +128,10 @@ function Convert-UdkComponentFiles([System.Xml.XmlElement]$Owner) {
     $selections = [Collections.Generic.List[object]]::new()
     function ReadFileDeclarations($Parent) {
         foreach ($file in $Parent.SelectNodes('*')) {
+            if ($file.LocalName -ceq 'Group') {
+                ReadFileDeclarations $file
+                continue
+            }
             if ($file.Name -cnotin @('Header', 'Source', 'File', 'Generated', 'CMake', 'MSBuildProps', 'MSBuildTargets') -or
                 $file.Attributes.Count -or $file.SelectSingleNode('*') -or -not $file.InnerText.Trim()) {
                 throw "Invalid file declaration: $($file.Name)"
@@ -92,16 +193,22 @@ function Convert-UdkComponentFiles([System.Xml.XmlElement]$Owner) {
         if ($solution -and -not $folder) { throw 'A solution filter requires a virtual folder.' }
         foreach ($selector in $filter.SelectNodes('*')) {
             $value = $selector.InnerText.Trim()
-            if (-not $value -or $selector.Attributes.Count -or $selector.SelectSingleNode('*')) {
-                throw 'Expected a nonempty GroupRef or Match in Filter.'
-            }
-            $entries = switch -CaseSensitive ($selector.Name) {
+            $entries = switch -CaseSensitive ($selector.LocalName) {
+                'Group' { ReadFileDeclarations $selector }
                 'GroupRef' {
+                    if ($selector.Attributes.Count -or $selector.SelectSingleNode('*')) { throw 'Invalid GroupRef.' }
                     if (-not $groups.ContainsKey($value)) { throw "Unknown Files group: $value" }
                     $groups[$value]
                 }
-                'Match' { $selections }
-                default { throw "Unknown Filter selector: $($selector.Name)" }
+                'Match' {
+                    if (-not $value -or $selector.Attributes.Count -or $selector.SelectSingleNode('*')) { throw 'Invalid Match.' }
+                    $selections
+                }
+                default {
+                    $container = $document.CreateElement('Files')
+                    [void]$container.AppendChild($selector.CloneNode($true))
+                    ReadFileDeclarations $container
+                }
             }
             foreach ($entry in $entries) {
                 $rule = $document.CreateElement('Filter')
@@ -386,7 +493,7 @@ function ConvertFrom-UdkManifestXml([System.Xml.XmlElement]$Root) {
     ReadElement $Root ''
 }
 
-function Read-UdkManifest([string]$Path, [string]$XmlRoot) {
+function Read-UdkManifest([string]$Path, [string]$XmlRoot, $RegistryScope) {
     $file = Resolve-UdkManifestPath $Path
     $settings = [System.Xml.XmlReaderSettings]::new()
     $settings.DtdProcessing = [System.Xml.DtdProcessing]::Prohibit
@@ -401,5 +508,59 @@ function Read-UdkManifest([string]$Path, [string]$XmlRoot) {
     if ($document.DocumentElement.LocalName -cne $XmlRoot) {
         throw "Expected <$XmlRoot> in $file"
     }
-    ConvertFrom-UdkManifestXml $document.DocumentElement
+    $root = $document.DocumentElement
+    if ($XmlRoot -ceq 'ComponentRegistry' -and $root.GetAttribute('schemaVersion') -ceq '7') {
+        $scope = Convert-UdkFileScope $root $null
+        Convert-UdkComponentFiles $root
+        $registry = ConvertFrom-UdkManifestXml $root
+        $msbuild = $registry.generation.msbuild
+        if ($msbuild.solutionName -cnotmatch '^[A-Za-z0-9_.-]+$' -or $msbuild.solutionName -in @('.', '..') -or $msbuild.solution) {
+            throw 'Expected SolutionName in schema 7.'
+        }
+        $msbuild | Add-Member solution ($msbuild.solutionName + '.sln')
+        $versionInputs = @($scope.Inputs | Where-Object { $_.GetAttribute('role') -ceq 'version-source' })
+        if ($versionInputs.Count -ne 1 -or $versionInputs[0].InnerText.Trim() -match '[*?]') {
+            throw 'Expected one version-source input with a literal path.'
+        }
+        $integration = @{ versionSource = $versionInputs[0].InnerText.Trim() }
+        foreach ($entry in @{
+            sourcesTargets = 'sourceIntegration-targets'; coreExportHeader = 'core-exportHeader'
+            versionHeader = 'version-header'; versionProps = 'version-props'
+        }.GetEnumerator()) {
+            $template = $scope.Outputs[$entry.Value]
+            if (-not $template) { throw "Missing output template: $($entry.Value)" }
+            $value = $template.Replace('{solutionName}', $msbuild.solutionName).Replace('{ext}', (Get-UdkOutputExtension $entry.Value))
+            if ($value -match '[{}]') { throw "Invalid registry output template: $template" }
+            $integration[$entry.Key] = $value
+        }
+        $registry.generation | Add-Member integration ([pscustomobject]$integration)
+        $registry | Add-Member fileScope $scope
+        return $registry
+    }
+    if ($XmlRoot -ceq 'Component') {
+        $newFiles = $root.SelectSingleNode('.//Files//Input|.//Files//Output|.//Files//Group[@id]|.//Ref')
+        if ($newFiles -or $RegistryScope) {
+            if (-not $RegistryScope) {
+                $directory = [IO.DirectoryInfo]::new((Split-Path -Parent $file))
+                while ($directory) {
+                    $candidate = Join-Path $directory.FullName 'Components.xml'
+                    if (Test-Path -LiteralPath $candidate -PathType Leaf) {
+                        $RegistryScope = (Read-UdkManifest $candidate 'ComponentRegistry').fileScope
+                        break
+                    }
+                    $directory = $directory.Parent
+                }
+            }
+            $scope = Convert-UdkFileScope $root $RegistryScope
+            $projectScopes = @(foreach ($project in $root.SelectNodes('Projects/Project')) {
+                Convert-UdkFileScope $project $scope
+            })
+            $component = ConvertFrom-UdkManifestXml $root
+            for ($index = 0; $index -lt $projectScopes.Count; $index++) {
+                $component.projects[$index] | Add-Member outputScope $projectScopes[$index]
+            }
+            return $component
+        }
+    }
+    ConvertFrom-UdkManifestXml $root
 }

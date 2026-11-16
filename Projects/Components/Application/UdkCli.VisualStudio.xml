@@ -4,12 +4,13 @@
     <Project id="vsix"
              kind="application"
              projectType="vsix"
-             version="0.3.0"
+             version="0.4.0"
              msbuildGuid="{5217622B-841E-4635-BA5D-8DE005125B16}">
       <Files>
-        <Source>Sources/Windows/UdkCli.VisualStudio/**/*.cs</Source>
-        <Source>Sources/Diagnostic/DotNet/*.cs</Source>
-        <MSBuildTargets>Sources/Windows/UdkCli.VisualStudio/UdkCli.VisualStudio.targets</MSBuildTargets>
+        <Input role="source">Sources/Windows/UdkCli.VisualStudio/**/*.cs</Input>
+        <Input role="source">Sources/Diagnostic/DotNet/*.cs</Input>
+        <Input role="msbuild-targets">Sources/Windows/UdkCli.VisualStudio/UdkCli.VisualStudio.targets</Input>
+        <Output role="project-vsix">{projectDirectory}/{name}.Net472.{ext}</Output>
       </Files>
       <Filters>
         <Filter filter="{Tree:Project}"
@@ -25,9 +26,6 @@
         </Filter>
       </Filters>
       <MSBuild>
-        <ProjectName>
-          <When artifact="project">{name}.Net472</When>
-        </ProjectName>
         <Properties>
           <TargetFramework>net472</TargetFramework>
         </Properties>

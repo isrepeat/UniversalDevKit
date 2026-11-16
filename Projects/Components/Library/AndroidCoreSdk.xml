@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Component name="AndroidCoreSdk">
   <Files>
-    <Group name="SourceTree">
+    <Group id="SourceTree">
       <File>Sources/Android/AndroidCoreSdk/**/*</File>
     </Group>
   </Files>
   <Filters>
     <Filter filter="{Tree:Solution}/Sources/Android/AndroidCoreSdk"
             preserveTree="true">
-      <GroupRef>SourceTree</GroupRef>
+      <Ref tag="Group" id="SourceTree" />
     </Filter>
   </Filters>
 </Component>

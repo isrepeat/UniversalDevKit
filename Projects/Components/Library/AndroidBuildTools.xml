@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Component name="AndroidBuildTools">
   <Files>
-    <Group name="SourceTree">
+    <Group id="SourceTree">
       <File>Sources/Android/AndroidBuildTools/**/*</File>
     </Group>
-    <Group name="PublicHeaders">
+    <Group id="PublicHeaders">
       <File>Includes/Android/AndroidBuildTools/**/*</File>
     </Group>
   </Files>
   <Filters>
     <Filter filter="{Tree:Solution}/Sources/Android/AndroidBuildTools"
             preserveTree="true">
-      <GroupRef>SourceTree</GroupRef>
+      <Ref tag="Group" id="SourceTree" />
     </Filter>
     <Filter filter="{Tree:Solution}/Includes/Android/AndroidBuildTools"
             preserveTree="true">
-      <GroupRef>PublicHeaders</GroupRef>
+      <Ref tag="Group" id="PublicHeaders" />
     </Filter>
   </Filters>
 </Component>

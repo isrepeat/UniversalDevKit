@@ -18,37 +18,37 @@
                     linkage="same" />
       </Dependencies>
       <Files>
-        <Group name="PublicHeaders">
-          <Header>Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/**/*.h</Header>
+        <Group id="PublicHeaders">
+          <Input role="header">Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/**/*.h</Input>
         </Group>
-        <Group name="NativeSources">
-          <Header>Sources/OpenGLESRenderer/**/*.h</Header>
-          <Source>Sources/OpenGLESRenderer/**/*.cpp</Source>
+        <Group id="NativeSources">
+          <Input role="header">Sources/OpenGLESRenderer/**/*.h</Input>
+          <Input role="source">Sources/OpenGLESRenderer/**/*.cpp</Input>
         </Group>
-        <Group name="Dependencies">
-          <Generated>{projectDirectory}/*.Dependencies.g.props</Generated>
+        <Group id="Dependencies">
+          <Ref tag="Output" id="Dependencies" />
         </Group>
-        <Group name="NativeBuild">
-          <MSBuildTargets>Sources/OpenGLESRenderer/UniversalDevKit.OpenGLESRenderer.targets</MSBuildTargets>
+        <Group id="NativeBuild">
+          <Input role="msbuild-targets">Sources/OpenGLESRenderer/UniversalDevKit.OpenGLESRenderer.targets</Input>
         </Group>
-        <Group name="CMakeRules">
-          <CMake>Sources/OpenGLESRenderer/Build.cmake</CMake>
+        <Group id="CMakeRules">
+          <Input role="cmake">Sources/OpenGLESRenderer/Build.cmake</Input>
           <File>Sources/OpenGLESRenderer/AngleConfig.cmake.in</File>
         </Group>
       </Files>
       <Filters>
         <Filter filter="{Tree:Solution}/Sources/OpenGLESRenderer">
-          <GroupRef>CMakeRules</GroupRef>
+          <Ref tag="Group" id="CMakeRules" />
         </Filter>
         <Filter filter="{Tree:Project}">
-          <GroupRef>PublicHeaders</GroupRef>
+          <Ref tag="Group" id="PublicHeaders" />
         </Filter>
         <Filter filter="{Tree:Project}">
-          <GroupRef>NativeSources</GroupRef>
+          <Ref tag="Group" id="NativeSources" />
         </Filter>
         <Filter filter="{Tree:Project}/Build">
-          <GroupRef>NativeBuild</GroupRef>
-          <GroupRef>Dependencies</GroupRef>
+          <Ref tag="Group" id="NativeBuild" />
+          <Ref tag="Group" id="Dependencies" />
         </Filter>
       </Filters>
       <Requirements cxxStandard="20" />
