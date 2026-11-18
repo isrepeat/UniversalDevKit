@@ -8,16 +8,17 @@ using Microsoft.VisualStudio.Shell.Interop;
 namespace UniversalDevKit.UdkCli.VisualStudio.Input {
     internal static class ShortcutBindings {
         internal static readonly IntPtr VirtualKeyR = new IntPtr(0x52);
+        internal static readonly IntPtr VirtualKeyD = new IntPtr(0x44);
 
-        public static bool IsReserved(IVsFilterKeys2 filterKeys, MSG message) {
+        public static bool IsReserved(IVsFilterKeys2 filterKeys, MSG message, IntPtr virtualKey) {
             ThreadHelper.ThrowIfNotOnUIThread();
             if (IsMapped(filterKeys, message)) {
                 return true;
             }
-            if (message.wParam == VirtualKeyR) {
+            if (message.wParam == virtualKey) {
                 return false;
             }
-            message.wParam = VirtualKeyR;
+            message.wParam = virtualKey;
             return IsMapped(filterKeys, message);
         }
 

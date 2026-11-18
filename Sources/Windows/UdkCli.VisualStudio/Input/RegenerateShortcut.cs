@@ -15,6 +15,7 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Input {
         private const int KeyDown = 0x0100;
         private const int SystemKeyDown = 0x0104;
         private const int RScanCode = 0x13;
+        private const int DScanCode = 0x20;
         private const int ExtendedKey = 1 << 24;
         private const int PreviousKeyState = 1 << 30;
         private const int Control = 0x11;
@@ -30,15 +31,17 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Input {
 
         private readonly AsyncPackage package;
         private readonly OleMenuCommand command;
+        private readonly OleMenuCommand cleanCommand;
         private readonly IVsFilterKeys2 filterKeys;
         private readonly IVsUIShell uiShell;
         private readonly HookProcedure hookProcedure;
         private IntPtr hook;
 
-        public RegenerateShortcut(AsyncPackage package, OleMenuCommand command, IVsFilterKeys2 filterKeys, IVsUIShell uiShell) {
+        public RegenerateShortcut(AsyncPackage package, OleMenuCommand command, OleMenuCommand cleanCommand, IVsFilterKeys2 filterKeys, IVsUIShell uiShell) {
             ThreadHelper.ThrowIfNotOnUIThread();
             this.package = package;
             this.command = command;
+            this.cleanCommand = cleanCommand;
             this.filterKeys = filterKeys;
             this.uiShell = uiShell;
             this.hookProcedure = this.OnMessage;
@@ -68,9 +71,10 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Input {
             var message = Marshal.PtrToStructure<MSG>(address);
             var keyData = message.lParam.ToInt64();
             var scanCode = (keyData >> 16) & 0xFF;
+            var clean = scanCode == DScanCode || (scanCode == 0 && message.wParam == ShortcutBindings.VirtualKeyD);
             // Synthetic key events may lack a scan code.
             if ((message.message != KeyDown && message.message != SystemKeyDown) ||
-                (scanCode != RScanCode && (scanCode != 0 || message.wParam != ShortcutBindings.VirtualKeyR)) ||
+                (!clean && scanCode != RScanCode && (scanCode != 0 || message.wParam != ShortcutBindings.VirtualKeyR)) ||
                 (keyData & ExtendedKey) != 0 ||
                 !IsControlAltDown() ||
                 IsDown(Shift) || IsDown(LeftWindows) || IsDown(RightWindows)) {
@@ -81,11 +85,11 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Input {
                 ThreadHelper.ThrowIfNotOnUIThread();
                 if (!UIContext.FromUIContextGuid(SolutionExists).IsActive || ErrorHandler.Failed(this.uiShell.GetDialogOwnerHwnd(out var owner)) ||
                     owner == IntPtr.Zero || GetAncestor(message.hwnd, RootOwner) != owner ||
-                    ShortcutBindings.IsReserved(this.filterKeys, message)) {
+                    ShortcutBindings.IsReserved(this.filterKeys, message, clean ? ShortcutBindings.VirtualKeyD : ShortcutBindings.VirtualKeyR)) {
                     return result;
                 }
                 if ((keyData & PreviousKeyState) == 0) {
-                    this.package.JoinableTaskFactory.RunAsync(this.InvokeAsync).FileAndForget("UniversalDevKit/RegenerateShortcut");
+                    this.package.JoinableTaskFactory.RunAsync(() => this.InvokeAsync(clean)).FileAndForget("UniversalDevKit/RegenerateShortcut");
                 }
                 Marshal.WriteInt32(address, MessageIdOffset, NullMessage);
             } catch (COMException) {
@@ -94,10 +98,10 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Input {
             return result;
         }
 
-        private async Task InvokeAsync() {
+        private async Task InvokeAsync(bool clean) {
             await this.package.JoinableTaskFactory.SwitchToMainThreadAsync(alwaysYield: true);
             if (!this.package.DisposalToken.IsCancellationRequested && UIContext.FromUIContextGuid(SolutionExists).IsActive) {
-                this.command.Invoke();
+                (clean ? this.cleanCommand : this.command).Invoke();
             }
         }
 

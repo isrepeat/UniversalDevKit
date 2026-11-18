@@ -12,7 +12,7 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Generation {
     internal static class ProjectGenerator {
         private const string Registration = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\UniversalDevKit.UdkCli";
 
-        public static async Task<string> RunAsync(string root) {
+        public static async Task<string> RunAsync(string root, bool clean = false) {
             var script = Path.Combine(root, "Sources", "Windows", "UdkCli", "Tools", "ProjectTools", "Generate.ps1");
             var local = File.Exists(script);
             var start = new ProcessStartInfo {
@@ -26,6 +26,9 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Generation {
                 StandardOutputEncoding = Encoding.UTF8,
                 StandardErrorEncoding = Encoding.UTF8
             };
+            if (clean) {
+                start.Arguments += local ? " -Clean" : " --clean";
+            }
             using var process = new Process { StartInfo = start };
             try {
                 process.Start();
