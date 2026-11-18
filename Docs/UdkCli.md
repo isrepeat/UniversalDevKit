@@ -36,6 +36,8 @@ msbuild Projects/!Generated/MsBuild/Application/UdkCli/UdkCli.vcxproj /p:Configu
 
 Исходники ProjectTools и PackageTools находятся в `Sources/Windows/UdkCli/Tools`. При сборке каталог `Tools` копируется рядом с `udk.exe` с сохранением структуры. Для запуска подходит Windows PowerShell 5.1. Требования к сборке конкретного пакета определяются PackageTools.
 
+CLI запускает Windows PowerShell 5.1 с приоритетом его штатных модулей, чтобы унаследованный от PowerShell 7 `PSModulePath` не мешал загрузке Get-FileHash и других команд. Проверка запуска: `Tests/Infrastructure/TestCliPowerShell.ps1 -Executable <путь-к-udk.exe>`.
+
 При первой установке можно выбрать пустую папку через **Browse**. По умолчанию используется `%LOCALAPPDATA%\Programs\UdkCli`. При обновлении установщик использует сохранённый `InstallLocation` текущего пользователя. Папка установки автоматически добавляется в пользовательский `PATH`. После установки откройте новый терминал и запустите `udk --help`.
 
 Для удаления выполните `udk uninstall`, найдите «Uninstall UDK CLI» через «Пуск» или воспользуйтесь настройками приложений Windows. Флажок **«Удалить также кеш версий UDK»** удаляет `%LOCALAPPDATA%\UdkCli\versions` и по умолчанию выключен. Файлы `.udk-version` и каталоги `!tools` остаются в репозиториях.
@@ -50,4 +52,4 @@ msbuild Projects/!Generated/MsBuild/Application/UdkCli/UdkCli.vcxproj /p:Configu
 
 Повторные выпуски переиспользуют промежуточные файлы Release x64 из `!artifacts/projects/Windows-x64/UdkCli.Release`. ZIP и установщик каждого запуска сохраняются в отдельной папке под `!artifacts/releases/UdkCli`.
 
-В комплект включается SolutionInjector `v1.1.0-dev.3` для синхронизации проектов через `SolutionInjectorProjectOwnership`.
+ProjectTools и Connect используют единую версию SolutionInjector `v1.1.0` из опубликованного GitHub Release. Общий загрузчик скачивает и проверяет архив при первом обращении, затем использует локальный кэш `%LOCALAPPDATA%/UniversalDevKit/Tools/SolutionInjector/<версия>/`. ZIP SolutionInjector не включается в установщик UDK CLI. Синхронизация проектов использует `SolutionInjectorProjectOwnership`.

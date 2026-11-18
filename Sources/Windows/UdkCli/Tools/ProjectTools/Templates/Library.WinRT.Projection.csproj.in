@@ -10,6 +10,8 @@
   <PropertyGroup>
     <TargetFramework>@FRAMEWORK@</TargetFramework>
     <AssemblyName>@ASSEMBLY@</AssemblyName>
+    <Platforms>@PLATFORMS@</Platforms>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <RootNamespace>@COMPONENT@</RootNamespace>
     <OutputPath>@ARTIFACTS@projection\bin\$(Platform)\$(Configuration)\</OutputPath>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>

@@ -30,6 +30,7 @@ if (-not $CMake) {
 }
 $cases = @(
     @{ Name = 'ScriptEncoding'; Group = 'Windows'; Path = 'Tests/Infrastructure/TestScriptEncoding.ps1'; Args = @() }
+    @{ Name = 'SolutionInjectorLoader'; Group = 'Windows'; Path = 'Tests/Infrastructure/TestSolutionInjector.ps1'; Args = @() }
     @{ Name = 'DiagnosticContract'; Group = 'Windows'; Path = 'Tests/Integration/Diagnostic/Diagnostic.Tests.ps1'; Args = @('-CMake', $CMake) }
     @{ Name = 'DiagnosticAndroid'; Group = 'Android'; Path = 'Tests/Integration/Diagnostic/Diagnostic.Tests.ps1'; Args = @('-Platform', 'Android', '-CMake', $CMake) }
     @{ Name = 'ComponentGeneration'; Group = 'Windows'; Path = 'Sources/Windows/UdkCli/Tools/ProjectTools/Generate.ps1'; Args = @('-ManifestPath', (Join-Path $repository 'Components.xml'), '-Check') }

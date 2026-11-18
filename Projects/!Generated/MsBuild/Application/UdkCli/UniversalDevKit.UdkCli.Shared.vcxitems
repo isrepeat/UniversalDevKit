@@ -28,6 +28,9 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ConvertManifestToJson.ps1">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\GetSolutionInjector.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\InstallVersion.ps1">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </None>
@@ -157,12 +160,6 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\WinRT.Runtime.g.targets.in">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json">
-      <__UniversalDevKitFilter></__UniversalDevKitFilter>
-    </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\WinRT\ManifestTasks.cs">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </None>
@@ -175,7 +172,7 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ResolveJsonReference.ps1">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\SolutionInjector.Connect.json">
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\SolutionInjector.json">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli.Diagnostic.targets">

@@ -22,6 +22,14 @@ try {
     if (-not $export.Contains('UNIVERSALDEVKIT_HELLOWORLD_CORE_API') -or $export.Contains('UNIVERSALDEVKIT_HELLOWORLD.CORE')) { throw 'Invalid dotted export macro.' }
     if (-not [IO.File]::ReadAllText($projection).Contains('<ProjectReference') -or
         -not [IO.File]::ReadAllText($app).Contains('HelloWorld.WinRT.Projection.csproj')) { throw 'Missing producer projection reference.' }
+    [xml]$projectionXml = Get-Content -LiteralPath $projection -Raw
+    if ($projectionXml.SelectSingleNode('/Project/PropertyGroup/Platforms').InnerText -cne 'x64') { throw 'Projection platforms do not match the solution.' }
+    if ($projectionXml.SelectSingleNode('/Project/PropertyGroup/PlatformTarget').InnerText -cne 'AnyCPU') { throw 'The managed projection must remain architecture-neutral.' }
+    & $tool -ManifestPath $manifest -Clean
+    if (Test-Path -LiteralPath $projection) { throw 'Cleanup left the generated projection project.' }
+    if (-not (Test-Path -LiteralPath (Join-Path $temporary 'Sources/WinRT/Greeter.idl'))) { throw 'Cleanup removed an IDL source.' }
+    & $tool -ManifestPath $manifest
+    & $tool -ManifestPath $manifest -Check
     if ($SkipBuild) { return }
     $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
     $installation = & $vswhere -latest -products '*' -requires Microsoft.Component.MSBuild -property installationPath

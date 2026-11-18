@@ -6,6 +6,7 @@
 #include <string_view>
 #include <process.h>
 #include <stdexcept>
+#include <cstdlib>
 #include <cerrno>
 
 namespace universaldevkit::cli {
@@ -85,7 +86,31 @@ namespace universaldevkit::cli {
 			throw std::runtime_error("Cannot resolve the Windows PowerShell path.");
 		}
 		const auto windowsPowerShell = std::filesystem::path(systemDirectory) / L"WindowsPowerShell" / L"v1.0" / L"powershell.exe";
-		return cli::RunExecutable(windowsPowerShell, childArguments);
+		std::size_t modulePathLength = 0;
+		if (::_wgetenv_s(&modulePathLength, nullptr, 0, L"PSModulePath") != 0) {
+			throw std::runtime_error("Cannot read the PowerShell module path.");
+		}
+		std::wstring previousModulePath(modulePathLength, L'\0');
+		if (modulePathLength != 0) {
+			if (::_wgetenv_s(&modulePathLength, previousModulePath.data(), previousModulePath.size(), L"PSModulePath") != 0) {
+				throw std::runtime_error("Cannot read the PowerShell module path.");
+			}
+			previousModulePath.resize(modulePathLength - 1);
+		}
+		const auto childModulePath = (windowsPowerShell.parent_path() / L"Modules").native() + L";" + previousModulePath;
+		if (::_wputenv_s(L"PSModulePath", childModulePath.c_str()) != 0) {
+			throw std::runtime_error("Cannot configure the Windows PowerShell module path.");
+		}
+		try {
+			const auto exitCode = cli::RunExecutable(windowsPowerShell, childArguments);
+			if (::_wputenv_s(L"PSModulePath", previousModulePath.c_str()) != 0) {
+				throw std::runtime_error("Cannot restore the PowerShell module path.");
+			}
+			return exitCode;
+		} catch (...) {
+			::_wputenv_s(L"PSModulePath", previousModulePath.c_str());
+			throw;
+		}
 	}
 
 	int RunExecutable(const std::filesystem::path& path, const std::vector<std::wstring>& arguments) {

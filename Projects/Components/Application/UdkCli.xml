@@ -15,12 +15,11 @@
     <Project id="native"
              kind="application"
              projectType="native"
-             githubVersion="0.5.1"
+             githubVersion="0.5.3"
              msbuildGuid="{9C7AAB80-FA41-4925-95FA-06409E32E4E1}">
       <Files>
         <Group id="ToolsAndConfiguration">
           <File>Sources/Windows/UdkCli/Tools/**/*</File>
-          <File>Sources/Windows/UdkCli/SolutionInjector.Connect.json</File>
         </Group>
         <Group id="WindowsBuild">
           <File>Sources/Windows/UdkCli.Diagnostic.targets</File>

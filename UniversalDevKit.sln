@@ -854,7 +854,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UdkCli", "UdkCli", "{83E644
 		Sources\Windows\UdkCli\Tools\InstallVersion.ps1 = Sources\Windows\UdkCli\Tools\InstallVersion.ps1
 		Sources\Windows\UdkCli\Tools\ReadManifest.ps1 = Sources\Windows\UdkCli\Tools\ReadManifest.ps1
 		Sources\Windows\UdkCli\Tools\ResolveJsonReference.ps1 = Sources\Windows\UdkCli\Tools\ResolveJsonReference.ps1
-		Sources\Windows\UdkCli\SolutionInjector.Connect.json = Sources\Windows\UdkCli\SolutionInjector.Connect.json
+		Sources\Windows\UdkCli\Tools\GetSolutionInjector.ps1 = Sources\Windows\UdkCli\Tools\GetSolutionInjector.ps1
+		Sources\Windows\UdkCli\Tools\SolutionInjector.json = Sources\Windows\UdkCli\Tools\SolutionInjector.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PackageTools", "PackageTools", "{4D6F6747-71BE-F4EA-014C-3D4535A6807C}"
@@ -929,12 +930,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{
 		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Public.props.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Public.props.in
 		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Requirements.targets.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Requirements.targets.in
 		Sources\Windows\UdkCli\Tools\ProjectTools\Templates\WinRT.Runtime.g.targets.in = Sources\Windows\UdkCli\Tools\ProjectTools\Templates\WinRT.Runtime.g.targets.in
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{9B5AFC51-C463-EDF8-0CFC-D63CF43D1D9A}"
-	ProjectSection(SolutionItems) = preProject
-		Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip = Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip
-		Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json = Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "XamlCompiler", "XamlCompiler", "{7FF5BA4D-D365-FDBD-A03B-E3BF3540BB17}"
@@ -1237,7 +1232,6 @@ Global
 		{F9961101-C581-697B-D7DB-C44F3D9A1D27} = {739FF1E5-DAEC-0A2D-A3E2-EC61EBBB3B2C}
 		{620696B5-0CA9-3C9A-A2CD-49A8C603164B} = {739FF1E5-DAEC-0A2D-A3E2-EC61EBBB3B2C}
 		{D21AA393-9F64-7F3E-CC7A-20CB31CBD13C} = {739FF1E5-DAEC-0A2D-A3E2-EC61EBBB3B2C}
-		{9B5AFC51-C463-EDF8-0CFC-D63CF43D1D9A} = {739FF1E5-DAEC-0A2D-A3E2-EC61EBBB3B2C}
 		{7FF5BA4D-D365-FDBD-A03B-E3BF3540BB17} = {1E2FDD5B-DC67-7E41-C027-4F8D53A6977C}
 		{678B0872-A25D-93EA-1C19-146CA6157FAF} = {DD63AF60-7281-8EB9-0738-AF5A6E25AE7A}
 		{2A379002-FDAE-626B-EB7C-4D664F6BD5C6} = {8FF335B3-6BA4-BDFE-A262-F8D2F70D99C8}
@@ -1419,7 +1413,6 @@ Global
 		{62A7E562-7130-9FEE-6475-CA01136C2FE1} = folder
 		{62B80C5B-22A3-81FC-9C21-53644BAF61F4} = {6C77E845-67CC-03A9-E745-F1BFED778BDB}|Sources\Android\AndroidBuildTools\PowerShell\test-apk-signing.ps1
 		{63A30518-25CE-F72C-4885-7E3838ED7F5F} = {6CE64FFA-D87F-0998-3CBC-28F0F94B6A22}|Sources\Android\AndroidBuildTools\Cmake\InstallAndroidAppPreviewerPluginSdk.cmake
-		{670FA724-AA41-077B-D41A-D14FD9BADCF6} = {9B5AFC51-C463-EDF8-0CFC-D63CF43D1D9A}|Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json
 		{678B0872-A25D-93EA-1C19-146CA6157FAF} = folder
 		{67978CE8-5024-B70A-8C9D-509F7DB030F0} = {9DFD8898-C1BA-935F-B23E-B62E441B5D5A}|Sources\Android\AndroidTemplates\Templates\Application\.gitignore
 		{69D11643-1EB3-65DD-144C-671D23692A58} = folder
@@ -1436,11 +1429,9 @@ Global
 		{73CDF22F-42E6-962C-6AD9-09F02E2CC4EF} = {EE8973D8-2FA1-B84A-247C-24C51C84C767}|Sources\Android\AndroidTemplates\Templates\Application\cmake\AndroidToolchain.cmake
 		{74224A70-E844-9F15-FF30-6FAEA2BBA398} = {6BA6A97E-291E-2BAB-56D5-9C1BAF70B6E6}|Includes\Android\AndroidBuildTools\UniversalDevKit\Android\AndroidBuildTools\ApplicationFramework\AppSessionControllerBase.h
 		{7524369C-66F6-88E8-2A66-9E42C8A10D7A} = folder
-		{7566348E-966D-01A6-BED2-674ABAC16463} = {9B5AFC51-C463-EDF8-0CFC-D63CF43D1D9A}|Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip
 		{762F6807-6226-99E3-2835-0A4F58EAD86D} = {6CE64FFA-D87F-0998-3CBC-28F0F94B6A22}|Sources\Android\AndroidBuildTools\Cmake\AndroidToolchain.cmake
 		{76F6F53E-D054-BFCF-A802-609B27CF8897} = {5B178A57-748F-9A15-EA32-46DC26A7915E}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\UI\Page\MainPageViewModel.h
 		{77C9EBEA-67FA-083D-9932-64D60FBBBA48} = folder
-		{78A6AF88-2313-1D09-7CB0-7B5E23833E61} = {83E644BE-13DF-E2BD-54D1-CDD3376D5977}|Sources\Windows\UdkCli\SolutionInjector.Connect.json
 		{79198DA2-2B17-30AD-C13F-0E6B3B79CAA6} = folder
 		{79B391CD-3848-01A8-2872-688B70E68848} = {D21AA393-9F64-7F3E-CC7A-20CB31CBD13C}|Sources\Windows\UdkCli\Tools\ProjectTools\Templates\ComponentExport.h.in
 		{79F49C30-48E8-B892-C449-9A5BC197FB26} = folder
@@ -1488,7 +1479,6 @@ Global
 		{9A2270A7-1299-8818-A883-5146C239D0A2} = {9135523E-3869-88AA-CB16-0EC390ACC947}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\media\SurfaceScreenshotCapture.kt
 		{9A624A7D-DC8B-18C9-1F1F-7A01356BF6A8} = {B6AE5E9A-B345-C0E0-DBE5-F170FF9796C5}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Application\Core\ApplicationSession.cpp
 		{9AB787F8-B265-E04B-5F83-492FC3CB7390} = folder
-		{9B5AFC51-C463-EDF8-0CFC-D63CF43D1D9A} = folder
 		{9BD57574-A94F-F11B-2541-6B35D44C615F} = folder
 		{9BF6DFB4-5D6E-01FA-2BAE-D5BB376C5952} = {77C9EBEA-67FA-083D-9932-64D60FBBBA48}|Sources\Windows\UdkCli\Tools\PackageTools\Private\NuGet.json
 		{9CA28EE5-A360-17AE-B88E-82FCBE9D866D} = folder
@@ -1498,6 +1488,7 @@ Global
 		{A01B333C-1B79-EC59-16C6-221B9EA05E5F} = folder
 		{A0586550-284D-030D-D967-BA76CF157272} = {B071081B-DCF4-CD6F-1188-F6254EEBBC7C}|ThirdParty\XamlRuntime\ANGLE\CustomRecipes\angle\001-fix-uwp.patch
 		{A0A9FE8A-FD4F-494E-ED2A-8F951D1E9B5C} = {4D6F6747-71BE-F4EA-014C-3D4535A6807C}|Sources\Windows\UdkCli\Tools\PackageTools\Build.ps1
+		{A289604B-B5B6-0D76-A389-1CDDE56624E6} = {83E644BE-13DF-E2BD-54D1-CDD3376D5977}|Sources\Windows\UdkCli\Tools\GetSolutionInjector.ps1
 		{A3B46987-1D79-F62F-466F-6E507DEFD914} = {678B0872-A25D-93EA-1C19-146CA6157FAF}|Sources\XamlRuntime\Consumer.cmake
 		{A47590C2-0807-F205-4B40-379D37A99526} = {855D48A5-D4B7-C5B4-C56E-AAF40965C99A}|Sources\Android\AndroidAppKit\src\main\AndroidManifest.xml
 		{A5878628-5BB8-2F98-E58C-57D3EE167A66} = {52D4CCCE-52FF-35AD-383E-6D49ED86AB8D}|Sources\Android\AndroidTemplates\Templates\Application\{{Application}}.Android\src\main\res\values-v31\themes.xml
@@ -1568,6 +1559,7 @@ Global
 		{D666DBEE-D62D-4BC0-443D-40682C19F358} = {D357158F-8B97-6E3A-C7F0-14802FD3F91B}|Sources\Android\AndroidAppKit\src\main\kotlin\com\isrepeat\androidappkit\diagnostics\AppDiagnostics.kt
 		{D6A53133-16BC-5D5D-F816-6C6E90823E74} = {C6218429-C30C-1915-8804-606442EE5D98}|Sources\Android\AndroidTemplates\Templates\Application\Scripts\build-for-drive.release.bat
 		{D6BE03A0-7AAB-07DA-E85A-5972EFE8F902} = {9DFD8898-C1BA-935F-B23E-B62E441B5D5A}|Sources\Android\AndroidTemplates\Templates\Application\build.ps1
+		{D731F68E-16E1-8970-6933-F091B97825A8} = {83E644BE-13DF-E2BD-54D1-CDD3376D5977}|Sources\Windows\UdkCli\Tools\SolutionInjector.json
 		{D756FB21-3D2C-53AA-9B2A-8224098E6F56} = folder
 		{D75CDC5E-5633-FECA-C031-002E96D870ED} = {1A302616-F1A8-361A-CCB6-ADCA9FAA681E}|Sources\Windows\UdkCli\Tools\PackageTools\Adapters\GradlePublish.ps1
 		{D92A85DB-B047-D010-6AE6-A51189A0296F} = folder

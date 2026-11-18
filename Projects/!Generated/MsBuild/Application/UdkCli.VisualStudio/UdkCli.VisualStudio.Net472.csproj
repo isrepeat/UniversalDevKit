@@ -9,7 +9,7 @@
     <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
     <VSSDKTargetPlatformVersion>18.0</VSSDKTargetPlatformVersion>
     <VSSDKBuildToolsAutoSetup>true</VSSDKBuildToolsAutoSetup>
-    <UniversalDevKitVsixVersion>0.5.1</UniversalDevKitVsixVersion>
+    <UniversalDevKitVsixVersion>0.5.3</UniversalDevKitVsixVersion>
     <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
