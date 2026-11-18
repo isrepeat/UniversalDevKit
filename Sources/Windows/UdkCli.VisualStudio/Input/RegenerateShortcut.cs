@@ -32,17 +32,15 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Input {
         private readonly AsyncPackage package;
         private readonly OleMenuCommand command;
         private readonly OleMenuCommand cleanCommand;
-        private readonly IVsFilterKeys2 filterKeys;
         private readonly IVsUIShell uiShell;
         private readonly HookProcedure hookProcedure;
         private IntPtr hook;
 
-        public RegenerateShortcut(AsyncPackage package, OleMenuCommand command, OleMenuCommand cleanCommand, IVsFilterKeys2 filterKeys, IVsUIShell uiShell) {
+        public RegenerateShortcut(AsyncPackage package, OleMenuCommand command, OleMenuCommand cleanCommand, IVsUIShell uiShell) {
             ThreadHelper.ThrowIfNotOnUIThread();
             this.package = package;
             this.command = command;
             this.cleanCommand = cleanCommand;
-            this.filterKeys = filterKeys;
             this.uiShell = uiShell;
             this.hookProcedure = this.OnMessage;
             this.hook = SetWindowsHookEx(GetMessageHook, this.hookProcedure, IntPtr.Zero, GetCurrentThreadId());
@@ -84,8 +82,7 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Input {
             try {
                 ThreadHelper.ThrowIfNotOnUIThread();
                 if (!UIContext.FromUIContextGuid(SolutionExists).IsActive || ErrorHandler.Failed(this.uiShell.GetDialogOwnerHwnd(out var owner)) ||
-                    owner == IntPtr.Zero || GetAncestor(message.hwnd, RootOwner) != owner ||
-                    ShortcutBindings.IsReserved(this.filterKeys, message, clean ? ShortcutBindings.VirtualKeyD : ShortcutBindings.VirtualKeyR)) {
+                    owner == IntPtr.Zero || GetAncestor(message.hwnd, RootOwner) != owner) {
                     return result;
                 }
                 if ((keyData & PreviousKeyState) == 0) {
@@ -101,6 +98,9 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Input {
         private async Task InvokeAsync(bool clean) {
             await this.package.JoinableTaskFactory.SwitchToMainThreadAsync(alwaysYield: true);
             if (!this.package.DisposalToken.IsCancellationRequested && UIContext.FromUIContextGuid(SolutionExists).IsActive) {
+                if (VsShell.VsixLog.IsInitialized) {
+                    Diagnostic.Log.Write(Diagnostic.Level.Info, VsShell.VsixLog.Category, clean ? "Ctrl+Alt+D: cleaning generated projects." : "Ctrl+Alt+R: generating projects.");
+                }
                 (clean ? this.cleanCommand : this.command).Invoke();
             }
         }

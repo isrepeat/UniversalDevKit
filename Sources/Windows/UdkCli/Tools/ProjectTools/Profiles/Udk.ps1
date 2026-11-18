@@ -46,6 +46,13 @@ function Get-UdkRepositoryPrefix([string]$Path) {
     return '$(MSBuildThisFileDirectory)' + $relative + '\'
 }
 $updates = [Collections.Generic.List[object]]::new()
+$publicPropsPath = 'Projects/MsBuild/UniversalDevKit.props'
+$requirementsTargetsPath = 'Projects/MsBuild/UniversalDevKit.Requirements.targets'
+$standalone = $Model.Integration -and -not (Test-Path -LiteralPath (Join-Path $repositoryPath $publicPropsPath))
+if ($standalone) {
+    $publicPropsPath = $sourcesTargetsPath -replace '\.(?:g\.)?targets$', '.Public.g.props'
+    $requirementsTargetsPath = $sourcesTargetsPath -replace '\.(?:g\.)?targets$', '.Requirements.g.targets'
+}
 $guids = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 $names = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 $componentGraph = @{}
@@ -313,17 +320,11 @@ foreach ($includePath in $Model.Components.Keys) {
     $lines.Add('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
     $relativePath = Get-UdkProjectPath $name 'Shared'
     $libraryRepositoryPrefix = Get-UdkRepositoryPrefix $relativePath
-    $libraryMsbuildRelative = Get-UdkProjectRelativePath $relativePath 'Projects/MsBuild'
-    $libraryMsbuildRelative = if ($libraryMsbuildRelative -eq '.') {
-        ''
-    } else {
-        $libraryMsbuildRelative + '\'
-    }
     $lines.Add('  <PropertyGroup Label="Globals">')
     $lines.Add('    <HasSharedItems>true</HasSharedItems>')
     $lines.Add('    <ItemsProjectGuid>{' + $guid.ToString().ToUpperInvariant() + '}</ItemsProjectGuid>')
     $lines.Add('  </PropertyGroup>')
-    $lines.Add('  <Import Project="$(MSBuildThisFileDirectory)' + $libraryMsbuildRelative + 'UniversalDevKit.props" Condition="''$(__IsUniversalDevKitPublicPropsImported)'' != ''true''" />')
+    $lines.Add('  <Import Project="' + (EscapeXml (Get-ProjectToolsRelativeImport $Model $relativePath $publicPropsPath)) + '" Condition="''$(__IsUniversalDevKitPublicPropsImported)'' != ''true''" />')
     if ($Model.Profile -eq 'udk' -and (Test-Path -LiteralPath (Join-Path $repositoryPath $versionSource) -PathType Leaf)) {
         $relativeVersionProps = Get-UdkProjectRelativePath $relativePath $versionProps
         $lines.Add('  <Import Project="$(MSBuildThisFileDirectory)' + (EscapeXml $relativeVersionProps) + '" />')
@@ -430,7 +431,7 @@ foreach ($includePath in $Model.Components.Keys) {
         $lines.Add('  </Target>')
     }
     $lines.Add((Get-UdkRequirementItemsXml $name $binaryComponentRegistry[$name].Requirements $true $true $true))
-    $lines.Add('  <Import Project="$(MSBuildThisFileDirectory)' + $libraryMsbuildRelative + 'UniversalDevKit.Requirements.targets" Condition="''$(__IsUniversalDevKitRequirementsImported)'' != ''true''" />')
+    $lines.Add('  <Import Project="' + (EscapeXml (Get-ProjectToolsRelativeImport $Model $relativePath $requirementsTargetsPath)) + '" Condition="''$(__IsUniversalDevKitRequirementsImported)'' != ''true''" />')
     if ($component.buildExtensions.msbuildTargets) {
         $lines.Add('  <Import Project="' + (EscapeXml ($libraryRepositoryPrefix + $component.buildExtensions.msbuildTargets.Replace('/', '\'))) + '" />')
     }
@@ -496,7 +497,7 @@ $lines.Add('     and all transitive dependencies; each Shared project is importe
 $lines.Add('     Sources are not copied and compile with the consumer project settings.')
 $lines.Add('     The Connect menu uses this registry; selections are validated before building. -->')
 $lines.Add('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">')
-$lines.Add('  <Import Project="UniversalDevKit.props" Condition="''$(__IsUniversalDevKitPublicPropsImported)'' != ''true''" />')
+$lines.Add('  <Import Project="' + (EscapeXml (Get-ProjectToolsRelativeImport $Model $sourcesTargetsPath $publicPropsPath)) + '" Condition="''$(__IsUniversalDevKitPublicPropsImported)'' != ''true''" />')
 $lines.Add('  <ItemGroup>')
 $lines.Add('    <__UniversalDevKitAvailableComponent Include="' + ($componentNames -join ';') + '" />')
 $lines.Add('    <__UniversalDevKitComponent Include="$(UniversalDevKitComponents)" />')
@@ -582,7 +583,7 @@ foreach ($name in $componentNames) {
         $lines.Add($xml.Replace('<ItemGroup>', '<ItemGroup Condition="' + (GetSourceCondition $systemSelectors) + '">'))
     }
 }
-$lines.Add('  <Import Project="UniversalDevKit.Requirements.targets" Condition="''$(__IsUniversalDevKitRequirementsImported)'' != ''true''" />')
+$lines.Add('  <Import Project="' + (EscapeXml (Get-ProjectToolsRelativeImport $Model $sourcesTargetsPath $requirementsTargetsPath)) + '" Condition="''$(__IsUniversalDevKitRequirementsImported)'' != ''true''" />')
 $lines.Add('  <Target Name="__UniversalDevKitValidateComponents" BeforeTargets="PrepareForBuild">')
 $lines.Add('    <Error Condition="''$(UniversalDevKitComponents)'' == ''''" Text="UniversalDevKitComponents must be specified." />')
 $invalidConditions = @($componentNames | ForEach-Object {
@@ -857,13 +858,29 @@ function AddGeneratedMetadata([string]$RelativePath, [string]$Content) {
     $updates.Add([pscustomobject]@{ Path = $path; RelativePath = $RelativePath; Content = $content; Original = $original })
 }
 $exportTemplate = [IO.File]::ReadAllText((Join-Path $PSScriptRoot '../Templates/Export.h.in'))
+if ($standalone) {
+    $publicProps = [IO.File]::ReadAllText((Join-Path $PSScriptRoot '../Templates/Public.props.in'))
+    $publicProps = $publicProps.Replace('@VERSION_PROPS@', (EscapeXml (Get-ProjectToolsRelativeImport $Model $publicPropsPath $versionProps)))
+    $publicProps = $publicProps.Replace('@REPOSITORY_ROOT@', (EscapeXml (Get-UdkRepositoryPrefix $publicPropsPath)))
+    $includeDirectory = (Split-Path -Parent (Split-Path -Parent $coreExportHeader)).Replace('\', '/')
+    $publicProps = $publicProps.Replace('@GENERATED_INCLUDES@', (EscapeXml (Get-ProjectToolsRelativeImport $Model $publicPropsPath $includeDirectory)))
+    AddGeneratedMetadata $publicPropsPath $publicProps
+    $requirements = [IO.File]::ReadAllText((Join-Path $PSScriptRoot '../Templates/Requirements.targets.in'))
+    $requirements = $requirements.Replace('<Project xmlns=', '<!-- Generated by ProjectTools/Generate.ps1. Edit Templates/Requirements.targets.in. -->' + "`n" + '<Project xmlns=')
+    AddGeneratedMetadata $requirementsTargetsPath $requirements
+}
 $componentExportTemplate = [IO.File]::ReadAllText((Join-Path $PSScriptRoot '../Templates/ComponentExport.h.in'))
 if ($Model.Integration) {
     $componentExportTemplate = $componentExportTemplate.Replace('UniversalDevKit/Export.h', 'UniversalDevKit/Export.g.h')
 }
 AddGeneratedMetadata $coreExportHeader $exportTemplate
 foreach ($name in $componentNames) {
-    AddGeneratedMetadata $binaryComponentRegistry[$name].ExportHeader ($componentExportTemplate.Replace('@COMPONENT@', $name.ToUpperInvariant()))
+    $componentExport = $componentExportTemplate.Replace('@COMPONENT@', $name.ToUpperInvariant())
+    if ($standalone) {
+        $relativeCoreExport = Get-UdkProjectRelativePath $binaryComponentRegistry[$name].ExportHeader $coreExportHeader
+        $componentExport = $componentExport -replace '#include <UniversalDevKit/Export(?:\.g)?\.h>', ('#include "' + $relativeCoreExport.Replace('\', '/') + '"')
+    }
+    AddGeneratedMetadata $binaryComponentRegistry[$name].ExportHeader $componentExport
 }
 $versionPath = Join-Path $repositoryPath $versionSource
 if (Test-Path -LiteralPath $versionPath) {

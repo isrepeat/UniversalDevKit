@@ -16,9 +16,8 @@ namespace UniversalDevKit.UdkCli.VisualStudio {
                 return;
             }
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-            if (await this.GetServiceAsync(typeof(SVsFilterKeys)) is IVsFilterKeys2 filterKeys &&
-                await this.GetServiceAsync(typeof(SVsUIShell)) is IVsUIShell uiShell) {
-                this.shortcut = new Input.RegenerateShortcut(this, command[0], command[1], filterKeys, uiShell);
+            if (await this.GetServiceAsync(typeof(SVsUIShell)) is IVsUIShell uiShell) {
+                this.shortcut = new Input.RegenerateShortcut(this, command[0], command[1], uiShell);
             } else {
                 if (VsShell.VsixLog.IsInitialized) {
                     Diagnostic.Log.Write(Diagnostic.Level.Warning, VsShell.VsixLog.Category, "Shortcut services unavailable.");

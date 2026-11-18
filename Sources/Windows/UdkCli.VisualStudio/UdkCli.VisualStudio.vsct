@@ -25,6 +25,9 @@
       </Button>
     </Buttons>
   </Commands>
+  <KeyBindings>
+    <KeyBinding guid="guidUdkCommands" id="CleanSolution" editor="guidVSStd97" key1="D" mod1="CONTROL ALT" />
+  </KeyBindings>
   <Symbols>
     <GuidSymbol name="guidUdkPackage" value="{111B8451-4B34-4D32-A917-DA2C6D10E337}" />
     <GuidSymbol name="guidUdkCommands" value="{93E681D4-1B92-46A3-9400-A1A8C947417A}">

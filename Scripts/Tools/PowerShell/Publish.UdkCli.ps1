@@ -84,7 +84,7 @@ $project = Join-Path $root (Get-ProjectToolsLocation $projectModel $applications
 [void][IO.Directory]::CreateDirectory($cacheDirectory)
 $buildLock = [IO.File]::Open((Join-Path $cacheDirectory 'build.lock'), 'OpenOrCreate', 'ReadWrite', 'None')
 try {
-    & $msbuild $project /nologo /m /t:Build /p:Configuration=Release /p:Platform=x64 "/p:UniversalDevKitGitHubVersion=$Version" "/p:OutDir=$buildDirectory\" "/p:IntDir=$objectDirectory\"
+    & $msbuild $project /nologo /m /nr:false /t:Build /p:Configuration=Release /p:Platform=x64 "/p:UniversalDevKitGitHubVersion=$Version" "/p:OutDir=$buildDirectory\" "/p:IntDir=$objectDirectory\"
     if ($LASTEXITCODE -ne 0) {
         throw 'UdkCli build failed.'
     }
@@ -108,7 +108,7 @@ try {
         Copy-Item -LiteralPath $archive -Destination $cachedPayload -Force
     }
 
-    & $msbuild $vsixProject /nologo /m /restore /p:Configuration=Release "/p:UniversalDevKitVsixVersion=$vsixVersion" "/p:OutDir=$vsixOutput\" "/p:ArtifactsPath=$cacheDirectory\vsix" "/p:UdkDiagnosticPayload=$diagnostic"
+    & $msbuild $vsixProject /nologo /m /nr:false /restore /p:Configuration=Release "/p:UniversalDevKitVsixVersion=$vsixVersion" "/p:OutDir=$vsixOutput\" "/p:ArtifactsPath=$cacheDirectory\vsix" "/p:UdkDiagnosticPayload=$diagnostic"
     if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $vsix -PathType Leaf)) {
         throw 'UDK Visual Studio extension build failed.'
     }
@@ -136,7 +136,7 @@ try {
 
     $setupProject = Join-Path $root (Get-ProjectToolsLocation $projectModel $applicationsByName['UdkCli.Setup'] 'DotNet' '.csproj')
     $dotnetArguments = @(
-        'publish', $setupProject, '-c', 'Release', '-r', 'win-x64', '--self-contained', 'true',
+        'publish', $setupProject, '-c', 'Release', '-r', 'win-x64', '--self-contained', 'true', '-nodeReuse:false',
         '--artifacts-path', (Join-Path $cacheDirectory 'wpf'), '-o', $setupOutput,
         '-p:PublishSingleFile=true', '-p:IncludeNativeLibrariesForSelfExtract=true',
         '-p:EnableCompressionInSingleFile=true', '-p:DebugType=None', '-p:IncludeSourceRevisionInInformationalVersion=false',

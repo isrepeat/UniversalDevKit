@@ -96,6 +96,9 @@ namespace UniversalDevKit.UdkCli.VisualStudio.Commands {
             try {
                 var result = await Task.Run(() => Generation.ProjectGenerator.RunAsync(root, clean));
                 pane.OutputStringThreadSafe(result);
+                if (VsShell.VsixLog.IsInitialized) {
+                    Diagnostic.Log.Write(Diagnostic.Level.Info, VsShell.VsixLog.Category, result);
+                }
             } finally {
                 await this.package.JoinableTaskFactory.SwitchToMainThreadAsync();
                 ErrorHandler.ThrowOnFailure(solution.GetProperty((int)__VSPROPID.VSPROPID_IsSolutionOpen, out isOpen));
