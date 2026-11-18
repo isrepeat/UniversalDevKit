@@ -4,7 +4,7 @@
     <Project id="vsix"
              kind="application"
              projectType="vsix"
-             version="0.4.4"
+             version="0.5.0"
              msbuildGuid="{5217622B-841E-4635-BA5D-8DE005125B16}">
       <Files>
         <Input role="source">Sources/Windows/UdkCli.VisualStudio/**/*.cs</Input>

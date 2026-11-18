@@ -99,10 +99,12 @@ namespace UniversalDevKit.UdkCli.Setup {
             return "\n\nIn Visual Studio, select Tools > Regenerate UDK Solution.";
         }
 
-        public static async Task UninstallAsync() {
+        public static async Task UninstallAsync(Action<string>? reportStatus = null) {
+            reportStatus?.Invoke("Finding Visual Studio installations…");
             var installations = await FindInstancesAsync();
             var failures = new List<string>();
             foreach (var installation in installations) {
+                reportStatus?.Invoke($"Checking the UDK extension in {installation.Name} ({installation.Id})…");
                 var log = Path.Combine(Path.GetTempPath(), $"UdkCli-Vsix-{Guid.NewGuid():N}.log");
                 try {
                     if (ReadInstalledVersions(installation).Length == 0) {
@@ -111,6 +113,7 @@ namespace UniversalDevKit.UdkCli.Setup {
                     if (IsVisualStudioRunning()) {
                         throw new InvalidOperationException("Close Visual Studio and run UDK Uninstall again.");
                     }
+                    reportStatus?.Invoke($"Removing the UDK extension from {installation.Name} ({installation.Id}). Waiting for VSIXInstaller. Log: {log}");
                     using var process = Start(installation.Installer, false, "/quiet",
                         $"/instanceIds:{installation.Id}", $"/logFile:{log}", $"/uninstall:{ExtensionId}");
                     await process.WaitForExitAsync();

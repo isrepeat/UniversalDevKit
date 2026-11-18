@@ -3,7 +3,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Reflection;
 using System.Diagnostics;
 
@@ -80,7 +79,8 @@ namespace UniversalDevKit.UdkCli.Setup {
             }
         }
 
-        public static void Uninstall(bool removeVersionCache) {
+        public static void Uninstall(bool removeVersionCache, IProgress<string>? progress = null) {
+            progress?.Report("Checking the UDK CLI installation…");
             using var registration = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(RegistryPath, writable: true);
             if (registration?.GetValue("InstallLocation") is not string registeredDirectory) {
                 throw new InvalidOperationException("UDK CLI is not registered for the current user.");
@@ -92,12 +92,14 @@ namespace UniversalDevKit.UdkCli.Setup {
                 throw new InvalidOperationException("Run the installed uninstaller from the Start menu.");
             }
 
-            Task.Run(VisualStudioIntegration.UninstallAsync).GetAwaiter().GetResult();
+            VisualStudioIntegration.UninstallAsync(status => progress?.Report(status)).GetAwaiter().GetResult();
 
             if (removeVersionCache) {
+                progress?.Report("Removing the UDK version cache…");
                 RemoveVersionCache(directory);
             }
 
+            progress?.Report("Removing UDK CLI files…");
             var tools = Path.Combine(directory, "Tools");
             if (Directory.Exists(tools)) {
                 Directory.Delete(tools, recursive: true);
@@ -105,9 +107,11 @@ namespace UniversalDevKit.UdkCli.Setup {
             File.Delete(Path.Combine(directory, "udk.exe"));
             File.Delete(Path.Combine(directory, "UniversalDevKit.Diagnostic.Dynamic.dll"));
             File.Delete(Path.Combine(directory, "LICENSE"));
+            progress?.Report("Removing the shortcut and updating PATH…");
             File.Delete(ShortcutPath);
             UpdatePath(registration, directory, addToPath: false);
 
+            progress?.Report("Finishing removal and scheduling uninstaller cleanup…");
             // Windows releases the executable after this process exits.
             var cleanup = new ProcessStartInfo {
                 FileName = Path.Combine(Environment.SystemDirectory, @"WindowsPowerShell\v1.0\powershell.exe"),

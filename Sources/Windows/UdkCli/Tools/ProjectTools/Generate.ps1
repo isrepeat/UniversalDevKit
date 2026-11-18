@@ -20,8 +20,14 @@ $versionPath = Join-Path $model.Root '.udk-version'
 if ($Clean -and ($Check -or $PassThru)) {
     throw 'Clean cannot be combined with Check or PassThru.'
 }
+$udkPlan = if ($model.Integration -or $model.Profile -eq 'udk') {
+    @(& (Join-Path $PSScriptRoot 'Profiles/Udk.ps1') -Model $model)
+} else {
+    @()
+}
+$plan = New-ProjectToolsMsBuildPlan $model $udkPlan
 if ($Clean) {
-    $projectPlan = New-ProjectToolsMsBuildPlan $model @()
+    $projectPlan = $plan
     $projectPaths = @($projectPlan.Projects.Path)
     $solution = Resolve-ProjectToolsPath $model.Root $model.Settings.solution
     if (Test-Path -LiteralPath $solution -PathType Leaf) {
@@ -46,7 +52,11 @@ if ($Clean) {
         $path + '.filters'
         $path + '.user'
     }
-    foreach ($path in $cleanupPaths) {
+    # Use the generation plan to include headers, dependency props and integration targets.
+    $cleanupPaths += @($projectPlan.Files | ForEach-Object {
+        Resolve-ProjectToolsPath $model.Root $_.RelativePath
+    })
+    foreach ($path in ($cleanupPaths | Sort-Object -Unique)) {
         if (Test-Path -LiteralPath $path -PathType Leaf) {
             Remove-Item -LiteralPath $path -Force
             Write-Host ('Removed: ' + (Get-ProjectToolsRelativePath $model.Root $path))
@@ -62,12 +72,6 @@ if ($Clean) {
     Write-Host 'ProjectTools solution cleanup completed.'
     return
 }
-$udkPlan = if ($model.Integration -or $model.Profile -eq 'udk') {
-    @(& (Join-Path $PSScriptRoot 'Profiles/Udk.ps1') -Model $model)
-} else {
-    @()
-}
-$plan = New-ProjectToolsMsBuildPlan $model $udkPlan
 $executable = & (Join-Path $PSScriptRoot 'Private/GetSolutionInjector.ps1') -LocalPath $SolutionInjectorPath
 $solutionUpdate = Get-ProjectToolsSolutionUpdate $model $plan.Projects $executable -Files $plan.Files
 if ($solutionUpdate) {
