@@ -112,6 +112,9 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Private\WinRT.ps1">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </None>
@@ -119,6 +122,9 @@
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Vsix.csproj.in">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Winui.csproj.in">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Wpf.csproj.in">
@@ -139,10 +145,28 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Library.CSharp.csproj.in">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Library.WinRT.Projection.csproj.in">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Public.props.in">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Requirements.targets.in">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\WinRT.Runtime.g.targets.in">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\WinRT\ManifestTasks.cs">
+      <__UniversalDevKitFilter></__UniversalDevKitFilter>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\WinRT\ManifestTasks.csproj">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
     </None>
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ReadManifest.ps1">

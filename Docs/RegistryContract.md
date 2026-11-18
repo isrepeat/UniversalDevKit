@@ -90,7 +90,7 @@
 |---|---|---|
 | `kind` | `library`, `application` | Обязателен в схемах 4 и 5 |
 | `language` | `cpp`, `csharp` | Поле схемы 4. В схеме 5 язык определяется по `projectType` |
-| `projectType` | `native` для C++, `wpf` и `vsix` для C#-приложений, `classLibrary` для C#-библиотек в схеме 5 | Обязателен в схемах 4 и 5 |
+| `projectType` | `native` и `winrt` для C++, `wpf`, `vsix` и `winui` для C#-приложений, `classLibrary` для C#-библиотек | Обязателен в схемах 4 и 5; WinRT/WinUI описаны в [WinRT.md](WinRT.md) |
 | `version` | Числовая версия из трёх или четырёх частей для проекта `vsix` | Необязательное поле |
 | `libraryType` | `compiled`, `headerOnly` | `compiled` для библиотек |
 | `stateScope` | `module`, `process` | `module` |

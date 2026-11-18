@@ -39,8 +39,10 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Private\Requirements.ps1" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Private\Solution.ps1" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Private\UpdateProjectFilters.ps1" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Private\WinRT.ps1" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Profiles\Udk.ps1" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Vsix.csproj.in" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Winui.csproj.in" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.Wpf.csproj.in" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Application.vcxproj.in" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Component.vcxproj.in" />
@@ -48,8 +50,14 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Export.h.in" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\HeaderCheck.cpp.in" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Library.CSharp.csproj.in" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Library.WinRT.Projection.csproj.in" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Public.props.in" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\Requirements.targets.in" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Templates\WinRT.Runtime.g.targets.in" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector-v1.1.0-dev.3-windows-x64.zip" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\Tools\SolutionInjector.json" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\WinRT\ManifestTasks.cs" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ProjectTools\WinRT\ManifestTasks.csproj" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ReadManifest.ps1" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\Tools\ResolveJsonReference.ps1" />
     <None Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Windows\UdkCli\UdkCli.props">

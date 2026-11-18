@@ -1,0 +1,6 @@
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <assemblyIdentity name="Preserved.Identity" version="1.2.3.4" type="win32" />
+  <file xmlns="urn:schemas-microsoft-com:asm.v3" name="HelloWorld.WinRT.dll">
+    <activatableClass xmlns="urn:schemas-microsoft-com:winrt.v1" name="HelloWorld.WinRT.Greeter" threadingModel="both" />
+  </file>
+</assembly>

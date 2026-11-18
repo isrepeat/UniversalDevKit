@@ -10,7 +10,7 @@
      Sources are not copied and compile with the consumer project settings.
      The Connect menu uses this registry; selections are validated before building. -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="UniversalDevKit.props"
+  <Import Project="$(MSBuildThisFileDirectory)..\..\MsBuild\UniversalDevKit.props"
           Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
   <ItemGroup>
     <__UniversalDevKitAvailableComponent Include="Diagnostic;Helpers;OpenGLESRenderer;XamlRuntime" />
@@ -74,7 +74,7 @@
   </ItemGroup>
   <ItemGroup Condition="$([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';OpenGLESRenderer;')) Or $([System.String]::Copy(';$(UniversalDevKitComponents);').Contains(';XamlRuntime;'))">
   </ItemGroup>
-  <Import Project="UniversalDevKit.Requirements.targets"
+  <Import Project="$(MSBuildThisFileDirectory)..\..\MsBuild\UniversalDevKit.Requirements.targets"
           Condition="'$(__IsUniversalDevKitRequirementsImported)' != 'true'" />
   <Target Name="__UniversalDevKitValidateComponents"
           BeforeTargets="PrepareForBuild">

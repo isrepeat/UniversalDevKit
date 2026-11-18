@@ -1,0 +1,30 @@
+<ComponentRegistry schemaVersion="7">
+  <Components>
+    <Component>Core.xml</Component>
+    <Component>WinRT.xml</Component>
+    <Component>Application.xml</Component>
+  </Components>
+  <Generation>
+    <MSBuild>
+      <SolutionName>HelloWorld</SolutionName>
+      <ProjectDirectory><Default>Projects/!Generated/MsBuild/{kind:title}/{name}</Default></ProjectDirectory>
+      <SolutionFolder><Default>Projects/{kind:title}/{name}</Default></SolutionFolder>
+      <Configurations>Debug;Release</Configurations>
+      <Platforms>x64</Platforms>
+    </MSBuild>
+  </Generation>
+  <Files>
+    <Input role="version-source">Version.json</Input>
+    <Output role="sourceIntegration-targets">Projects/!Generated/MsBuild/HelloWorld.Sources.{ext}</Output>
+    <Output role="core-exportHeader">Projects/!Generated/Includes/UniversalDevKit/Export.{ext}</Output>
+    <Output role="component-exportHeader">Projects/!Generated/Includes/UniversalDevKit/{name}/Export.{ext}</Output>
+    <Output role="version-header">Projects/!Generated/Includes/UniversalDevKit/Version.{ext}</Output>
+    <Output role="version-props">Projects/!Generated/MsBuild/HelloWorld.Version.{ext}</Output>
+    <Output role="dependencies-props">{projectDirectory}/{name}.Dependencies.{ext}</Output>
+    <Output role="project-nativeLibrary">{projectDirectory}/{name}.{variant:title}.{ext}</Output>
+    <Output role="shared-items">{projectDirectory}/{name}.Shared.{ext}</Output>
+    <Output role="project-winrt">{projectDirectory}/{name}.{ext}</Output>
+    <Output role="project-winrtProjection">{projectDirectory}/{name}.Projection.{ext}</Output>
+    <Output role="project-winui">{projectDirectory}/{name}.{ext}</Output>
+  </Files>
+</ComponentRegistry>

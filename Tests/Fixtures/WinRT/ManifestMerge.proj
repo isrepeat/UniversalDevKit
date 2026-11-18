@@ -1,0 +1,9 @@
+<Project DefaultTargets="Merge">
+  <UsingTask TaskName="UniversalDevKit.WinRT.MergeActivationManifest" AssemblyFile="$(ManifestTasksAssembly)" />
+  <Target Name="Merge">
+    <UniversalDevKit.WinRT.MergeActivationManifest BaseManifest="$(MSBuildThisFileDirectory)Manifests/Base.manifest" Fragments="$(MSBuildThisFileDirectory)Manifests/Same.manifest;$(MSBuildThisFileDirectory)Manifests/Same.manifest" Output="$(MergeOutput)" />
+  </Target>
+  <Target Name="Conflict">
+    <UniversalDevKit.WinRT.MergeActivationManifest BaseManifest="$(MSBuildThisFileDirectory)Manifests/Base.manifest" Fragments="$(MSBuildThisFileDirectory)Manifests/Conflict.manifest" Output="$(MergeOutput)" />
+  </Target>
+</Project>

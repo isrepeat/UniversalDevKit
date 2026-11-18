@@ -148,7 +148,7 @@ foreach ($includePath in $Model.Components.Keys) {
     if ($name -isnot [string]) {
         throw "Component name must be a string: $includePath"
     }
-    if ($name -notmatch '^[A-Z][A-Za-z0-9]*$') {
+    if ($name -cnotmatch '^[A-Z][A-Za-z0-9]*(?:\.[A-Za-z][A-Za-z0-9]*)*$') {
         throw "Invalid component name: $name"
     }
     if (-not $names.Add($name)) {
@@ -156,7 +156,7 @@ foreach ($includePath in $Model.Components.Keys) {
     }
     # Reject unknown fields; dependencies and platforms require explicit generator support.
     foreach ($field in $component.PSObject.Properties.Name) {
-        if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'browseFiles', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild', 'outputScope')) {
+        if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'browseFiles', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild', 'outputScope', 'projection')) {
             throw "Unsupported field ${name}: $field"
         }
     }
@@ -198,7 +198,7 @@ foreach ($includePath in $Model.Components.Keys) {
                     throw "Unsupported dependency field: $field"
                 }
             }
-            if ($dependency.component -isnot [string] -or $dependency.component -notmatch '^[A-Z][A-Za-z0-9]*$') {
+            if ($dependency.component -isnot [string] -or $dependency.component -cnotmatch '^[A-Z][A-Za-z0-9]*(?:\.[A-Za-z][A-Za-z0-9]*)*$') {
                 throw "Invalid dependency component in $name"
             }
             if ($dependency.visibility -cnotin @('private', 'public') -or $dependency.linkage -cnotin @('same', 'static', 'dynamic')) {
@@ -369,7 +369,8 @@ foreach ($includePath in $Model.Components.Keys) {
         if (-not $files.Add($path)) {
             throw "Duplicate component file: $path"
         }
-        if ([IO.Path]::GetExtension($path) -cne '.cpp') {
+        $isIdl = $component.projectType -eq 'winrt' -and [IO.Path]::GetExtension($path) -ceq '.idl'
+        if ([IO.Path]::GetExtension($path) -cne '.cpp' -and -not $isIdl) {
             throw "Expected .cpp source: $path"
         }
         $include = EscapeXml ($libraryRepositoryPrefix + $path.Replace('/', '\'))
@@ -378,13 +379,14 @@ foreach ($includePath in $Model.Components.Keys) {
         } else {
             ''
         }
-        $lines.Add('    <ClCompile Include="' + $include + '"' + $conditionAttribute + '>')
+        $itemType = if ($isIdl) { 'Midl' } else { 'ClCompile' }
+        $lines.Add('    <' + $itemType + ' Include="' + $include + '"' + $conditionAttribute + '>')
         $lines.Add('      <__UniversalDevKitComponent>' + $name + '</__UniversalDevKitComponent>')
         $lines.Add('      <__UniversalDevKitFilter>' + (EscapeXml (Get-ProjectToolsFilter $path $component.filters $relativePath)) + '</__UniversalDevKitFilter>')
         if ($fileSettings[$path].precompiledHeader -eq 'inherit' -and $component.compile.precompiledHeader -eq 'notUsing') {
             $lines.Add('      <__UniversalDevKitInheritPch>true</__UniversalDevKitInheritPch>')
         }
-        $lines.Add('    </ClCompile>')
+        $lines.Add('    </' + $itemType + '>')
     }
     $lines.Add('  </ItemGroup>')
     if ($componentSources.Count) {
@@ -561,7 +563,7 @@ foreach ($name in $componentNames) {
         if ($definitionSelectors.Count) {
             $lines.Add('  <ItemDefinitionGroup Condition="' + (GetSourceCondition $definitionSelectors) + '">')
             $lines.Add('    <ClCompile><AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\' + $binaryComponentRegistry[$name].IncludeRoot.Replace('/', '\') + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile>')
-            $lines.Add('    <ClCompile><PreprocessorDefinitions>UNIVERSALDEVKIT_' + $name.ToUpperInvariant() + '_DYNAMIC;%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile>')
+            $lines.Add('    <ClCompile><PreprocessorDefinitions>UNIVERSALDEVKIT_' + $name.Replace('.', '_').ToUpperInvariant() + '_DYNAMIC;%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile>')
             $lines.Add('  </ItemDefinitionGroup>')
         }
     }
@@ -661,7 +663,7 @@ foreach ($name in $componentNames) {
             }
             $libraryGuid = [Guid]::new([byte[]]$hash[0..15])
             $definitions = if ($mode -eq 'Dynamic') {
-                '      <PreprocessorDefinitions>UNIVERSALDEVKIT_' + $name.ToUpperInvariant() + '_DYNAMIC;UNIVERSALDEVKIT_' + $name.ToUpperInvariant() + '_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>'
+                '      <PreprocessorDefinitions>UNIVERSALDEVKIT_' + $name.Replace('.', '_').ToUpperInvariant() + '_DYNAMIC;UNIVERSALDEVKIT_' + $name.Replace('.', '_').ToUpperInvariant() + '_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>'
             } else {
                 ''
             }
@@ -754,7 +756,7 @@ foreach ($name in $componentNames) {
         }
         $lines.Add('  </ItemGroup>')
         $definitions = @($dependencyGraph.DefinitionComponents | ForEach-Object {
-            'UNIVERSALDEVKIT_' + $_.ToUpperInvariant() + '_DYNAMIC'
+            'UNIVERSALDEVKIT_' + $_.Replace('.', '_').ToUpperInvariant() + '_DYNAMIC'
         })
         if ($definitions.Count) {
             $lines.Add('  <ItemDefinitionGroup Condition="' + $condition + '">')
@@ -873,9 +875,12 @@ $componentExportTemplate = [IO.File]::ReadAllText((Join-Path $PSScriptRoot '../T
 if ($Model.Integration) {
     $componentExportTemplate = $componentExportTemplate.Replace('UniversalDevKit/Export.h', 'UniversalDevKit/Export.g.h')
 }
+if ($standalone) {
+    $exportTemplate = $exportTemplate.Replace("#include <UniversalDevKit/Platform.h>`r`n", '').Replace("#include <UniversalDevKit/Platform.h>`n", '').Replace('#if UNIVERSALDEVKIT_PLATFORM_WINDOWS', '#if defined(_WIN32)')
+}
 AddGeneratedMetadata $coreExportHeader $exportTemplate
 foreach ($name in $componentNames) {
-    $componentExport = $componentExportTemplate.Replace('@COMPONENT@', $name.ToUpperInvariant())
+    $componentExport = $componentExportTemplate.Replace('@COMPONENT@', $name.Replace('.', '_').ToUpperInvariant())
     if ($standalone) {
         $relativeCoreExport = Get-UdkProjectRelativePath $binaryComponentRegistry[$name].ExportHeader $coreExportHeader
         $componentExport = $componentExport -replace '#include <UniversalDevKit/Export(?:\.g)?\.h>', ('#include "' + $relativeCoreExport.Replace('\', '/') + '"')

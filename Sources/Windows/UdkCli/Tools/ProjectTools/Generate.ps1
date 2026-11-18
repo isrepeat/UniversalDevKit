@@ -12,7 +12,7 @@ $env:VSLANG = '1033'
 [Console]::InputEncoding = [Text.UTF8Encoding]::new($false)
 [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
 $OutputEncoding = [Text.UTF8Encoding]::new($false)
-foreach ($module in @('Contract', 'Linkage', 'MsBuild', 'Solution')) {
+foreach ($module in @('Contract', 'Linkage', 'MsBuild', 'WinRT', 'Solution')) {
     . (Join-Path $PSScriptRoot "Private/$module.ps1")
 }
 $model = Read-ProjectToolsModel $ManifestPath

@@ -1,0 +1,8 @@
+namespace HelloWorld.ExtraWinRT
+{
+    runtimeclass ExtraGreeter
+    {
+        ExtraGreeter();
+        String GetMessage();
+    }
+}

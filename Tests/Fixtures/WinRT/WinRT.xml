@@ -1,0 +1,16 @@
+<Component name="HelloWorld.WinRT">
+  <Projects>
+    <Project id="winrt" kind="library" projectType="winrt">
+      <Projection assemblyName="HelloWorld.WinRT.Projection" targetFramework="net10.0-windows10.0.26100.0" />
+      <Files>
+        <Input role="header">Sources/WinRT/Greeter.h</Input>
+        <Input role="source">Sources/WinRT/Greeter.cpp</Input>
+        <Input role="source">Sources/WinRT/Greeter.idl</Input>
+      </Files>
+      <Compile>
+        <IncludeDirectories><IncludeDirectory>Sources</IncludeDirectory></IncludeDirectories>
+      </Compile>
+      <Dependencies><Dependency component="HelloWorld.Core" visibility="private" linkage="static" /></Dependencies>
+    </Project>
+  </Projects>
+</Component>

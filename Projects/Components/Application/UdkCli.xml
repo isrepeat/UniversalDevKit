@@ -15,7 +15,7 @@
     <Project id="native"
              kind="application"
              projectType="native"
-             githubVersion="0.5.0"
+             githubVersion="0.5.1"
              msbuildGuid="{9C7AAB80-FA41-4925-95FA-06409E32E4E1}">
       <Files>
         <Group id="ToolsAndConfiguration">

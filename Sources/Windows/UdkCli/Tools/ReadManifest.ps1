@@ -18,8 +18,8 @@ function Get-UdkPackageManifests([string]$Root) {
 
 function Get-UdkOutputExtension([string]$Role) {
     switch -CaseSensitive ($Role) {
-        { $_ -cin @('project-nativeLibrary', 'project-nativeApplication', 'project-headerCheck') } { 'vcxproj' }
-        { $_ -cin @('project-classLibrary', 'project-wpf', 'project-vsix') } { 'csproj' }
+        { $_ -cin @('project-nativeLibrary', 'project-nativeApplication', 'project-headerCheck', 'project-winrt') } { 'vcxproj' }
+        { $_ -cin @('project-classLibrary', 'project-wpf', 'project-vsix', 'project-winui', 'project-winrtProjection') } { 'csproj' }
         'shared-items' { 'vcxitems' }
         { $_ -cin @('core-exportHeader', 'component-exportHeader', 'version-header') } { 'g.h' }
         { $_ -cin @('dependencies-props', 'version-props') } { 'g.props' }
@@ -173,7 +173,7 @@ function Convert-UdkComponentFiles([System.Xml.XmlElement]$Owner) {
             [void]$target.AppendChild($file.CloneNode($true))
         }
     }
-    if ($Owner.GetAttribute('projectType') -ceq 'native' -or $legacyProject) {
+    if ($Owner.GetAttribute('projectType') -cin @('native', 'winrt') -or $legacyProject) {
         foreach ($bucket in 'Headers', 'Sources') {
             if (-not $Owner.SelectSingleNode($bucket)) {
                 [void]$Owner.InsertBefore($document.CreateElement($bucket), $files)

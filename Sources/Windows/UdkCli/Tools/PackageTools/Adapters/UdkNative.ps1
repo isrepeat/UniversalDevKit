@@ -342,7 +342,7 @@ function Invoke-UdkNativeProject($Project, $Context) {
                         WriteGenerated (Join-Path $destination 'Abi.g.h') ($abiText.TrimEnd() + "`n#if _MSC_FULL_VER != $fullCompiler`n#error UniversalDevKit package exact compiler mismatch`n#endif")
                     }
                     $definitions = (@($graph.DefinitionComponents | ForEach-Object {
-                        'UNIVERSALDEVKIT_' + $_.ToUpperInvariant() + '_DYNAMIC'
+                        'UNIVERSALDEVKIT_' + $_.Replace('.', '_').ToUpperInvariant() + '_DYNAMIC'
                         }) -join ';') + ';'
                     $includes = (@($graph.RequirementComponents | ForEach-Object {
                         (PackageRoot $_) + 'include'

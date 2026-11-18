@@ -350,8 +350,9 @@ function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, 
         if ($project.Variant -eq 'DotNet') {
             $lines += @(('Project("' + $dotnetProjectType + '") = "' + $name + '", "' + $relative + '", "' + $project.Guid + '"'), 'EndProject')
             foreach ($configuration in $Model.Settings.configurations) { foreach ($platform in $Model.Settings.platforms) {
-                $configs += "`t`t$($project.Guid).$configuration|$platform.ActiveCfg = $configuration|Any CPU"
-                $configs += "`t`t$($project.Guid).$configuration|$platform.Build.0 = $configuration|Any CPU"
+                $projectPlatform = if ($project.NativePlatform) { $platform } else { 'Any CPU' }
+                $configs += "`t`t$($project.Guid).$configuration|$platform.ActiveCfg = $configuration|$projectPlatform"
+                $configs += "`t`t$($project.Guid).$configuration|$platform.Build.0 = $configuration|$projectPlatform"
             } }
             continue
         }

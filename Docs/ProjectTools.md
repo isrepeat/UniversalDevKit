@@ -15,6 +15,8 @@ Shared и метаданные UDK формирует профиль UDK; биб
 
 Проверка генератора описана в `Tests/Infrastructure/TestProjectTools.ps1`.
 
+Типы `winui` и `winrt`, готовая C#-проекция, автоматический манифест и упаковка NuGet описаны в [WinUI и C++/WinRT](WinRT.md). Интеграционный пример и проверка: `Tests/Fixtures/WinRT` и `Tests/Infrastructure/TestWinRT.ps1`.
+
 ProjectTools поставляет проверяемый архив SolutionInjector v1.1.0-dev.3 и использует sync вместо вставки проектов. Владение хранится в GlobalSection(SolutionInjectorProjectOwnership) самого решения. Обновление конфигураций и Shared-ссылок, перемещение и удаление управляемых записей проверяются на временной копии до записи основного solution. Версия для Connect закреплена в `Sources/Windows/UdkCli/SolutionInjector.Connect.json`. Для тестовых реестров используются отдельные минимальные solutions, чтобы они не наследовали владение рабочими компонентами UDK.
 
 ## Контракт

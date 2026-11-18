@@ -1,0 +1,15 @@
+<Component name="HelloWorld.Core">
+  <Projects>
+    <Project id="native" kind="library" projectType="native">
+      <Variants>Static;Dynamic</Variants>
+      <Files>
+        <Input role="header">Sources/Core/Greeting.h</Input>
+        <Input role="source">Sources/Core/Greeting.cpp</Input>
+      </Files>
+      <Compile>
+        <IncludeDirectories><IncludeDirectory>Sources</IncludeDirectory></IncludeDirectories>
+        <PrecompiledHeader>notUsing</PrecompiledHeader>
+      </Compile>
+    </Project>
+  </Projects>
+</Component>

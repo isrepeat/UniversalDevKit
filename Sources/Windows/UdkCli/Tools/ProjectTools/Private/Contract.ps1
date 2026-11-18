@@ -607,11 +607,11 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
                 throw "Invalid project object: $include"
             }
             $language = switch -CaseSensitive ($project.projectType) {
-                'native' {
+                { $_ -cin @('native', 'winrt') } {
                     'cpp'
                 }
                 {
-                    $_ -cin @('classLibrary', 'wpf', 'vsix')
+                    $_ -cin @('classLibrary', 'wpf', 'vsix', 'winui')
                 } {
                     'csharp'
                 }
@@ -689,12 +689,30 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         }
         $isManagedLibrary = $manifest.schemaVersion -ge 5 -and $component.kind -ceq 'library' -and
             $component.language -ceq 'csharp' -and $component.projectType -ceq 'classLibrary'
-        $isDotNet = $isManagedLibrary -or ($unified -and $isApplication -and $component.language -ceq 'csharp' -and $component.projectType -cin @('wpf', 'vsix'))
-        if (-not $isDotNet -and $component.name -notmatch '^[A-Z][A-Za-z0-9]*$') {
+        $isDotNet = $isManagedLibrary -or ($unified -and $isApplication -and $component.language -ceq 'csharp' -and $component.projectType -cin @('wpf', 'vsix', 'winui'))
+        $isWinRT = $component.projectType -ceq 'winrt'
+        if (-not $isWinRT -and $component.PSObject.Properties['projection']) { throw "projection requires projectType=winrt: $include" }
+        if ($isWinRT -and ($component.kind -cne 'library' -or $component.libraryType -eq 'headerOnly' -or
+            ($component.variants -and (@($component.variants).Count -ne 1 -or $component.variants[0] -cne 'Dynamic')))) {
+            throw "WinRT requires a compiled Dynamic library: $include"
+        }
+        if ($isWinRT) {
+            $component | Add-Member variants @('Dynamic') -Force
+            if ($component.projection.assemblyName -cnotmatch '^[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z0-9_]+)*$' -or
+                $component.projection.assemblyName -eq $component.name -or
+                $component.projection.targetFramework -cnotmatch '^net[0-9]+\.[0-9]+-windows10\.0\.[0-9]+\.0$' -or
+                @($component.projection.PSObject.Properties.Name | Where-Object { $_ -cnotin @('assemblyName', 'targetFramework') }).Count) {
+                throw "WinRT requires projection.assemblyName and a Windows projection.targetFramework: $include"
+            }
+            if ($component.msbuild.properties.RootNamespace -and $component.msbuild.properties.RootNamespace -cne $component.name) {
+                throw "WinRT RootNamespace must match the component name: $include"
+            }
+        }
+        if (-not $isDotNet -and $component.name -cnotmatch '^[A-Z][A-Za-z0-9]*(?:\.[A-Za-z][A-Za-z0-9]*)*$') {
             throw "Invalid native component name: $($component.name)"
         }
         if ($unified) {
-            if (-not $isDotNet -and ($component.language -cne 'cpp' -or $component.projectType -cne 'native')) {
+            if (-not $isDotNet -and ($component.language -cne 'cpp' -or $component.projectType -cnotin @('native', 'winrt'))) {
                 throw "Unsupported language and projectType for component: $include"
             }
             if ($component.kind -ceq 'library' -and -not $isManagedLibrary) {
@@ -724,7 +742,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
                 }
             }
             foreach ($field in $component.PSObject.Properties.Name) {
-                if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'version', 'abiVersion', 'msbuildGuid', 'msbuild', 'buildExtensions', 'filters', 'browseFiles', 'sources', 'excludeSources', 'outputScope')) {
+                if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'version', 'abiVersion', 'msbuildGuid', 'msbuild', 'buildExtensions', 'filters', 'browseFiles', 'sources', 'excludeSources', 'outputScope', 'dependencies')) {
                     throw "Unsupported C# application field: $field"
                 }
             }
@@ -737,14 +755,30 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
             if ($isManagedLibrary -and ($framework -isnot [string] -or $framework -cnotmatch '^net(?:standard|coreapp)?[0-9]+(?:\.[0-9]+)*(?:-[a-z]+[0-9.]*)?$')) {
                 throw "C# classLibrary requires TargetFramework in msbuild.properties: $include"
             }
-            if ($component.projectType -eq 'wpf' -and ($framework -isnot [string] -or $framework -cnotmatch '^net[0-9]+\.[0-9]+-windows(?:[0-9]+(?:\.[0-9]+)*)?$')) {
+            if ($component.projectType -in @('wpf', 'winui') -and ($framework -isnot [string] -or $framework -cnotmatch '^net[0-9]+\.[0-9]+-windows(?:[0-9]+(?:\.[0-9]+)*)?$')) {
                 throw "WPF requires a Windows TargetFramework in msbuild.properties: $include"
             }
             if ($component.projectType -eq 'vsix' -and ($framework -isnot [string] -or $framework -cne 'net472')) {
                 throw "VSIX requires TargetFramework net472 in msbuild.properties: $include"
             }
+            if (-not $component.PSObject.Properties['sources']) { $component | Add-Member sources @() }
             $component.sources = @(Expand-ProjectToolsFiles $root $component.sources $component.excludeSources)
-            $extensions = if ($component.projectType -eq 'wpf') {
+            if ($component.dependencies -and $component.projectType -ne 'winui') {
+                throw "Only WinUI applications support C# component dependencies: $include"
+            }
+            foreach ($dependency in $component.dependencies) {
+                if ($dependency.component -isnot [string] -or $dependency.visibility -cnotin @('private', 'public') -or
+                    $dependency.linkage -cnotin @('same', 'dynamic') -or
+                    @($dependency.PSObject.Properties.Name | Where-Object { $_ -cnotin @('component', 'visibility', 'linkage') }).Count) {
+                    throw "WinUI dependencies require component, visibility and dynamic/same linkage: $include"
+                }
+            }
+            if ($component.projectType -eq 'winui' -and $component.msbuild.properties.WindowsPackageType -and $component.msbuild.properties.WindowsPackageType -ne 'None') {
+                throw "WinUI supports unpackaged applications only: $include"
+            }
+            $extensions = if ($component.projectType -eq 'winui') {
+                @('.cs', '.xaml', '.resw', '.manifest', '.png', '.jpg', '.jpeg', '.ico', '.svg')
+            } elseif ($component.projectType -eq 'wpf') {
                 @('.cs', '.xaml')
             } else {
                 @('.cs')
@@ -761,7 +795,7 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
             }
         } else {
             foreach ($field in $component.PSObject.Properties.Name) {
-                if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'browseFiles', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild', 'outputScope')) {
+                if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'browseFiles', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild', 'outputScope', 'projection')) {
                     throw "Unknown component field: $field"
                 }
             }

@@ -1,0 +1,8 @@
+namespace HelloWorld.WinRT
+{
+    runtimeclass Greeter
+    {
+        Greeter();
+        String GetMessage();
+    }
+}

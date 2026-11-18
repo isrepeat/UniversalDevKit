@@ -9,7 +9,7 @@ function GetRelativePath([string]$FromDirectory, [string]$ToPath) {
 function GetSolutionSharedProjects([string]$Path) {
     $solutionDirectory = Split-Path -Parent $Path
     $result = @{}
-    $pattern = '(?m)^Project\("[^\r\n]+"\)\s*=\s*"UniversalDevKit\.([A-Z][A-Za-z0-9]*)\.Shared",\s*"([^"]+\.vcxitems)",\s*"\{([^}]+)\}"'
+    $pattern = '(?m)^Project\("[^\r\n]+"\)\s*=\s*"UniversalDevKit\.([A-Z][A-Za-z0-9]*(?:\.[A-Za-z][A-Za-z0-9]*)*)\.Shared",\s*"([^"]+\.vcxitems)",\s*"\{([^}]+)\}"'
     foreach ($match in [regex]::Matches([IO.File]::ReadAllText($Path), $pattern)) {
         $guid = [Guid]::Empty
         if (-not [Guid]::TryParse($match.Groups[3].Value, [ref]$guid)) {

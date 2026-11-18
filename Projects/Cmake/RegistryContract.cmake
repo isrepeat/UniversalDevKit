@@ -107,7 +107,7 @@ function(udkCheckComponentContract json)
                 string(JSON name GET "${dependency}" component)
                 string(JSON visibility GET "${dependency}" visibility)
                 string(JSON linkage GET "${dependency}" linkage)
-                if(NOT name MATCHES "^[A-Z][A-Za-z0-9]*$" OR name IN_LIST names OR
+                if(NOT name MATCHES "^[A-Z][A-Za-z0-9]*(\\.[A-Za-z][A-Za-z0-9]*)*$" OR name IN_LIST names OR
                    NOT visibility MATCHES "^(public|private)$" OR NOT linkage MATCHES "^(same|static|dynamic)$")
                     message(FATAL_ERROR "Invalid dependency contract")
                 endif()

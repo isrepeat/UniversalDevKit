@@ -1,0 +1,14 @@
+<Component name="HelloWorld.ExtraWinRT">
+  <Projects>
+    <Project id="winrt" kind="library" projectType="winrt">
+      <Projection assemblyName="HelloWorld.ExtraWinRT.Projection" targetFramework="net10.0-windows10.0.26100.0" />
+      <Files>
+        <Input role="header">Sources/ExtraWinRT/ExtraGreeter.h</Input>
+        <Input role="source">Sources/ExtraWinRT/ExtraGreeter.cpp</Input>
+        <Input role="source">Sources/ExtraWinRT/ExtraGreeter.idl</Input>
+      </Files>
+      <Compile><IncludeDirectories><IncludeDirectory>Sources</IncludeDirectory></IncludeDirectories></Compile>
+      <Dependencies><Dependency component="HelloWorld.Core" visibility="private" linkage="dynamic" /></Dependencies>
+    </Project>
+  </Projects>
+</Component>

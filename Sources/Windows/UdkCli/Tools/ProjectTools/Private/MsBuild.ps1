@@ -2,12 +2,16 @@ function ConvertTo-ProjectToolsXml([string]$Value) {
     return [Security.SecurityElement]::Escape($Value)
 }
 
-function Get-ProjectToolsApplicationProperties($Component, [string[]]$Reserved) {
+function Get-ProjectToolsApplicationProperties($Component, [string[]]$Reserved, $Model, [string]$Path) {
     foreach ($property in $Component.msbuild.properties.PSObject.Properties) {
         if ($property.Name -notmatch '^[A-Za-z_][A-Za-z0-9_]*$' -or $property.Name -in $Reserved) {
             throw "Invalid application MSBuild property: $($property.Name)"
         }
-        '    <' + $property.Name + '>' + (ConvertTo-ProjectToolsXml $property.Value) + '</' + $property.Name + '>'
+        $value = $property.Value
+        if ($Component.projectType -eq 'winui' -and $property.Name -eq 'ApplicationManifest') {
+            $value = Get-ProjectToolsRelativeImport $Model $Path $value
+        }
+        '    <' + $property.Name + '>' + (ConvertTo-ProjectToolsXml $value) + '</' + $property.Name + '>'
     }
 }
 
@@ -16,6 +20,9 @@ function Get-ProjectToolsLocation($Model, $Component, [string]$Variant, [string]
         $role = if ($Extension -eq '.csproj') {
             'project-' + $Component.projectType
         } else {
+            if ($Component.projectType -eq 'winrt' -and $Variant -eq 'Dynamic') {
+                return Get-ProjectToolsOutputPath $Model $Component 'project-winrt' $Variant
+            }
             switch ($Variant) {
                 'Shared' { 'shared-items' }
                 'Dependencies' { 'dependencies-props' }
@@ -201,7 +208,7 @@ function New-ProjectToolsApplicationProject($Model, $Component, [string]$Path, [
             '    </ProjectConfiguration>'
         }
     }
-    $properties = Get-ProjectToolsApplicationProperties $Component @('ProjectGuid', 'Keyword', 'WindowsTargetPlatformVersion', 'UniversalDevKitGitHubVersion')
+    $properties = Get-ProjectToolsApplicationProperties $Component @('ProjectGuid', 'Keyword', 'WindowsTargetPlatformVersion', 'UniversalDevKitGitHubVersion') $Model $Path
     if ($Component.githubVersion) {
         $properties = @('    <UniversalDevKitGitHubVersion>' + (ConvertTo-ProjectToolsXml $Component.githubVersion) + '</UniversalDevKitGitHubVersion>') + @($properties)
     }
@@ -245,7 +252,9 @@ function Get-ProjectToolsDotNetLocation($Model, $Component) {
 }
 
 function New-ProjectToolsDotNetProject($Model, $Component, [string]$Path) {
-    $reserved = if ($Component.projectType -eq 'wpf') {
+    $reserved = if ($Component.projectType -eq 'winui') {
+        @('ProjectGuid', 'OutputType', 'UseWinUI', 'Nullable', 'EnableDefaultNoneItems')
+    } elseif ($Component.projectType -eq 'wpf') {
         @('ProjectGuid', 'OutputType', 'UseWPF', 'Nullable')
     }
         elseif ($Component.projectType -eq 'classLibrary') {
@@ -258,7 +267,7 @@ function New-ProjectToolsDotNetProject($Model, $Component, [string]$Path) {
     if ($Component.version) {
         $reserved += 'UniversalDevKitVsixVersion'
     }
-    $properties = Get-ProjectToolsApplicationProperties $Component $reserved
+    $properties = Get-ProjectToolsApplicationProperties $Component $reserved $Model $Path
     if ($Component.version) {
         $properties = @('    <UniversalDevKitVsixVersion>' + (ConvertTo-ProjectToolsXml $Component.version) + '</UniversalDevKitVsixVersion>') + @($properties)
     }
@@ -300,12 +309,15 @@ function New-ProjectToolsDotNetProject($Model, $Component, [string]$Path) {
                 'Compile'
             }
             '.xaml' {
-                if ([IO.Path]::GetFileName($file) -ieq 'App.xaml') {
+                if ([IO.Path]::GetFileName($file) -in @('App.xaml', 'App.g.xaml')) {
                     'ApplicationDefinition'
                 } else {
                     'Page'
                 }
             }
+            '.resw' { 'PRIResource' }
+            '.manifest' { 'None' }
+            default { 'Content' }
         }
         if (-not $outsideProject) {
             '    <None Remove="' + $include + '" />'
@@ -329,6 +341,9 @@ function New-ProjectToolsDotNetProject($Model, $Component, [string]$Path) {
         (@('  <ItemGroup Condition="''$(BuildingInsideVisualStudio)'' == ''true''">') + $runtimeReferences + '  </ItemGroup>') -join "`n"
     }
     $templateName = switch ($Component.projectType) {
+        'winui' {
+            'Application.Winui.csproj.in'
+        }
         'wpf' {
             'Application.Wpf.csproj.in'
         }
@@ -341,6 +356,11 @@ function New-ProjectToolsDotNetProject($Model, $Component, [string]$Path) {
     }
     $template = [IO.File]::ReadAllText((Join-Path $PSScriptRoot "../Templates/$templateName"))
     $values = @{ PROPERTIES = $properties -join "`n"; FILTERS = $filters; IMPORTS = $imports -join "`n"; REFERENCES = $references }
+    if ($Component.projectType -eq 'winui') {
+        $values.ARTIFACTS = Get-ProjectToolsWinRTArtifactRoot $Model $Path $Component.name
+        $values.PLATFORMS = $Model.Settings.platforms -join ';'
+        $values.DEFAULTPLATFORM = $Model.Settings.platforms[0]
+    }
     return [regex]::Replace($template, '@([A-Z]+)@', {
         param($match) $values[$match.Groups[1].Value]
     })
@@ -440,10 +460,11 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
             $lines.Add('  <ItemGroup>')
             foreach ($group in @(@{ Type = 'ClInclude'; Files = $component.headers }, @{ Type = 'ClCompile'; Files = $component.sources })) {
                 foreach ($file in $group.Files) {
+                    $itemType = if ($component.projectType -eq 'winrt' -and [IO.Path]::GetExtension($file) -eq '.idl') { 'Midl' } else { $group.Type }
                     $include = Get-ProjectToolsRelativeImport $Model $sharedPath $file
                     $filter = Get-ProjectToolsFilter $file $component.filters $sharedPath
-                    $sharedItems.Add(@{ Type = $group.Type; Include = $include; Filter = $filter })
-                    $lines.Add('    <' + $group.Type + ' Include="' + (ConvertTo-ProjectToolsXml $include) + '" />')
+                    $sharedItems.Add(@{ Type = $itemType; Include = $include; Filter = $filter })
+                    $lines.Add('    <' + $itemType + ' Include="' + (ConvertTo-ProjectToolsXml $include) + '" />')
                 }
             }
             foreach ($file in (@($component.buildExtensions.msbuildProps, $component.buildExtensions.msbuildTargets) + @($component.browseFiles)) | Where-Object {
@@ -497,7 +518,7 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
                 $_
             })
             if ($integration -and -not $definitions.Count) {
-                $prefix = 'UNIVERSALDEVKIT_' + $component.name.ToUpperInvariant()
+                $prefix = 'UNIVERSALDEVKIT_' + $component.name.Replace('.', '_').ToUpperInvariant()
                 $definitions = @($prefix + '_DYNAMIC'; $prefix + '_EXPORTS')
             }
             $definitionXml = if ($variant -eq 'Dynamic' -and $definitions.Count) {
@@ -561,7 +582,7 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
         $guid = ([Guid]$component.msbuildGuid).ToString('B').ToUpperInvariant()
         if ($component.language -ceq 'csharp') {
             $path = Get-ProjectToolsDotNetLocation $Model $component
-            $projects.Add([pscustomobject]@{ Path = $path; Guid = $guid; Variant = 'DotNet'; Component = $component.name })
+            $projects.Add([pscustomobject]@{ Path = $path; Guid = $guid; Variant = 'DotNet'; Component = $component.name; NativePlatform = ($component.projectType -eq 'winui') })
             AddOutput $path (New-ProjectToolsDotNetProject $Model $component $path)
             continue
         }
@@ -573,11 +594,13 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
         AddOutput $sharedPath (New-ProjectToolsApplicationSharedProject $Model $component $sharedPath $sharedGuid)
         AddOutput $path (New-ProjectToolsApplicationProject $Model $component $path $sharedPath)
     }
+    Add-ProjectToolsWinRTPlan $Model $plan $projects
     if (@($projects.Guid | Sort-Object -Unique).Count -ne $projects.Count) {
         throw 'Duplicate project GUID.'
     }
     if ($Model.Manifest.schemaVersion -ge 6) {
         foreach ($project in $projects) {
+            if ($project.PSObject.Properties['SolutionFolder']) { continue }
             $component = switch ($project.Variant) {
                 'DotNet' {
                     @($Model.ManagedLibraries.Values) + @($Model.Applications.Values) | Where-Object {

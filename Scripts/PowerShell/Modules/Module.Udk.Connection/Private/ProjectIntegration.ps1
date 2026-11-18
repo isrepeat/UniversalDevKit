@@ -215,7 +215,7 @@ function Invoke-UdkConnectionPlanCore {
                 [void]$reference.AppendChild($link)
                 [void]$libraryReferences.AppendChild($reference)
                 if ($name -cin $Plan.DefinitionComponents) {
-                    $dynamicDefinitions += 'UNIVERSALDEVKIT_' + $name.ToUpperInvariant() + '_DYNAMIC'
+                    $dynamicDefinitions += 'UNIVERSALDEVKIT_' + $name.Replace('.', '_').ToUpperInvariant() + '_DYNAMIC'
                 }
                 if ($name -cin $Plan.RuntimeComponents) {
                     $runtime = $document.CreateElement('__UniversalDevKitRuntimeProject', $namespace)
