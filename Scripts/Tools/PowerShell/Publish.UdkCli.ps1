@@ -67,7 +67,12 @@ $objectDirectory = Join-Path $cacheDirectory 'cpp\obj'
 $setupOutput = Join-Path $cacheDirectory 'wpf\publish'
 $cachedPayload = Join-Path $cacheDirectory 'UdkPayload.zip'
 $vsixOutput = Join-Path $cacheDirectory 'vsix\bin'
-$vsixProject = Join-Path $root (Get-ProjectToolsLocation $projectModel $applicationsByName['UdkCli.VisualStudio'] 'DotNet' '.csproj')
+$vsixComponent = $applicationsByName['UdkCli.VisualStudio']
+$vsixVersion = $vsixComponent.version
+if (-not $vsixVersion) {
+    throw 'The Visual Studio extension version is missing from the component manifest.'
+}
+$vsixProject = Join-Path $root (Get-ProjectToolsLocation $projectModel $vsixComponent 'DotNet' '.csproj')
 $vsix = Join-Path $vsixOutput 'UdkCli.VisualStudio.vsix'
 $diagnostic = Join-Path $buildDirectory 'UniversalDevKit.Diagnostic.Dynamic.dll'
 $packageDirectory = Join-Path $releaseDirectory 'package'
@@ -103,9 +108,30 @@ try {
         Copy-Item -LiteralPath $archive -Destination $cachedPayload -Force
     }
 
-    & $msbuild $vsixProject /nologo /m /restore /p:Configuration=Release "/p:OutDir=$vsixOutput\" "/p:ArtifactsPath=$cacheDirectory\vsix" "/p:UdkDiagnosticPayload=$diagnostic"
+    & $msbuild $vsixProject /nologo /m /restore /p:Configuration=Release "/p:UniversalDevKitVsixVersion=$vsixVersion" "/p:OutDir=$vsixOutput\" "/p:ArtifactsPath=$cacheDirectory\vsix" "/p:UdkDiagnosticPayload=$diagnostic"
     if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $vsix -PathType Leaf)) {
         throw 'UDK Visual Studio extension build failed.'
+    }
+
+    $vsixArchive = [IO.Compression.ZipFile]::OpenRead($vsix)
+    try {
+        $manifestEntry = $vsixArchive.GetEntry('extension.vsixmanifest')
+        if (-not $manifestEntry) {
+            throw 'The built VSIX has no extension manifest.'
+        }
+        $manifestStream = $manifestEntry.Open()
+        try {
+            $vsixManifest = [xml]::new()
+            $vsixManifest.Load($manifestStream)
+        } finally {
+            $manifestStream.Dispose()
+        }
+        $identity = $vsixManifest.PackageManifest.Metadata.Identity
+        if ($identity.Id -ne 'UniversalDevKit.UdkCli.VisualStudio' -or $identity.Version -ne $vsixVersion) {
+            throw "The built VSIX must contain UDK extension version $vsixVersion; found '$($identity.Id)' version '$($identity.Version)'."
+        }
+    } finally {
+        $vsixArchive.Dispose()
     }
 
     $setupProject = Join-Path $root (Get-ProjectToolsLocation $projectModel $applicationsByName['UdkCli.Setup'] 'DotNet' '.csproj')
