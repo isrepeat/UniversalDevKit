@@ -327,10 +327,19 @@ foreach(componentName IN LISTS registeredComponentNames)
     add_library(${componentHeadersTarget} INTERFACE)
     add_library(UniversalDevKit::${componentName}.Headers ALIAS ${componentHeadersTarget})
     target_link_libraries(${componentHeadersTarget} INTERFACE UniversalDevKit::Headers)
-    target_include_directories(${componentHeadersTarget} INTERFACE
-        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${componentIncludeRoot_${componentName}}>"
-        "$<INSTALL_INTERFACE:include>"
-    )
+    string(JSON usageScript ERROR_VARIABLE missingUsageScript GET "${componentDefinitionJson_${componentName}}" consumerIntegration cmake script)
+    if(missingUsageScript)
+        target_include_directories(${componentHeadersTarget} INTERFACE
+            "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/${componentIncludeRoot_${componentName}}>"
+        )
+    else()
+        udkCheckRegistryPath("${usageScript}")
+        if(NOT usageScript MATCHES "[.]cmake$" OR NOT EXISTS "${PROJECT_SOURCE_DIR}/${usageScript}")
+            message(FATAL_ERROR "Invalid ConsumerIntegration CMake script for ${componentName}: ${usageScript}")
+        endif()
+        include("${PROJECT_SOURCE_DIR}/${usageScript}")
+    endif()
+    target_include_directories(${componentHeadersTarget} INTERFACE "$<INSTALL_INTERFACE:include>")
     target_compile_features(${componentHeadersTarget} INTERFACE cxx_std_${componentRequiredStandard_${componentName}})
     set_target_properties(${componentHeadersTarget} PROPERTIES EXPORT_NAME ${componentName}.Headers)
 

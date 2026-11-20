@@ -12,6 +12,10 @@
                     visibility="private"
                     linkage="same" />
       </Dependencies>
+      <ConsumerIntegration>
+        <MSBuild props="Sources/Diagnostic/Native/MsBuild/Diagnostic.Usage.props" />
+        <CMake script="Sources/Diagnostic/Native/Cmake/Diagnostic.Usage.cmake" />
+      </ConsumerIntegration>
       <Files>
         <Input role="header">Includes/Diagnostic/UniversalDevKit/Diagnostic/**/*.h</Input>
         <Group id="NativeSources">

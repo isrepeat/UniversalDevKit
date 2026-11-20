@@ -2,6 +2,8 @@
   <!-- The restored tool package generates a C# file in the consumer's obj directory. -->
   <Target Name="__UniversalDevKitPackageDeliveryGenerate" BeforeTargets="CoreCompile">
     <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;&amp; ([scriptblock]::Create([IO.File]::ReadAllText('$(MSBuildThisFileDirectory)../tools/Generate.ps1'))) -Output '$(IntermediateOutputPath)UdkPackageDelivery.g.cs'&quot;" />
-    <ItemGroup><Compile Include="$(IntermediateOutputPath)UdkPackageDelivery.g.cs" /></ItemGroup>
+    <ItemGroup>
+      <Compile Include="$(IntermediateOutputPath)UdkPackageDelivery.g.cs" />
+    </ItemGroup>
   </Target>
 </Project>

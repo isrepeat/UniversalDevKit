@@ -552,6 +552,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         }
     }
     $components = [ordered]@{}
+    $nativeTargets = @{}
     $applications = [ordered]@{}
     $managedLibraries = [ordered]@{}
     if ($manifest.PSObject.Properties['msbuildApplications'] -and ($profile -ne 'udk' -or $manifest.msbuildApplications -isnot [Array])) {
@@ -694,7 +695,8 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
             $projectId = $project.id
             $project.PSObject.Properties.Remove('id')
             $project | Add-Member name $definition.name
-            [pscustomobject]@{ Include = $include; Component = $project; RuntimeProjects = $runtimeProjects; ProjectId = $projectId }
+            $projectTarget = @($localTargets.Keys | Where-Object { $localTargets[$_] -ceq $projectId })
+            [pscustomobject]@{ Include = $include; Component = $project; RuntimeProjects = $runtimeProjects; ProjectId = $projectId; ProjectTarget = $projectTarget }
         }
     }
     foreach ($definition in $definitions) {
@@ -821,7 +823,7 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
             }
         } else {
             foreach ($field in $component.PSObject.Properties.Name) {
-                if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'browseFiles', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild', 'outputScope', 'projection')) {
+                if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'browseFiles', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'consumerIntegration', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild', 'outputScope', 'projection')) {
                     throw "Unknown component field: $field"
                 }
             }
@@ -830,7 +832,7 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
             }
             if ($isApplication) {
                 foreach ($field in $component.PSObject.Properties.Name) {
-                    if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'excludeHeaders', 'excludeSources', 'filters', 'browseFiles', 'requirements', 'compile', 'buildExtensions', 'msbuild', 'outputScope')) {
+                    if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'excludeHeaders', 'excludeSources', 'filters', 'browseFiles', 'requirements', 'compile', 'buildExtensions', 'msbuild', 'outputScope', 'dependencies')) {
                         throw "Unsupported application field: $field"
                     }
                 }
@@ -872,6 +874,14 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
                 throw 'Supported C++ standards are 20 and 23.'
             }
             foreach ($dependency in $component.dependencies) {
+                if ($isApplication) {
+                    if ($dependency.target -isnot [string] -or -not $dependency.target -or
+                        @($dependency.PSObject.Properties.Name | Where-Object { $_ -cnotin @('target', 'variant') }).Count -or
+                        ($dependency.variant -and $dependency.variant -cnotin @('static', 'dynamic'))) {
+                        throw "Expected a native target and optional static/dynamic variant: $include"
+                    }
+                    continue
+                }
                 if ($dependency.visibility -notin @('public', 'private') -or $dependency.linkage -notin @('same', 'static', 'dynamic')) {
                     throw 'Invalid dependency visibility/linkage.'
                 }
@@ -899,6 +909,22 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
                 $solutionFilters.Add([pscustomobject]@{ Rule = $rule; Component = $component })
             }
             $component.filters = @(ConvertTo-ProjectToolsFilterRules $root @($component.filters | Where-Object scope -CNE 'solution'))
+        }
+        if ($component.PSObject.Properties['consumerIntegration']) {
+            if ($component.consumerIntegration -isnot [pscustomobject]) { throw "Invalid ConsumerIntegration: $include" }
+            foreach ($backend in $component.consumerIntegration.PSObject.Properties) {
+                $field, $suffix = switch -CaseSensitive ($backend.Name) {
+                    'msbuild' { 'props', '.props' }
+                    'cmake' { 'script', '.cmake' }
+                    default { throw "Unknown ConsumerIntegration backend: $($backend.Name)" }
+                }
+                $file = $backend.Value.$field
+                if ($backend.Value -isnot [pscustomobject] -or @($backend.Value.PSObject.Properties.Name).Count -ne 1 -or
+                    $file -isnot [string] -or $file -match '[*?]' -or -not $file.EndsWith($suffix, [StringComparison]::Ordinal) -or
+                    -not (Test-Path -LiteralPath (Resolve-ProjectToolsPath $root $file) -PathType Leaf)) {
+                    throw "Invalid ConsumerIntegration $($backend.Name) file: $include"
+                }
+            }
         }
         foreach ($extensionEntry in $component.buildExtensions.PSObject.Properties) {
             if ($extensionEntry.Name -notin @('cmake', 'msbuildProps', 'msbuildTargets')) {
@@ -967,6 +993,10 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
         }
         else {
             $components[$include] = $component
+            foreach ($targetName in $definition.ProjectTarget) {
+                if ($nativeTargets.ContainsKey($targetName)) { throw "Duplicate native target: $targetName" }
+                $nativeTargets[$targetName] = $component
+            }
         }
     }
     foreach ($entry in $solutionFilters) {
@@ -974,5 +1004,5 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
             $entry.Rule = @(Resolve-ProjectToolsOutputFilters $layoutModel $null @($entry.Rule))[0]
         }
     }
-    return [pscustomobject]@{ Root = $root; Manifest = $manifest; Components = $components; Applications = $applications; ManagedLibraries = $managedLibraries; Settings = $settings; Profile = $profile; Integration = $integration; SolutionFilters = $solutionFilters }
+    return [pscustomobject]@{ Root = $root; Manifest = $manifest; Components = $components; NativeTargets = $nativeTargets; Applications = $applications; ManagedLibraries = $managedLibraries; Settings = $settings; Profile = $profile; Integration = $integration; SolutionFilters = $solutionFilters }
 }

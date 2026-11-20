@@ -17,6 +17,8 @@
       <RuntimeLibrary Condition="'$(TestRuntimeLibrary)' != ''">$(TestRuntimeLibrary)</RuntimeLibrary>
       <PreprocessorDefinitions Condition="'$(TestMixedRuntime)' == 'true'">UDK_TEST_MIXED_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <Link><SubSystem>Console</SubSystem></Link>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
 </Project>

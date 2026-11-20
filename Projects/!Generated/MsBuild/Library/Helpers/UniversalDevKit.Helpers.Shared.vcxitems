@@ -6,11 +6,7 @@
     <ItemsProjectGuid>{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}</ItemsProjectGuid>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\..\..\..\MsBuild\UniversalDevKit.props" Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\..\..\Includes\Helpers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-  </ItemDefinitionGroup>
+  <Import Project="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Helpers\MsBuild\Helpers.Usage.props" />
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Includes\Helpers\UniversalDevKit\Helpers\Collection\Algorithms.h">
       <__UniversalDevKitFilter>Collection</__UniversalDevKitFilter>

@@ -13,6 +13,7 @@
   </Filters>
   <Projects>
     <Project id="native"
+             target="XamlRuntime.Native"
              kind="library"
              projectType="native"
              msbuildGuid="{3E00A02D-46F3-432B-91C8-5D459F70C525}">
@@ -25,6 +26,10 @@
                     visibility="private"
                     linkage="dynamic" />
       </Dependencies>
+      <ConsumerIntegration>
+        <MSBuild props="Sources/XamlRuntime/MsBuild/XamlRuntime.Usage.props" />
+        <CMake script="Sources/XamlRuntime/Cmake/XamlRuntime.Usage.cmake" />
+      </ConsumerIntegration>
       <Files>
         <Group id="PublicHeaders">
           <Input role="header">Includes/XamlRuntime/UniversalDevKit/XamlRuntime/**/*.h</Input>

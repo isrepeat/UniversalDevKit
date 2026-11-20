@@ -384,6 +384,7 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
     foreach ($component in $Model.Components.Values) {
         $registry[$component.name] = [pscustomobject]@{
             Kind = $component.kind; StateScope = $component.stateScope
+            Variants = @(Get-ProjectToolsNativeVariants $component)
             Dependencies = @($component.dependencies | Where-Object {
                 $_
             } | ForEach-Object {
@@ -543,6 +544,14 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
 
             if (-not $integration) {
                 $content = $content.Replace('</ConfigurationType>', "</ConfigurationType>`n    <CharacterSet>Unicode</CharacterSet>")
+                $roots = @($registry[$component.name].Dependencies | ForEach-Object { $_.Component })
+                $dependencyGraph = Resolve-UdkLinkageGraph $roots $graph.ResolvedModes $registry
+                $usageImports = foreach ($requiredName in @($component.name) + @($dependencyGraph.RequirementComponents)) {
+                    $file = $byName[$requiredName].consumerIntegration.msbuild.props
+                    if ($file) {
+                        '  <Import Project="' + (ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeImport $Model $path $file)) + '" />'
+                    }
+                }
                 $references = foreach ($dependencyName in $graph.ResolvedComponents) {
                     if ($dependencyName -eq $component.name -or $registry[$dependencyName].Kind -eq 'headerOnly') {
                         continue
@@ -551,7 +560,7 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
                     '  <ItemGroup><ProjectReference Include="' + (ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeImport $Model $path $dependencyPath)) + '" /></ItemGroup>'
                 }
                 $cppTargets = '  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />'
-                $content = $content.Replace($cppTargets, ((@($references | Where-Object {
+                $content = $content.Replace($cppTargets, ((@($usageImports | Where-Object { $_ } | Select-Object -Unique) + @($references | Where-Object {
                     $_
                 }) + $cppTargets) -join "`n"))
                 $targets = foreach ($file in @($component.buildExtensions.msbuildTargets) + @($Model.Settings.targets) | Where-Object {
@@ -592,7 +601,69 @@ function New-ProjectToolsMsBuildPlan($Model, $UdkPlan) {
         $sharedGuid = Get-ProjectToolsGuid (([Guid]$guid).ToString('D') + ':Shared')
         $projects.Add([pscustomobject]@{ Path = $sharedPath; Guid = $sharedGuid; Variant = 'Shared'; Component = $component.name })
         AddOutput $sharedPath (New-ProjectToolsApplicationSharedProject $Model $component $sharedPath $sharedGuid)
-        AddOutput $path (New-ProjectToolsApplicationProject $Model $component $path $sharedPath)
+        $content = New-ProjectToolsApplicationProject $Model $component $path $sharedPath
+        if ($component.dependencies.Count) {
+            $modes = @{}
+            foreach ($dependency in $component.dependencies) {
+                $library = $Model.NativeTargets[$dependency.target]
+                if (-not $library -or $library.projectType -ne 'native') { throw "Unknown native library target: $($dependency.target)" }
+                $mode = if ($library.kind -eq 'headerOnly') {
+                    if ($dependency.variant) { throw "Header-only target does not accept a binary variant: $($dependency.target)" }
+                    'Shared'
+                } elseif ($dependency.variant -eq 'static') {
+                    'Static'
+                } else {
+                    'Dynamic'
+                }
+                if ($modes.ContainsKey($library.name)) { throw "Duplicate application dependency: $($dependency.target)" }
+                $modes[$library.name] = $mode
+            }
+            $graph = Resolve-UdkLinkageGraph @($modes.Keys | Sort-Object) $modes $registry
+            if (@($graph.RequirementComponents | Where-Object { $byName[$_].requirements.cxxStandard -eq 23 }).Count) {
+                $content = $content.Replace('<LanguageStandard>stdcpp20</LanguageStandard>', '<LanguageStandard>stdcpplatest</LanguageStandard>')
+            }
+            $integrationLines = foreach ($name in $graph.RequirementComponents) {
+                $file = $byName[$name].consumerIntegration.msbuild.props
+                if ($file) {
+                    '  <Import Project="' + (ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeImport $Model $path $file)) + '" />'
+                }
+            }
+            if ($Model.Profile -eq 'udk' -or $Model.Integration) {
+                $publicProps = 'Projects/MsBuild/UniversalDevKit.props'
+                if (Test-Path -LiteralPath (Join-Path $Model.Root $publicProps) -PathType Leaf) {
+                    $import = ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeImport $Model $path $publicProps)
+                    $integrationLines = @('  <Import Project="' + $import + '" Condition="''$(__IsUniversalDevKitPublicPropsImported)'' != ''true''" />') + @($integrationLines)
+                }
+                $definitions = @($graph.DefinitionComponents | ForEach-Object {
+                    'UNIVERSALDEVKIT_' + $_.Replace('.', '_').ToUpperInvariant() + '_DYNAMIC'
+                })
+                if ($definitions.Count) {
+                    $integrationLines = @($integrationLines | Where-Object { $_ }) + ('  <ItemDefinitionGroup><ClCompile><PreprocessorDefinitions>' + ($definitions -join ';') + ';%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile></ItemDefinitionGroup>')
+                }
+            }
+            $references = foreach ($name in $graph.ResolvedComponents) {
+                if ($graph.ResolvedModes[$name] -eq 'Shared') { continue }
+                $libraryPath = Get-ProjectToolsLocation $Model $byName[$name] $graph.ResolvedModes[$name]
+                $reference = ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeImport $Model $path $libraryPath)
+                $link = ($name -in $graph.LinkComponents).ToString().ToLowerInvariant()
+                '  <ItemGroup><ProjectReference Include="' + $reference + '"><LinkLibraryDependencies>' + $link + '</LinkLibraryDependencies></ProjectReference></ItemGroup>'
+            }
+            $cppTargets = '  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />'
+            $content = $content.Replace($cppTargets, ((@($integrationLines | Where-Object { $_ } | Select-Object -Unique) + @($references | Where-Object { $_ }) + $cppTargets) -join "`n"))
+            $runtimeTargets = 'Projects/MsBuild/UniversalDevKit.Runtime.targets'
+            if (($Model.Profile -eq 'udk' -or $Model.Integration) -and
+                (Test-Path -LiteralPath (Join-Path $Model.Root $runtimeTargets) -PathType Leaf)) {
+                $runtimeItems = foreach ($name in $graph.RuntimeComponents) {
+                    $libraryPath = Get-ProjectToolsLocation $Model $byName[$name] 'Dynamic'
+                    $reference = ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeImport $Model $path $libraryPath)
+                    '  <ItemGroup><__UniversalDevKitRuntimeProject Include="' + $reference + '" /></ItemGroup>'
+                }
+                $runtimeImport = ConvertTo-ProjectToolsXml (Get-ProjectToolsRelativeImport $Model $path $runtimeTargets)
+                $runtimeLines = @($runtimeItems | Where-Object { $_ }) + ('  <Import Project="' + $runtimeImport + '" />')
+                $content = $content.Replace('</Project>', (($runtimeLines + '</Project>') -join "`n"))
+            }
+        }
+        AddOutput $path $content
     }
     Add-ProjectToolsWinRTPlan $Model $plan $projects
     if (@($projects.Guid | Sort-Object -Unique).Count -ne $projects.Count) {

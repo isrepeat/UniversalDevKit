@@ -6,6 +6,7 @@
     <ItemsProjectGuid>{AB97876A-F25A-4AAE-BACD-D32C776BB261}</ItemsProjectGuid>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\..\..\..\MsBuild\UniversalDevKit.props" Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\Diagnostic\Native\MsBuild\Diagnostic.Usage.props" />
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Includes\Diagnostic\UniversalDevKit\Diagnostic\Logging.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
@@ -73,7 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Update="@(ClCompile-&gt;WithMetadataValue('__UniversalDevKitComponent', 'Diagnostic'))">
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\..\..\Includes\Diagnostic;$(MSBuildThisFileDirectory)..\..\..\..\..\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\..\..\ThirdParty\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader Condition="'%(ClCompile.__UniversalDevKitInheritPch)' != 'true'">NotUsing</PrecompiledHeader>
     </ClCompile>

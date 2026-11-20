@@ -6,6 +6,7 @@
     <ItemsProjectGuid>{3E00A02D-46F3-432B-91C8-5D459F70C525}</ItemsProjectGuid>
   </PropertyGroup>
   <Import Project="$(MSBuildThisFileDirectory)..\..\..\..\MsBuild\UniversalDevKit.props" Condition="'$(__IsUniversalDevKitPublicPropsImported)' != 'true'" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\..\..\..\Sources\XamlRuntime\MsBuild\XamlRuntime.Usage.props" />
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\..\Includes\XamlRuntime\UniversalDevKit\XamlRuntime\Animation.h">
       <__UniversalDevKitFilter></__UniversalDevKitFilter>
@@ -159,7 +160,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Update="@(ClCompile-&gt;WithMetadataValue('__UniversalDevKitComponent', 'XamlRuntime'))">
-      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\..\..\..\Includes\XamlRuntime;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemGroup>
   <Target Name="__UniversalDevKitValidateXamlRuntimePlatform" BeforeTargets="PrepareForBuild">

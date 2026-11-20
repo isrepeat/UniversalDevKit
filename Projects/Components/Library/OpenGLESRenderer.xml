@@ -2,6 +2,7 @@
 <Component name="OpenGLESRenderer">
   <Projects>
     <Project id="native"
+             target="OpenGLESRenderer.Native"
              kind="library"
              projectType="native"
              msbuildGuid="{364E96CB-9D8A-40B0-8455-6A31A15A36B0}">
@@ -17,6 +18,10 @@
                     visibility="public"
                     linkage="same" />
       </Dependencies>
+      <ConsumerIntegration>
+        <MSBuild props="Sources/OpenGLESRenderer/MsBuild/OpenGLESRenderer.Usage.props" />
+        <CMake script="Sources/OpenGLESRenderer/Cmake/OpenGLESRenderer.Usage.cmake" />
+      </ConsumerIntegration>
       <Files>
         <Group id="PublicHeaders">
           <Input role="header">Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/**/*.h</Input>

@@ -156,7 +156,7 @@ foreach ($includePath in $Model.Components.Keys) {
     }
     # Reject unknown fields; dependencies and platforms require explicit generator support.
     foreach ($field in $component.PSObject.Properties.Name) {
-        if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'browseFiles', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild', 'outputScope', 'projection')) {
+        if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'browseFiles', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'consumerIntegration', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild', 'outputScope', 'projection')) {
             throw "Unsupported field ${name}: $field"
         }
     }
@@ -214,6 +214,7 @@ foreach ($includePath in $Model.Components.Keys) {
     $componentIncludeRoot = Get-UdkComponentIncludeRoot $component
     $binaryComponentRegistry[$name] = [pscustomobject]@{
         IncludeRoot = $componentIncludeRoot
+        UsageProps = $component.consumerIntegration.msbuild.props
         ExportHeader = if ($Model.Manifest.fileScope) {
             Get-ProjectToolsOutputPath $Model $component 'component-exportHeader' ''
         } elseif ($Model.Integration) {
@@ -332,7 +333,9 @@ foreach ($includePath in $Model.Components.Keys) {
     if ($component.buildExtensions.msbuildProps) {
         $lines.Add('  <Import Project="' + (EscapeXml ($libraryRepositoryPrefix + $component.buildExtensions.msbuildProps.Replace('/', '\'))) + '" />')
     }
-    if ($kind -eq 'headerOnly') {
+    if ($component.consumerIntegration.msbuild.props) {
+        $lines.Add('  <Import Project="' + (EscapeXml ($libraryRepositoryPrefix + $component.consumerIntegration.msbuild.props.Replace('/', '\'))) + '" />')
+    } elseif ($kind -eq 'headerOnly') {
         $lines.Add('  <ItemDefinitionGroup>')
         $lines.Add('    <ClCompile>')
         $lines.Add('      <AdditionalIncludeDirectories>' + $libraryRepositoryPrefix + $binaryComponentRegistry[$name].IncludeRoot.Replace('/', '\') + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>')
@@ -392,7 +395,10 @@ foreach ($includePath in $Model.Components.Keys) {
     if ($componentSources.Count) {
         $lines.Add('  <ItemGroup>')
         $lines.Add('    <ClCompile Update="@(ClCompile-&gt;WithMetadataValue(''__UniversalDevKitComponent'', ''' + $name + '''))">')
-        $settings = @{ includeDirectories = @($binaryComponentRegistry[$name].IncludeRoot); preprocessorDefinitions = @(); precompiledHeader = 'inherit' }
+        $settings = @{ includeDirectories = @(); preprocessorDefinitions = @(); precompiledHeader = 'inherit' }
+        if (-not $binaryComponentRegistry[$name].UsageProps) {
+            $settings.includeDirectories = @($binaryComponentRegistry[$name].IncludeRoot)
+        }
         if ($component.compile) {
             foreach ($field in $component.compile.PSObject.Properties.Name) {
                 if ($field -eq 'includeDirectories') {
@@ -562,8 +568,12 @@ foreach ($name in $componentNames) {
         })
         if ($definitionSelectors.Count) {
             $lines.Add('  <ItemDefinitionGroup Condition="' + (GetSourceCondition $definitionSelectors) + '">')
-            $lines.Add('    <ClCompile><AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\' + $binaryComponentRegistry[$name].IncludeRoot.Replace('/', '\') + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile>')
-            $lines.Add('    <ClCompile><PreprocessorDefinitions>UNIVERSALDEVKIT_' + $name.Replace('.', '_').ToUpperInvariant() + '_DYNAMIC;%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile>')
+            $lines.Add('    <ClCompile>')
+            $lines.Add('      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\..\' + $binaryComponentRegistry[$name].IncludeRoot.Replace('/', '\') + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>')
+            $lines.Add('    </ClCompile>')
+            $lines.Add('    <ClCompile>')
+            $lines.Add('      <PreprocessorDefinitions>UNIVERSALDEVKIT_' + $name.Replace('.', '_').ToUpperInvariant() + '_DYNAMIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>')
+            $lines.Add('    </ClCompile>')
             $lines.Add('  </ItemDefinitionGroup>')
         }
     }
@@ -722,11 +732,23 @@ foreach ($name in $componentNames) {
         $condition = "'`$(ConfigurationType)' == '$configurationType'"
         $dependenciesPath = Get-UdkProjectPath $name 'Dependencies'
         $libraryRepositoryPrefix = Get-UdkRepositoryPrefix $dependenciesPath
-        $dependencyIncludeRoots = @($dependencyGraph.RequirementComponents | ForEach-Object {
+        foreach ($requiredName in $dependencyGraph.RequirementComponents) {
+            $usageProps = $binaryComponentRegistry[$requiredName].UsageProps
+            if ($usageProps) {
+                $lines.Add('  <Import Project="' + (EscapeXml ($libraryRepositoryPrefix + $usageProps.Replace('/', '\'))) + '" Condition="' + $condition + '" />')
+            }
+        }
+        $dependencyIncludeRoots = @($dependencyGraph.RequirementComponents | Where-Object {
+            -not $binaryComponentRegistry[$_].UsageProps
+        } | ForEach-Object {
             $libraryRepositoryPrefix + $binaryComponentRegistry[$_].IncludeRoot.Replace('/', '\')
         })
         if ($dependencyIncludeRoots.Count) {
-            $lines.Add('  <ItemDefinitionGroup Condition="' + $condition + '"><ClCompile><AdditionalIncludeDirectories>' + ($dependencyIncludeRoots -join ';') + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories></ClCompile></ItemDefinitionGroup>')
+            $lines.Add('  <ItemDefinitionGroup Condition="' + $condition + '">')
+            $lines.Add('    <ClCompile>')
+            $lines.Add('      <AdditionalIncludeDirectories>' + ($dependencyIncludeRoots -join ';') + ';%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>')
+            $lines.Add('    </ClCompile>')
+            $lines.Add('  </ItemDefinitionGroup>')
         }
         foreach ($dependencyName in $dependencyGraph.ResolvedComponents) {
             $compile = $dependencyName -cin $dependencyGraph.RequirementComponents
@@ -760,7 +782,9 @@ foreach ($name in $componentNames) {
         })
         if ($definitions.Count) {
             $lines.Add('  <ItemDefinitionGroup Condition="' + $condition + '">')
-            $lines.Add('    <ClCompile><PreprocessorDefinitions>' + ($definitions -join ';') + ';%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile>')
+            $lines.Add('    <ClCompile>')
+            $lines.Add('      <PreprocessorDefinitions>' + ($definitions -join ';') + ';%(PreprocessorDefinitions)</PreprocessorDefinitions>')
+            $lines.Add('    </ClCompile>')
             $lines.Add('  </ItemDefinitionGroup>')
         }
     }
@@ -811,8 +835,14 @@ foreach ($name in $componentNames) {
     $libraryRepositoryPrefix = Get-UdkRepositoryPrefix $headerCheckPath
     $projectTemplate = Get-ProjectToolsNativeProjectTemplate $Model $componentsByName[$name] $headerCheckPath
     $content = $projectTemplate.Replace('@COMPONENT@', $name).Replace('@GUID@', $guid).Replace('@CONFIGURATION_TYPE@', 'Application').Replace('@DYNAMIC_DEFINITIONS@', '').Replace('stdcpp20', $language)
+    $usageImports = foreach ($requiredName in $headerGraph.RequirementComponents) {
+        $usageProps = $binaryComponentRegistry[$requiredName].UsageProps
+        if ($requiredName -ne $name -and $usageProps) {
+            '  <Import Project="' + (EscapeXml ($libraryRepositoryPrefix + $usageProps.Replace('/', '\'))) + '" />'
+        }
+    }
     $dependencyIncludes = @($headerGraph.RequirementComponents | Where-Object {
-        $_ -ne $name
+        $_ -ne $name -and -not $binaryComponentRegistry[$_].UsageProps
     } | ForEach-Object {
         $libraryRepositoryPrefix + $binaryComponentRegistry[$_].IncludeRoot.Replace('/', '\')
     })
@@ -827,7 +857,7 @@ foreach ($name in $componentNames) {
         '  </ItemGroup>'
     ) -join "`n"
     $dependenciesName = EscapeXml (Get-ProjectToolsRelativeFile $Model $headerCheckPath (Get-UdkProjectPath $name 'Dependencies'))
-    $content = $content.Replace('  <Import Project="' + $dependenciesName + '" />', $headerCheckItem)
+    $content = $content.Replace('  <Import Project="' + $dependenciesName + '" />', ((@($usageImports | Where-Object { $_ }) + $headerCheckItem) -join "`n"))
     $source = [IO.File]::ReadAllText((Join-Path $PSScriptRoot '../Templates/HeaderCheck.cpp.in')).TrimEnd([char[]]"`r`n") + "`n"
     $definition = @($Model.Components.Values | Where-Object name -eq $name)[0]
     foreach ($header in $definition.headers) {
