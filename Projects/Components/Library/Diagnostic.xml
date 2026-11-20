@@ -8,14 +8,10 @@
              projectGuid="{AB97876A-F25A-4AAE-BACD-D32C776BB261}"
              stateScope="process">
       <Dependencies>
-        <Dependency component="Helpers"
+        <Dependency target="Helpers.Native"
                     visibility="private"
                     linkage="same" />
       </Dependencies>
-      <ConsumerIntegration>
-        <MSBuild props="Sources/Diagnostic/Native/MsBuild/Diagnostic.Usage.props" />
-        <CMake script="Sources/Diagnostic/Native/Cmake/Diagnostic.Usage.cmake" />
-      </ConsumerIntegration>
       <Files>
         <Input role="header">Includes/Diagnostic/UniversalDevKit/Diagnostic/**/*.h</Input>
         <Group id="NativeSources">
@@ -28,7 +24,7 @@
       </Files>
       <Filters>
         <Filter filter="{Tree:Solution}/Sources/Diagnostic/Native">
-          <Ref tag="Group" id="CMakeRules" />
+          <Ref tag="Input" id="CMakeRules" />
         </Filter>
         <Filter filter="{Tree:Project}"
                 preserveTree="true">
@@ -47,25 +43,19 @@
         </IncludeDirectories>
         <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES</PreprocessorDefinitions>
       </Compile>
-      <Extension backend="MSBuild">
-        <Files>
-          <Group id="NativeBuild">
-            <Input role="msbuild-targets">Sources/Diagnostic/Native/Spdlog.targets</Input>
-          </Group>
-        </Files>
+      <Extension buildSystem="MSBuild">
+        <Files.Input id="NativeBuild" role="msbuild-targets">Sources/Diagnostic/Native/Spdlog.targets</Files.Input>
         <Filters>
           <Filter filter="{Tree:Project}/Build">
-            <Ref tag="Group" id="NativeBuild" />
-            <Ref tag="Output" id="DependenciesProps" />
+            <Ref tag="Input" id="NativeBuild" />
+            <Ref tag="Output" id="ROOT-DependenciesProps" />
           </Filter>
         </Filters>
+        <ConsumerIntegration.Files.Input role="msbuild-props">Sources/Diagnostic/Native/MsBuild/Diagnostic.Usage.props</ConsumerIntegration.Files.Input>
       </Extension>
-      <Extension backend="CMake">
-        <Files>
-          <Group id="CMakeRules">
-            <Input role="cmake">Sources/Diagnostic/Native/Spdlog.cmake</Input>
-          </Group>
-        </Files>
+      <Extension buildSystem="CMake">
+        <Files.Input id="CMakeRules" role="cmake">Sources/Diagnostic/Native/Spdlog.cmake</Files.Input>
+        <ConsumerIntegration.Files.Input role="cmake">Sources/Diagnostic/Native/Cmake/Diagnostic.Usage.cmake</ConsumerIntegration.Files.Input>
       </Extension>
     </Project> <!-- Project id="native" -->
 
@@ -82,7 +72,7 @@
                     variant="dynamic"
                     usage="runtime" />
       </Dependencies>
-      <Extension backend="MSBuild">
+      <Extension buildSystem="MSBuild">
         <Properties>
           <TargetFramework>net8.0</TargetFramework>
           <AssemblyName>UniversalDevKit.Diagnostic</AssemblyName>

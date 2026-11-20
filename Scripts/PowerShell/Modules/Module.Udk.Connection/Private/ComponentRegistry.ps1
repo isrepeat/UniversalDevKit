@@ -16,7 +16,7 @@ function Get-UdkComponentRegistry {
     [void](GetAvailableComponents -RepositoryPath $RepositoryPath)
     . (Join-Path $RepositoryPath 'Sources/Windows/UdkCli/Tools/ReadManifest.ps1')
     $manifest = Read-UdkManifest (Join-Path $RepositoryPath 'Components') 'ComponentRegistry'
-    $paths = if ($manifest.schemaVersion -in @(4, 5, 6, 7)) { $manifest.components } elseif ($manifest.schemaVersion -eq 2) { $manifest.includes }
+    $paths = if ($manifest.schemaVersion -in @(4, 5, 6, 7, 8)) { $manifest.components } elseif ($manifest.schemaVersion -eq 2) { $manifest.includes }
     if (-not $paths) {
         throw 'Unsupported component registry schema.'
     }
@@ -24,7 +24,7 @@ function Get-UdkComponentRegistry {
     foreach ($include in $paths) {
         $descriptionPath = Resolve-UdkManifestPath (Join-Path $RepositoryPath $include)
         $component = Read-UdkManifest $descriptionPath 'Component' $manifest.fileScope
-        if ($manifest.schemaVersion -in @(5, 6, 7)) {
+        if ($manifest.schemaVersion -in @(5, 6, 7, 8)) {
             $name = $component.name
             $nativeLibraries = @($component.projects | Where-Object {
                 $_.kind -ceq 'library' -and $_.projectType -ceq 'native'

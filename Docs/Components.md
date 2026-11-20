@@ -44,18 +44,21 @@ ProjectTools выбирает приложения по `kind: application` в �
 
 ## Настройки компиляции
 
-Для локальной сборки нативная библиотека может указать файлы, передающие настройки её потребителям. Пути в `ConsumerIntegration` отсчитываются от корня реестра.
+Для локальной сборки нативная библиотека может указать файлы, передающие настройки её потребителям. Расширение выбирает систему сборки. Пути отсчитываются от корня реестра.
 
 ```xml
-<ConsumerIntegration>
-  <MSBuild props="Sources/Diagnostic/Native/MsBuild/Diagnostic.Usage.props" />
-  <CMake script="Sources/Diagnostic/Native/Cmake/Diagnostic.Usage.cmake" />
-</ConsumerIntegration>
+<Extension buildSystem="MSBuild">
+  <Files.Input id="NativeBuild" role="msbuild-targets">Sources/Diagnostic/Native/Spdlog.targets</Files.Input>
+  <ConsumerIntegration.Files.Input role="msbuild-props">Sources/Diagnostic/Native/MsBuild/Diagnostic.Usage.props</ConsumerIntegration.Files.Input>
+</Extension>
+<Extension buildSystem="CMake">
+  <ConsumerIntegration.Files.Input role="cmake">Sources/Diagnostic/Native/Cmake/Diagnostic.Usage.cmake</ConsumerIntegration.Files.Input>
+</Extension>
 ```
 
 MSBuild импортирует `.props` при генерации проекта потребителя по графу зависимостей. Скрипт CMake добавляет требования к интерфейсной цели `componentHeadersTarget`. Для файлов из checkout в CMake указывайте `BUILD_INTERFACE`. Настройки собственной сборки остаются в `Compile` или существующих расширениях сборщика.
 
-Нативное приложение MSBuild может указать `<Dependency target="Diagnostic.Native" />` в `Dependencies`. Для компилируемой библиотеки по умолчанию выбирается Dynamic, а `variant="static"` запрашивает Static. Для header-only библиотеки вариант не указывается.
+Нативная библиотека указывает зависимость через имя цели, например `<Dependency target="Helpers.Native" visibility="private" linkage="same" />`. Нативное приложение MSBuild может указать `<Dependency target="Diagnostic.Native" />`. Для компилируемой библиотеки по умолчанию выбирается Dynamic, а `variant="static"` запрашивает Static. Для header-only библиотеки вариант не указывается.
 
 Существующие библиотеки без файла интеграции сохраняют прежнее поведение. Раскладка установки, пакетная интеграция и Connect используют свои существующие настройки.
 

@@ -167,7 +167,7 @@ function Convert-UdkFileScope([System.Xml.XmlElement]$Owner, $ParentScope) {
         $role = $node.GetAttribute('role')
         $value = $node.InnerText.Trim()
         if ($node.Name -ceq 'Output') {
-            $tag = 'Generated'
+            $tag = 'Output'
             $value = '@output:' + $role
         } else {
             if ($node.SelectSingleNode('*') -or -not $value -or
@@ -218,7 +218,7 @@ function Convert-UdkComponentFiles([System.Xml.XmlElement]$Owner) {
                 ReadFileDeclarations $file
                 continue
             }
-            if ($file.Name -cnotin @('Header', 'Source', 'File', 'Generated', 'CMake', 'MSBuildProps', 'MSBuildTargets') -or
+            if ($file.Name -cnotin @('Header', 'Source', 'File', 'Output', 'Generated', 'CMake', 'MSBuildProps', 'MSBuildTargets') -or
                 $file.Attributes.Count -or $file.SelectSingleNode('*') -or -not $file.InnerText.Trim()) {
                 throw "Invalid file declaration: $($file.Name)"
             }
@@ -303,10 +303,11 @@ function Convert-UdkComponentFiles([System.Xml.XmlElement]$Owner) {
                     $rule.SetAttribute('preserveTree', $filter.GetAttribute('preserveTree'))
                 }
                 if ($solution) { $rule.SetAttribute('scope', 'solution') }
-                $field = if ($solution -and $entry.Name -ceq 'Generated') { 'generatedPath' } else { 'path' }
+                $isOutput = $entry.Name -cin @('Output', 'Generated')
+                $field = if ($solution -and $isOutput) { 'generatedPath' } else { 'path' }
                 $rule.SetAttribute($field, $entry.InnerText.Trim())
                 if ($solution -and $entry.Name -cin @('Header', 'Source')) { $rule.SetAttribute('selection', $entry.Name) }
-                if (-not $solution -and $entry.Name -ceq 'Generated') { $rule.SetAttribute('planned', 'true') }
+                if (-not $solution -and $isOutput) { $rule.SetAttribute('planned', 'true') }
                 if ($selector.Name -ceq 'Match') { $rule.SetAttribute('match', $value) }
                 [void]$filters.InsertBefore($rule, $filter)
             }
@@ -579,8 +580,7 @@ function ConvertFrom-UdkManifestXml([System.Xml.XmlElement]$Root) {
     ReadElement $Root ''
 }
 
-function Read-UdkManifest([string]$Path, [string]$XmlRoot, $RegistryScope) {
-    $file = Resolve-UdkManifestPath $Path
+function Read-UdkManifestDocument([string]$File) {
     $settings = [System.Xml.XmlReaderSettings]::new()
     $settings.DtdProcessing = [System.Xml.DtdProcessing]::Prohibit
     $settings.XmlResolver = $null
@@ -591,17 +591,127 @@ function Read-UdkManifest([string]$Path, [string]$XmlRoot, $RegistryScope) {
     } finally {
         $reader.Dispose()
     }
+    return ,$document
+}
+
+function Convert-UdkManifestShorthand([System.Xml.XmlElement]$Root) {
+    $document = $Root.OwnerDocument
+    foreach ($settings in @($Root.SelectNodes('Generation/Settings'))) {
+        if ($Root.Name -cne 'ComponentRegistry' -or $settings.GetAttribute('buildSystem') -cne 'MSBuild' -or
+            $settings.Attributes.Count -ne 1 -or $settings.ParentNode.SelectSingleNode('MSBuild')) {
+            throw 'Expected one Generation Settings block for MSBuild.'
+        }
+        $msbuild = $document.CreateElement('MSBuild')
+        while ($settings.HasChildNodes) { [void]$msbuild.AppendChild($settings.FirstChild) }
+        [void]$settings.ParentNode.ReplaceChild($msbuild, $settings)
+    }
+    foreach ($extension in $Root.SelectNodes('.//Extension[@buildSystem]')) {
+        if ($extension.HasAttribute('backend')) { throw 'Specify only buildSystem on Extension.' }
+        $extension.SetAttribute('backend', $extension.GetAttribute('buildSystem'))
+        $extension.RemoveAttribute('buildSystem')
+    }
+    foreach ($owner in @($Root) + @($Root.SelectNodes('Projects/Project|Extension|Projects/Project/Extension|Projects/Project/Extension/ConsumerIntegration'))) {
+        $inputs = @($owner.SelectNodes('Files.Input'))
+        if (-not $inputs.Count) { continue }
+        if ($owner.SelectSingleNode('Files')) { throw 'Use either Files or Files.Input in the same block.' }
+        $files = $document.CreateElement('Files')
+        [void]$owner.InsertBefore($files, $inputs[0])
+        foreach ($entry in $inputs) {
+            $inputFile = $document.CreateElement('Input')
+            foreach ($attribute in $entry.Attributes) { [void]$inputFile.Attributes.Append($attribute.CloneNode($true)) }
+            while ($entry.HasChildNodes) { [void]$inputFile.AppendChild($entry.FirstChild) }
+            [void]$files.AppendChild($inputFile)
+            [void]$owner.RemoveChild($entry)
+        }
+    }
+    foreach ($project in $Root.SelectNodes('Projects/Project')) {
+        foreach ($extension in $project.SelectNodes('Extension')) {
+            $blocks = @($extension.SelectNodes('ConsumerIntegration|ConsumerIntegration.Files|ConsumerIntegration.Files.Input'))
+            if (-not $blocks.Count) { continue }
+            if ($blocks.Count -ne 1 -or ($blocks[0].Name -cne 'ConsumerIntegration.Files.Input' -and $blocks[0].Attributes.Count)) {
+                throw 'Expected one ConsumerIntegration declaration per build system.'
+            }
+            $block = $blocks[0]
+            $files = if ($block.Name -ceq 'ConsumerIntegration') { $block.SelectSingleNode('Files') } else { $block }
+            if (-not $files -or ($block.Name -ceq 'ConsumerIntegration' -and
+                ($block.SelectNodes('*').Count -ne 1 -or $block.SelectSingleNode('text()[normalize-space()]'))) -or
+                ($block.Name -cne 'ConsumerIntegration.Files.Input' -and
+                ($files.Attributes.Count -or $files.SelectNodes('*').Count -ne 1 -or $files.SelectSingleNode('text()[normalize-space()]')))) {
+                throw 'Expected one Files input in ConsumerIntegration.'
+            }
+            $inputFile = if ($block.Name -ceq 'ConsumerIntegration.Files.Input') { $block } else { $files.SelectSingleNode('Input') }
+            $system, $role, $attribute = switch -CaseSensitive ($extension.GetAttribute('backend')) {
+                'MSBuild' { 'MSBuild', 'msbuild-props', 'props' }
+                'CMake' { 'CMake', 'cmake', 'script' }
+                default { throw 'Unsupported ConsumerIntegration build system.' }
+            }
+            if (-not $inputFile -or $inputFile.Attributes.Count -ne 1 -or $inputFile.GetAttribute('role') -cne $role -or
+                $inputFile.SelectSingleNode('*') -or -not $inputFile.InnerText.Trim()) {
+                throw "Expected one ConsumerIntegration input with role '$role'."
+            }
+            $integration = $project.SelectSingleNode('ConsumerIntegration')
+            if (-not $integration) {
+                $integration = $document.CreateElement('ConsumerIntegration')
+                [void]$project.InsertBefore($integration, $extension)
+            }
+            if ($integration.SelectSingleNode($system)) { throw "Duplicate ConsumerIntegration for $system." }
+            $entry = $document.CreateElement($system)
+            $entry.SetAttribute($attribute, $inputFile.InnerText.Trim())
+            [void]$integration.AppendChild($entry)
+            [void]$extension.RemoveChild($block)
+        }
+    }
+}
+
+function Resolve-UdkNativeDependencyTargets([System.Xml.XmlElement]$Root, $RegistryScope) {
+    $dependencies = @($Root.SelectNodes('Projects/Project[@kind="library" and @projectType="native"]/Dependencies/Dependency[@target]'))
+    if (-not $dependencies.Count) { return }
+    if (-not $RegistryScope -or -not $RegistryScope.RegistryRoot) { throw 'Native dependency targets require a component registry.' }
+    if ($null -eq $RegistryScope.NativeTargets) {
+        $targets = [Collections.Generic.Dictionary[string,string]]::new([StringComparer]::Ordinal)
+        foreach ($relative in $RegistryScope.ComponentPaths) {
+            if ($relative -isnot [string] -or $relative -match '[\\:$@%*?;\r\n]' -or
+                @($relative.Split('/') | Where-Object { $_ -in @('', '.', '..') }).Count) {
+                throw "Invalid registry component path: $relative"
+            }
+            $manifestPath = Resolve-UdkManifestPath (Join-Path $RegistryScope.RegistryRoot $relative)
+            $definition = (Read-UdkManifestDocument $manifestPath).DocumentElement
+            foreach ($project in $definition.SelectNodes('Projects/Project[@kind="library" and @projectType="native" and @target]')) {
+                $target = $project.GetAttribute('target')
+                if ($targets.ContainsKey($target)) { throw "Duplicate native target: $target" }
+                $targets.Add($target, $definition.GetAttribute('name'))
+            }
+        }
+        $RegistryScope.NativeTargets = $targets
+    }
+    foreach ($dependency in $dependencies) {
+        $target = $dependency.GetAttribute('target')
+        if ($dependency.HasAttribute('component') -or -not $RegistryScope.NativeTargets.ContainsKey($target)) {
+            throw "Invalid native dependency target: $target"
+        }
+        $dependency.RemoveAttribute('target')
+        $dependency.SetAttribute('component', $RegistryScope.NativeTargets[$target])
+    }
+}
+
+function Read-UdkManifest([string]$Path, [string]$XmlRoot, $RegistryScope) {
+    $file = Resolve-UdkManifestPath $Path
+    $document = Read-UdkManifestDocument $file
     if ($document.DocumentElement.LocalName -cne $XmlRoot) {
         throw "Expected <$XmlRoot> in $file"
     }
     $root = $document.DocumentElement
-    if ($XmlRoot -ceq 'ComponentRegistry' -and $root.GetAttribute('schemaVersion') -ceq '7') {
+    if ($XmlRoot -cin @('ComponentRegistry', 'Component')) { Convert-UdkManifestShorthand $root }
+    if ($XmlRoot -ceq 'ComponentRegistry' -and $root.GetAttribute('schemaVersion') -cin @('7', '8')) {
         $scope = Convert-UdkFileScope $root $null
         Convert-UdkComponentFiles $root
         $registry = ConvertFrom-UdkManifestXml $root
+        $scope | Add-Member RegistryRoot (Split-Path -Parent $file)
+        $scope | Add-Member ComponentPaths @($registry.components)
+        $scope | Add-Member NativeTargets $null
         $msbuild = $registry.generation.msbuild
         if ($msbuild.solutionName -cnotmatch '^[A-Za-z0-9_.-]+$' -or $msbuild.solutionName -in @('.', '..') -or $msbuild.solution) {
-            throw 'Expected SolutionName in schema 7.'
+            throw 'Expected SolutionName in the registry.'
         }
         $msbuild | Add-Member solution ($msbuild.solutionName + '.sln')
         $versionInputs = @($scope.Inputs | Where-Object { $_.GetAttribute('role') -ceq 'version-source' })
@@ -625,7 +735,7 @@ function Read-UdkManifest([string]$Path, [string]$XmlRoot, $RegistryScope) {
     }
     if ($XmlRoot -ceq 'Component') {
         $newFiles = $root.SelectSingleNode('.//Files//Input|.//Files//Output|.//Files//Group[@id]|.//Ref|.//Extension')
-        if ($newFiles -or $RegistryScope) {
+        if ($newFiles -or $RegistryScope -or $root.SelectSingleNode('Projects/Project/Dependencies/Dependency[@target]')) {
             if (-not $RegistryScope) {
                 $directory = [IO.DirectoryInfo]::new((Split-Path -Parent $file))
                 while ($directory) {
@@ -637,6 +747,7 @@ function Read-UdkManifest([string]$Path, [string]$XmlRoot, $RegistryScope) {
                     $directory = $directory.Parent
                 }
             }
+            Resolve-UdkNativeDependencyTargets $root $RegistryScope
             $scope = Convert-UdkFileScope $root $RegistryScope
             $projectScopes = @(foreach ($project in $root.SelectNodes('Projects/Project')) {
                 Convert-UdkFileScope $project $scope

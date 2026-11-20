@@ -24,7 +24,7 @@
           <Match>Sources/Diagnostic/DotNet/**/*</Match>
         </Filter>
       </Filters>
-      <Extension backend="MSBuild">
+      <Extension buildSystem="MSBuild">
         <Files>
           <Input role="msbuild-targets">Sources/Windows/UdkCli.VisualStudio/UdkCli.VisualStudio.targets</Input>
         </Files>

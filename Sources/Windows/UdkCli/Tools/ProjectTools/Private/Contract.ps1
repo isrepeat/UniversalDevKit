@@ -418,7 +418,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
     $path = Resolve-UdkManifestPath $ManifestPath
     $root = Split-Path -Parent $path
     $manifest = Read-UdkManifest $path 'ComponentRegistry'
-    if (($manifest.schemaVersion -isnot [int] -and $manifest.schemaVersion -isnot [long]) -or $manifest.schemaVersion -notin @(2, 3, 4, 5, 6, 7)) {
+    if (($manifest.schemaVersion -isnot [int] -and $manifest.schemaVersion -isnot [long]) -or $manifest.schemaVersion -notin @(2, 3, 4, 5, 6, 7, 8)) {
         throw 'Unsupported component schemaVersion.'
     }
     $unified = $manifest.schemaVersion -ge 4
@@ -431,7 +431,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         throw "$listField must be a nonempty array."
     }
     $manifestFields = @('schemaVersion', 'generation', $listField)
-    if ($manifest.schemaVersion -eq 7) { $manifestFields += @('fileScope', 'filters') }
+    if ($manifest.schemaVersion -in @(7, 8)) { $manifestFields += @('fileScope', 'filters') }
     if (-not $unified) {
         $manifestFields += 'msbuildApplications'
     }

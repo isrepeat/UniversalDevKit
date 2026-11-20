@@ -8,20 +8,16 @@
              projectGuid="{364E96CB-9D8A-40B0-8455-6A31A15A36B0}">
       <SupportedPlatforms>Windows;Android</SupportedPlatforms>
       <Dependencies>
-        <Dependency component="Helpers"
+        <Dependency target="Helpers.Native"
                     visibility="public"
                     linkage="same" />
-        <Dependency component="Diagnostic"
+        <Dependency target="Diagnostic.Native"
                     visibility="private"
                     linkage="dynamic" />
-        <Dependency component="XamlRuntime"
+        <Dependency target="XamlRuntime.Native"
                     visibility="public"
                     linkage="same" />
       </Dependencies>
-      <ConsumerIntegration>
-        <MSBuild props="Sources/OpenGLESRenderer/MsBuild/OpenGLESRenderer.Usage.props" />
-        <CMake script="Sources/OpenGLESRenderer/Cmake/OpenGLESRenderer.Usage.cmake" />
-      </ConsumerIntegration>
       <Files>
         <Group id="PublicHeaders">
           <Input role="header">Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/**/*.h</Input>
@@ -48,26 +44,24 @@
           <LinkLibraries>GLESv3</LinkLibraries>
         </Android>
       </PlatformRequirements>
-      <Extension backend="MSBuild">
-        <Files>
-          <Group id="NativeBuild">
-            <Input role="msbuild-targets">Sources/OpenGLESRenderer/UniversalDevKit.OpenGLESRenderer.targets</Input>
-          </Group>
-        </Files>
+      <Extension buildSystem="MSBuild">
+        <Files.Input id="NativeBuild" role="msbuild-targets">Sources/OpenGLESRenderer/UniversalDevKit.OpenGLESRenderer.targets</Files.Input>
         <Filters>
           <Filter filter="{Tree:Project}/Build">
-            <Ref tag="Group" id="NativeBuild" />
-            <Ref tag="Output" id="DependenciesProps" />
+            <Ref tag="Input" id="NativeBuild" />
+            <Ref tag="Output" id="ROOT-DependenciesProps" />
           </Filter>
         </Filters>
+        <ConsumerIntegration.Files.Input role="msbuild-props">Sources/OpenGLESRenderer/MsBuild/OpenGLESRenderer.Usage.props</ConsumerIntegration.Files.Input>
       </Extension>
-      <Extension backend="CMake">
+      <Extension buildSystem="CMake">
         <Files>
           <Group id="CMakeRules">
             <Input role="cmake">Sources/OpenGLESRenderer/Build.cmake</Input>
             <File>Sources/OpenGLESRenderer/AngleConfig.cmake.in</File>
           </Group>
         </Files>
+        <ConsumerIntegration.Files.Input role="cmake">Sources/OpenGLESRenderer/Cmake/OpenGLESRenderer.Usage.cmake</ConsumerIntegration.Files.Input>
       </Extension>
     </Project> <!-- Project id="native" -->
   </Projects>

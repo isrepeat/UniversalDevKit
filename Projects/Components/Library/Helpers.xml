@@ -7,10 +7,6 @@
              projectType="native"
              libraryType="headerOnly"
              projectGuid="{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}">
-      <ConsumerIntegration>
-        <MSBuild props="Sources/Helpers/MsBuild/Helpers.Usage.props" />
-        <CMake script="Sources/Helpers/Cmake/Helpers.Usage.cmake" />
-      </ConsumerIntegration>
       <Files>
         <Group id="PublicHeaders">
           <Input role="header">Includes/Helpers/UniversalDevKit/Helpers/**/*.h</Input>
@@ -22,6 +18,12 @@
           <Ref tag="Group" id="PublicHeaders" />
         </Filter>
       </Filters>
+      <Extension buildSystem="MSBuild">
+        <ConsumerIntegration.Files.Input role="msbuild-props">Sources/Helpers/MsBuild/Helpers.Usage.props</ConsumerIntegration.Files.Input>
+      </Extension>
+      <Extension buildSystem="CMake">
+        <ConsumerIntegration.Files.Input role="cmake">Sources/Helpers/Cmake/Helpers.Usage.cmake</ConsumerIntegration.Files.Input>
+      </Extension>
     </Project> <!-- Project id="native" -->
   </Projects>
 </Component>

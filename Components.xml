@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ComponentRegistry schemaVersion="7">
+<ComponentRegistry schemaVersion="8">
   <Components>
     <Component>Projects/Components/Library/AndroidAppKit.xml</Component>
     <Component>Projects/Components/Library/AndroidBuildTools.xml</Component>
@@ -15,7 +15,7 @@
     <Component>Projects/Components/Application/XamlCompiler.xml</Component>
   </Components>
   <Generation>
-    <MSBuild>
+    <Settings buildSystem="MSBuild">
       <SolutionName>UniversalDevKit</SolutionName>
       <SolutionFolder>
         <Default>Projects/!Generated/MsBuild/{kind:title}/{name}</Default>
@@ -25,17 +25,17 @@
       </ProjectDirectory>
       <Configurations>Debug;Release</Configurations>
       <Platforms>x64</Platforms>
-    </MSBuild>
+    </Settings>
   </Generation>
 
   <Files>
-    <Group id="Version">
+    <Group id="ROOT-Version">
       <Input role="version-source">Version.json</Input>
       <Output role="version-header">Projects/!Generated/Includes/UniversalDevKit/Version.{ext}</Output>
-      <Output id="VersionProps"
+      <Output id="ROOT-VersionProps"
 							role="version-props">Projects/!Generated/MsBuild/{solutionName}.Version.{ext}</Output>
     </Group>
-    <Output id="SourcesIntegration"
+    <Output id="ROOT-SourcesIntegration"
             role="sourceIntegration-targets">Projects/!Generated/MsBuild/{solutionName}.Sources.{ext}</Output>
     <Output role="component-exportHeader">Projects/!Generated/Includes/UniversalDevKit/{name}/Export.{ext}</Output>
     <Output role="project-nativeApplication">{projectDirectory}/{name}.{ext}</Output>
@@ -48,10 +48,10 @@
     <Output role="source-headerCheck">{projectDirectory}/HeaderCheck.{ext}</Output>
     <Output role="core-exportHeader">Projects/!Generated/Includes/UniversalDevKit/Export.{ext}</Output>
   </Files>
-	<Extension backend="MSBuild">
+	<Extension buildSystem="MSBuild">
 		<Files>
 			<Input role="msbuild-props" projectType="native">Projects/MsBuild/BuildLayout.props</Input>
-			<Output id="DependenciesProps"
+			<Output id="ROOT-DependenciesProps"
 							role="dependencies-props">{projectDirectory}/{solutionName}.{name}.Dependencies.{ext}</Output>
 		</Files>
 	</Extension>

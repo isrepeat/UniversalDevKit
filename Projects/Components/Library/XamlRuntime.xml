@@ -19,17 +19,13 @@
              projectGuid="{3E00A02D-46F3-432B-91C8-5D459F70C525}">
       <SupportedPlatforms>Windows;Android</SupportedPlatforms>
       <Dependencies>
-        <Dependency component="Helpers"
+        <Dependency target="Helpers.Native"
                     visibility="public"
                     linkage="same" />
-        <Dependency component="Diagnostic"
+        <Dependency target="Diagnostic.Native"
                     visibility="private"
                     linkage="dynamic" />
       </Dependencies>
-      <ConsumerIntegration>
-        <MSBuild props="Sources/XamlRuntime/MsBuild/XamlRuntime.Usage.props" />
-        <CMake script="Sources/XamlRuntime/Cmake/XamlRuntime.Usage.cmake" />
-      </ConsumerIntegration>
       <Files>
         <Group id="PublicHeaders">
           <Input role="header">Includes/XamlRuntime/UniversalDevKit/XamlRuntime/**/*.h</Input>
@@ -52,26 +48,24 @@
         </Filter>
       </Filters>
       <Requirements cxxStandard="20" />
-      <Extension backend="MSBuild">
-        <Files>
-          <Group id="NativeBuild">
-            <Input role="msbuild-targets">Sources/XamlRuntime/UniversalDevKit.XamlRuntime.targets</Input>
-          </Group>
-        </Files>
+      <Extension buildSystem="MSBuild">
+        <Files.Input id="NativeBuild" role="msbuild-targets">Sources/XamlRuntime/UniversalDevKit.XamlRuntime.targets</Files.Input>
         <Filters>
           <Filter filter="{Tree:Project}/Build">
-            <Ref tag="Group" id="NativeBuild" />
-            <Ref tag="Output" id="DependenciesProps" />
+            <Ref tag="Input" id="NativeBuild" />
+            <Ref tag="Output" id="ROOT-DependenciesProps" />
           </Filter>
         </Filters>
+        <ConsumerIntegration.Files.Input role="msbuild-props">Sources/XamlRuntime/MsBuild/XamlRuntime.Usage.props</ConsumerIntegration.Files.Input>
       </Extension>
-      <Extension backend="CMake">
+      <Extension buildSystem="CMake">
         <Files>
           <Group id="CMakeRules">
             <Input role="cmake">Sources/XamlRuntime/Build.cmake</Input>
             <File>Sources/XamlRuntime/Consumer.cmake</File>
           </Group>
         </Files>
+        <ConsumerIntegration.Files.Input role="cmake">Sources/XamlRuntime/Cmake/XamlRuntime.Usage.cmake</ConsumerIntegration.Files.Input>
       </Extension>
     </Project> <!-- Project id="native" -->
   </Projects>

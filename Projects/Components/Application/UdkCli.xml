@@ -2,8 +2,8 @@
 <Component name="UdkCli">
   <Files>
     <Group id="GeneratedIntegration">
-      <Ref tag="Output" id="SourcesIntegration" />
-      <Ref tag="Output" id="VersionProps" />
+      <Ref tag="Output" id="ROOT-SourcesIntegration" />
+      <Ref tag="Output" id="ROOT-VersionProps" />
     </Group>
   </Files>
   <Filters>
@@ -47,7 +47,7 @@
           <IncludeDirectory>Projects/!Generated/Includes</IncludeDirectory>
         </IncludeDirectories>
       </Compile>
-      <Extension backend="MSBuild">
+      <Extension buildSystem="MSBuild">
         <Files>
           <Input role="msbuild-props">Sources/Windows/UdkCli/UdkCli.props</Input>
           <Input role="msbuild-targets">Sources/Windows/UdkCli/UdkCli.targets</Input>

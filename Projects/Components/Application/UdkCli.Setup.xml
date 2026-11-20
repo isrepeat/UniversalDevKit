@@ -19,7 +19,7 @@
           <Match>Sources/Windows/UdkCli.Setup/**/*.targets</Match>
         </Filter>
       </Filters>
-      <Extension backend="MSBuild">
+      <Extension buildSystem="MSBuild">
         <Files>
           <Input role="msbuild-targets">Sources/Windows/UdkCli.Setup/UdkCli.Setup.targets</Input>
         </Files>

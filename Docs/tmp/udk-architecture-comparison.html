@@ -1,0 +1,1353 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UDK — сравнение архитектуры манифестов</title>
+  <style>
+    :root { color-scheme: dark; --font-size-base: 14px; --border: #3d4147; }
+    body { margin: 0; padding: clamp(8px, 1vw, 20px); background: #252629; color: #f1f1f1; font: 14px/1.45 system-ui, sans-serif; }
+    h2, h3 { margin: 0; }
+    h2 { font-size: 1.3rem; }
+    h3 { font-size: 1rem; font-weight: 500; }
+    .viz-controls { display: flex; flex-wrap: wrap; gap: 1rem; }
+    .form-label { display: grid; grid-template-columns: 1fr auto; gap: .35em; }
+    .form-range { grid-column: 1 / -1; width: 100%; margin: 0; accent-color: #f5a46b; }
+    .comparison-nav { position: sticky; top: 0; z-index: 1; display: flex; gap: .4rem 1rem; flex-wrap: wrap; padding-block: .6rem; background: #252629; border-bottom: 1px solid var(--border); }
+    .comparison-nav a { color: #f5a46b; }
+  </style>
+</head>
+<body>
+<div id="udk-schema-comparison">
+  <style>
+    #udk-schema-comparison { display: grid; gap: calc(var(--font-size-base) * 1.5); }
+    #udk-schema-comparison > section { width: var(--comparison-width, 100%); margin-inline: auto; container-type: inline-size; scroll-margin-top: calc(var(--comparison-nav-height, 0px) + .6rem); }
+    #udk-schema-comparison .viz-controls label { flex: 1 1 12em; }
+    #udk-schema-comparison output { margin-inline-start: .4em; }
+    #udk-schema-comparison .xml-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(var(--font-size-base) * 1.2); }
+    #udk-schema-comparison h2 { margin-bottom: calc(var(--font-size-base) * .5); }
+    #udk-schema-comparison .xml-pair section { min-width: 0; }
+    #udk-schema-comparison .xml-pair h3 { border-bottom: 1px solid var(--border); padding-bottom: calc(var(--font-size-base) * .35); }
+    #udk-schema-comparison pre { margin: calc(var(--font-size-base) * .5) 0 0; padding: .55em 0; background: #1e1e1e; color: #c9d0bd; border-radius: 4px; }
+    #udk-schema-comparison pre code { display: block; white-space: normal; color: inherit; font-family: Consolas, "Courier New", monospace; font-size: calc(var(--font-size-base) * var(--comparison-scale, 1)); counter-reset: xml-line; }
+    #udk-schema-comparison .xml-line { display: block; position: relative; padding: 0 .65em 0 3.7em; min-height: 1lh; white-space: pre-wrap; overflow-wrap: anywhere; counter-increment: xml-line; }
+    #udk-schema-comparison .xml-line::before { content: counter(xml-line); position: absolute; inset-inline-start: 0; width: 2.6em; text-align: right; color: #98a1aa; user-select: none; }
+    #udk-schema-comparison .xml-tag { color: #f5a46b; }
+    #udk-schema-comparison .xml-attribute { color: #d8bb78; }
+    #udk-schema-comparison .xml-value { color: #c0ce9e; }
+    #udk-schema-comparison .xml-variable { color: inherit; }
+    #udk-schema-comparison .xml-comment, #udk-schema-comparison .xml-punctuation { color: #b4a28b; }
+    @container (max-width: 540px) { #udk-schema-comparison .xml-pair { grid-template-columns: minmax(0, 1fr); } }
+  </style>
+  <div class="viz-controls">
+    <label class="form-label" for="udk-comparison-width">
+      Ширина области <output for="udk-comparison-width">100%</output>
+      <input class="form-range" id="udk-comparison-width" type="range" min="50" max="100" step="5" value="100">
+    </label>
+    <label class="form-label" for="udk-comparison-scale">
+      Масштаб текста <output for="udk-comparison-scale">100%</output>
+      <input class="form-range" id="udk-comparison-scale" type="range" min="80" max="150" step="5" value="100">
+    </label>
+  </div>
+  <nav class="comparison-nav" aria-label="Манифесты">
+    <a href="#components-xml">Components.xml</a>
+    <a href="#diagnostic-xml">Diagnostic.xml</a>
+    <a href="#androidappkit-xml">AndroidAppKit.xml</a>
+    <a href="#androidbuildtools-xml">AndroidBuildTools.xml</a>
+    <a href="#androidcoresdk-xml">AndroidCoreSdk.xml</a>
+    <a href="#androidtemplates-xml">AndroidTemplates.xml</a>
+    <a href="#helpers-xml">Helpers.xml</a>
+    <a href="#xamlruntime-xml">XamlRuntime.xml</a>
+    <a href="#openglesrenderer-xml">OpenGLESRenderer.xml</a>
+    <a href="#udkcli-xml">UdkCli.xml</a>
+    <a href="#udkcli-setup-xml">UdkCli.Setup.xml</a>
+    <a href="#udkcli-visualstudio-xml">UdkCli.VisualStudio.xml</a>
+    <a href="#xamlcompiler-xml">XamlCompiler.xml</a>
+  </nav>
+  <section id="components-xml" aria-label="Components.xml">
+    <h2>Components.xml</h2>
+    <div class="xml-pair">
+      <section aria-label="Текущая схема">
+        <h3>Текущая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;ComponentRegistry</span> <span class="xml-attribute">schemaVersion</span>=<span class="xml-value">"7"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Components</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Library/AndroidAppKit.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Library/AndroidBuildTools.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Library/AndroidCoreSdk.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Library/AndroidTemplates.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Library/Diagnostic.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Library/Helpers.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Library/XamlRuntime.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Library/OpenGLESRenderer.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Application/UdkCli.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Application/UdkCli.Setup.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Application/UdkCli.VisualStudio.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Application/XamlCompiler.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Components</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Generation</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;MSBuild</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;SolutionName</span>&gt;UniversalDevKit<span class="xml-tag">&lt;/SolutionName</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;SolutionFolder</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Default</span>&gt;Projects/!Generated/MsBuild/{kind:title}/{name}<span class="xml-tag">&lt;/Default</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/SolutionFolder</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;ProjectDirectory</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Default</span>&gt;Projects/!Generated/MsBuild/{kind:title}/{name}<span class="xml-tag">&lt;/Default</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/ProjectDirectory</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Configurations</span>&gt;Debug;Release<span class="xml-tag">&lt;/Configurations</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Platforms</span>&gt;x64<span class="xml-tag">&lt;/Platforms</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/MSBuild</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Generation</span>&gt;</span>
+<span class="xml-line" role="presentation"></span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"Version"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"version-source"</span>&gt;Version.json<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"version-header"</span>&gt;Projects/!Generated/Includes/UniversalDevKit/Version.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">id</span>=<span class="xml-value">"VersionProps"</span></span>
+<span class="xml-line" role="presentation">							<span class="xml-attribute">role</span>=<span class="xml-value">"version-props"</span>&gt;Projects/!Generated/MsBuild/{solutionName}.Version.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourcesIntegration"</span></span>
+<span class="xml-line" role="presentation">            <span class="xml-attribute">role</span>=<span class="xml-value">"sourceIntegration-targets"</span>&gt;Projects/!Generated/MsBuild/{solutionName}.Sources.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"component-exportHeader"</span>&gt;Projects/!Generated/Includes/UniversalDevKit/{name}/Export.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"project-nativeApplication"</span>&gt;{projectDirectory}/{name}.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"project-nativeLibrary"</span>&gt;{projectDirectory}/{solutionName}.{name}.{variant:title}.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"project-classLibrary"</span>&gt;{projectDirectory}/{name}.{framework}.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"project-headerCheck"</span>&gt;{projectDirectory}/{solutionName}.{name}.HeaderCheck.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"project-vsix"</span>&gt;{projectDirectory}/{name}.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"project-wpf"</span>&gt;{projectDirectory}/{name}.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"shared-items"</span>&gt;{projectDirectory}/{solutionName}.{name}.Shared.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source-headerCheck"</span>&gt;{projectDirectory}/HeaderCheck.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"core-exportHeader"</span>&gt;Projects/!Generated/Includes/UniversalDevKit/Export.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">	<span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">backend</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">		<span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">			<span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-props"</span> <span class="xml-attribute">projectType</span>=<span class="xml-value">"native"</span>&gt;Projects/MsBuild/BuildLayout.props<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">			<span class="xml-tag">&lt;Output</span> <span class="xml-attribute">id</span>=<span class="xml-value">"DependenciesProps"</span></span>
+<span class="xml-line" role="presentation">							<span class="xml-attribute">role</span>=<span class="xml-value">"dependencies-props"</span>&gt;{projectDirectory}/{solutionName}.{name}.Dependencies.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">		<span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">	<span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/ComponentRegistry</span>&gt;</span></code></pre>
+      </section>
+      <section aria-label="Предлагаемая схема">
+        <h3>Предлагаемая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;ComponentRegistry</span> <span class="xml-attribute">schemaVersion</span>=<span class="xml-value">"8"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Components</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Library/AndroidAppKit.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Library/AndroidBuildTools.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Library/AndroidCoreSdk.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Library/AndroidTemplates.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Library/Diagnostic.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Library/Helpers.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Library/XamlRuntime.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Library/OpenGLESRenderer.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Application/UdkCli.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Application/UdkCli.Setup.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Application/UdkCli.VisualStudio.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Component</span>&gt;Projects/Components/Application/XamlCompiler.xml<span class="xml-tag">&lt;/Component</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Components</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Generation</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Settings</span> <span class="xml-attribute">buildSystem</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;SolutionName</span>&gt;UniversalDevKit<span class="xml-tag">&lt;/SolutionName</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;SolutionFolder</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Default</span>&gt;Projects/!Generated/MsBuild/{kind:title}/{name}<span class="xml-tag">&lt;/Default</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/SolutionFolder</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;ProjectDirectory</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Default</span>&gt;Projects/!Generated/MsBuild/{kind:title}/{name}<span class="xml-tag">&lt;/Default</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/ProjectDirectory</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Configurations</span>&gt;Debug;Release<span class="xml-tag">&lt;/Configurations</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Platforms</span>&gt;x64<span class="xml-tag">&lt;/Platforms</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Settings</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Generation</span>&gt;</span>
+<span class="xml-line" role="presentation"></span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ROOT-Version"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"version-source"</span>&gt;Version.json<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"version-header"</span>&gt;Projects/!Generated/Includes/UniversalDevKit/Version.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ROOT-VersionProps"</span></span>
+<span class="xml-line" role="presentation">							<span class="xml-attribute">role</span>=<span class="xml-value">"version-props"</span>&gt;Projects/!Generated/MsBuild/{solutionName}.Version.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ROOT-SourcesIntegration"</span></span>
+<span class="xml-line" role="presentation">            <span class="xml-attribute">role</span>=<span class="xml-value">"sourceIntegration-targets"</span>&gt;Projects/!Generated/MsBuild/{solutionName}.Sources.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"component-exportHeader"</span>&gt;Projects/!Generated/Includes/UniversalDevKit/{name}/Export.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"project-nativeApplication"</span>&gt;{projectDirectory}/{name}.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"project-nativeLibrary"</span>&gt;{projectDirectory}/{solutionName}.{name}.{variant:title}.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"project-classLibrary"</span>&gt;{projectDirectory}/{name}.{framework}.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"project-headerCheck"</span>&gt;{projectDirectory}/{solutionName}.{name}.HeaderCheck.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"project-vsix"</span>&gt;{projectDirectory}/{name}.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"project-wpf"</span>&gt;{projectDirectory}/{name}.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"shared-items"</span>&gt;{projectDirectory}/{solutionName}.{name}.Shared.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source-headerCheck"</span>&gt;{projectDirectory}/HeaderCheck.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"core-exportHeader"</span>&gt;Projects/!Generated/Includes/UniversalDevKit/Export.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">	<span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">buildSystem</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">		<span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">			<span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-props"</span> <span class="xml-attribute">projectType</span>=<span class="xml-value">"native"</span>&gt;Projects/MsBuild/BuildLayout.props<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">			<span class="xml-tag">&lt;Output</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ROOT-DependenciesProps"</span></span>
+<span class="xml-line" role="presentation">							<span class="xml-attribute">role</span>=<span class="xml-value">"dependencies-props"</span>&gt;{projectDirectory}/{solutionName}.{name}.Dependencies.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">		<span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">	<span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/ComponentRegistry</span>&gt;</span></code></pre>
+      </section>
+    </div>
+  </section>
+  <section id="diagnostic-xml" aria-label="Diagnostic.xml">
+    <h2>Diagnostic.xml</h2>
+    <div class="xml-pair">
+      <section aria-label="Текущая схема">
+        <h3>Текущая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"Diagnostic"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Projects</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">target</span>=<span class="xml-value">"Diagnostic.Native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"library"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectGuid</span>=<span class="xml-value">"{AB97876A-F25A-4AAE-BACD-D32C776BB261}"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">stateScope</span>=<span class="xml-value">"process"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Dependencies</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Dependency</span> <span class="xml-attribute">component</span>=<span class="xml-value">"Helpers"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">visibility</span>=<span class="xml-value">"private"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">linkage</span>=<span class="xml-value">"same"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Dependencies</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;ConsumerIntegration</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;MSBuild</span> <span class="xml-attribute">props</span>=<span class="xml-value">"Sources/Diagnostic/Native/MsBuild/Diagnostic.Usage.props"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;CMake</span> <span class="xml-attribute">script</span>=<span class="xml-value">"Sources/Diagnostic/Native/Cmake/Diagnostic.Usage.cmake"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/ConsumerIntegration</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"header"</span>&gt;Includes/Diagnostic/UniversalDevKit/Diagnostic/**/*.h<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeSources"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"header"</span>&gt;Sources/Diagnostic/Native/**/*.h<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/Diagnostic/Native/**/*.cpp<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SpdlogSources"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;ThirdParty/spdlog/src/*.cpp<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/Diagnostic/Native"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"CMakeRules"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span></span>
+<span class="xml-line" role="presentation">                <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeSources"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/ThirdParty/spdlog/src"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SpdlogSources"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Requirements</span> <span class="xml-attribute">cxxStandard</span>=<span class="xml-value">"20"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">threads</span>=<span class="xml-value">"true"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Compile</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;PrecompiledHeader</span>&gt;notUsing<span class="xml-tag">&lt;/PrecompiledHeader</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;IncludeDirectories</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;IncludeDirectory</span>&gt;ThirdParty/spdlog/include<span class="xml-tag">&lt;/IncludeDirectory</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/IncludeDirectories</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;PreprocessorDefinitions</span>&gt;SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES<span class="xml-tag">&lt;/PreprocessorDefinitions</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Compile</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">backend</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-targets"</span>&gt;Sources/Diagnostic/Native/Spdlog.targets<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/Build"</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeBuild"</span> /&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Output"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"DependenciesProps"</span> /&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">backend</span>=<span class="xml-value">"CMake"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"CMakeRules"</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"cmake"</span>&gt;Sources/Diagnostic/Native/Spdlog.cmake<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span> --&gt;</span>
+<span class="xml-line" role="presentation"></span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"dotnet"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">target</span>=<span class="xml-value">"Diagnostic.DotNet"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"library"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"classLibrary"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/Diagnostic/DotNet/**/*.cs<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"project-classLibrary"</span>&gt;{projectDirectory}/{solutionName}.{name}.Net8.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Dependencies</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Dependency</span> <span class="xml-attribute">target</span>=<span class="xml-value">"Diagnostic.Native"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">variant</span>=<span class="xml-value">"dynamic"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">usage</span>=<span class="xml-value">"runtime"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Dependencies</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">backend</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Properties</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;TargetFramework</span>&gt;net8.0<span class="xml-tag">&lt;/TargetFramework</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;AssemblyName</span>&gt;UniversalDevKit.Diagnostic<span class="xml-tag">&lt;/AssemblyName</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Nullable</span>&gt;enable<span class="xml-tag">&lt;/Nullable</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;AllowUnsafeBlocks</span>&gt;true<span class="xml-tag">&lt;/AllowUnsafeBlocks</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Properties</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"dotnet"</span> --&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Projects</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+      <section aria-label="Предлагаемая схема">
+        <h3>Предлагаемая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"Diagnostic"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Projects</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">target</span>=<span class="xml-value">"Diagnostic.Native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"library"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectGuid</span>=<span class="xml-value">"{AB97876A-F25A-4AAE-BACD-D32C776BB261}"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">stateScope</span>=<span class="xml-value">"process"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Dependencies</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Dependency</span> <span class="xml-attribute">target</span>=<span class="xml-value">"Helpers.Native"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">visibility</span>=<span class="xml-value">"private"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">linkage</span>=<span class="xml-value">"same"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Dependencies</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"header"</span>&gt;Includes/Diagnostic/UniversalDevKit/Diagnostic/**/*.h<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeSources"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"header"</span>&gt;Sources/Diagnostic/Native/**/*.h<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/Diagnostic/Native/**/*.cpp<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SpdlogSources"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;ThirdParty/spdlog/src/*.cpp<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/Diagnostic/Native"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Input"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"CMakeRules"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span></span>
+<span class="xml-line" role="presentation">                <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeSources"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/ThirdParty/spdlog/src"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SpdlogSources"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Requirements</span> <span class="xml-attribute">cxxStandard</span>=<span class="xml-value">"20"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">threads</span>=<span class="xml-value">"true"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Compile</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;PrecompiledHeader</span>&gt;notUsing<span class="xml-tag">&lt;/PrecompiledHeader</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;IncludeDirectories</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;IncludeDirectory</span>&gt;ThirdParty/spdlog/include<span class="xml-tag">&lt;/IncludeDirectory</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/IncludeDirectories</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;PreprocessorDefinitions</span>&gt;SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES<span class="xml-tag">&lt;/PreprocessorDefinitions</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Compile</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">buildSystem</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files.Input</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeBuild"</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-targets"</span>&gt;Sources/Diagnostic/Native/Spdlog.targets<span class="xml-tag">&lt;/Files.Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/Build"</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Input"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeBuild"</span> /&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Output"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ROOT-DependenciesProps"</span> /&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;ConsumerIntegration.Files.Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-props"</span>&gt;Sources/Diagnostic/Native/MsBuild/Diagnostic.Usage.props<span class="xml-tag">&lt;/ConsumerIntegration.Files.Input</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">buildSystem</span>=<span class="xml-value">"CMake"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files.Input</span> <span class="xml-attribute">id</span>=<span class="xml-value">"CMakeRules"</span> <span class="xml-attribute">role</span>=<span class="xml-value">"cmake"</span>&gt;Sources/Diagnostic/Native/Spdlog.cmake<span class="xml-tag">&lt;/Files.Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;ConsumerIntegration.Files.Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"cmake"</span>&gt;Sources/Diagnostic/Native/Cmake/Diagnostic.Usage.cmake<span class="xml-tag">&lt;/ConsumerIntegration.Files.Input</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span> --&gt;</span>
+<span class="xml-line" role="presentation"></span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"dotnet"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">target</span>=<span class="xml-value">"Diagnostic.DotNet"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"library"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"classLibrary"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/Diagnostic/DotNet/**/*.cs<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"project-classLibrary"</span>&gt;{projectDirectory}/{solutionName}.{name}.Net8.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Dependencies</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Dependency</span> <span class="xml-attribute">target</span>=<span class="xml-value">"Diagnostic.Native"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">variant</span>=<span class="xml-value">"dynamic"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">usage</span>=<span class="xml-value">"runtime"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Dependencies</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">buildSystem</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Properties</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;TargetFramework</span>&gt;net8.0<span class="xml-tag">&lt;/TargetFramework</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;AssemblyName</span>&gt;UniversalDevKit.Diagnostic<span class="xml-tag">&lt;/AssemblyName</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Nullable</span>&gt;enable<span class="xml-tag">&lt;/Nullable</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;AllowUnsafeBlocks</span>&gt;true<span class="xml-tag">&lt;/AllowUnsafeBlocks</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Properties</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"dotnet"</span> --&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Projects</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+    </div>
+  </section>
+  <section id="androidappkit-xml" aria-label="AndroidAppKit.xml">
+    <h2>AndroidAppKit.xml <small>· без изменений</small></h2>
+    <div class="xml-pair">
+      <section aria-label="Текущая схема">
+        <h3>Текущая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"AndroidAppKit"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourceTree"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;File</span>&gt;Sources/Android/AndroidAppKit/**/*<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/Android/AndroidAppKit"</span></span>
+<span class="xml-line" role="presentation">            <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourceTree"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+      <section aria-label="Предлагаемая схема">
+        <h3>Предлагаемая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"AndroidAppKit"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourceTree"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;File</span>&gt;Sources/Android/AndroidAppKit/**/*<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/Android/AndroidAppKit"</span></span>
+<span class="xml-line" role="presentation">            <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourceTree"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+    </div>
+  </section>
+  <section id="androidbuildtools-xml" aria-label="AndroidBuildTools.xml">
+    <h2>AndroidBuildTools.xml <small>· без изменений</small></h2>
+    <div class="xml-pair">
+      <section aria-label="Текущая схема">
+        <h3>Текущая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"AndroidBuildTools"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourceTree"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;File</span>&gt;Sources/Android/AndroidBuildTools/**/*<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"PublicHeaders"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;File</span>&gt;Includes/Android/AndroidBuildTools/**/*<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/Android/AndroidBuildTools"</span></span>
+<span class="xml-line" role="presentation">            <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourceTree"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Includes/Android/AndroidBuildTools"</span></span>
+<span class="xml-line" role="presentation">            <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"PublicHeaders"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+      <section aria-label="Предлагаемая схема">
+        <h3>Предлагаемая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"AndroidBuildTools"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourceTree"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;File</span>&gt;Sources/Android/AndroidBuildTools/**/*<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"PublicHeaders"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;File</span>&gt;Includes/Android/AndroidBuildTools/**/*<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/Android/AndroidBuildTools"</span></span>
+<span class="xml-line" role="presentation">            <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourceTree"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Includes/Android/AndroidBuildTools"</span></span>
+<span class="xml-line" role="presentation">            <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"PublicHeaders"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+    </div>
+  </section>
+  <section id="androidcoresdk-xml" aria-label="AndroidCoreSdk.xml">
+    <h2>AndroidCoreSdk.xml <small>· без изменений</small></h2>
+    <div class="xml-pair">
+      <section aria-label="Текущая схема">
+        <h3>Текущая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"AndroidCoreSdk"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourceTree"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;File</span>&gt;Sources/Android/AndroidCoreSdk/**/*<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/Android/AndroidCoreSdk"</span></span>
+<span class="xml-line" role="presentation">            <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourceTree"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+      <section aria-label="Предлагаемая схема">
+        <h3>Предлагаемая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"AndroidCoreSdk"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourceTree"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;File</span>&gt;Sources/Android/AndroidCoreSdk/**/*<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/Android/AndroidCoreSdk"</span></span>
+<span class="xml-line" role="presentation">            <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourceTree"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+    </div>
+  </section>
+  <section id="androidtemplates-xml" aria-label="AndroidTemplates.xml">
+    <h2>AndroidTemplates.xml <small>· без изменений</small></h2>
+    <div class="xml-pair">
+      <section aria-label="Текущая схема">
+        <h3>Текущая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"AndroidTemplates"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourceTree"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;File</span>&gt;Sources/Android/AndroidTemplates/**/*<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/Android/AndroidTemplates"</span></span>
+<span class="xml-line" role="presentation">            <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourceTree"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+      <section aria-label="Предлагаемая схема">
+        <h3>Предлагаемая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"AndroidTemplates"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourceTree"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;File</span>&gt;Sources/Android/AndroidTemplates/**/*<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/Android/AndroidTemplates"</span></span>
+<span class="xml-line" role="presentation">            <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourceTree"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+    </div>
+  </section>
+  <section id="helpers-xml" aria-label="Helpers.xml">
+    <h2>Helpers.xml</h2>
+    <div class="xml-pair">
+      <section aria-label="Текущая схема">
+        <h3>Текущая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"Helpers"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Projects</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">target</span>=<span class="xml-value">"Helpers.Native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"library"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">libraryType</span>=<span class="xml-value">"headerOnly"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectGuid</span>=<span class="xml-value">"{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;ConsumerIntegration</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;MSBuild</span> <span class="xml-attribute">props</span>=<span class="xml-value">"Sources/Helpers/MsBuild/Helpers.Usage.props"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;CMake</span> <span class="xml-attribute">script</span>=<span class="xml-value">"Sources/Helpers/Cmake/Helpers.Usage.cmake"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/ConsumerIntegration</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"PublicHeaders"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"header"</span>&gt;Includes/Helpers/UniversalDevKit/Helpers/**/*.h<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span></span>
+<span class="xml-line" role="presentation">                <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"PublicHeaders"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span> --&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Projects</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+      <section aria-label="Предлагаемая схема">
+        <h3>Предлагаемая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"Helpers"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Projects</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">target</span>=<span class="xml-value">"Helpers.Native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"library"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">libraryType</span>=<span class="xml-value">"headerOnly"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectGuid</span>=<span class="xml-value">"{C1E8C40D-B9B5-4C0D-9F7E-1B793D3C13AE}"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"PublicHeaders"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"header"</span>&gt;Includes/Helpers/UniversalDevKit/Helpers/**/*.h<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span></span>
+<span class="xml-line" role="presentation">                <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"PublicHeaders"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">buildSystem</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;ConsumerIntegration.Files.Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-props"</span>&gt;Sources/Helpers/MsBuild/Helpers.Usage.props<span class="xml-tag">&lt;/ConsumerIntegration.Files.Input</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">buildSystem</span>=<span class="xml-value">"CMake"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;ConsumerIntegration.Files.Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"cmake"</span>&gt;Sources/Helpers/Cmake/Helpers.Usage.cmake<span class="xml-tag">&lt;/ConsumerIntegration.Files.Input</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span> --&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Projects</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+    </div>
+  </section>
+  <section id="xamlruntime-xml" aria-label="XamlRuntime.xml">
+    <h2>XamlRuntime.xml</h2>
+    <div class="xml-pair">
+      <section aria-label="Текущая схема">
+        <h3>Текущая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"XamlRuntime"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ThirdParty"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;File</span>&gt;ThirdParty/XamlRuntime/**/*<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/ThirdParty/XamlRuntime"</span></span>
+<span class="xml-line" role="presentation">            <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ThirdParty"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Projects</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">target</span>=<span class="xml-value">"XamlRuntime.Native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"library"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectGuid</span>=<span class="xml-value">"{3E00A02D-46F3-432B-91C8-5D459F70C525}"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;SupportedPlatforms</span>&gt;Windows;Android<span class="xml-tag">&lt;/SupportedPlatforms</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Dependencies</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Dependency</span> <span class="xml-attribute">component</span>=<span class="xml-value">"Helpers"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">visibility</span>=<span class="xml-value">"public"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">linkage</span>=<span class="xml-value">"same"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Dependency</span> <span class="xml-attribute">component</span>=<span class="xml-value">"Diagnostic"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">visibility</span>=<span class="xml-value">"private"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">linkage</span>=<span class="xml-value">"dynamic"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Dependencies</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;ConsumerIntegration</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;MSBuild</span> <span class="xml-attribute">props</span>=<span class="xml-value">"Sources/XamlRuntime/MsBuild/XamlRuntime.Usage.props"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;CMake</span> <span class="xml-attribute">script</span>=<span class="xml-value">"Sources/XamlRuntime/Cmake/XamlRuntime.Usage.cmake"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/ConsumerIntegration</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"PublicHeaders"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"header"</span>&gt;Includes/XamlRuntime/UniversalDevKit/XamlRuntime/**/*.h<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeSources"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/XamlRuntime/**/*.cpp<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/XamlRuntime"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"CMakeRules"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span></span>
+<span class="xml-line" role="presentation">                <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"PublicHeaders"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span></span>
+<span class="xml-line" role="presentation">                <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeSources"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Requirements</span> <span class="xml-attribute">cxxStandard</span>=<span class="xml-value">"20"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">backend</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-targets"</span>&gt;Sources/XamlRuntime/UniversalDevKit.XamlRuntime.targets<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/Build"</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeBuild"</span> /&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Output"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"DependenciesProps"</span> /&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">backend</span>=<span class="xml-value">"CMake"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"CMakeRules"</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"cmake"</span>&gt;Sources/XamlRuntime/Build.cmake<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;File</span>&gt;Sources/XamlRuntime/Consumer.cmake<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span> --&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Projects</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+      <section aria-label="Предлагаемая схема">
+        <h3>Предлагаемая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"XamlRuntime"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ThirdParty"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;File</span>&gt;ThirdParty/XamlRuntime/**/*<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/ThirdParty/XamlRuntime"</span></span>
+<span class="xml-line" role="presentation">            <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ThirdParty"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Projects</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">target</span>=<span class="xml-value">"XamlRuntime.Native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"library"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectGuid</span>=<span class="xml-value">"{3E00A02D-46F3-432B-91C8-5D459F70C525}"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;SupportedPlatforms</span>&gt;Windows;Android<span class="xml-tag">&lt;/SupportedPlatforms</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Dependencies</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Dependency</span> <span class="xml-attribute">target</span>=<span class="xml-value">"Helpers.Native"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">visibility</span>=<span class="xml-value">"public"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">linkage</span>=<span class="xml-value">"same"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Dependency</span> <span class="xml-attribute">target</span>=<span class="xml-value">"Diagnostic.Native"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">visibility</span>=<span class="xml-value">"private"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">linkage</span>=<span class="xml-value">"dynamic"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Dependencies</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"PublicHeaders"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"header"</span>&gt;Includes/XamlRuntime/UniversalDevKit/XamlRuntime/**/*.h<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeSources"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/XamlRuntime/**/*.cpp<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/XamlRuntime"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"CMakeRules"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span></span>
+<span class="xml-line" role="presentation">                <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"PublicHeaders"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span></span>
+<span class="xml-line" role="presentation">                <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeSources"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Requirements</span> <span class="xml-attribute">cxxStandard</span>=<span class="xml-value">"20"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">buildSystem</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files.Input</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeBuild"</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-targets"</span>&gt;Sources/XamlRuntime/UniversalDevKit.XamlRuntime.targets<span class="xml-tag">&lt;/Files.Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/Build"</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Input"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeBuild"</span> /&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Output"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ROOT-DependenciesProps"</span> /&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;ConsumerIntegration.Files.Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-props"</span>&gt;Sources/XamlRuntime/MsBuild/XamlRuntime.Usage.props<span class="xml-tag">&lt;/ConsumerIntegration.Files.Input</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">buildSystem</span>=<span class="xml-value">"CMake"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"CMakeRules"</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"cmake"</span>&gt;Sources/XamlRuntime/Build.cmake<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;File</span>&gt;Sources/XamlRuntime/Consumer.cmake<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;ConsumerIntegration.Files.Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"cmake"</span>&gt;Sources/XamlRuntime/Cmake/XamlRuntime.Usage.cmake<span class="xml-tag">&lt;/ConsumerIntegration.Files.Input</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span> --&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Projects</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+    </div>
+  </section>
+  <section id="openglesrenderer-xml" aria-label="OpenGLESRenderer.xml">
+    <h2>OpenGLESRenderer.xml</h2>
+    <div class="xml-pair">
+      <section aria-label="Текущая схема">
+        <h3>Текущая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"OpenGLESRenderer"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Projects</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">target</span>=<span class="xml-value">"OpenGLESRenderer.Native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"library"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectGuid</span>=<span class="xml-value">"{364E96CB-9D8A-40B0-8455-6A31A15A36B0}"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;SupportedPlatforms</span>&gt;Windows;Android<span class="xml-tag">&lt;/SupportedPlatforms</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Dependencies</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Dependency</span> <span class="xml-attribute">component</span>=<span class="xml-value">"Helpers"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">visibility</span>=<span class="xml-value">"public"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">linkage</span>=<span class="xml-value">"same"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Dependency</span> <span class="xml-attribute">component</span>=<span class="xml-value">"Diagnostic"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">visibility</span>=<span class="xml-value">"private"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">linkage</span>=<span class="xml-value">"dynamic"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Dependency</span> <span class="xml-attribute">component</span>=<span class="xml-value">"XamlRuntime"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">visibility</span>=<span class="xml-value">"public"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">linkage</span>=<span class="xml-value">"same"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Dependencies</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;ConsumerIntegration</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;MSBuild</span> <span class="xml-attribute">props</span>=<span class="xml-value">"Sources/OpenGLESRenderer/MsBuild/OpenGLESRenderer.Usage.props"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;CMake</span> <span class="xml-attribute">script</span>=<span class="xml-value">"Sources/OpenGLESRenderer/Cmake/OpenGLESRenderer.Usage.cmake"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/ConsumerIntegration</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"PublicHeaders"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"header"</span>&gt;Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/**/*.h<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeSources"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"header"</span>&gt;Sources/OpenGLESRenderer/**/*.h<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/OpenGLESRenderer/**/*.cpp<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/OpenGLESRenderer"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"CMakeRules"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"PublicHeaders"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeSources"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Requirements</span> <span class="xml-attribute">cxxStandard</span>=<span class="xml-value">"20"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;PlatformRequirements</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Android</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;LinkLibraries</span>&gt;GLESv3<span class="xml-tag">&lt;/LinkLibraries</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Android</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/PlatformRequirements</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">backend</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-targets"</span>&gt;Sources/OpenGLESRenderer/UniversalDevKit.OpenGLESRenderer.targets<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/Build"</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeBuild"</span> /&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Output"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"DependenciesProps"</span> /&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">backend</span>=<span class="xml-value">"CMake"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"CMakeRules"</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"cmake"</span>&gt;Sources/OpenGLESRenderer/Build.cmake<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;File</span>&gt;Sources/OpenGLESRenderer/AngleConfig.cmake.in<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span> --&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Projects</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+      <section aria-label="Предлагаемая схема">
+        <h3>Предлагаемая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"OpenGLESRenderer"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Projects</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">target</span>=<span class="xml-value">"OpenGLESRenderer.Native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"library"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectGuid</span>=<span class="xml-value">"{364E96CB-9D8A-40B0-8455-6A31A15A36B0}"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;SupportedPlatforms</span>&gt;Windows;Android<span class="xml-tag">&lt;/SupportedPlatforms</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Dependencies</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Dependency</span> <span class="xml-attribute">target</span>=<span class="xml-value">"Helpers.Native"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">visibility</span>=<span class="xml-value">"public"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">linkage</span>=<span class="xml-value">"same"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Dependency</span> <span class="xml-attribute">target</span>=<span class="xml-value">"Diagnostic.Native"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">visibility</span>=<span class="xml-value">"private"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">linkage</span>=<span class="xml-value">"dynamic"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Dependency</span> <span class="xml-attribute">target</span>=<span class="xml-value">"XamlRuntime.Native"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">visibility</span>=<span class="xml-value">"public"</span></span>
+<span class="xml-line" role="presentation">                    <span class="xml-attribute">linkage</span>=<span class="xml-value">"same"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Dependencies</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"PublicHeaders"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"header"</span>&gt;Includes/OpenGLESRenderer/UniversalDevKit/OpenGLESRenderer/**/*.h<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeSources"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"header"</span>&gt;Sources/OpenGLESRenderer/**/*.h<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/OpenGLESRenderer/**/*.cpp<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/OpenGLESRenderer"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"CMakeRules"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"PublicHeaders"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeSources"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Requirements</span> <span class="xml-attribute">cxxStandard</span>=<span class="xml-value">"20"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;PlatformRequirements</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Android</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;LinkLibraries</span>&gt;GLESv3<span class="xml-tag">&lt;/LinkLibraries</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Android</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/PlatformRequirements</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">buildSystem</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files.Input</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeBuild"</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-targets"</span>&gt;Sources/OpenGLESRenderer/UniversalDevKit.OpenGLESRenderer.targets<span class="xml-tag">&lt;/Files.Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/Build"</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Input"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"NativeBuild"</span> /&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Output"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ROOT-DependenciesProps"</span> /&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;ConsumerIntegration.Files.Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-props"</span>&gt;Sources/OpenGLESRenderer/MsBuild/OpenGLESRenderer.Usage.props<span class="xml-tag">&lt;/ConsumerIntegration.Files.Input</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">buildSystem</span>=<span class="xml-value">"CMake"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"CMakeRules"</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"cmake"</span>&gt;Sources/OpenGLESRenderer/Build.cmake<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;File</span>&gt;Sources/OpenGLESRenderer/AngleConfig.cmake.in<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;ConsumerIntegration.Files.Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"cmake"</span>&gt;Sources/OpenGLESRenderer/Cmake/OpenGLESRenderer.Usage.cmake<span class="xml-tag">&lt;/ConsumerIntegration.Files.Input</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span> --&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Projects</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+    </div>
+  </section>
+  <section id="udkcli-xml" aria-label="UdkCli.xml">
+    <h2>UdkCli.xml</h2>
+    <div class="xml-pair">
+      <section aria-label="Текущая схема">
+        <h3>Текущая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"UdkCli"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"GeneratedIntegration"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Output"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"SourcesIntegration"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Output"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"VersionProps"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Projects/!Generated/MsBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"GeneratedIntegration"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Projects</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"application"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">githubVersion</span>=<span class="xml-value">"0.5.3"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectGuid</span>=<span class="xml-value">"{9C7AAB80-FA41-4925-95FA-06409E32E4E1}"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ToolsAndConfiguration"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;File</span>&gt;Sources/Windows/UdkCli/Tools/**/*<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"WindowsBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;File</span>&gt;Sources/Windows/UdkCli.Diagnostic.targets<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"header"</span>&gt;Sources/Windows/UdkCli/**/*.h<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/Windows/UdkCli/**/*.cpp<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/Windows"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"WindowsBuild"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/Windows/UdkCli"</span></span>
+<span class="xml-line" role="presentation">                <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ToolsAndConfiguration"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli/**/*<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Requirements</span> <span class="xml-attribute">cxxStandard</span>=<span class="xml-value">"20"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Compile</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;IncludeDirectories</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;IncludeDirectory</span>&gt;Includes/Diagnostic<span class="xml-tag">&lt;/IncludeDirectory</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;IncludeDirectory</span>&gt;Includes/Core<span class="xml-tag">&lt;/IncludeDirectory</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;IncludeDirectory</span>&gt;Projects/!Generated/Includes<span class="xml-tag">&lt;/IncludeDirectory</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/IncludeDirectories</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Compile</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">backend</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-props"</span>&gt;Sources/Windows/UdkCli/UdkCli.props<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-targets"</span>&gt;Sources/Windows/UdkCli/UdkCli.targets<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/Build"</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli/**/*.props<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli/**/*.targets<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Properties</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;TargetName</span>&gt;udk<span class="xml-tag">&lt;/TargetName</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Properties</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span> --&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Projects</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+      <section aria-label="Предлагаемая схема">
+        <h3>Предлагаемая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"UdkCli"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"GeneratedIntegration"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Output"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ROOT-SourcesIntegration"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Output"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ROOT-VersionProps"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Projects/!Generated/MsBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"GeneratedIntegration"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Projects</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"application"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">githubVersion</span>=<span class="xml-value">"0.5.3"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectGuid</span>=<span class="xml-value">"{9C7AAB80-FA41-4925-95FA-06409E32E4E1}"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ToolsAndConfiguration"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;File</span>&gt;Sources/Windows/UdkCli/Tools/**/*<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"WindowsBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;File</span>&gt;Sources/Windows/UdkCli.Diagnostic.targets<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"header"</span>&gt;Sources/Windows/UdkCli/**/*.h<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/Windows/UdkCli/**/*.cpp<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/Windows"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"WindowsBuild"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/Windows/UdkCli"</span></span>
+<span class="xml-line" role="presentation">                <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"ToolsAndConfiguration"</span> /&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli/**/*<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Requirements</span> <span class="xml-attribute">cxxStandard</span>=<span class="xml-value">"20"</span> /&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Compile</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;IncludeDirectories</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;IncludeDirectory</span>&gt;Includes/Diagnostic<span class="xml-tag">&lt;/IncludeDirectory</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;IncludeDirectory</span>&gt;Includes/Core<span class="xml-tag">&lt;/IncludeDirectory</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;IncludeDirectory</span>&gt;Projects/!Generated/Includes<span class="xml-tag">&lt;/IncludeDirectory</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/IncludeDirectories</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Compile</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">buildSystem</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-props"</span>&gt;Sources/Windows/UdkCli/UdkCli.props<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-targets"</span>&gt;Sources/Windows/UdkCli/UdkCli.targets<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/Build"</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli/**/*.props<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">            <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli/**/*.targets<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Properties</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;TargetName</span>&gt;udk<span class="xml-tag">&lt;/TargetName</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Properties</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span> --&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Projects</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+    </div>
+  </section>
+  <section id="udkcli-setup-xml" aria-label="UdkCli.Setup.xml">
+    <h2>UdkCli.Setup.xml</h2>
+    <div class="xml-pair">
+      <section aria-label="Текущая схема">
+        <h3>Текущая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"UdkCli.Setup"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Projects</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"wpf"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"application"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"wpf"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectGuid</span>=<span class="xml-value">"{C27A6217-35E3-4AD1-BBC7-71438D8E1E16}"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/Windows/UdkCli.Setup/**/*.cs<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/Windows/UdkCli.Setup/**/*.xaml<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span></span>
+<span class="xml-line" role="presentation">                <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli.Setup/**/*<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/Build"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli.Setup/**/*.props<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli.Setup/**/*.targets<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">backend</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-targets"</span>&gt;Sources/Windows/UdkCli.Setup/UdkCli.Setup.targets<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Properties</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;TargetFramework</span>&gt;net10.0-windows<span class="xml-tag">&lt;/TargetFramework</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Properties</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"wpf"</span> --&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Projects</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+      <section aria-label="Предлагаемая схема">
+        <h3>Предлагаемая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"UdkCli.Setup"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Projects</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"wpf"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"application"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"wpf"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectGuid</span>=<span class="xml-value">"{C27A6217-35E3-4AD1-BBC7-71438D8E1E16}"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/Windows/UdkCli.Setup/**/*.cs<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/Windows/UdkCli.Setup/**/*.xaml<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span></span>
+<span class="xml-line" role="presentation">                <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli.Setup/**/*<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/Build"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli.Setup/**/*.props<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli.Setup/**/*.targets<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">buildSystem</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-targets"</span>&gt;Sources/Windows/UdkCli.Setup/UdkCli.Setup.targets<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Properties</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;TargetFramework</span>&gt;net10.0-windows<span class="xml-tag">&lt;/TargetFramework</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Properties</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"wpf"</span> --&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Projects</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+    </div>
+  </section>
+  <section id="udkcli-visualstudio-xml" aria-label="UdkCli.VisualStudio.xml">
+    <h2>UdkCli.VisualStudio.xml</h2>
+    <div class="xml-pair">
+      <section aria-label="Текущая схема">
+        <h3>Текущая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"UdkCli.VisualStudio"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Projects</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"vsix"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"application"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"vsix"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">version</span>=<span class="xml-value">"0.5.3"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectGuid</span>=<span class="xml-value">"{5217622B-841E-4635-BA5D-8DE005125B16}"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/Windows/UdkCli.VisualStudio/**/*.cs<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/Diagnostic/DotNet/*.cs<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"project-vsix"</span>&gt;{projectDirectory}/{name}.Net472.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span></span>
+<span class="xml-line" role="presentation">                <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli.VisualStudio/**/*<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/Build"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli.VisualStudio/**/*.props<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli.VisualStudio/**/*.targets<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/Diagnostic"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Diagnostic/DotNet/**/*<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">backend</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-targets"</span>&gt;Sources/Windows/UdkCli.VisualStudio/UdkCli.VisualStudio.targets<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Properties</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;TargetFramework</span>&gt;net472<span class="xml-tag">&lt;/TargetFramework</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Properties</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"vsix"</span> --&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Projects</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+      <section aria-label="Предлагаемая схема">
+        <h3>Предлагаемая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"UdkCli.VisualStudio"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Projects</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"vsix"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"application"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"vsix"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">version</span>=<span class="xml-value">"0.5.3"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectGuid</span>=<span class="xml-value">"{5217622B-841E-4635-BA5D-8DE005125B16}"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/Windows/UdkCli.VisualStudio/**/*.cs<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/Diagnostic/DotNet/*.cs<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Output</span> <span class="xml-attribute">role</span>=<span class="xml-value">"project-vsix"</span>&gt;{projectDirectory}/{name}.Net472.{ext}<span class="xml-tag">&lt;/Output</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}"</span></span>
+<span class="xml-line" role="presentation">                <span class="xml-attribute">preserveTree</span>=<span class="xml-value">"true"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli.VisualStudio/**/*<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/Build"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli.VisualStudio/**/*.props<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/UdkCli.VisualStudio/**/*.targets<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/Diagnostic"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Diagnostic/DotNet/**/*<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Extension</span> <span class="xml-attribute">buildSystem</span>=<span class="xml-value">"MSBuild"</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"msbuild-targets"</span>&gt;Sources/Windows/UdkCli.VisualStudio/UdkCli.VisualStudio.targets<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Properties</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;TargetFramework</span>&gt;net472<span class="xml-tag">&lt;/TargetFramework</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Properties</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Extension</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"vsix"</span> --&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Projects</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+    </div>
+  </section>
+  <section id="xamlcompiler-xml" aria-label="XamlCompiler.xml">
+    <h2>XamlCompiler.xml <small>· без изменений</small></h2>
+    <div class="xml-pair">
+      <section aria-label="Текущая схема">
+        <h3>Текущая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"XamlCompiler"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"CMakeRules"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;File</span>&gt;Sources/Windows/XamlCompiler/CMakeLists.txt<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/Windows/XamlCompiler"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"CMakeRules"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Projects</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"application"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"native"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"header"</span>&gt;Sources/Windows/XamlCompiler/**/*.h<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/Windows/XamlCompiler/**/*.cpp<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/Sources"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/XamlCompiler/**/*<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Requirements</span> <span class="xml-attribute">cxxStandard</span>=<span class="xml-value">"20"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span> --&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Projects</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+      <section aria-label="Предлагаемая схема">
+        <h3>Предлагаемая схема</h3>
+        <pre><code><span class="xml-line" role="presentation">&lt;?xml <span class="xml-attribute">version</span>=<span class="xml-value">"1.0"</span> <span class="xml-attribute">encoding</span>=<span class="xml-value">"utf-8"</span>?&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;Component</span> <span class="xml-attribute">name</span>=<span class="xml-value">"XamlCompiler"</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Group</span> <span class="xml-attribute">id</span>=<span class="xml-value">"CMakeRules"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;File</span>&gt;Sources/Windows/XamlCompiler/CMakeLists.txt<span class="xml-tag">&lt;/File</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Group</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Solution}/Sources/Windows/XamlCompiler"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Ref</span> <span class="xml-attribute">tag</span>=<span class="xml-value">"Group"</span> <span class="xml-attribute">id</span>=<span class="xml-value">"CMakeRules"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;Projects</span>&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;Project</span> <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">kind</span>=<span class="xml-value">"application"</span></span>
+<span class="xml-line" role="presentation">             <span class="xml-attribute">projectType</span>=<span class="xml-value">"native"</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Files</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"header"</span>&gt;Sources/Windows/XamlCompiler/**/*.h<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Input</span> <span class="xml-attribute">role</span>=<span class="xml-value">"source"</span>&gt;Sources/Windows/XamlCompiler/**/*.cpp<span class="xml-tag">&lt;/Input</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Files</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;Filter</span> <span class="xml-attribute">filter</span>=<span class="xml-value">"{Tree:Project}/Sources"</span>&gt;</span>
+<span class="xml-line" role="presentation">          <span class="xml-tag">&lt;Match</span>&gt;Sources/Windows/XamlCompiler/**/*<span class="xml-tag">&lt;/Match</span>&gt;</span>
+<span class="xml-line" role="presentation">        <span class="xml-tag">&lt;/Filter</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;/Filters</span>&gt;</span>
+<span class="xml-line" role="presentation">      <span class="xml-tag">&lt;Requirements</span> <span class="xml-attribute">cxxStandard</span>=<span class="xml-value">"20"</span> /&gt;</span>
+<span class="xml-line" role="presentation">    <span class="xml-tag">&lt;/Project</span>&gt; &lt;!-- Project <span class="xml-attribute">id</span>=<span class="xml-value">"native"</span> --&gt;</span>
+<span class="xml-line" role="presentation">  <span class="xml-tag">&lt;/Projects</span>&gt;</span>
+<span class="xml-line" role="presentation"><span class="xml-tag">&lt;/Component</span>&gt;</span></code></pre>
+      </section>
+    </div>
+  </section>
+  <script>
+    (() => {
+      const root = document.getElementById("udk-schema-comparison");
+      const nav = root.querySelector(".comparison-nav");
+      function updateNavHeight() {
+        root.style.setProperty("--comparison-nav-height", nav.offsetHeight + "px");
+      }
+      updateNavHeight();
+      new ResizeObserver(updateNavHeight).observe(nav);
+      const width = root.querySelector("#udk-comparison-width");
+      const scale = root.querySelector("#udk-comparison-scale");
+      const widthLabel = root.querySelector('output[for="udk-comparison-width"]');
+      const scaleLabel = root.querySelector('output[for="udk-comparison-scale"]');
+
+      function update() {
+        root.style.setProperty("--comparison-width", width.value + "%");
+        root.style.setProperty("--comparison-scale", scale.valueAsNumber / 100);
+        widthLabel.value = width.value + "%";
+        scaleLabel.value = scale.value + "%";
+      }
+
+      function restore(state) {
+        const view = state?.privateContent;
+        width.value = view?.width ?? 100;
+        scale.value = view?.scale ?? 100;
+        update();
+      }
+
+      for (const control of [width, scale]) {
+        control.addEventListener("input", update);
+        control.addEventListener("change", () => {
+          try {
+            localStorage.setItem("udk-architecture-comparison-view", JSON.stringify({ width: width.valueAsNumber, scale: scale.valueAsNumber }));
+          } catch {}
+        });
+      }
+      let saved;
+      try { saved = JSON.parse(localStorage.getItem("udk-architecture-comparison-view")); } catch {}
+      restore({ privateContent: saved });
+    })();
+  </script>
+</div>
+</body>
+</html>
