@@ -32,16 +32,6 @@
         <Group id="NativeSources">
           <Input role="source">Sources/XamlRuntime/**/*.cpp</Input>
         </Group>
-        <Group id="Dependencies">
-          <Ref tag="Output" id="Dependencies" />
-        </Group>
-        <Group id="NativeBuild">
-          <Input role="msbuild-targets">Sources/XamlRuntime/UniversalDevKit.XamlRuntime.targets</Input>
-        </Group>
-        <Group id="CMakeRules">
-          <Input role="cmake">Sources/XamlRuntime/Build.cmake</Input>
-          <File>Sources/XamlRuntime/Consumer.cmake</File>
-        </Group>
       </Files>
       <Filters>
         <Filter filter="{Tree:Solution}/Sources/XamlRuntime">
@@ -55,12 +45,29 @@
                 preserveTree="true">
           <Ref tag="Group" id="NativeSources" />
         </Filter>
-        <Filter filter="{Tree:Project}/Build">
-          <Ref tag="Group" id="NativeBuild" />
-          <Ref tag="Group" id="Dependencies" />
-        </Filter>
       </Filters>
       <Requirements cxxStandard="20" />
+      <Extension backend="MSBuild">
+        <Files>
+          <Group id="NativeBuild">
+            <Input role="msbuild-targets">Sources/XamlRuntime/UniversalDevKit.XamlRuntime.targets</Input>
+          </Group>
+        </Files>
+        <Filters>
+          <Filter filter="{Tree:Project}/Build">
+            <Ref tag="Group" id="NativeBuild" />
+            <Ref tag="Output" id="DependenciesProps" />
+          </Filter>
+        </Filters>
+      </Extension>
+      <Extension backend="CMake">
+        <Files>
+          <Group id="CMakeRules">
+            <Input role="cmake">Sources/XamlRuntime/Build.cmake</Input>
+            <File>Sources/XamlRuntime/Consumer.cmake</File>
+          </Group>
+        </Files>
+      </Extension>
     </Project> <!-- Project id="native" -->
   </Projects>
 </Component>

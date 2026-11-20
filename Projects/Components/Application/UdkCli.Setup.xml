@@ -8,7 +8,6 @@
       <Files>
         <Input role="source">Sources/Windows/UdkCli.Setup/**/*.cs</Input>
         <Input role="source">Sources/Windows/UdkCli.Setup/**/*.xaml</Input>
-        <Input role="msbuild-targets">Sources/Windows/UdkCli.Setup/UdkCli.Setup.targets</Input>
       </Files>
       <Filters>
         <Filter filter="{Tree:Project}"
@@ -20,11 +19,14 @@
           <Match>Sources/Windows/UdkCli.Setup/**/*.targets</Match>
         </Filter>
       </Filters>
-      <MSBuild>
+      <Extension backend="MSBuild">
+        <Files>
+          <Input role="msbuild-targets">Sources/Windows/UdkCli.Setup/UdkCli.Setup.targets</Input>
+        </Files>
         <Properties>
           <TargetFramework>net10.0-windows</TargetFramework>
         </Properties>
-      </MSBuild>
+      </Extension>
     </Project> <!-- Project id="wpf" -->
   </Projects>
 </Component>

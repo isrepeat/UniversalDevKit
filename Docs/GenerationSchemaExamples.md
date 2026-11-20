@@ -11,6 +11,8 @@
 | `Output role="…"` | Задаёт шаблон пути для запланированного выхода. Если выход объявлен в группе, его экземпляр в этой области входит в неё. |
 | `Ref tag="…" id="…"` | Подставляет указанный элемент целиком, включая его атрибуты и содержимое. |
 
+Настройки сборщиков в проекте объявляются в `<Extension backend="MSBuild">` или `<Extension backend="CMake">`. Вложенный `Files` использует те же объявления файлов и групп. Роли `msbuild-props`, `msbuild-targets` и `cmake` допустимы только в расширении соответствующего сборщика. Общие исходники, заголовки и выходы остаются в `Project/Files`. Группы из расширений доступны фильтрам того же проекта. Реестр может объявить общее расширение MSBuild для импортов `msbuild-props` с `projectType="native"`.
+
 ## 1. Реестр и общие файлы
 
 ```xml
@@ -30,6 +32,14 @@
     </MSBuild>
   </Generation>
 
+  <Extension backend="MSBuild">
+    <Files>
+      <Input role="msbuild-props" projectType="native">Projects/MsBuild/BuildLayout.props</Input>
+      <Output role="dependencies-props"
+              id="DependenciesProps">{projectDirectory}/{solutionName}.{name}.Dependencies.{ext}</Output>
+    </Files>
+  </Extension>
+
   <Files>
     <Group id="Version">
       <Input role="version-source">Version.json</Input>
@@ -37,12 +47,8 @@
       <Output role="version-props">Projects/!Generated/MsBuild/{solutionName}.Version.{ext}</Output>
     </Group>
 
-    <Input role="msbuild-props" projectType="native">Projects/MsBuild/BuildLayout.props</Input>
-
     <Output role="sourceIntegration-targets"
             id="SourcesIntegration">Projects/!Generated/MsBuild/{solutionName}.Sources.{ext}</Output>
-    <Output role="dependencies-props"
-            id="Dependencies">{projectDirectory}/{solutionName}.{name}.Dependencies.{ext}</Output>
     <Output role="component-exportHeader">Projects/!Generated/Includes/UniversalDevKit/{name}/Export.{ext}</Output>
     <Output role="project-nativeApplication">{projectDirectory}/{name}.{ext}</Output>
     <Output role="project-nativeLibrary">{projectDirectory}/{solutionName}.{name}.{variant:title}.{ext}</Output>
@@ -77,20 +83,27 @@
           <Input role="source">Sources/Diagnostic/Native/**/*.cpp</Input>
         </Group>
 
-        <Group id="Build">
-          <Input role="msbuild-targets">Sources/Diagnostic/Native/Spdlog.targets</Input>
-          <Ref tag="Output" id="Dependencies" />
-        </Group>
       </Files>
+
 
       <Filters>
         <Filter filter="{Tree:Project}/Sources">
           <Ref tag="Group" id="Sources" />
         </Filter>
-        <Filter filter="{Tree:Project}/Build">
-          <Ref tag="Group" id="Build" />
-        </Filter>
       </Filters>
+      <Extension backend="MSBuild">
+        <Files>
+          <Group id="NativeBuild">
+            <Input role="msbuild-targets">Sources/Diagnostic/Native/Spdlog.targets</Input>
+          </Group>
+        </Files>
+        <Filters>
+          <Filter filter="{Tree:Project}/Build">
+            <Ref tag="Group" id="NativeBuild" />
+            <Ref tag="Output" id="DependenciesProps" />
+          </Filter>
+        </Filters>
+      </Extension>
     </Project>
 
     <Project id="dotnet" kind="library" projectType="classLibrary">
@@ -99,15 +112,15 @@
         <Output role="project-classLibrary">{projectDirectory}/{solutionName}.{name}.Net8.{ext}</Output>
       </Files>
 
-      <MSBuild>
-        <Properties>
-          <TargetFramework>net8.0</TargetFramework>
-        </Properties>
-      </MSBuild>
 
       <RuntimeDependencies>
         <Dependency projectId="native" variant="Dynamic" />
       </RuntimeDependencies>
+      <Extension backend="MSBuild">
+        <Properties>
+          <TargetFramework>net8.0</TargetFramework>
+        </Properties>
+      </Extension>
     </Project>
   </Projects>
 </Component>
@@ -115,7 +128,7 @@
 
 Нативный проект получает только вариант `Dynamic` из-за `stateScope="process"`. Если проект поддерживает оба варианта, их можно задать как `<Variants>static;dynamic</Variants>`. Тогда общий шаблон `project-nativeLibrary` раскроется дважды, а `dependencies-props` останется одним выходом на библиотеку.
 
-Группа `Build` включает существующий `Spdlog.targets` и запланированный `UniversalDevKit.Diagnostic.Dependencies.g.props`. `Ref` подставляет объявление `Output` с `id="Dependencies"`. Его роль вычисляется для текущего нативного проекта. Импорт созданного `.props` скрипт строит по тому же пути из плана.
+Фильтр `Build` показывает `Spdlog.targets` из группы расширения и напрямую ссылается на запланированный `UniversalDevKit.Diagnostic.Dependencies.g.props`. `Ref` подставляет объявление `Output` с `id="DependenciesProps"`. Его роль вычисляется для текущего нативного проекта. Импорт созданного `.props` скрипт строит по тому же пути из плана.
 
 Локальный `project-classLibrary` даёт `UniversalDevKit.Diagnostic.Net8.csproj`. Связь с нативной библиотекой сохраняется через `projectId` и `variant`, поэтому имена файлов проектов можно менять независимо.
 
@@ -175,8 +188,12 @@
       <Files>
         <Input role="header">Sources/Windows/UdkCli/**/*.h</Input>
         <Input role="source">Sources/Windows/UdkCli/**/*.cpp</Input>
-        <Input role="msbuild-props">Sources/Windows/UdkCli/UdkCli.props</Input>
       </Files>
+      <Extension backend="MSBuild">
+        <Files>
+          <Input role="msbuild-props">Sources/Windows/UdkCli/UdkCli.props</Input>
+        </Files>
+      </Extension>
     </Project>
   </Projects>
 </Component>
@@ -207,23 +224,23 @@
 </Group>
 ```
 
-Точно так же `<Ref tag="Output" id="Dependencies" />` раскрывается в элемент `Output` со всеми атрибутами и шаблоном пути:
+Точно так же `<Ref tag="Output" id="DependenciesProps" />` раскрывается в элемент `Output` со всеми атрибутами и шаблоном пути:
 
 ```xml
 <Output role="dependencies-props"
-        id="Dependencies">{projectDirectory}/{solutionName}.{name}.Dependencies.{ext}</Output>
+        id="DependenciesProps">{projectDirectory}/{solutionName}.{name}.Dependencies.{ext}</Output>
 ```
 
-В этом примере парсер находит `Output id="Dependencies"` в реестре. Роль `dependencies-props` относится к проекту, поэтому шаблон вычисляется в контексте нативного проекта `Diagnostic`. Подстановки `{projectDirectory}`, `{solutionName}`, `{name}` и `{ext}` дают путь `Projects/!Generated/MsBuild/Library/Diagnostic/UniversalDevKit.Diagnostic.Dependencies.g.props`. Для сравнения, роль `sourceIntegration-targets` из примера `UdkCli` вычисляется один раз в контексте реестра.
+В этом примере парсер находит `Output id="DependenciesProps"` в реестре. Роль `dependencies-props` относится к проекту, поэтому шаблон вычисляется в контексте нативного проекта `Diagnostic`. Подстановки `{projectDirectory}`, `{solutionName}`, `{name}` и `{ext}` дают путь `Projects/!Generated/MsBuild/Library/Diagnostic/UniversalDevKit.Diagnostic.Dependencies.g.props`. Для сравнения, роль `sourceIntegration-targets` из примера `UdkCli` вычисляется один раз в контексте реестра.
 
-Вложенный `Ref` ищется из области, где он был объявлен. Если проект ссылается на группу реестра, а внутри неё есть `<Ref tag="Output" id="Dependencies" />`, вложенная ссылка ищет объявление в реестре. Шаблон найденного проектного выхода при этом вычисляется для проекта, который использует группу.
+Вложенный `Ref` ищется из области, где он был объявлен. Если проект ссылается на группу реестра, а внутри неё есть `<Ref tag="Output" id="DependenciesProps" />`, вложенная ссылка ищет объявление в реестре. Шаблон найденного проектного выхода при этом вычисляется для проекта, который использует группу.
 
 После раскрытия парсер обрабатывает элемент по правилам места, где стояла ссылка. Внутри `Filter` группа даёт файлы для отображения. Внутри `Files/Group` подставленный `Output` включает запланированный файл в выборку. Повторное использование элемента сохраняет связь с исходным объявлением, поэтому ссылки на одну группу или выход используют те же входы и выходы плана. Парсер сообщает об отсутствующей цели или цикле ссылок.
 
 ## Наследование и вычисление путей
 
 - Скрипт определяет состав выходов по типу и настройкам проекта. `Output` задаёт путь для соответствующей роли. Например, объявление `source-headerCheck` в реестре используется при генерации HeaderCheck.
-- Для проектной роли локальный `Output` переопределяет шаблон реестра. Если у локального объявления нет `id`, идентификатор наследуется. Например, при локальном переименовании файла роли `dependencies-props` ссылка `<Ref tag="Output" id="Dependencies" />` получит путь из локального шаблона.
+- Для проектной роли локальный `Output` переопределяет шаблон реестра. Если у локального объявления нет `id`, идентификатор наследуется. Например, при локальном переименовании файла роли `dependencies-props` ссылка `<Ref tag="Output" id="DependenciesProps" />` получит путь из локального шаблона.
 - `id` в `Output` служит идентификатором для ссылок. Подстановка `{name}` в пути означает имя компонента. Объявление без `id` можно использовать непосредственно в группе.
 - Пути отсчитываются от корня реестра. Скрипт подставляет `{ext}` по роли, например `vcxproj`, `vcxitems`, `csproj`, `g.h`, `g.cpp`, `g.props` или `g.targets`. Путь сопутствующего `.filters` вычисляется добавлением суффикса к пути проекта.
 - Перед записью скрипт вычисляет пути, проверяет коллизии и разрешает ссылки. По тем же путям он строит импорты, ссылки между проектами и содержимое фильтров. Если запланированный выход остался без шаблона, генерация останавливается до записи файлов.

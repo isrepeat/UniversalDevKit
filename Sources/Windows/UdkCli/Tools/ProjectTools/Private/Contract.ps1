@@ -639,8 +639,34 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
         if ($applicationCount -and $definition.projects.Count -ne 1) {
             throw "An application component must contain one project: $include"
         }
+        $localTargets = [System.Collections.Generic.Dictionary[string,string]]::new([StringComparer]::Ordinal)
+        foreach ($project in $definition.projects) {
+            if ($project.PSObject.Properties['target']) {
+                if (-not $project.id -or $project.target -cnotmatch '^[A-Za-z][A-Za-z0-9_.-]*$' -or $localTargets.ContainsKey($project.target)) {
+                    throw "Invalid or duplicate target in $include"
+                }
+                $localTargets.Add($project.target, $project.id)
+                $project.PSObject.Properties.Remove('target')
+            }
+        }
         foreach ($project in $definition.projects) {
             $runtimeProjects = @()
+            if ($project.projectType -ceq 'classLibrary' -and $project.PSObject.Properties['dependencies']) {
+                if ($project.PSObject.Properties['runtimeDependencies']) {
+                    throw "Use a single runtime dependency declaration in $include"
+                }
+                $runtimeDependencies = @(foreach ($dependency in $project.dependencies) {
+                    if ($dependency.target -isnot [string] -or
+                        -not $localTargets.ContainsKey($dependency.target) -or
+                        $dependency.usage -cne 'runtime' -or $dependency.variant -cne 'dynamic' -or
+                        @($dependency.PSObject.Properties.Name | Where-Object { $_ -cnotin @('target', 'usage', 'variant') }).Count) {
+                        throw "Expected a local native dynamic runtime target in $include"
+                    }
+                    [pscustomobject]@{ projectId = $localTargets[$dependency.target]; variant = 'Dynamic' }
+                })
+                $project.PSObject.Properties.Remove('dependencies')
+                $project | Add-Member runtimeDependencies $runtimeDependencies
+            }
             if ($project.PSObject.Properties['runtimeDependencies']) {
                 if ($project.language -cne 'csharp' -or $project.projectType -cne 'classLibrary' -or $project.runtimeDependencies -isnot [Array]) {
                     throw "runtimeDependencies requires a C# classLibrary and an array: $include"

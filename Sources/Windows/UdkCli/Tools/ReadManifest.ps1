@@ -29,7 +29,60 @@ function Get-UdkOutputExtension([string]$Role) {
     }
 }
 
+function Assert-UdkExtensionScope([System.Xml.XmlElement]$Owner, [switch]$Expanded) {
+    $backends = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    foreach ($extension in $Owner.SelectNodes('*[not(self::Projects)]/descendant-or-self::Extension')) {
+        $backend = $extension.GetAttribute('backend')
+        if ($extension.ParentNode -ne $Owner -or $Owner.Name -cnotin @('Project', 'ComponentRegistry') -or
+            $backend -cnotin @('MSBuild', 'CMake') -or ($Owner.Name -ceq 'ComponentRegistry' -and $backend -cne 'MSBuild') -or
+            $extension.Attributes.Count -ne 1 -or -not $backends.Add($backend) -or
+            $extension.SelectSingleNode('text()[normalize-space()]')) {
+            throw "Invalid Extension backend or placement: $backend"
+        }
+        $allowed = if ($backend -ceq 'MSBuild' -and $Owner.Name -ceq 'Project') {
+            @('Files', 'Filters', 'Properties', 'DynamicDefinitions', 'ProjectName', 'ProjectNames', 'ProjectDirectory', 'SolutionFolder')
+        } else { @('Files') }
+        foreach ($child in $extension.SelectNodes('*')) {
+            if ($child.Name -cnotin $allowed -or $extension.SelectNodes($child.Name).Count -ne 1) {
+                throw "Invalid or duplicate element in Extension backend=${backend}: $($child.Name)"
+            }
+        }
+        $files = $extension.SelectSingleNode('Files')
+        if ($files -and ($files.Attributes.Count -or $files.SelectSingleNode('text()[normalize-space()]') -or
+            $files.SelectSingleNode('.//*[not(self::Group or self::Input or self::File or self::Ref or self::Output)]') -or
+            ($backend -cne 'MSBuild' -and $files.SelectSingleNode('.//Output')))) {
+            throw "Invalid Files in Extension backend=$backend"
+        }
+    }
+    $inputPath = 'Files//Input|Extension/Files//Input'
+    if (-not $Expanded) { $inputPath += '|Filters//Input|Extension/Filters//Input' }
+    foreach ($inputFile in $Owner.SelectNodes($inputPath)) {
+        $role = $inputFile.GetAttribute('role')
+        $extension = $inputFile.SelectSingleNode('ancestor::Extension')
+        $requiredBackend = switch -CaseSensitive ($role) {
+            'cmake' { 'CMake' }
+            'msbuild-props' { 'MSBuild' }
+            'msbuild-targets' { 'MSBuild' }
+        }
+        if (($requiredBackend -and (-not $extension -or $extension.GetAttribute('backend') -cne $requiredBackend)) -or
+            ($extension -and -not $requiredBackend)) {
+            throw "Input role '$role' is invalid here. Expected backend: $requiredBackend"
+        }
+        if ($Owner.Name -ceq 'ComponentRegistry' -and $extension -and
+            ($role -cne 'msbuild-props' -or $inputFile.GetAttribute('projectType') -cne 'native')) {
+            throw 'Registry extensions support only native msbuild-props.'
+        }
+    }
+    if ($Owner.SelectSingleNode('Files//*[self::CMake or self::MSBuildProps or self::MSBuildTargets]')) {
+        throw 'Use backend-specific Input roles in Extension Files.'
+    }
+}
+
 function Convert-UdkFileScope([System.Xml.XmlElement]$Owner, $ParentScope) {
+    Assert-UdkExtensionScope $Owner
+    if ($Owner.Name -ceq 'Project' -and $Owner.SelectSingleNode('MSBuild|BuildExtensions')) {
+        throw 'Declare project build settings in Extension.'
+    }
     $scope = [pscustomobject]@{
         Parent = $ParentScope
         Nodes = [Collections.Generic.Dictionary[string,object]]::new([StringComparer]::Ordinal)
@@ -45,7 +98,7 @@ function Convert-UdkFileScope([System.Xml.XmlElement]$Owner, $ParentScope) {
         }
         $scope.Nodes.Add($key, $node.CloneNode($true))
     }
-    foreach ($node in $Owner.SelectNodes('Files//Output')) {
+    foreach ($node in $Owner.SelectNodes('Files//Output|Extension/Files//Output')) {
         $role = $node.GetAttribute('role')
         $null = Get-UdkOutputExtension $role
         $template = $node.InnerText.Trim()
@@ -76,6 +129,39 @@ function Convert-UdkFileScope([System.Xml.XmlElement]$Owner, $ParentScope) {
         }
     }
     ExpandRefs $Owner $scope @()
+    # Filter references may point to backend files for display.
+    Assert-UdkExtensionScope $Owner -Expanded
+    foreach ($extension in @($Owner.SelectNodes('Extension'))) {
+        $extensionFiles = $extension.SelectSingleNode('Files')
+        if ($extensionFiles) {
+            $files = $Owner.SelectSingleNode('Files')
+            if (-not $files) {
+                $files = $Owner.OwnerDocument.CreateElement('Files')
+                [void]$Owner.InsertBefore($files, $extension)
+            }
+            foreach ($entry in @($extensionFiles.SelectNodes('*'))) { [void]$files.AppendChild($entry) }
+            [void]$extension.RemoveChild($extensionFiles)
+        }
+        $extensionFilters = $extension.SelectSingleNode('Filters')
+        if ($extensionFilters) {
+            $filters = $Owner.SelectSingleNode('Filters')
+            if (-not $filters) {
+                $filters = $Owner.OwnerDocument.CreateElement('Filters')
+                [void]$Owner.InsertBefore($filters, $extension)
+            }
+            if ($extensionFilters.Attributes.Count -or $extensionFilters.SelectSingleNode('text()[normalize-space()]')) {
+                throw 'Invalid Filters in Extension backend=MSBuild'
+            }
+            foreach ($filter in @($extensionFilters.SelectNodes('*'))) { [void]$filters.AppendChild($filter) }
+            [void]$extension.RemoveChild($extensionFilters)
+        }
+        if ($extension.SelectSingleNode('*')) {
+            $msbuild = $Owner.OwnerDocument.CreateElement('MSBuild')
+            foreach ($entry in @($extension.SelectNodes('*'))) { [void]$msbuild.AppendChild($entry) }
+            [void]$Owner.InsertBefore($msbuild, $extension)
+        }
+        [void]$Owner.RemoveChild($extension)
+    }
     $scope.Inputs = @($Owner.SelectNodes('Files//Input') | ForEach-Object { $_.CloneNode($true) })
     foreach ($node in @($Owner.SelectNodes('Files//Input|Filters//Input|Files//Output|Filters//Output'))) {
         $role = $node.GetAttribute('role')
@@ -538,7 +624,7 @@ function Read-UdkManifest([string]$Path, [string]$XmlRoot, $RegistryScope) {
         return $registry
     }
     if ($XmlRoot -ceq 'Component') {
-        $newFiles = $root.SelectSingleNode('.//Files//Input|.//Files//Output|.//Files//Group[@id]|.//Ref')
+        $newFiles = $root.SelectSingleNode('.//Files//Input|.//Files//Output|.//Files//Group[@id]|.//Ref|.//Extension')
         if ($newFiles -or $RegistryScope) {
             if (-not $RegistryScope) {
                 $directory = [IO.DirectoryInfo]::new((Split-Path -Parent $file))

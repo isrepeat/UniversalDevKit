@@ -2,6 +2,7 @@
 <Component name="Diagnostic">
   <Projects>
     <Project id="native"
+             target="Diagnostic.Native"
              kind="library"
              projectType="native"
              msbuildGuid="{AB97876A-F25A-4AAE-BACD-D32C776BB261}"
@@ -20,15 +21,6 @@
         <Group id="SpdlogSources">
           <Input role="source">ThirdParty/spdlog/src/*.cpp</Input>
         </Group>
-        <Group id="Dependencies">
-          <Ref tag="Output" id="Dependencies" />
-        </Group>
-        <Group id="NativeBuild">
-          <Input role="msbuild-targets">Sources/Diagnostic/Native/Spdlog.targets</Input>
-        </Group>
-        <Group id="CMakeRules">
-          <Input role="cmake">Sources/Diagnostic/Native/Spdlog.cmake</Input>
-        </Group>
       </Files>
       <Filters>
         <Filter filter="{Tree:Solution}/Sources/Diagnostic/Native">
@@ -37,10 +29,6 @@
         <Filter filter="{Tree:Project}"
                 preserveTree="true">
           <Ref tag="Group" id="NativeSources" />
-        </Filter>
-        <Filter filter="{Tree:Project}/Build">
-          <Ref tag="Group" id="NativeBuild" />
-          <Ref tag="Group" id="Dependencies" />
         </Filter>
         <Filter filter="{Tree:Project}/ThirdParty/spdlog/src">
           <Ref tag="Group" id="SpdlogSources" />
@@ -55,27 +43,49 @@
         </IncludeDirectories>
         <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;SPDLOG_WCHAR_FILENAMES</PreprocessorDefinitions>
       </Compile>
+      <Extension backend="MSBuild">
+        <Files>
+          <Group id="NativeBuild">
+            <Input role="msbuild-targets">Sources/Diagnostic/Native/Spdlog.targets</Input>
+          </Group>
+        </Files>
+        <Filters>
+          <Filter filter="{Tree:Project}/Build">
+            <Ref tag="Group" id="NativeBuild" />
+            <Ref tag="Output" id="DependenciesProps" />
+          </Filter>
+        </Filters>
+      </Extension>
+      <Extension backend="CMake">
+        <Files>
+          <Group id="CMakeRules">
+            <Input role="cmake">Sources/Diagnostic/Native/Spdlog.cmake</Input>
+          </Group>
+        </Files>
+      </Extension>
     </Project> <!-- Project id="native" -->
 
     <Project id="dotnet"
+             target="Diagnostic.DotNet"
              kind="library"
              projectType="classLibrary">
       <Files>
         <Input role="source">Sources/Diagnostic/DotNet/**/*.cs</Input>
         <Output role="project-classLibrary">{projectDirectory}/{solutionName}.{name}.Net8.{ext}</Output>
       </Files>
-      <MSBuild>
+      <Dependencies>
+        <Dependency target="Diagnostic.Native"
+                    variant="dynamic"
+                    usage="runtime" />
+      </Dependencies>
+      <Extension backend="MSBuild">
         <Properties>
           <TargetFramework>net8.0</TargetFramework>
           <AssemblyName>UniversalDevKit.Diagnostic</AssemblyName>
           <Nullable>enable</Nullable>
           <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         </Properties>
-      </MSBuild>
-      <RuntimeDependencies>
-        <Dependency projectId="native"
-                    variant="Dynamic" />
-      </RuntimeDependencies>
+      </Extension>
     </Project> <!-- Project id="dotnet" -->
   </Projects>
 </Component>

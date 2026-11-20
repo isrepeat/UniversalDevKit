@@ -25,16 +25,6 @@
           <Input role="header">Sources/OpenGLESRenderer/**/*.h</Input>
           <Input role="source">Sources/OpenGLESRenderer/**/*.cpp</Input>
         </Group>
-        <Group id="Dependencies">
-          <Ref tag="Output" id="Dependencies" />
-        </Group>
-        <Group id="NativeBuild">
-          <Input role="msbuild-targets">Sources/OpenGLESRenderer/UniversalDevKit.OpenGLESRenderer.targets</Input>
-        </Group>
-        <Group id="CMakeRules">
-          <Input role="cmake">Sources/OpenGLESRenderer/Build.cmake</Input>
-          <File>Sources/OpenGLESRenderer/AngleConfig.cmake.in</File>
-        </Group>
       </Files>
       <Filters>
         <Filter filter="{Tree:Solution}/Sources/OpenGLESRenderer">
@@ -46,10 +36,6 @@
         <Filter filter="{Tree:Project}">
           <Ref tag="Group" id="NativeSources" />
         </Filter>
-        <Filter filter="{Tree:Project}/Build">
-          <Ref tag="Group" id="NativeBuild" />
-          <Ref tag="Group" id="Dependencies" />
-        </Filter>
       </Filters>
       <Requirements cxxStandard="20" />
       <PlatformRequirements>
@@ -57,6 +43,27 @@
           <LinkLibraries>GLESv3</LinkLibraries>
         </Android>
       </PlatformRequirements>
+      <Extension backend="MSBuild">
+        <Files>
+          <Group id="NativeBuild">
+            <Input role="msbuild-targets">Sources/OpenGLESRenderer/UniversalDevKit.OpenGLESRenderer.targets</Input>
+          </Group>
+        </Files>
+        <Filters>
+          <Filter filter="{Tree:Project}/Build">
+            <Ref tag="Group" id="NativeBuild" />
+            <Ref tag="Output" id="DependenciesProps" />
+          </Filter>
+        </Filters>
+      </Extension>
+      <Extension backend="CMake">
+        <Files>
+          <Group id="CMakeRules">
+            <Input role="cmake">Sources/OpenGLESRenderer/Build.cmake</Input>
+            <File>Sources/OpenGLESRenderer/AngleConfig.cmake.in</File>
+          </Group>
+        </Files>
+      </Extension>
     </Project> <!-- Project id="native" -->
   </Projects>
 </Component>

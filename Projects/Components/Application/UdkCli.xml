@@ -26,8 +26,6 @@
         </Group>
         <Input role="header">Sources/Windows/UdkCli/**/*.h</Input>
         <Input role="source">Sources/Windows/UdkCli/**/*.cpp</Input>
-        <Input role="msbuild-props">Sources/Windows/UdkCli/UdkCli.props</Input>
-        <Input role="msbuild-targets">Sources/Windows/UdkCli/UdkCli.targets</Input>
       </Files>
       <Filters>
         <Filter filter="{Tree:Solution}/Sources/Windows">
@@ -40,10 +38,6 @@
         <Filter filter="{Tree:Project}">
           <Match>Sources/Windows/UdkCli/**/*</Match>
         </Filter>
-        <Filter filter="{Tree:Project}/Build">
-          <Match>Sources/Windows/UdkCli/**/*.props</Match>
-          <Match>Sources/Windows/UdkCli/**/*.targets</Match>
-        </Filter>
       </Filters>
       <Requirements cxxStandard="20" />
       <Compile>
@@ -53,11 +47,21 @@
           <IncludeDirectory>Projects/!Generated/Includes</IncludeDirectory>
         </IncludeDirectories>
       </Compile>
-      <MSBuild>
+      <Extension backend="MSBuild">
+        <Files>
+          <Input role="msbuild-props">Sources/Windows/UdkCli/UdkCli.props</Input>
+          <Input role="msbuild-targets">Sources/Windows/UdkCli/UdkCli.targets</Input>
+        </Files>
+        <Filters>
+          <Filter filter="{Tree:Project}/Build">
+            <Match>Sources/Windows/UdkCli/**/*.props</Match>
+            <Match>Sources/Windows/UdkCli/**/*.targets</Match>
+          </Filter>
+        </Filters>
         <Properties>
           <TargetName>udk</TargetName>
         </Properties>
-      </MSBuild>
+      </Extension>
     </Project> <!-- Project id="native" -->
   </Projects>
 </Component>

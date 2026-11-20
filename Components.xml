@@ -34,13 +34,8 @@
       <Output role="version-header">Projects/!Generated/Includes/UniversalDevKit/Version.{ext}</Output>
       <Output role="version-props" id="VersionProps">Projects/!Generated/MsBuild/{solutionName}.Version.{ext}</Output>
     </Group>
-
-    <Input role="msbuild-props" projectType="native">Projects/MsBuild/BuildLayout.props</Input>
-
-    <Output role="sourceIntegration-targets"
-            id="SourcesIntegration">Projects/!Generated/MsBuild/{solutionName}.Sources.{ext}</Output>
-    <Output role="dependencies-props"
-            id="Dependencies">{projectDirectory}/{solutionName}.{name}.Dependencies.{ext}</Output>
+    <Output id="SourcesIntegration"
+            role="sourceIntegration-targets">Projects/!Generated/MsBuild/{solutionName}.Sources.{ext}</Output>
     <Output role="component-exportHeader">Projects/!Generated/Includes/UniversalDevKit/{name}/Export.{ext}</Output>
     <Output role="project-nativeApplication">{projectDirectory}/{name}.{ext}</Output>
     <Output role="project-nativeLibrary">{projectDirectory}/{solutionName}.{name}.{variant:title}.{ext}</Output>
@@ -52,4 +47,11 @@
     <Output role="source-headerCheck">{projectDirectory}/HeaderCheck.{ext}</Output>
     <Output role="core-exportHeader">Projects/!Generated/Includes/UniversalDevKit/Export.{ext}</Output>
   </Files>
+	<Extension backend="MSBuild">
+		<Files>
+			<Input role="msbuild-props" projectType="native">Projects/MsBuild/BuildLayout.props</Input>
+			<Output id="DependenciesProps"
+							role="dependencies-props">{projectDirectory}/{solutionName}.{name}.Dependencies.{ext}</Output>
+		</Files>
+	</Extension>
 </ComponentRegistry>

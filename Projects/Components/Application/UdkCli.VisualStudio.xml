@@ -9,7 +9,6 @@
       <Files>
         <Input role="source">Sources/Windows/UdkCli.VisualStudio/**/*.cs</Input>
         <Input role="source">Sources/Diagnostic/DotNet/*.cs</Input>
-        <Input role="msbuild-targets">Sources/Windows/UdkCli.VisualStudio/UdkCli.VisualStudio.targets</Input>
         <Output role="project-vsix">{projectDirectory}/{name}.Net472.{ext}</Output>
       </Files>
       <Filters>
@@ -25,11 +24,14 @@
           <Match>Sources/Diagnostic/DotNet/**/*</Match>
         </Filter>
       </Filters>
-      <MSBuild>
+      <Extension backend="MSBuild">
+        <Files>
+          <Input role="msbuild-targets">Sources/Windows/UdkCli.VisualStudio/UdkCli.VisualStudio.targets</Input>
+        </Files>
         <Properties>
           <TargetFramework>net472</TargetFramework>
         </Properties>
-      </MSBuild>
+      </Extension>
     </Project> <!-- Project id="vsix" -->
   </Projects>
 </Component>
