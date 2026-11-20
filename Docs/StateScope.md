@@ -23,7 +23,7 @@
 {
   "name": "ComponentA",
   "stateScope": "process",
-  "msbuildGuid": "{9C51FF34-91AE-4F32-98AE-ABBAFE4219E1}",
+  "projectGuid": "{9C51FF34-91AE-4F32-98AE-ABBAFE4219E1}",
   "headers": ["Includes/ComponentA/UniversalDevKit/ComponentA/Service.h"],
   "sources": ["Sources/ComponentA/Service.cpp"],
   "dependencies": []

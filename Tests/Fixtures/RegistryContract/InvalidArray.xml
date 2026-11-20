@@ -1,7 +1,7 @@
 <Component>
   <Name>HeaderProbe</Name>
   <Kind>headerOnly</Kind>
-  <MsbuildGuid>{984F66E5-780A-40B6-A641-4ECFCD8E0EAF}</MsbuildGuid>
+  <ProjectGuid>{984F66E5-780A-40B6-A641-4ECFCD8E0EAF}</ProjectGuid>
   <Dependencies />
   <Files>not-a-list</Files>
 </Component>

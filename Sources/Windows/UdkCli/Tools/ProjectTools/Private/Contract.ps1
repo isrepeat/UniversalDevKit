@@ -770,7 +770,7 @@ function Read-ProjectToolsModel([string]$ManifestPath) {
                 }
             }
             foreach ($field in $component.PSObject.Properties.Name) {
-                if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'version', 'abiVersion', 'msbuildGuid', 'msbuild', 'buildExtensions', 'filters', 'browseFiles', 'sources', 'excludeSources', 'outputScope', 'dependencies')) {
+                if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'version', 'abiVersion', 'projectGuid', 'msbuild', 'buildExtensions', 'filters', 'browseFiles', 'sources', 'excludeSources', 'outputScope', 'dependencies')) {
                     throw "Unsupported C# application field: $field"
                 }
             }
@@ -823,7 +823,7 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
             }
         } else {
             foreach ($field in $component.PSObject.Properties.Name) {
-                if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'browseFiles', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'consumerIntegration', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild', 'outputScope', 'projection')) {
+                if ($field -notin @('name', 'githubVersion', 'abiVersion', 'projectGuid', 'headers', 'sources', 'filters', 'browseFiles', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'consumerIntegration', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild', 'outputScope', 'projection')) {
                     throw "Unknown component field: $field"
                 }
             }
@@ -832,7 +832,7 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
             }
             if ($isApplication) {
                 foreach ($field in $component.PSObject.Properties.Name) {
-                    if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'excludeHeaders', 'excludeSources', 'filters', 'browseFiles', 'requirements', 'compile', 'buildExtensions', 'msbuild', 'outputScope', 'dependencies')) {
+                    if ($field -notin @('name', 'kind', 'language', 'projectType', 'githubVersion', 'abiVersion', 'projectGuid', 'headers', 'sources', 'excludeHeaders', 'excludeSources', 'filters', 'browseFiles', 'requirements', 'compile', 'buildExtensions', 'msbuild', 'outputScope', 'dependencies')) {
                         throw "Unsupported application field: $field"
                     }
                 }
@@ -963,7 +963,7 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
                 throw "Invalid component MSBuild projectName template: $include"
             }
         }
-        if (-not $component.msbuildGuid) {
+        if (-not $component.projectGuid) {
             $identity = if ($isManagedLibrary) {
                 'ClassLibrary'
             } elseif ($isApplication) {
@@ -971,10 +971,10 @@ if ($field -notin @('properties', 'projectName', 'projectNames', 'projectDirecto
             } else {
                 'Shared'
             }
-            $component | Add-Member msbuildGuid (Get-ProjectToolsGuid ('ProjectTools:' + $component.name + ':' + $identity))
+            $component | Add-Member projectGuid (Get-ProjectToolsGuid ('ProjectTools:' + $component.name + ':' + $identity))
         }
         $parsedGuid = [Guid]::Empty
-        if (-not [Guid]::TryParse($component.msbuildGuid, [ref]$parsedGuid) -or $guids.ContainsKey($parsedGuid.ToString())) {
+        if (-not [Guid]::TryParse($component.projectGuid, [ref]$parsedGuid) -or $guids.ContainsKey($parsedGuid.ToString())) {
             throw 'Invalid or duplicate component GUID.'
         }
         $guids[$parsedGuid.ToString()] = $true

@@ -156,7 +156,7 @@ foreach ($includePath in $Model.Components.Keys) {
     }
     # Reject unknown fields; dependencies and platforms require explicit generator support.
     foreach ($field in $component.PSObject.Properties.Name) {
-        if ($field -notin @('name', 'githubVersion', 'abiVersion', 'msbuildGuid', 'headers', 'sources', 'filters', 'browseFiles', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'consumerIntegration', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild', 'outputScope', 'projection')) {
+        if ($field -notin @('name', 'githubVersion', 'abiVersion', 'projectGuid', 'headers', 'sources', 'filters', 'browseFiles', 'dependencies', 'supportedPlatforms', 'platformSources', 'stateScope', 'requirements', 'platformRequirements', 'buildExtensions', 'consumerIntegration', 'compile', 'sourceSettings', 'kind', 'language', 'projectType', 'variants', 'excludeHeaders', 'excludeSources', 'msbuild', 'outputScope', 'projection')) {
             throw "Unsupported field ${name}: $field"
         }
     }
@@ -175,9 +175,9 @@ foreach ($includePath in $Model.Components.Keys) {
     if ($component.PSObject.Properties['stateScope'] -and $component.stateScope -cnotin @('module', 'process')) {
         throw "Invalid stateScope for component: $name"
     }
-    if ($component.msbuildGuid -isnot [string] -or $component.msbuildGuid -notmatch '^\{[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}\}$' -or
-        -not [Guid]::TryParse([string]$component.msbuildGuid, [ref]$guid) -or -not $guids.Add($guid.ToString())) {
-        throw "Invalid or duplicate msbuildGuid: $name"
+    if ($component.projectGuid -isnot [string] -or $component.projectGuid -notmatch '^\{[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}\}$' -or
+        -not [Guid]::TryParse([string]$component.projectGuid, [ref]$guid) -or -not $guids.Add($guid.ToString())) {
+        throw "Invalid or duplicate projectGuid: $name"
     }
     foreach ($field in @('headers', 'sources')) {
         if ($null -eq $component.$field -or $component.$field -isnot [Array]) {

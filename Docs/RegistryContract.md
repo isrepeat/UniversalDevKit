@@ -103,7 +103,7 @@
 
 Схемы 4–7 содержат непустой массив `components`. В схеме 4 поля проекта лежат непосредственно в описании компонента. ProjectTools также принимает схемы 2 и 3 для существующих манифестов.
 
-`msbuildGuid` записывается в форме `{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}`. Имена и GUID уникальны без учёта регистра. В именах C++-компонентов допустимы латинские буквы и цифры, первая буква заглавная. В именах существующих C#-проектов также допускаются точки.
+`projectGuid` записывается в форме `{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}`. Имена и GUID уникальны без учёта регистра. В именах C++-компонентов допустимы латинские буквы и цифры, первая буква заглавная. В именах существующих C#-проектов также допускаются точки.
 
 ## Зависимости
 
@@ -128,7 +128,7 @@
              kind="library"
              projectType="native"
              libraryType="headerOnly"
-             msbuildGuid="{984F66E5-780A-40B6-A641-4ECFCD8E0EAF}">
+             projectGuid="{984F66E5-780A-40B6-A641-4ECFCD8E0EAF}">
       <Files>
         <Header>Includes/HeaderProbe/UniversalDevKit/HeaderProbe/Value.h</Header>
       </Files>

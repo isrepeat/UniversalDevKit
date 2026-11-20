@@ -244,7 +244,7 @@ function Convert-UdkComponentFiles([System.Xml.XmlElement]$Owner) {
     }
     $buckets = @{ Header = 'Headers'; Source = 'Sources'; CMake = 'BuildExtensions'; MSBuildProps = 'BuildExtensions'; MSBuildTargets = 'BuildExtensions' }
     $legacyProject = $Owner.LocalName -ceq 'Component' -and -not $Owner.SelectSingleNode('Projects') -and
-        $Owner.SelectSingleNode('Kind|MsbuildGuid')
+        $Owner.SelectSingleNode('Kind|ProjectGuid')
     if ($Owner.LocalName -ceq 'Project' -or $legacyProject) {
         $buckets['File'] = 'BrowseFiles'
     }

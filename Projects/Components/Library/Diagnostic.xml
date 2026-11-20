@@ -5,7 +5,7 @@
              target="Diagnostic.Native"
              kind="library"
              projectType="native"
-             msbuildGuid="{AB97876A-F25A-4AAE-BACD-D32C776BB261}"
+             projectGuid="{AB97876A-F25A-4AAE-BACD-D32C776BB261}"
              stateScope="process">
       <Dependencies>
         <Dependency component="Helpers"

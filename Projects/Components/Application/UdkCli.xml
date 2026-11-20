@@ -16,7 +16,7 @@
              kind="application"
              projectType="native"
              githubVersion="0.5.3"
-             msbuildGuid="{9C7AAB80-FA41-4925-95FA-06409E32E4E1}">
+             projectGuid="{9C7AAB80-FA41-4925-95FA-06409E32E4E1}">
       <Files>
         <Group id="ToolsAndConfiguration">
           <File>Sources/Windows/UdkCli/Tools/**/*</File>

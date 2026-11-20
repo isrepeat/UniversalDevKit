@@ -29,7 +29,7 @@ ProjectTools использует SolutionInjector v1.1.0 и команду sync
 
 Пути компонентов, файлов и расширений отсчитываются от каталога `Components.xml`. `generation.msbuild` содержит `solution`, `projectDirectory` с `{name}` и необязательным `{kind}`, `projectName` с `{name}/{variant}`, `configurations`, `platforms` и необязательные `solutionFolder`, `props`, `targets`.
 
-Описания C++-компонентов используют `headers`, `sources`, `requirements`, `compile`, `dependencies` и `buildExtensions`. `headers` и `sources` допускают точные пути и маски `*`, `**`, `?`. `excludeHeaders` и `excludeSources` исключают файлы, а `variants` выбирает static/dynamic. Для C++-компонентов создаётся Shared, для `libraryType: headerOnly` достаточно Shared и проекта проверки заголовков в профиле UDK. `msbuildGuid` необязателен. Существующие GUID бинарных проектов сохраняются.
+Описания C++-компонентов используют `headers`, `sources`, `requirements`, `compile`, `dependencies` и `buildExtensions`. `headers` и `sources` допускают точные пути и маски `*`, `**`, `?`. `excludeHeaders` и `excludeSources` исключают файлы, а `variants` выбирает static/dynamic. Для C++-компонентов создаётся Shared, для `libraryType: headerOnly` достаточно Shared и проекта проверки заголовков в профиле UDK. `projectGuid` необязателен. Существующие GUID бинарных проектов сохраняются.
 
 Генерируемые библиотечные проекты полностью управляются инструментом. Пользовательские настройки размещаются в buildExtensions.msbuildProps/msbuildTargets либо общих generation.msbuild.props/targets. msbuild.properties задаёт свойства Globals, msbuild.dynamicDefinitions — export-макросы DLL.
 

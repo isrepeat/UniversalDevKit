@@ -5,7 +5,7 @@
              kind="application"
              projectType="vsix"
              version="0.5.3"
-             msbuildGuid="{5217622B-841E-4635-BA5D-8DE005125B16}">
+             projectGuid="{5217622B-841E-4635-BA5D-8DE005125B16}">
       <Files>
         <Input role="source">Sources/Windows/UdkCli.VisualStudio/**/*.cs</Input>
         <Input role="source">Sources/Diagnostic/DotNet/*.cs</Input>

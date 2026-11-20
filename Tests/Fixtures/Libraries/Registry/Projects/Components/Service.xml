@@ -1,7 +1,7 @@
 <Component>
   <Name>Service</Name>
   <StateScope>process</StateScope>
-  <MsbuildGuid>{9C51FF34-91AE-4F32-98AE-ABBAFE4219E1}</MsbuildGuid>
+  <ProjectGuid>{9C51FF34-91AE-4F32-98AE-ABBAFE4219E1}</ProjectGuid>
   <Dependencies />
   <Files>
     <Header>Includes/Service/UniversalDevKit/Service/Service.h</Header>

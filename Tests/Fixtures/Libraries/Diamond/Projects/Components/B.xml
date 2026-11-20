@@ -7,7 +7,7 @@
       <Linkage>same</Linkage>
     </Dependency>
   </Dependencies>
-  <MsbuildGuid>{DA000000-0000-4000-8000-000000000002}</MsbuildGuid>
+  <ProjectGuid>{DA000000-0000-4000-8000-000000000002}</ProjectGuid>
   <Files>
     <Header>Includes/B/UniversalDevKit/B/Value.h</Header>
     <Source>Sources/B/Value.cpp</Source>

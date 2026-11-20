@@ -1,6 +1,6 @@
 <Component>
   <Name>CompileProbe</Name>
-  <MsbuildGuid>{1DFD5E41-F82B-4DB7-ABBE-503FE74880FA}</MsbuildGuid>
+  <ProjectGuid>{1DFD5E41-F82B-4DB7-ABBE-503FE74880FA}</ProjectGuid>
   <Files>
     <Header>ThirdParty/CompileProbe/include/Value.h</Header>
     <Source>Sources/CompileProbe/Value.cpp</Source>

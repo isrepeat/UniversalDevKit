@@ -32,7 +32,8 @@
     <Group id="Version">
       <Input role="version-source">Version.json</Input>
       <Output role="version-header">Projects/!Generated/Includes/UniversalDevKit/Version.{ext}</Output>
-      <Output role="version-props" id="VersionProps">Projects/!Generated/MsBuild/{solutionName}.Version.{ext}</Output>
+      <Output id="VersionProps"
+							role="version-props">Projects/!Generated/MsBuild/{solutionName}.Version.{ext}</Output>
     </Group>
     <Output id="SourcesIntegration"
             role="sourceIntegration-targets">Projects/!Generated/MsBuild/{solutionName}.Sources.{ext}</Output>

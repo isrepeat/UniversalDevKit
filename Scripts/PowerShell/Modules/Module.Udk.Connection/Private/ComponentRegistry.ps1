@@ -37,14 +37,14 @@ function Get-UdkComponentRegistry {
         if ($component.kind -eq 'application') { continue }
         $kind = $component.kind
         if ($kind -eq 'library') { $kind = $component.libraryType }
-        if (-not $component.name -or -not $component.msbuildGuid) {
+        if (-not $component.name -or -not $component.projectGuid) {
             throw "Invalid component description: $include"
         }
         if ($componentRegistry.ContainsKey($component.name)) {
             throw "Duplicate component: $($component.name)"
         }
         $guid = [Guid]::Empty
-        if (-not [Guid]::TryParse($component.msbuildGuid, [ref]$guid)) {
+        if (-not [Guid]::TryParse($component.projectGuid, [ref]$guid)) {
             throw "Invalid component GUID: $($component.name)"
         }
         $componentRegistry[$component.name] = [pscustomobject]@{

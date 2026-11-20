@@ -291,15 +291,15 @@ function Get-ProjectToolsSolutionUpdate($Model, $Projects, [string]$Executable, 
         }
         $rootFolderGuid = FindFolderGuid $rootName '' ('ProjectTools.SolutionFolder:' + $rootName)
         $lines += @(('Project("' + $folderType + '") = "' + $rootName + '", "' + $rootName + '", "' + $rootFolderGuid + '"'), 'EndProject')
-        $msbuildGuid = FindFolderGuid 'MsBuild' $rootFolderGuid 'UDK.SolutionFolder:Projects/MsBuild'
+        $msbuildFolderGuid = FindFolderGuid 'MsBuild' $rootFolderGuid 'UDK.SolutionFolder:Projects/MsBuild'
         if ($Model.Profile -eq 'udk') {
-            $lines += @(('Project("' + $folderType + '") = "MsBuild", "MsBuild", "' + $msbuildGuid + '"'), 'EndProject')
+            $lines += @(('Project("' + $folderType + '") = "MsBuild", "MsBuild", "' + $msbuildFolderGuid + '"'), 'EndProject')
         }
         if ($Model.Profile -eq 'udk') {
-            $nested += "`t`t$msbuildGuid = $rootFolderGuid"
+            $nested += "`t`t$msbuildFolderGuid = $rootFolderGuid"
         }
         $technologyGuid = if ($Model.Profile -eq 'udk') {
-            $msbuildGuid
+            $msbuildFolderGuid
         } else {
             $rootFolderGuid
         }

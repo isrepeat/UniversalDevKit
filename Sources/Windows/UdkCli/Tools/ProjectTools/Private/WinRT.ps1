@@ -64,7 +64,7 @@ function Add-ProjectToolsWinRTPlan($Model, $Plan, $Projects) {
         $directory = (Split-Path -Parent $native).Replace('\', '/')
         $fragmentRoot = '!artifacts/projects/Windows/msbuild/' + $component.name
         $packageTargets = "$directory/$($component.name).NuGet.g.targets"
-        $guid = Get-ProjectToolsGuid ($component.msbuildGuid + ':Projection')
+        $guid = Get-ProjectToolsGuid ($component.projectGuid + ':Projection')
         $Projects.Add([pscustomobject]@{
             Path = $projection; Guid = $guid; Variant = 'DotNet'; Component = $component.name
             SolutionFolder = Get-ProjectToolsLayout $Model $component 'Dynamic' 'solutionFolder'
