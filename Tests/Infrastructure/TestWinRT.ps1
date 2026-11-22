@@ -30,6 +30,20 @@ try {
     if (-not (Test-Path -LiteralPath (Join-Path $temporary 'Sources/WinRT/Greeter.idl'))) { throw 'Cleanup removed an IDL source.' }
     & $tool -ManifestPath $manifest
     & $tool -ManifestPath $manifest -Check
+    $applicationDescriptionPath = Join-Path $temporary 'Application.xml'
+    [xml]$applicationDescription = Get-Content -LiteralPath $applicationDescriptionPath -Raw
+    $files = $applicationDescription.SelectSingleNode('//Project/Files')
+    [void]$files.ParentNode.RemoveChild($files)
+    $applicationDescription.Save($applicationDescriptionPath)
+    & $tool -ManifestPath $manifest
+    foreach ($file in @('App.g.cs', 'App.g.xaml', 'MainWindow.g.cs', 'MainWindow.g.xaml')) {
+        if ((Test-Path -LiteralPath (Join-Path (Split-Path -Parent $app) $file)) -or [IO.File]::ReadAllText($app).Contains($file)) {
+            throw "ProjectTools generated a WinUI source: $file"
+        }
+    }
+    Copy-Item -LiteralPath (Join-Path $repository 'Tests/Fixtures/WinRT/Application.xml') -Destination $applicationDescriptionPath
+    & $tool -ManifestPath $manifest
+    & $tool -ManifestPath $manifest -Check
     if ($SkipBuild) { return }
     $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
     $installation = & $vswhere -latest -products '*' -requires Microsoft.Component.MSBuild -property installationPath
@@ -131,15 +145,6 @@ try {
     if (-not [IO.File]::ReadAllText($merged[0].FullName).Contains('HelloWorld.ExtraWinRT.ExtraGreeter')) { throw 'Transitive WinRT activation was not merged.' }
     Build $consumer @('/t:Publish', ('/p:PublishDir=' + $publish + '\'), ('/p:RestorePackagesPath=' + (Join-Path $temporary 'consumer-packages')))
     VerifyApplication (Join-Path $publish 'Consumer.exe')
-    [xml]$applicationDescription = Get-Content -LiteralPath (Join-Path $temporary 'Application.xml') -Raw
-    $files = $applicationDescription.SelectSingleNode('//Project/Files')
-    [void]$files.ParentNode.RemoveChild($files)
-    $dependencies = $applicationDescription.SelectSingleNode('//Project/Dependencies')
-    [void]$dependencies.ParentNode.RemoveChild($dependencies)
-    $applicationDescription.Save((Join-Path $temporary 'Application.xml'))
-    & $tool -ManifestPath $manifest
-    Build $app @('/restore')
-    if (-not (Test-Path -LiteralPath (Join-Path (Split-Path -Parent $app) 'App.g.xaml'))) { throw 'The empty WinUI application was not scaffolded.' }
     & $tool -ManifestPath $manifest -Check
     Write-Host 'PASS: WinRT project references, WinMD manifests, producer projection, local NuGet and publish activation.'
 } finally {

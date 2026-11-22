@@ -309,7 +309,7 @@ function New-ProjectToolsDotNetProject($Model, $Component, [string]$Path) {
                 'Compile'
             }
             '.xaml' {
-                if ([IO.Path]::GetFileName($file) -in @('App.xaml', 'App.g.xaml')) {
+                if ([IO.Path]::GetFileName($file) -eq 'App.xaml') {
                     'ApplicationDefinition'
                 } else {
                     'Page'
